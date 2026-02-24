@@ -38,6 +38,9 @@
       "ariaLabel": "Search"
     },
     "login": "LOGIN",
+    "cart": {
+      "ariaLabel": "Shopping cart"
+    },
     "mobileMenu": {
       "ariaLabel": "Open menu"
     }

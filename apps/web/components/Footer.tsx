@@ -2,12 +2,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
 
 export function Footer() {
   const { t } = useTranslation();
+  const pathname = usePathname();
+  const isMenuPage = pathname === '/menu' || pathname === '/coming-soon';
+  
   return (
-    <footer className="bg-[#2f3f3d]  overflow-hidden relative">
+    <footer className={`${isMenuPage ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'} overflow-hidden relative`}>
       {/* Background Decorative Patterns */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Vector 1 - Top Left */}
@@ -33,7 +37,7 @@ export function Footer() {
       {/* Booking Section */}
       <section className="py-16 md:py-20 lg:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-light italic mb-4">
+          <h2 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-4xl md:text-5xl lg:text-6xl font-light italic mb-4`}>
             {t('home.footer.booking.title')}
           </h2>
           {/* Vector7 декоративный паттерн под заголовком - из Figma */}
@@ -47,12 +51,12 @@ export function Footer() {
               unoptimized
             />
           </div>
-          <p className="text-white/80 text-lg md:text-xl mb-8 font-light">
+          <p className={`${isMenuPage ? 'text-[#2f3f3d]/80' : 'text-white/80'} text-lg md:text-xl mb-8 font-light`}>
             {t('home.footer.booking.description')}
           </p>
           <Link
             href="/booking"
-            className="inline-block bg-[#ffe5c2] text-[#2f3f3d] px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg hover:bg-[#fadaac] transition-colors"
+            className={`inline-block ${isMenuPage ? 'bg-[#2f3f3d] text-[#ffe5c2] hover:bg-[#1f2f2d]' : 'bg-[#ffe5c2] text-[#2f3f3d] hover:bg-[#fadaac]'} px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-colors`}
           >
             {t('home.footer.booking.selectTableButton')}
           </Link>
@@ -60,7 +64,7 @@ export function Footer() {
       </section>
 
       {/* Footer Content */}
-      <div className="bg-[#2f3f3d] border-t border-white/10 pt-12 pb-8">
+      <div className={`${isMenuPage ? 'bg-[#ffe5c2] border-[#2f3f3d]/10' : 'bg-[#2f3f3d] border-white/10'} border-t pt-12 pb-8`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
             {/* Left Column - Restaurant Info */}
@@ -78,7 +82,7 @@ export function Footer() {
                 </div>
               
               </div>
-              <p className="text-white/70 text-sm leading-relaxed max-w-[200px]">
+              <p className={`${isMenuPage ? 'text-[#2f3f3d]/70' : 'text-white/70'} text-sm leading-relaxed max-w-[200px]`}>
                 {t('home.footer.description')}
               </p>
               {/* Social Media Icons */}
@@ -87,7 +91,7 @@ export function Footer() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/70 hover:text-white transition-colors"
+                  className={`${isMenuPage ? 'text-[#2f3f3d]/70 hover:text-[#2f3f3d]' : 'text-white/70 hover:text-white'} transition-colors`}
                   aria-label={t('home.footer.socialMedia.telegram')}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -98,7 +102,7 @@ export function Footer() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/70 hover:text-white transition-colors"
+                  className={`${isMenuPage ? 'text-[#2f3f3d]/70 hover:text-[#2f3f3d]' : 'text-white/70 hover:text-white'} transition-colors`}
                   aria-label={t('home.footer.socialMedia.instagram')}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -111,7 +115,7 @@ export function Footer() {
                   href="#"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/70 hover:text-white transition-colors"
+                  className={`${isMenuPage ? 'text-[#2f3f3d]/70 hover:text-[#2f3f3d]' : 'text-white/70 hover:text-white'} transition-colors`}
                   aria-label={t('home.footer.socialMedia.vk')}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -123,27 +127,27 @@ export function Footer() {
 
             {/* Middle Column - Navigation */}
             <div>
-              <h3 className="text-white text-sm font-bold uppercase tracking-[0.7px] mb-4">
+              <h3 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-sm font-bold uppercase tracking-[0.7px] mb-4`}>
                 {t('home.footer.navigation.title')}
               </h3>
               <ul className="space-y-4">
                 <li>
-                  <Link href="/" className="text-[#ececec] hover:text-white text-sm transition-colors">
+                  <Link href="/" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.home')}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu" className="text-[#ececec] hover:text-white text-sm transition-colors">
+                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.restaurantMenu')}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/wine" className="text-[#ececec] hover:text-white text-sm transition-colors">
+                  <Link href="/wine" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.wineCard')}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/delivery" className="text-[#ececec] hover:text-white text-sm transition-colors">
+                  <Link href="/delivery" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.foodDelivery')}
                   </Link>
                 </li>
@@ -152,20 +156,20 @@ export function Footer() {
 
             {/* КОНТАКТЫ Column */}
             <div>
-              <h3 className="text-white text-sm font-bold uppercase tracking-[0.7px] mb-4">
+              <h3 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-sm font-bold uppercase tracking-[0.7px] mb-4`}>
                 {t('home.footer.contacts.title')}
               </h3>
               <ul className="space-y-4">
-                <li className="text-[#ececec] text-sm">
+                <li className={`${isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'} text-sm`}>
                   {t('home.footer.contacts.address')}
                 </li>
-                <li className="text-[#ececec] text-sm">
-                  <a href="tel:+79999990000" className="hover:text-white transition-colors">
+                <li className={`${isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'} text-sm`}>
+                  <a href="tel:+79999990000" className={`${isMenuPage ? 'hover:text-[#2f3f3d]' : 'hover:text-white'} transition-colors`}>
                     {t('home.footer.contacts.phone')}
                   </a>
                 </li>
-                <li className="text-[#ececec] text-sm">
-                  <a href="mailto:info@vkavkazan.ru" className="hover:text-white transition-colors">
+                <li className={`${isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'} text-sm`}>
+                  <a href="mailto:info@vkavkazan.ru" className={`${isMenuPage ? 'hover:text-[#2f3f3d]' : 'hover:text-white'} transition-colors`}>
                     {t('home.footer.contacts.email')}
                   </a>
                 </li>
@@ -174,32 +178,32 @@ export function Footer() {
 
             {/* РЕЖИМ РАБОТЫ Column */}
             <div>
-              <h3 className="text-white text-sm font-bold uppercase tracking-[0.7px] mb-6">
+              <h3 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-sm font-bold uppercase tracking-[0.7px] mb-6`}>
                 {t('home.footer.workingHours.title')}
               </h3>
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between gap-4 text-sm">
-                  <span className="text-[#ececec]">{t('home.footer.workingHours.weekdays')}</span>
-                  <span className="text-white">{t('home.footer.workingHours.weekdaysTime')}</span>
+                  <span className={isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'}>{t('home.footer.workingHours.weekdays')}</span>
+                  <span className={isMenuPage ? 'text-[#2f3f3d]' : 'text-white'}>{t('home.footer.workingHours.weekdaysTime')}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4 text-sm">
-                  <span className="text-[#ececec]">{t('home.footer.workingHours.weekend')}</span>
-                  <span className="text-white">{t('home.footer.workingHours.weekendTime')}</span>
+                  <span className={isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'}>{t('home.footer.workingHours.weekend')}</span>
+                  <span className={isMenuPage ? 'text-[#2f3f3d]' : 'text-white'}>{t('home.footer.workingHours.weekendTime')}</span>
                 </div>
               </div>
-              <p className="text-white/60 text-xs mt-4">
+              <p className={`${isMenuPage ? 'text-[#2f3f3d]/60' : 'text-white/60'} text-xs mt-4`}>
                 {t('home.footer.workingHours.deliveryInfo')}
               </p>
             </div>
           </div>
 
           {/* Bottom Line */}
-          <div className="border-t border-white/10 pt-6 mt-8">
+          <div className={`border-t ${isMenuPage ? 'border-[#2f3f3d]/10' : 'border-white/10'} pt-6 mt-8`}>
             <div className="flex flex-col md:flex-row justify-center md:justify-start items-center gap-4 md:gap-6 text-sm">
-              <Link href="/privacy" className="text-white/60 hover:text-white/80 text-xs md:text-sm transition-colors">
+              <Link href="/privacy" className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}>
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
-              <Link href="/terms" className="text-white/60 hover:text-white/80 text-xs md:text-sm transition-colors">
+              <Link href="/terms" className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}>
                 {t('home.footer.bottomLinks.terms')}
               </Link>
             </div>

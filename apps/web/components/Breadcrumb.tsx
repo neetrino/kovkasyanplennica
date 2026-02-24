@@ -91,7 +91,7 @@ export function Breadcrumb() {
   const breadcrumbs = getBreadcrumbs();
 
   // Don't show breadcrumb on home page
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '/menu' || pathname === '/coming-soon') {
     return null;
   }
 

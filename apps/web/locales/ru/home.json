@@ -38,6 +38,9 @@
       "ariaLabel": "Поиск"
     },
     "login": "ВОЙТИ",
+    "cart": {
+      "ariaLabel": "Корзина покупок"
+    },
     "mobileMenu": {
       "ariaLabel": "Открыть меню"
     }

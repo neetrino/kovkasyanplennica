@@ -185,7 +185,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
         {/* Кнопка "Смотреть меню" - точно как в Figma */}
         <div className="flex justify-center">
           <Link
-            href="/menu"
+            href="/coming-soon"
             className="bg-[#75bf5e] text-white px-8 py-3.5 rounded-[70px] font-bold text-base tracking-wide hover:bg-[#65af4e] transition-colors duration-300 min-w-[246px] text-center"
           >
             {t('home.menu.viewMenuButton')}

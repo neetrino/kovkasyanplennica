@@ -64,7 +64,7 @@ export function Hero() {
         <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center w-full max-w-md px-4">
           {/* Кнопка "Забронировать" */}
           <Link
-            href="/booking"
+            href="/coming-soon"
             className="w-full sm:w-auto bg-transparent border-2 border-[#2f3f3d] text-[#2f3f3d] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-semibold text-sm md:text-base tracking-[0.32px] hover:bg-[#2f3f3d] hover:text-white transition-all duration-300 min-w-[190px] text-center"
           >
             {t('home.hero.bookButton')}
@@ -72,7 +72,7 @@ export function Hero() {
 
           {/* Кнопка "Заказать" */}
           <Link
-            href="/menu"
+            href="/coming-soon"
             className="w-full sm:w-auto bg-[#2f3f3d] border-2 border-[#2f3f3d] text-white px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-sm md:text-base tracking-[0.32px] hover:bg-[#1f2f2d] transition-all duration-300 min-w-[190px] text-center"
           >
             {t('home.hero.orderButton')}

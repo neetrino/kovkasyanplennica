@@ -38,6 +38,9 @@
       "ariaLabel": "Որոնում"
     },
     "login": "ՄՈՒՏՔ",
+    "cart": {
+      "ariaLabel": "Գնումների զամբյուղ"
+    },
     "mobileMenu": {
       "ariaLabel": "Բացել մենյուն"
     }

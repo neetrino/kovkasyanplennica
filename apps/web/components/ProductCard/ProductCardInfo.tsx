@@ -58,7 +58,7 @@ export function ProductCardInfo({
 
   return (
     <div className="w-full mt-12">
-      <Link href={`/products/${slug}`} className="block">
+      <Link href="/coming-soon" className="block">
         {/* Product Title - Centered, Bold, 20px */}
         <h3 className="text-center text-[20px] font-bold text-black mb-2 leading-normal">
           {title}

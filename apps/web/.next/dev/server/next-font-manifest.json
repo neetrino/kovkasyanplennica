@@ -1,24 +1,26 @@
 {
   "app": {
-    "[project]/apps/web/app/_not-found/page": [
+    "[project]/apps/web/app/about/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
-    "[project]/apps/web/app/admin/page": [
+    "[project]/apps/web/app/cart/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
-    "[project]/apps/web/app/admin/products/add/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    "[project]/apps/web/app/coming-soon/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/40a3cfd5ccf07894-s.p.e6264139.woff2",
+      "static/media/f44276dc64e51acb-s.p.b097052a.woff2"
     ],
-    "[project]/apps/web/app/admin/products/page": [
-      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
-    ],
-    "[project]/apps/web/app/login/page": [
+    "[project]/apps/web/app/menu/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
     "[project]/apps/web/app/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ],
     "[project]/apps/web/app/products/[slug]/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
+    ],
+    "[project]/apps/web/app/products/page": [
       "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2"
     ]
   },

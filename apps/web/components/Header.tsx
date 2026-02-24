@@ -2,21 +2,29 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from '../lib/i18n-client';
+import { useAuth } from '../lib/auth/AuthContext';
+import { fetchCart } from '../app/cart/cart-fetcher';
+import { formatPrice, getStoredCurrency } from '../lib/currency';
+import type { Cart } from '../app/cart/types';
 
 export function Header() {
   const { t } = useTranslation();
+  const { isLoggedIn, isAdmin, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cartTotal, setCartTotal] = useState<number>(0);
+  const [currency, setCurrency] = useState(getStoredCurrency());
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const navigationLinks = [
     { href: '/', label: t('home.header.navigation.home') },
-    { href: '/menu', label: t('home.header.navigation.menu') },
-    { href: '/about', label: t('home.header.navigation.about') },
-    { href: '/vacancies', label: t('home.header.navigation.vacancies') },
-    { href: '/team', label: t('home.header.navigation.team') },
-    { href: '/contact', label: t('home.header.navigation.contact') },
-    { href: '/delivery', label: t('home.header.navigation.delivery') },
+    { href: '/coming-soon', label: t('home.header.navigation.menu') },
+    { href: '/coming-soon', label: t('home.header.navigation.about') },
+    { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
+    { href: '/coming-soon', label: t('home.header.navigation.team') },
+    { href: '/coming-soon', label: t('home.header.navigation.contact') },
+    { href: '/coming-soon', label: t('home.header.navigation.delivery') },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -25,6 +33,47 @@ export function Header() {
       window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
     }
   };
+
+  // Load cart total
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        const cart: Cart | null = await fetchCart(isLoggedIn, t);
+        if (cart && cart.totals) {
+          setCartTotal(cart.totals.total);
+        } else {
+          setCartTotal(0);
+        }
+      } catch (error) {
+        setCartTotal(0);
+      }
+    };
+
+    loadCart();
+
+    // Listen for cart updates
+    const handleCartUpdate = () => {
+      loadCart();
+    };
+
+    const handleCurrencyUpdate = () => {
+      setCurrency(getStoredCurrency());
+    };
+
+    const handleAuthUpdate = () => {
+      loadCart();
+    };
+
+    window.addEventListener('cart-updated', handleCartUpdate);
+    window.addEventListener('currency-updated', handleCurrencyUpdate);
+    window.addEventListener('auth-updated', handleAuthUpdate);
+
+    return () => {
+      window.removeEventListener('cart-updated', handleCartUpdate);
+      window.removeEventListener('currency-updated', handleCurrencyUpdate);
+      window.removeEventListener('auth-updated', handleAuthUpdate);
+    };
+  }, [isLoggedIn, t]);
 
   return (
     <header className="relative w-full bg-[#ffe5c2] h-[106px] flex items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -63,22 +112,22 @@ export function Header() {
       <div className="flex items-center gap-5">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative">
-          <div className="relative bg-[#ffe5c2] border border-black rounded-full h-12 w-[290px] flex items-center px-4">
+          <div className="relative bg-[#ffe5c2] border border-black rounded-full h-10 w-[240px] flex items-center px-3">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('home.header.search.placeholder')}
-              className="flex-1 bg-transparent text-[#2f3f3d] text-base font-medium placeholder:text-[rgba(47,63,61,0.65)] outline-none pr-8"
+              className="flex-1 bg-transparent text-[#2f3f3d] text-sm font-medium placeholder:text-[rgba(47,63,61,0.65)] outline-none pr-6"
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 -translate-y-1/2"
+              className="absolute right-3 top-1/2 -translate-y-1/2"
               aria-label={t('home.header.search.ariaLabel')}
             >
               <svg
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -103,13 +152,92 @@ export function Header() {
           </div>
         </form>
 
-        {/* Login Button */}
+        {/* Cart Button */}
         <Link
-          href="/login"
-          className="bg-[#2f3f3d] border border-[#2f3f3d] text-white px-5 py-2.5 rounded-full h-12 w-[172px] flex items-center justify-center font-bold text-base leading-6 tracking-[0.32px] hover:bg-[#1f2f2d] transition-colors"
+          href="/coming-soon"
+          className="bg-[#2f3f3d] h-10 rounded-[45px] px-2.5 flex items-center gap-1.5 hover:bg-[#1f2f2d] transition-colors"
+          aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
-          {t('home.header.login')}
+          <div className="flex items-center justify-center w-4 h-4">
+            <Image
+              src="/assets/product-card/Icon.svg"
+              alt=""
+              width={16}
+              height={16}
+              className="object-contain"
+              unoptimized
+            />
+          </div>
+          <span className="text-[#fff4de] text-sm font-bold leading-5">
+            {formatPrice(cartTotal, currency)}
+          </span>
         </Link>
+
+        {/* Login Button or User Icon with Dropdown */}
+        {isLoggedIn ? (
+          <div className="relative">
+            <button
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className="bg-[#2f3f3d] rounded-full h-10 w-10 flex items-center justify-center hover:bg-[#1f2f2d] transition-colors"
+              aria-label={t('home.header.profile.ariaLabel') || 'Profile'}
+            >
+              <Image
+                src="/assets/product-card/439.png"
+                alt=""
+                width={40}
+                height={40}
+                className="object-contain rounded-full"
+                unoptimized
+              />
+            </button>
+            
+            {/* Dropdown Menu */}
+            {isUserMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setIsUserMenuOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-20">
+                  <div className="py-1">
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-[#2f3f3d] hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      {t('common.navigation.profile') || 'Profile'}
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="block px-4 py-2 text-sm text-[#2f3f3d] hover:bg-gray-100 transition-colors"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        {t('common.navigation.admin') || 'Admin'}
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-[#2f3f3d] hover:bg-gray-100 transition-colors"
+                    >
+                      {t('common.navigation.logout') || 'Logout'}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="bg-[#2f3f3d] border border-[#2f3f3d] text-white px-4 py-2 rounded-full h-10 w-[140px] flex items-center justify-center font-bold text-sm leading-5 tracking-[0.32px] hover:bg-[#1f2f2d] transition-colors"
+          >
+            {t('home.header.login')}
+          </Link>
+        )}
       </div>
 
       {/* Mobile Menu Button */}

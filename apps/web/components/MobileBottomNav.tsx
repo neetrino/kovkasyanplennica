@@ -65,7 +65,7 @@ export function MobileBottomNav() {
       // On mobile we show Cart instead of Wishlist
       { 
         label: 'Cart', 
-        href: '/cart', 
+        href: '/coming-soon', 
         icon: CartIcon, 
         visible: true,
       },
