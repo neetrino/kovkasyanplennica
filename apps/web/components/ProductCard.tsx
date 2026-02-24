@@ -28,6 +28,8 @@ interface Product {
   globalDiscount?: number | null;
   discountPercent?: number | null;
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
+  calories?: number;
+  category?: string;
 }
 
 type ViewMode = 'list' | 'grid-2' | 'grid-3';

@@ -69,3 +69,7 @@ export function CategoriesList({ categories, onEdit, onDelete }: CategoriesListP
 
 
 
+
+
+
+

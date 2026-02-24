@@ -69,3 +69,7 @@ export type ProductWithRelations = Prisma.ProductGetPayload<{
 
 
 
+
+
+
+

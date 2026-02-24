@@ -46,3 +46,7 @@ export function getColorValue(colorName: string): string {
   return colorMap[normalizedName] || '#CCCCCC';
 }
 
+
+
+
+

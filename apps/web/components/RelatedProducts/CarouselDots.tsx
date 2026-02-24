@@ -40,3 +40,7 @@ export function CarouselDots({ totalItems, visibleItems, currentIndex, onDotClic
 
 
 
+
+
+
+

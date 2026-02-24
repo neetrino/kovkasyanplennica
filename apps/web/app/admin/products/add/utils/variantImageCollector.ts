@@ -60,3 +60,7 @@ export function collectVariantImagesFromProductVariants(variants: unknown[]): Se
   return variantImages;
 }
 
+
+
+
+

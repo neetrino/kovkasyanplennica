@@ -7,7 +7,6 @@ import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import { CompareIcon } from '../icons/CompareIcon';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
-import { ProductColors } from './ProductColors';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
 
@@ -108,12 +107,6 @@ export function ProductCardList({
               {product.brand?.name || t('common.defaults.category')}
             </p>
           </Link>
-          {/* Available Colors */}
-          {product.colors && product.colors.length > 0 && (
-            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-              <ProductColors colors={product.colors} maxVisible={6} />
-            </div>
-          )}
         </div>
 
         {/* Price and Actions */}
@@ -200,6 +193,10 @@ export function ProductCardList({
     </div>
   );
 }
+
+
+
+
 
 
 

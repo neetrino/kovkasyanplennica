@@ -1,11 +1,10 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
 import type { MouseEvent } from 'react';
-import { ProductCardImage } from './ProductCardImage';
 import { ProductCardInfo } from './ProductCardInfo';
 import { ProductCardActions } from './ProductCardActions';
-import { CartIcon as CartPngIcon } from '../icons/CartIcon';
-import { useTranslation } from '../../lib/i18n-client';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
 
@@ -52,23 +51,36 @@ export function ProductCardGrid({
   onCompareToggle,
   onAddToCart,
 }: ProductCardGridProps) {
-  const { t } = useTranslation();
-
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow relative group">
-      {/* Product Image */}
-      <div className="aspect-square bg-gray-100 relative overflow-hidden">
-        <ProductCardImage
-          slug={product.slug}
-          image={product.image}
-          title={product.title}
-          labels={product.labels}
-          imageError={imageError}
-          onImageError={onImageError}
-          isCompact={isCompact}
-        />
-        
-        {/* Action Icons - appear on hover */}
+    <div className="relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full min-h-[240px] w-full max-w-[270px] mx-auto">
+      {/* Product Image - Circular plate at top, half outside card, half inside */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[50%] aspect-square z-10">
+        <Link
+          href={`/products/${product.slug}`}
+          className="relative w-full h-full rounded-full overflow-hidden bg-white shadow-lg block"
+        >
+          {product.image && !imageError ? (
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              className="object-cover rounded-full"
+              sizes="223px"
+              unoptimized
+              onError={onImageError}
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
+              <svg className="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          )}
+        </Link>
+      </div>
+      
+      {/* Action Buttons - Show on Hover */}
+      <div className="absolute top-[8%] right-3 z-20">
         <ProductCardActions
           isInWishlist={isInWishlist}
           isInCompare={isInCompare}
@@ -78,48 +90,30 @@ export function ProductCardGrid({
           onWishlistToggle={onWishlistToggle}
           onCompareToggle={onCompareToggle}
           onAddToCart={onAddToCart}
-          showOnHover
+          showOnHover={true}
         />
       </div>
-      
-      {/* Product Info */}
-      <ProductCardInfo
-        slug={product.slug}
-        title={product.title}
-        brandName={product.brand?.name}
-        price={product.price}
-        originalPrice={product.originalPrice}
-        compareAtPrice={product.compareAtPrice}
-        discountPercent={product.discountPercent}
-        currency={currency}
-        colors={product.colors}
-        isCompact={isCompact}
-      />
 
-      {/* Cart Button in Price Row */}
-      <div className={`px-4 pb-4 flex items-center justify-end ${isCompact ? 'gap-2' : 'gap-4'}`}>
-        <button
-          onClick={onAddToCart}
-          disabled={!product.inStock || isAddingToCart}
-          className={`${isCompact ? 'w-10 h-10' : 'w-12 h-12'} rounded-full flex items-center justify-center transition-all duration-200 ${
-            product.inStock && !isAddingToCart
-              ? 'bg-transparent text-gray-600 hover:bg-green-600 hover:text-white hover:shadow-md'
-              : 'bg-transparent text-gray-400 cursor-not-allowed'
-          }`}
-          title={product.inStock ? t('common.buttons.addToCart') : t('common.stock.outOfStock')}
-          aria-label={product.inStock ? t('common.ariaLabels.addToCart') : t('common.ariaLabels.outOfStock')}
-        >
-          {isAddingToCart ? (
-            <svg className={`animate-spin ${isCompact ? 'h-5 w-5' : 'h-6 w-6'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            <CartPngIcon size={isCompact ? 18 : 24} />
-          )}
-        </button>
+      {/* Product Info */}
+      <div className="flex-1 flex flex-col px-[6.17%] pt-[18%] pb-[8%]">
+        <ProductCardInfo
+          slug={product.slug}
+          title={product.title}
+          brandName={product.brand?.name}
+          price={product.price}
+          originalPrice={product.originalPrice}
+          compareAtPrice={product.compareAtPrice}
+          discountPercent={product.discountPercent}
+          currency={currency}
+          colors={product.colors}
+          calories={(product as { calories?: number }).calories}
+          category={(product as { category?: string }).category}
+          isCompact={isCompact}
+          inStock={product.inStock}
+          isAddingToCart={isAddingToCart}
+          onAddToCart={onAddToCart}
+        />
       </div>
     </div>
   );
 }
-
