@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "restaurantName": "KOVKASYAN",
+    "restaurantSubtitle": "plennitsa",
+    "logoAlt": "KOVKASYAN PLENNITSA",
+    "bookButton": "BOOK",
+    "orderButton": "ORDER"
+  },
+  "about": {
+    "title": "ABOUT US",
+    "description": "Our restaurant is a place where taste, atmosphere and attention to detail come together. We cook with fresh ingredients, carefully preserving the balance between classics and modern accents, so that every visit becomes a small gastronomic journey.",
+    "learnMoreButton": "Learn More",
+    "interiorAlt": "Restaurant interior"
+  },
+  "menu": {
+    "title": "MENU",
+    "loading": "Loading...",
+    "viewMenuButton": "VIEW MENU",
+    "categoryFallback": "Category"
+  },
+  "favorites": {
+    "title": "OUR FAVORITES",
+    "viewMenuButton": "VIEW MENU"
+  },
+  "header": {
+    "logoAlt": "KOVKASYAN PLENNITSA",
+    "navigation": {
+      "home": "HOME",
+      "menu": "MENU",
+      "about": "ABOUT US",
+      "vacancies": "VACANCIES",
+      "team": "TEAM",
+      "contact": "CONTACT",
+      "delivery": "DELIVERY"
+    },
+    "search": {
+      "placeholder": "Search",
+      "ariaLabel": "Search"
+    },
+    "login": "LOGIN",
+    "cart": {
+      "ariaLabel": "Shopping cart"
+    },
+    "mobileMenu": {
+      "ariaLabel": "Open menu"
+    }
+  },
+  "footer": {
+    "booking": {
+      "title": "BOOKING",
+      "description": "Reserve your perfect evening in just a few clicks.",
+      "selectTableButton": "Select Table"
+    },
+    "logoAlt": "KOVKASYAN PLENNITSA",
+    "description": "Reviving the traditions of high culinary art of Georgia and Armenia in the city center.",
+    "socialMedia": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "vk": "VK"
+    },
+    "navigation": {
+      "title": "NAVIGATION",
+      "home": "Home",
+      "restaurantMenu": "Restaurant Menu",
+      "wineCard": "Wine Card",
+      "foodDelivery": "Food Delivery"
+    },
+    "contacts": {
+      "title": "CONTACTS",
+      "address": "Pushkin St., 10",
+      "phone": "+7 (999) 999-00-00",
+      "email": "info@vkavkazan.ru"
+    },
+    "workingHours": {
+      "title": "WORKING HOURS",
+      "weekdays": "Mon — Fri",
+      "weekdaysTime": "10:00 - 23:00",
+      "weekend": "Sat — Sun",
+      "weekendTime": "11:00 - 01:00",
+      "deliveryInfo": "Free delivery on orders over 3000 ₽ citywide."
+    },
+    "bottomLinks": {
+      "privacy": "Privacy Policy",
+      "terms": "Public Offer"
+    }
+  }
+}
