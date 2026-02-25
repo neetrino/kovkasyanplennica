@@ -39,7 +39,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-4xl md:text-5xl lg:text-6xl font-light italic mb-4`}>
             {t('home.footer.booking.title')}
-          </h2>
+           </h2>
           {/* Vector7 декоративный паттерн под заголовком - из Figma */}
           <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-6 flex justify-center mx-auto">
             <Image

@@ -99,7 +99,7 @@ export function Header() {
       <nav className="hidden lg:flex items-center gap-10">
         {navigationLinks.map((link) => (
           <Link
-            key={link.href}
+            key={link.label}
             href={link.href}
             className="text-[#2f3f3d] text-base font-normal leading-6 hover:opacity-80 transition-opacity"
           >

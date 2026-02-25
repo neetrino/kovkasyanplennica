@@ -40,10 +40,23 @@ export default function AboutPage() {
                 {t('about.subtitle')}
               </p>
 
-              {/* Заголовок */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                {t('about.title')}
-              </h1>
+              {/* Заголовок — в стиле Menu (крупный, font-light italic) */}
+              <div className="mb-2">
+                <h1 className="text-[#2f3f3d] text-6xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px]">
+                  {t('about.title')}
+                </h1>
+                <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-2">
+                  <Image
+                    src="/assets/hero/Vector7.svg"
+                    alt=""
+                    width={300}
+                    height={12}
+                    className="object-contain object-left"
+                    aria-hidden="true"
+                    unoptimized
+                  />
+                </div>
+              </div>
 
               {/* Текст */}
               <div className="space-y-4 text-gray-600 text-base md:text-lg leading-relaxed">

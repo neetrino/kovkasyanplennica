@@ -47,7 +47,7 @@ export function About() {
         <div className="mb-16 md:mb-24">
           {/* Заголовок "О НАС" - центрированный сверху */}
           <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-[#2f3f3d] text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+            <h2 className="text-[#2f3f3d] text-6xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px]">
               {t('home.about.title')}
             </h2>
             {/* Vector7 декоративный паттерн под заголовком - из Figma */}
@@ -92,7 +92,7 @@ export function About() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Заголовок "О НАС" - слева */}
           <div className="lg:col-span-1 mb-8 lg:mb-0">
-            <h2 className="text-[#2f3f3d] text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+          <h2 className="text-[#2f3f3d] text-4xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px]">
               {t('home.about.title')}
             </h2>
             

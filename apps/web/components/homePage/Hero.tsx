@@ -2,7 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { Ruslan_Display } from 'next/font/google';
 import { useTranslation } from '../../lib/i18n-client';
+
+const ruslanDisplay = Ruslan_Display({
+  subsets: ['latin', 'cyrillic'],
+  weight: '400',
+});
 
 /**
  * Hero Component
@@ -52,10 +58,10 @@ export function Hero() {
 
         {/* Название ресторана - точно как в Figma */}
         <h1 className="text-center mb-12 md:mb-16">
-          <span className="block text-[#2f3f3d] text-4xl md:text-2xl lg:text-2xl xl:text-7xl font-ravie text-3xl mb-2 tracking-tight">
+          <span className={`${ruslanDisplay.className} block text-[#2f3f3d] text-4xl md:text-2xl lg:text-2xl xl:text-7xl text-3xl mb-2 tracking-tight font-normal`}>
             {t('home.hero.restaurantName')}
           </span>
-          <span className="block text-[#2f3f3d] text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light italic lowercase">
+          <span className={`${ruslanDisplay.className} block text-[#2f3f3d] text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light italic lowercase`}>
             {t('home.hero.restaurantSubtitle')}
           </span>
         </h1>

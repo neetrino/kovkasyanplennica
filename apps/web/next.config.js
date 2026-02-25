@@ -1,9 +1,36 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
+const fs = require('fs');
+
+// Load env from repo root and env/ so app works when .env was moved to env/
+const rootDir = path.resolve(__dirname, '../..');
+const envPaths = [
+  path.join(rootDir, '.env'),
+  path.join(rootDir, 'env', '.env'),
+  path.join(rootDir, 'env', '.env.local'),
+];
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const eq = trimmed.indexOf('=');
+        if (eq > 0) {
+          const key = trimmed.slice(0, eq).trim();
+          let val = trimmed.slice(eq + 1).trim();
+          if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1).replace(/\\"/g, '"');
+          if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1).replace(/\\'/g, "'");
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+}
 
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@shop/ui', '@shop/design-tokens'],
+  transpilePackages: ['@shop/ui', '@shop/design-tokens', '@white-shop/db'],
   // Standalone output - prevents prerendering of 404 page
   output: 'standalone',
   // typescript.ignoreBuildErrors removed - build will fail on TypeScript errors
@@ -73,15 +100,20 @@ const nextConfig = {
       '@': path.resolve(__dirname, '.'),
       '@shop/ui': path.resolve(__dirname, '../../packages/ui'),
       '@shop/design-tokens': path.resolve(__dirname, '../../packages/design-tokens'),
+      '@white-shop/db': path.resolve(__dirname, '../../packages/db'),
     };
     
     return config;
   },
-  // Turbopack configuration for monorepo
-  // Required when webpack config is present - Next.js 16 requires explicit turbopack config
-  // Set root to project root where Next.js is installed in node_modules (monorepo workspace)
+  // Turbopack configuration for monorepo (Next.js 16 uses Turbopack by default in dev)
+  // resolveAlias: relative paths from root — Turbopack does not support Windows absolute paths
   turbopack: {
     root: path.resolve(__dirname, '../..'),
+    resolveAlias: {
+      '@shop/ui': 'packages/ui',
+      '@shop/design-tokens': 'packages/design-tokens',
+      '@white-shop/db': 'packages/db',
+    },
   },
 };
 

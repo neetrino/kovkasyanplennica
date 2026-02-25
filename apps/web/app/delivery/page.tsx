@@ -9,11 +9,11 @@ import { loadTranslation } from '../../lib/i18n';
 
 export default function DeliveryPage() {
   const { t } = useTranslation();
-  const [lang, setLang] = useState<'en' | 'ru' | 'am'>('en');
+  const [lang, setLang] = useState<'en' | 'ru' | 'am'>('ru');
 
   useEffect(() => {
-    const language = typeof window !== 'undefined' ? localStorage.getItem('language') || 'en' : 'en';
-    const mappedLang = language === 'hy' ? 'am' : (language === 'ka' ? 'en' : language); // Map 'hy' to 'am' for config
+    const language = getStoredLanguage();
+    const mappedLang = language === 'hy' ? 'am' : (language === 'ka' ? 'en' : language);
     setLang(mappedLang as 'en' | 'ru' | 'am');
   }, []);
   

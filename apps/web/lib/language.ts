@@ -11,7 +11,7 @@ export type LanguageCode = keyof typeof LANGUAGES;
 const LANGUAGE_STORAGE_KEY = 'shop_language';
 
 export function getStoredLanguage(): LanguageCode {
-  if (typeof window === 'undefined') return 'en';
+  if (typeof window === 'undefined') return 'ru';
   try {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
     if (stored && stored in LANGUAGES) {
@@ -20,7 +20,7 @@ export function getStoredLanguage(): LanguageCode {
   } catch {
     // Ignore errors
   }
-  return 'en';
+  return 'ru';
 }
 
 export function setStoredLanguage(language: LanguageCode, options?: { skipReload?: boolean }): void {
