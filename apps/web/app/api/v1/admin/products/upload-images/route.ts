@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateToken, requireAdmin } from "@/lib/middleware/auth";
+import { uploadToR2 } from "@/lib/r2";
+import { randomUUID } from "crypto";
 
 /**
  * POST /api/v1/admin/products/upload-images
@@ -98,21 +100,61 @@ export async function POST(req: NextRequest) {
       validImages.push(image);
     }
 
-    console.log("📤 [ADMIN UPLOAD IMAGES API] Processing images:", {
+    console.log("📤 [ADMIN UPLOAD IMAGES API] Uploading to R2:", {
       count: validImages.length,
     });
 
-    // Возвращаем те же base64 строки как URL
-    // В будущем здесь можно добавить сохранение в cloud storage (S3, Cloudinary, etc.)
-    // и возвращать реальные URL
-    const urls = validImages.map((image, index) => {
-      // Для оптимизации можно сжать изображение здесь
-      // Пока возвращаем как есть, но в будущем можно оптимизировать
-      return image;
-    });
+    const DATA_URL_REGEX = /^data:(image\/[^;]+);base64,(.+)$/;
+    const EXT_MAP: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/jpg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+
+    const urls: string[] = [];
+    for (let i = 0; i < validImages.length; i++) {
+      const image = validImages[i];
+      const match = image.match(DATA_URL_REGEX);
+      if (!match) {
+        return NextResponse.json(
+          {
+            type: "https://api.shop.am/problems/validation-error",
+            title: "Validation Error",
+            status: 400,
+            detail: `Image at index ${i} has invalid data URL format`,
+            instance: req.url,
+          },
+          { status: 400 }
+        );
+      }
+      const contentType = match[1].toLowerCase();
+      const base64Data = match[2];
+      const ext = EXT_MAP[contentType] ?? "jpg";
+      const buffer = Buffer.from(base64Data, "base64");
+      const key = `products/${randomUUID()}.${ext}`;
+      try {
+        const publicUrl = await uploadToR2(key, buffer, contentType);
+        urls.push(publicUrl);
+      } catch (uploadError: unknown) {
+        const msg = uploadError instanceof Error ? uploadError.message : "R2 upload failed";
+        console.error("❌ [ADMIN UPLOAD IMAGES API] R2 upload error:", uploadError);
+        return NextResponse.json(
+          {
+            type: "https://api.shop.am/problems/internal-error",
+            title: "Upload Failed",
+            status: 500,
+            detail: msg,
+            instance: req.url,
+          },
+          { status: 500 }
+        );
+      }
+    }
 
     const totalTime = Date.now() - requestStartTime;
-    console.log(`✅ [ADMIN UPLOAD IMAGES API] Images processed in ${totalTime}ms`, {
+    console.log(`✅ [ADMIN UPLOAD IMAGES API] Uploaded to R2 in ${totalTime}ms`, {
       count: urls.length,
     });
 

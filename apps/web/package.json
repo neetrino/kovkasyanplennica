@@ -16,11 +16,12 @@
     "reset": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && cd ../../packages/db && npm run db:generate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.700.0",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^5.9.0",
-    "@shop/design-tokens": "*",
-    "@shop/ui": "*",
-    "@white-shop/db": "*",
+    "@shop/design-tokens": "workspace:*",
+    "@shop/ui": "workspace:*",
+    "@white-shop/db": "workspace:*",
     "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.2",
     "ioredis": "^5.3.2",

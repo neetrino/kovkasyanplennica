@@ -1,6 +1,7 @@
 'use client';
 
 import type { ChangeEvent } from 'react';
+import { apiClient } from '@/lib/api-client';
 import { processImageFile } from '../../../../../lib/utils/image-utils';
 import type { Variant, ColorData } from '../types';
 import type { GeneratedVariant } from '../types';
@@ -135,11 +136,13 @@ export function useImageHandling({
 
           console.log(`📸 [UPLOAD] Processing file ${index + 1}/${files.length}:`, file.name, `(${Math.round(file.size / 1024)}KB)`);
 
+          const outputType =
+            file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
           const base64 = await processImageFile(file, {
             maxSizeMB: 2,
             maxWidthOrHeight: 1920,
             useWebWorker: true,
-            fileType: 'image/jpeg',
+            fileType: outputType,
             initialQuality: 0.8,
           });
 
@@ -186,18 +189,22 @@ export function useImageHandling({
         return;
       }
 
+      const { urls } = await apiClient.post<{ urls: string[] }>(
+        '/api/v1/admin/products/upload-images',
+        { images: uploadedImages }
+      );
+
       setImageUrls((prev) => {
-        const newImageUrls = [...prev, ...uploadedImages];
-        const newFeaturedIdx = prev.length === 0 ? 0 : featuredImageIndex;
+        const newImageUrls = [...prev, ...urls];
         if (prev.length === 0 && newImageUrls.length > 0) {
           setFeaturedImageIndex(0);
           setMainProductImage(newImageUrls[0]);
         }
         return newImageUrls;
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ [UPLOAD] Fatal error during upload:', error);
-      setImageUploadError(error?.message || t('admin.products.add.failedToProcessImages'));
+      setImageUploadError(error instanceof Error ? error.message : t('admin.products.add.failedToProcessImages'));
     } finally {
       setImageUploadLoading(false);
       if (event.target) {
@@ -230,19 +237,27 @@ export function useImageHandling({
         originalSize: `${Math.round(file.size / 1024)}KB`,
       });
 
+      const outputType =
+        file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
       const base64 = await processImageFile(file, {
         maxSizeMB: 2,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
-        fileType: 'image/jpeg',
+        fileType: outputType,
         initialQuality: 0.8,
       });
 
-      setGeneratedVariants((prev) => prev.map((v) => (v.id === variantId ? { ...v, image: base64 } : v)));
-      console.log('✅ [VARIANT BUILDER] Variant image uploaded and processed for variant:', variantId);
-    } catch (error: any) {
+      const { urls } = await apiClient.post<{ urls: string[] }>(
+        '/api/v1/admin/products/upload-images',
+        { images: [base64] }
+      );
+      const imageUrl = urls[0] ?? base64;
+
+      setGeneratedVariants((prev) => prev.map((v) => (v.id === variantId ? { ...v, image: imageUrl } : v)));
+      console.log('✅ [VARIANT BUILDER] Variant image uploaded to R2 for variant:', variantId);
+    } catch (error: unknown) {
       console.error('❌ [VARIANT IMAGE] Error processing variant image:', error);
-      setImageUploadError(error?.message || t('admin.products.add.failedToProcessImage'));
+      setImageUploadError(error instanceof Error ? error.message : t('admin.products.add.failedToProcessImage'));
     } finally {
       setImageUploadLoading(false);
       if (event.target) {
@@ -273,18 +288,20 @@ export function useImageHandling({
       setImageUploadLoading(true);
       console.log('📤 [ADMIN] Starting upload for color:', colorImageTarget.colorValue, 'Files:', imageFiles.length);
 
-      const uploadedImages = await Promise.all(
+      const base64Images = await Promise.all(
         imageFiles.map(async (file, index) => {
           console.log(`🖼️ [COLOR IMAGE] Processing image ${index + 1}/${imageFiles.length}:`, {
             fileName: file.name,
             originalSize: `${Math.round(file.size / 1024)}KB`,
           });
 
+          const outputType =
+            file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
           const base64 = await processImageFile(file, {
             maxSizeMB: 2,
             maxWidthOrHeight: 1920,
             useWebWorker: true,
-            fileType: 'image/jpeg',
+            fileType: outputType,
             initialQuality: 0.8,
           });
 
@@ -293,17 +310,22 @@ export function useImageHandling({
         })
       );
 
-      console.log('📥 [ADMIN] All images processed, adding to variant:', {
+      const { urls } = await apiClient.post<{ urls: string[] }>(
+        '/api/v1/admin/products/upload-images',
+        { images: base64Images }
+      );
+
+      console.log('📥 [ADMIN] Images uploaded to R2, adding to variant:', {
         variantId: colorImageTarget.variantId,
         colorValue: colorImageTarget.colorValue,
-        imagesCount: uploadedImages.length,
+        imagesCount: urls.length,
       });
 
-      addColorImages(colorImageTarget.variantId, colorImageTarget.colorValue, uploadedImages);
-      console.log('✅ [ADMIN] Color images added to state:', uploadedImages.length);
-    } catch (error: any) {
+      addColorImages(colorImageTarget.variantId, colorImageTarget.colorValue, urls);
+      console.log('✅ [ADMIN] Color images (R2 URLs) added to state:', urls.length);
+    } catch (error: unknown) {
       console.error('❌ [ADMIN] Error uploading color images:', error);
-      setImageUploadError(error?.message || t('admin.products.add.failedToProcessImages'));
+      setImageUploadError(error instanceof Error ? error.message : t('admin.products.add.failedToProcessImages'));
     } finally {
       setImageUploadLoading(false);
       if (event.target) {

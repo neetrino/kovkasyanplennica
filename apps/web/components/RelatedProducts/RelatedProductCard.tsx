@@ -82,7 +82,7 @@ export function RelatedProductCard({
         >
           <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
             {/* Product Image */}
-            <div className="relative aspect-square bg-gray-100 overflow-hidden flex-shrink-0">
+            <div className="relative aspect-square bg-transparent overflow-hidden flex-shrink-0">
               {hasImage ? (
                 <Image
                   src={product.image!}
