@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { MouseEvent } from 'react';
 import { t } from '../../../lib/i18n';
+import { logger } from '../../../lib/utils/logger';
 import type { ProductPageProps, ProductVariant } from './types';
 import { WISHLIST_KEY, COMPARE_KEY } from './constants';
 import {
@@ -276,8 +277,11 @@ export default function ProductPage({ params }: ProductPageProps) {
       }
       setTimeout(() => setShowMessage(null), 2000);
       window.dispatchEvent(new Event('wishlist-updated'));
-    } catch (err) {
-      // Ignore errors
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error('Wishlist toggle failed', { message });
+      setShowMessage(t(language, 'product.errorAddingToCart'));
+      setTimeout(() => setShowMessage(null), 2000);
     }
   };
 
@@ -307,8 +311,11 @@ export default function ProductPage({ params }: ProductPageProps) {
       }
       setTimeout(() => setShowMessage(null), 2000);
       window.dispatchEvent(new Event('compare-updated'));
-    } catch (err) {
-      // Ignore errors
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error('Compare toggle failed', { message });
+      setShowMessage(t(language, 'product.errorAddingToCart'));
+      setTimeout(() => setShowMessage(null), 2000);
     }
   };
 

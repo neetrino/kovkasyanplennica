@@ -109,7 +109,8 @@
   - **Որտեղ:** API routes, lib/services, components
   - **Ինչ անել:** ✅ Ներմուծված է կենտրոնացված logger (`apps/web/lib/utils/logger.ts`); հիմնական API routes-ում և services-ում (orders, products-slug, contact, admin/messages, auth, users) `console.log`/`console.error`/`console.warn` փոխարինված են logger-ով: Մնացած API routes-ում և services-ում console-ները կարող են փոխարինվել ավելի ուշ (scripts/ — մնացել են console, ինչպես պահանջվում է)
 
-- [x] **5.1** 🔴 **Մեծ ֆայլեր (>300 տող)**
+- [x] **3.1** 🟢 **Logger (console → logger)**
+- [x] **5.1**  **Մեծ ֆայլեր (>300 տող)**
   - **Որտեղ:** `apps/web/components/ProductCard.tsx` (~730), `apps/web/components/RelatedProducts.tsx` (~598), `apps/web/components/CategoryNavigation.tsx` (~492), `apps/web/components/ProductReviews.tsx` (~504), `apps/web/app/admin/orders/OrdersPageContent.tsx` (~700), `apps/web/app/admin/products/add/hooks/useProductEditMode.tsx` (~523)
   - **Ինչ անել:** ✅ Բաժանված են ենթակոմպոնենտների, hooks, utils
   - **Արդյունք:**
@@ -142,9 +143,10 @@
       - Utils: `dashboardUtils` (formatCurrency, formatDate)
       - Components: `AdminSidebar`, `StatsGrid`, `RecentOrdersCard`, `TopProductsCard`, `UserActivityCard`, `QuickActionsCard`
 
-- [ ] **6.1** 🔴 **Դատարկ catch**
+- [x] **3.1** 🟢 **Logger (console → logger)**
+- [x] **6.1**  **Դատարկ catch**
   - **Որտեղ:** `apps/web/app/products/[slug]/useProductPage.ts` — `catch (err) { }`
-  - **Ինչ անել:** Ավելացնել լոգ (logger) և/կամ օգտատիրոջ համար sansitive error; չթողնել դատարկ catch
+  - **Ինչ անել:** ✅ Ավելացվել է logger և օգտատիրոջ հաղորդագրություն (sensitive error-ը միայն logger-ում). Դատարկ catch-երը ուղղված են `hooks/useProductActions.ts`-ում (wishlist/compare) և `page.new.tsx`-ում
 
 - [ ] **6.3** 🔴 **error: any API catch-ում**
   - **Որտեղ:** auth/login, auth/register և այլ `route.ts`

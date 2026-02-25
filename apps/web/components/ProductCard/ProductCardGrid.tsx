@@ -57,7 +57,7 @@ export function ProductCardGrid({
       <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[50%] aspect-square z-10">
         <Link
           href="/coming-soon"
-          className="relative w-full h-full rounded-full overflow-hidden bg-white shadow-lg block"
+          className="relative w-full h-full rounded-full overflow-hidden bg-transparent shadow-lg block"
         >
           {product.image && !imageError ? (
             <Image

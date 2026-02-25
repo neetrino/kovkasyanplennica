@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import { WISHLIST_KEY, COMPARE_KEY } from '../types';
 import { t } from '../../../../lib/i18n';
+import { logger } from '../../../../lib/utils/logger';
 import type { LanguageCode } from '../../../../lib/language';
 
 interface UseProductActionsProps {
@@ -44,8 +45,11 @@ export function useProductActions({
       
       setTimeout(() => setShowMessage(null), 2000);
       window.dispatchEvent(new Event('wishlist-updated'));
-    } catch {
-      // Silently fail
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.error('Wishlist toggle failed', { message });
+      setShowMessage(t(language, 'product.errorAddingToCart'));
+      setTimeout(() => setShowMessage(null), 2000);
     }
   };
 
@@ -75,8 +79,11 @@ export function useProductActions({
       
       setTimeout(() => setShowMessage(null), 2000);
       window.dispatchEvent(new Event('compare-updated'));
-    } catch {
-      // Silently fail
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.error('Compare toggle failed', { message });
+      setShowMessage(t(language, 'product.errorAddingToCart'));
+      setTimeout(() => setShowMessage(null), 2000);
     }
   };
 
