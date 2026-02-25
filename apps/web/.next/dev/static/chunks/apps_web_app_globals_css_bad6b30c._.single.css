@@ -895,16 +895,16 @@ a {
   height: 400px;
 }
 
+.h-\[480px\] {
+  height: 480px;
+}
+
 .h-\[500px\] {
   height: 500px;
 }
 
 .h-\[58px\] {
   height: 58px;
-}
-
-.h-\[620px\] {
-  height: 620px;
 }
 
 .h-\[762px\] {
@@ -925,10 +925,6 @@ a {
 
 .h-full {
   height: 100%;
-}
-
-.h-\[480px\] {
-  height: 480px;
 }
 
 .max-h-60 {
@@ -1235,12 +1231,12 @@ a {
   max-width: 300px;
 }
 
-.max-w-\[800px\] {
-  max-width: 800px;
+.max-w-\[720px\] {
+  max-width: 720px;
 }
 
-.max-w-\[980px\] {
-  max-width: 980px;
+.max-w-\[800px\] {
+  max-width: 800px;
 }
 
 .max-w-full {
@@ -1253,18 +1249,6 @@ a {
 
 .max-w-md {
   max-width: 28rem;
-}
-
-.max-w-\[720px\] {
-  max-width: 720px;
-}
-
-.max-w-xl {
-  max-width: 36rem;
-}
-
-.max-w-\[18rem\] {
-  max-width: 18rem;
 }
 
 .flex-1 {
@@ -1532,10 +1516,6 @@ a {
 
 .gap-8 {
   gap: 2rem;
-}
-
-.gap-16 {
-  gap: 4rem;
 }
 
 .gap-x-6 {
@@ -2154,10 +2134,6 @@ a {
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1));
 }
 
-.bg-\[\#2f3f3d\]\/80 {
-  background-color: #2f3f3dcc;
-}
-
 .bg-opacity-50 {
   --tw-bg-opacity: .5;
 }
@@ -2294,11 +2270,6 @@ a {
 .object-left {
   -o-object-position: left;
   object-position: left;
-}
-
-.object-right {
-  -o-object-position: right;
-  object-position: right;
 }
 
 .p-0\.5 {
@@ -2447,11 +2418,6 @@ a {
   padding-bottom: 2rem;
 }
 
-.py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-}
-
 .pb-1 {
   padding-bottom: .25rem;
 }
@@ -2520,16 +2486,16 @@ a {
   padding-right: 1.5rem;
 }
 
+.pt-0 {
+  padding-top: 0;
+}
+
 .pt-12 {
   padding-top: 3rem;
 }
 
 .pt-2 {
   padding-top: .5rem;
-}
-
-.pt-24 {
-  padding-top: 6rem;
 }
 
 .pt-3 {
@@ -2554,10 +2520,6 @@ a {
 
 .pt-\[18\%\] {
   padding-top: 18%;
-}
-
-.pt-0 {
-  padding-top: 0;
 }
 
 .text-left {
@@ -2613,8 +2575,8 @@ a {
   font-size: 20px;
 }
 
-.text-\[72px\] {
-  font-size: 72px;
+.text-\[56px\] {
+  font-size: 56px;
 }
 
 .text-base {
@@ -2640,10 +2602,6 @@ a {
 .text-xs {
   font-size: .75rem;
   line-height: 1rem;
-}
-
-.text-\[56px\] {
-  font-size: 56px;
 }
 
 .font-black {
@@ -2716,14 +2674,6 @@ a {
 
 .leading-tight {
   line-height: 1.25;
-}
-
-.leading-loose {
-  line-height: 2;
-}
-
-.leading-snug {
-  line-height: 1.375;
 }
 
 .tracking-\[0\.32px\] {
@@ -3905,10 +3855,6 @@ a {
     height: 2rem;
   }
 
-  .sm\:h-\[700px\] {
-    height: 700px;
-  }
-
   .sm\:h-\[540px\] {
     height: 540px;
   }
@@ -4006,11 +3952,6 @@ a {
     padding-bottom: 1rem;
   }
 
-  .sm\:px-8 {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
-
   .sm\:pb-2 {
     padding-bottom: .5rem;
   }
@@ -4027,28 +3968,12 @@ a {
     padding-right: 1.5rem;
   }
 
-  .sm\:pt-32 {
-    padding-top: 8rem;
-  }
-
-  .sm\:pt-16 {
-    padding-top: 4rem;
-  }
-
-  .sm\:pt-6 {
-    padding-top: 1.5rem;
-  }
-
-  .sm\:pt-2 {
-    padding-top: .5rem;
+  .sm\:pt-0 {
+    padding-top: 0;
   }
 
   .sm\:pt-8 {
     padding-top: 2rem;
-  }
-
-  .sm\:pt-0 {
-    padding-top: 0;
   }
 
   .sm\:text-2xl {
@@ -4056,8 +3981,8 @@ a {
     line-height: 2rem;
   }
 
-  .sm\:text-\[120px\] {
-    font-size: 120px;
+  .sm\:text-\[88px\] {
+    font-size: 88px;
   }
 
   .sm\:text-lg {
@@ -4078,10 +4003,6 @@ a {
   .sm\:text-xs {
     font-size: .75rem;
     line-height: 1rem;
-  }
-
-  .sm\:text-\[88px\] {
-    font-size: 88px;
   }
 }
 
@@ -4374,11 +4295,6 @@ a {
     padding-bottom: 1.5rem;
   }
 
-  .md\:py-28 {
-    padding-top: 7rem;
-    padding-bottom: 7rem;
-  }
-
   .md\:pl-6 {
     padding-left: 1.5rem;
   }
@@ -4395,11 +4311,6 @@ a {
 
   .md\:text-5xl {
     font-size: 3rem;
-    line-height: 1;
-  }
-
-  .md\:text-6xl {
-    font-size: 3.75rem;
     line-height: 1;
   }
 
@@ -4478,14 +4389,6 @@ a {
     margin-top: 5rem;
   }
 
-  .lg\:mt-4 {
-    margin-top: 1rem;
-  }
-
-  .lg\:mb-2 {
-    margin-bottom: .5rem;
-  }
-
   .lg\:block {
     display: block;
   }
@@ -4532,10 +4435,6 @@ a {
 
   .lg\:h-\[600px\] {
     height: 600px;
-  }
-
-  .lg\:h-\[820px\] {
-    height: 820px;
   }
 
   .lg\:h-\[620px\] {
@@ -4598,10 +4497,6 @@ a {
     gap: 3rem;
   }
 
-  .lg\:gap-20 {
-    gap: 5rem;
-  }
-
   .lg\:px-12 {
     padding-left: 3rem;
     padding-right: 3rem;
@@ -4627,11 +4522,6 @@ a {
     padding-bottom: 8rem;
   }
 
-  .lg\:px-10 {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-  }
-
   .lg\:pb-0 {
     padding-bottom: 0;
   }
@@ -4642,18 +4532,6 @@ a {
 
   .lg\:pr-8 {
     padding-right: 2rem;
-  }
-
-  .lg\:pt-40 {
-    padding-top: 10rem;
-  }
-
-  .lg\:pt-20 {
-    padding-top: 5rem;
-  }
-
-  .lg\:pt-8 {
-    padding-top: 2rem;
   }
 
   .lg\:pt-10 {
@@ -4675,27 +4553,18 @@ a {
     line-height: 1;
   }
 
-  .lg\:text-7xl {
-    font-size: 4.5rem;
-    line-height: 1;
-  }
-
   .lg\:text-8xl {
     font-size: 6rem;
     line-height: 1;
   }
 
-  .lg\:text-\[173px\] {
-    font-size: 173px;
+  .lg\:text-\[128px\] {
+    font-size: 128px;
   }
 
   .lg\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .lg\:text-\[128px\] {
-    font-size: 128px;
   }
 }
 
