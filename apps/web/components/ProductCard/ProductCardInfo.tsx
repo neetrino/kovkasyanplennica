@@ -20,6 +20,7 @@ interface ProductCardInfoProps {
   calories?: number;
   category?: string;
   isCompact?: boolean;
+  compactHeight?: boolean;
   inStock?: boolean;
   isAddingToCart?: boolean;
   onAddToCart?: (e: MouseEvent) => void;
@@ -42,6 +43,7 @@ export function ProductCardInfo({
   calories,
   category,
   isCompact = false,
+  compactHeight = false,
   inStock = true,
   isAddingToCart = false,
   onAddToCart,
@@ -57,44 +59,46 @@ export function ProductCardInfo({
   };
 
   return (
-    <div className="w-full mt-12">
+    <div className={`w-full ${compactHeight ? 'mt-6' : 'mt-12'}`}>
       <Link href="/coming-soon" className="block">
-        {/* Product Title - Centered, Bold, 20px */}
-        <h3 className="text-center text-[20px] font-bold text-black mb-2 leading-normal">
+        {/* Product Title - Centered, Bold */}
+        <h3 className={`text-center font-bold text-black leading-normal ${compactHeight ? 'text-[14px] mb-1' : 'text-[20px] mb-2'}`}>
           {title}
         </h3>
       </Link>
 
-      {/* Calories - Centered, Grey, 16px, Semibold */}
+      {/* Calories - Centered, Grey, Semibold */}
       {calories && (
-        <p className="text-center text-[16px] font-semibold text-[#acacac] mb-3 leading-normal">
+        <p className={`text-center font-semibold text-[#acacac] leading-normal ${compactHeight ? 'text-[12px] mb-1' : 'text-[16px] mb-3'}`}>
           {calories} {t('common.calories')}
         </p>
       )}
 
       {/* Divider Line */}
-      <div className="w-full mx-auto border-t border-[rgba(172,172,172,0.2)] mb-3" />
+      <div className={`w-full mx-auto border-t border-[rgba(172,172,172,0.2)] ${compactHeight ? 'mb-1' : 'mb-3'}`} />
 
-      {/* Category - Left aligned, Grey, 16px, Medium */}
-      <div className="mb-3">
-        <p className="text-left text-[16px] font-medium text-[#acacac] leading-normal">
+      {/* Category - Left aligned, Grey, Medium */}
+      <div className={compactHeight ? 'mb-1' : 'mb-3'}>
+        <p className={`text-left font-medium text-[#acacac] leading-normal ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
           {category || brandName || t('common.defaults.category')}
         </p>
       </div>
 
       {/* Price Section - Figma design: Цена (left) | Cart Button (center) | Price (right) */}
-      <div className="relative flex items-center justify-between pt-8 pb-[25px]">
-        {/* Price Label - Left, Grey, 16px, Medium */}
-        <span className="text-[16px] font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap">
+      <div className={`relative flex items-center justify-between ${compactHeight ? 'pt-3 pb-3' : 'pt-8 pb-[25px]'}`}>
+        {/* Price Label - Left, Grey, Medium */}
+        <span className={`font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
           {t('common.price')}
         </span>
         
-        {/* Cart Button - Center, Green circular button, 58x58px, half outside card bottom */}
+        {/* Cart Button - Center, Green circular button, half outside card bottom */}
         {onAddToCart && (
           <button
             onClick={handleAddToCart}
             disabled={!inStock || isAddingToCart}
-            className="absolute left-1/2 -translate-x-1/2 bottom-[-20px] translate-y-1/2 w-[58px] h-[58px] rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-10"
+            className={`absolute left-1/2 -translate-x-1/2 bottom-[-20px] translate-y-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-10 ${
+              compactHeight ? 'w-10 h-10' : 'w-[58px] h-[58px]'
+            }`}
             title={inStock ? t('common.buttons.addToCart') : t('common.stock.outOfStock')}
             aria-label={inStock ? t('common.ariaLabels.addToCart') : t('common.ariaLabels.outOfStock')}
           >
@@ -115,9 +119,9 @@ export function ProductCardInfo({
           </button>
         )}
         
-        {/* Price Value - Right, Bold, smaller size, aligned with price label */}
+        {/* Price Value - Right, Bold, aligned with price label */}
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-lg font-black text-black leading-normal whitespace-pre-wrap">
+          <span className={`font-black text-black leading-normal whitespace-pre-wrap ${compactHeight ? 'text-sm' : 'text-lg'}`}>
             {formatPrice(price || 0, currency)}
           </span>
           {discountPercent && discountPercent > 0 ? (

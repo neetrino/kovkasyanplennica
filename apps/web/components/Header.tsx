@@ -155,20 +155,20 @@ export function Header() {
         {/* Cart Button */}
         <Link
           href="/coming-soon"
-          className="bg-[#2f3f3d] h-10 rounded-[45px] px-2.5 flex items-center gap-1.5 hover:bg-[#1f2f2d] transition-colors"
+          className={`bg-[#2f3f3d] rounded-[45px] flex items-center gap-1.5 hover:bg-[#1f2f2d] transition-colors ${isLoggedIn ? 'h-10 px-2.5' : 'h-8 px-2'}`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
-          <div className="flex items-center justify-center w-4 h-4">
+          <div className={`flex items-center justify-center ${isLoggedIn ? 'w-4 h-4' : 'w-3 h-3'}`}>
             <Image
               src="/assets/product-card/Icon.svg"
               alt=""
               width={16}
               height={16}
-              className="object-contain"
+              className="object-contain max-w-full max-h-full"
               unoptimized
             />
           </div>
-          <span className="text-[#fff4de] text-sm font-bold leading-5">
+          <span className={`text-[#fff4de] font-bold ${isLoggedIn ? 'text-sm leading-5' : 'text-xs leading-4'}`}>
             {formatPrice(cartTotal, currency)}
           </span>
         </Link>
@@ -233,7 +233,7 @@ export function Header() {
         ) : (
           <Link
             href="/login"
-            className="bg-[#2f3f3d] border border-[#2f3f3d] text-white px-4 py-2 rounded-full h-10 w-[140px] flex items-center justify-center font-bold text-sm leading-5 tracking-[0.32px] hover:bg-[#1f2f2d] transition-colors"
+            className="bg-[#2f3f3d] border border-[#2f3f3d] text-white px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] hover:bg-[#1f2f2d] transition-colors"
           >
             {t('home.header.login')}
           </Link>

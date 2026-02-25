@@ -1,0 +1,220 @@
+/* Figma: bnb45 — mobile bottom nav, background with smooth cutout for Home circle */
+
+.bnb45 {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 430px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: 108px;
+  z-index: 50;
+  text-align: left;
+  font-size: 12px;
+  color: #a4b89e;
+  font-family: Inter, sans-serif;
+  overflow: visible;
+}
+
+/* Bar background #2f3f3d: rounded bottom corners (24px) + semicircular cutout for Home */
+.barShape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.navigationmenuLeftParent {
+  position: absolute;
+  width: 100%;
+  top: 33px;
+  right: 0;
+  left: 0;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  isolation: isolate;
+  gap: 12px;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.navigationmenuLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 0;
+  flex-shrink: 0;
+  color: #ffe5c2;
+}
+
+.navigationmenuHome {
+  height: 58px;
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 12px 4px;
+  box-sizing: border-box;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  z-index: 2;
+}
+
+.navigationmenuHomeChild {
+  width: 27.4px;
+  height: 21.5px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  position: relative;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.navigationmenuHome2 {
+  height: 58px;
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px 8px;
+  box-sizing: border-box;
+  gap: 8px;
+  color: #a4b89e;
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
+}
+
+.vectorIcon {
+  width: 30px;
+  height: 22px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.centerLabel {
+  height: 15px;
+  width: 57px;
+  position: absolute;
+  margin: 0 !important;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+  z-index: 1;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #2f3f3d;
+  text-align: center;
+  pointer-events: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+.navigationmenuRight {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.navigationmenuHome3 {
+  height: 58px;
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  gap: 8px;
+  text-decoration: none;
+  color: #a4b89e;
+  position: relative;
+  z-index: 2;
+}
+
+.cart {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vuesaxlinearbagIcon {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+}
+
+/* Home: светлый круг + волнистое кольцо #2F3F3D снаружи (как на референсе) */
+.homeWrapper {
+  height: 52px;
+  width: 52px;
+  position: absolute;
+  margin: 0 !important;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background-color: #ffe5c2;
+  border: 1px solid #2f3f3d;
+  z-index: 3;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 -2px 12px rgba(47, 63, 61, 0.2);
+  pointer-events: auto;
+}
+
+/* Кольцо вокруг Home: эллипс (толще по бокам), цвет #2F3F3D, позади круга */
+.homeRing {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 76px;
+  height: 76px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.home {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  z-index: 1;
+}

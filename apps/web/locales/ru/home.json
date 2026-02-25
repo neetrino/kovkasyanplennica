@@ -31,7 +31,8 @@
       "vacancies": "ВАКАНСИИ",
       "team": "КОМАНДА",
       "contact": "КОНТАКТЫ",
-      "delivery": "ДОСТАВКА"
+      "delivery": "ДОСТАВКА",
+      "search": "ПОИСК"
     },
     "search": {
       "placeholder": "Поиск",
