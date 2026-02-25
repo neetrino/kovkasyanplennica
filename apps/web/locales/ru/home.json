@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "restaurantName": "КОВКАСЯН",
+    "restaurantSubtitle": "пленница",
+    "logoAlt": "КОВКАСЯН ПЛЕННИЦА",
+    "bookButton": "ЗАБРОНИРОВАТЬ",
+    "orderButton": "ЗАКАЗАТЬ"
+  },
+  "about": {
+    "title": "О НАС",
+    "description": "Наш ресторан — это место, где вкус, атмосфера и внимание к деталям соединяются в единое целое. Мы готовим из свежих ингредиентов, бережно сохраняя баланс между классикой и современными акцентами, чтобы каждый визит становился маленьким гастрономическим путешествием.",
+    "learnMoreButton": "Узнать больше",
+    "interiorAlt": "Интерьер ресторана"
+  },
+  "menu": {
+    "title": "МЕНЮ",
+    "loading": "Загрузка...",
+    "viewMenuButton": "СМОТРЕТЬ МЕНЮ",
+    "categoryFallback": "Категория"
+  },
+  "favorites": {
+    "title": "НАШИ ФАВОРИТЫ",
+    "viewMenuButton": "СМОТРЕТЬ МЕНЮ"
+  },
+  "header": {
+    "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
+    "navigation": {
+      "home": "ГЛАВНАЯ",
+      "menu": "МЕНЮ",
+      "about": "О НАС",
+      "vacancies": "ВАКАНСИИ",
+      "team": "КОМАНДА",
+      "contact": "КОНТАКТЫ",
+      "delivery": "ДОСТАВКА"
+    },
+    "search": {
+      "placeholder": "Поиск",
+      "ariaLabel": "Поиск"
+    },
+    "login": "ВОЙТИ",
+    "cart": {
+      "ariaLabel": "Корзина покупок"
+    },
+    "mobileMenu": {
+      "ariaLabel": "Открыть меню"
+    }
+  },
+  "footer": {
+    "booking": {
+      "title": "БРОНИРОВАНИЕ",
+      "description": "Зарезервируйте ваш идеальный вечер всего за несколько кликов.",
+      "selectTableButton": "Выбрать стол"
+    },
+    "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
+    "description": "Возрождая традиции высокого кулинарного искусства Грузии и Армении в центре города.",
+    "socialMedia": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "vk": "VK"
+    },
+    "navigation": {
+      "title": "НАВИГАЦИЯ",
+      "home": "Главная",
+      "restaurantMenu": "Меню ресторана",
+      "wineCard": "Винная карта",
+      "foodDelivery": "Доставка еды"
+    },
+    "contacts": {
+      "title": "КОНТАКТЫ",
+      "address": "ул. Пушкина, д. 10",
+      "phone": "+7 (999) 999-00-00",
+      "email": "info@vkavkazan.ru"
+    },
+    "workingHours": {
+      "title": "РЕЖИМ РАБОТЫ",
+      "weekdays": "Пн — Пт",
+      "weekdaysTime": "10:00 - 23:00",
+      "weekend": "Сб — Вс",
+      "weekendTime": "11:00 - 01:00",
+      "deliveryInfo": "Бесплатная доставка при заказе от 3000 Р по всему городу."
+    },
+    "bottomLinks": {
+      "privacy": "Политика конфиденциальности",
+      "terms": "Публичная оферта"
+    }
+  }
+}
