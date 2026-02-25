@@ -31,7 +31,8 @@
       "vacancies": "VACANCIES",
       "team": "TEAM",
       "contact": "CONTACT",
-      "delivery": "DELIVERY"
+      "delivery": "DELIVERY",
+      "search": "SEARCH"
     },
     "search": {
       "placeholder": "Search",

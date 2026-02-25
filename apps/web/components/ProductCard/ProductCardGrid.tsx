@@ -29,6 +29,7 @@ interface ProductCardGridProps {
   isAddingToCart: boolean;
   imageError: boolean;
   isCompact?: boolean;
+  compactHeight?: boolean;
   onImageError: () => void;
   onWishlistToggle: (e: MouseEvent) => void;
   onCompareToggle: (e: MouseEvent) => void;
@@ -46,15 +47,24 @@ export function ProductCardGrid({
   isAddingToCart,
   imageError,
   isCompact = false,
+  compactHeight = false,
   onImageError,
   onWishlistToggle,
   onCompareToggle,
   onAddToCart,
 }: ProductCardGridProps) {
   return (
-    <div className="relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full min-h-[240px] w-full max-w-[270px] mx-auto">
+    <div
+      className={`relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full w-full max-w-[270px] mx-auto ${
+        compactHeight ? 'min-h-[180px] max-w-[200px]' : 'min-h-[240px]'
+      }`}
+    >
       {/* Product Image - Circular plate at top, half outside card, half inside */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[50%] aspect-square z-10">
+      <div
+        className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 ${
+          compactHeight ? 'w-[45%]' : 'w-[50%]'
+        }`}
+      >
         <Link
           href="/coming-soon"
           className="relative w-full h-full rounded-full overflow-hidden bg-transparent shadow-lg block"
@@ -95,7 +105,11 @@ export function ProductCardGrid({
       </div>
 
       {/* Product Info */}
-      <div className="flex-1 flex flex-col px-[6.17%] pt-[18%] pb-[8%]">
+      <div
+        className={`flex-1 flex flex-col px-[6.17%] ${
+          compactHeight ? 'pt-[14%] pb-[4%]' : 'pt-[18%] pb-[8%]'
+        }`}
+      >
         <ProductCardInfo
           slug={product.slug}
           title={product.title}
@@ -108,7 +122,8 @@ export function ProductCardGrid({
           colors={product.colors}
           calories={(product as { calories?: number }).calories}
           category={(product as { category?: string }).category}
-          isCompact={isCompact}
+          isCompact={isCompact || compactHeight}
+          compactHeight={compactHeight}
           inStock={product.inStock}
           isAddingToCart={isAddingToCart}
           onAddToCart={onAddToCart}
