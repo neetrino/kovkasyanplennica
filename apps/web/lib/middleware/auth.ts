@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import * as jwt from "jsonwebtoken";
 import { db } from "@white-shop/db";
+import { logger } from "@/lib/utils/logger";
 
 export interface AuthUser {
   id: string;
@@ -25,7 +26,7 @@ export async function authenticateToken(
     }
 
     if (!process.env.JWT_SECRET) {
-      console.error("❌ [AUTH] JWT_SECRET is not set!");
+      logger.error("Auth middleware: JWT_SECRET is not set");
       return null;
     }
 

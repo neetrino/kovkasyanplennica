@@ -99,7 +99,7 @@ async function createAdmin() {
     console.log('🎉 [CREATE ADMIN] Done!');
     console.log('📝 [CREATE ADMIN] Login credentials:');
     console.log('   Email:', adminEmail);
-    console.log('   Password:', adminPassword);
+    console.log('   Password: [set via ADMIN_PASSWORD - never log actual password]');
     console.log('   Phone:', adminPhone || 'not set');
   } catch (error: any) {
     console.error('❌ [CREATE ADMIN] Error:', error);

@@ -64,9 +64,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Email validation (ReDoS-safe: no polynomial regex on user input)
+    const trimmedEmail = email.trim();
+    if (
+      trimmedEmail.length > 254 ||
+      trimmedEmail.indexOf("@") < 1 ||
+      trimmedEmail.indexOf("@") === trimmedEmail.length - 1 ||
+      !trimmedEmail.slice(trimmedEmail.indexOf("@") + 1).includes(".")
+    ) {
       return NextResponse.json(
         {
           type: "https://api.shop.am/problems/validation-error",
@@ -83,7 +88,7 @@ export async function POST(req: NextRequest) {
     const contactMessage = await db.contactMessage.create({
       data: {
         name: name.trim(),
-        email: email.trim(),
+        email: trimmedEmail,
         subject: subject.trim(),
         message: message.trim(),
       },

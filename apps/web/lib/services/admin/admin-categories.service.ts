@@ -1,5 +1,19 @@
 import { db } from "@white-shop/db";
 
+/** ReDoS-safe slug from title: no polynomial regex on user input */
+function toSlug(title: string): string {
+  const withHyphens = title
+    .toLowerCase()
+    .split("")
+    .map((c) => (/[a-z0-9]/.test(c) ? c : "-"))
+    .join("");
+  const collapsed = withHyphens
+    .split("-")
+    .filter((s) => s.length > 0)
+    .join("-");
+  return collapsed;
+}
+
 class AdminCategoriesService {
   /**
    * Get categories for admin
@@ -62,11 +76,7 @@ class AdminCategoriesService {
       }
     }
     
-    // Generate slug from title
-    const slug = data.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    const slug = toSlug(data.title);
 
     const category = await db.category.create({
       data: {
@@ -272,10 +282,7 @@ class AdminCategoriesService {
 
     // Update translation if title is provided
     if (data.title) {
-      const slug = data.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+      const slug = toSlug(data.title);
 
       const categoryTranslations = Array.isArray(category.translations) ? category.translations : [];
       const existingTranslation = categoryTranslations.find((t: { locale: string }) => t.locale === locale);

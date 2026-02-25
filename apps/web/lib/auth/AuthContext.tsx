@@ -114,8 +114,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * Login user
    */
   const login = async (emailOrPhone: string, password: string) => {
-    console.log('🔐 [AUTH] Login attempt:', { emailOrPhone: emailOrPhone ? 'provided' : 'not provided', password: password ? 'provided' : 'not provided' });
-    
     try {
       setIsLoading(true);
 
