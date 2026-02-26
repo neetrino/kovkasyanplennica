@@ -3,8 +3,26 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    min-height: 100%;
+    height: auto;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-white text-gray-900;
+    min-height: 100%;
+    height: auto;
+    overflow-x: hidden;
+  }
+
+  /* Highlight / selection — mobile header & menu popup palette (#2F3F3D, #ffe5c2) */
+  ::selection {
+    background-color: #2f3f3d;
+    color: #ffe5c2;
+  }
+  ::-moz-selection {
+    background-color: #2f3f3d;
+    color: #ffe5c2;
   }
   
   /* Prevent text selection and caret on all text elements */
@@ -19,13 +37,15 @@
     caret-color: transparent !important;
   }
   
-  /* Allow selection in input and textarea fields */
+  /* Allow selection in input and textarea fields; keep text normal */
   input, textarea {
     user-select: text !important;
     -webkit-user-select: text !important;
     -moz-user-select: text !important;
     -ms-user-select: text !important;
     caret-color: currentColor !important;
+    font-weight: normal;
+    font-style: normal;
   }
   
   /* Ensure caret is visible and blinking in focused inputs */

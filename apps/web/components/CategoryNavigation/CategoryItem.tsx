@@ -66,8 +66,8 @@ export function CategoryItem({
       {/* Category Label */}
       <span className={`text-[10px] sm:text-xs text-center font-medium leading-tight transition-colors ${
         isActive 
-          ? 'text-gray-900 underline' 
-          : 'text-gray-700'
+          ? 'text-white underline' 
+          : 'text-gray-300'
       }`}>
         {labelText}
       </span>

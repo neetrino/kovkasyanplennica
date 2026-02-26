@@ -42,7 +42,8 @@
     "sortProducts": "Դասավորել ապրանքները"
   },
   "grid": {
-    "noProducts": "Ապրանքներ չգտնվեցին։"
+    "noProducts": "Ապրանքներ չգտնվեցին։",
+    "otherCategory": "Այլ"
   },
   "mobileFilters": {
     "title": "Ֆիլտրեր",

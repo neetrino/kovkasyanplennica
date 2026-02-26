@@ -55,8 +55,8 @@ export function ProductCardGrid({
 }: ProductCardGridProps) {
   return (
     <div
-      className={`relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full w-full max-w-[270px] mx-auto ${
-        compactHeight ? 'min-h-[180px] max-w-[200px]' : 'min-h-[240px]'
+      className={`relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full w-full ${
+        compactHeight ? 'min-h-[180px]' : 'min-h-[240px]'
       }`}
     >
       {/* Product Image - Circular plate at top, half outside card, half inside */}

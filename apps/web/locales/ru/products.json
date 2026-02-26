@@ -42,7 +42,8 @@
     "sortProducts": "Сортировать товары"
   },
   "grid": {
-    "noProducts": "Товары не найдены."
+    "noProducts": "Товары не найдены.",
+    "otherCategory": "Другое"
   },
   "mobileFilters": {
     "title": "Фильтры",

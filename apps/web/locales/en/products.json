@@ -42,7 +42,8 @@
     "sortProducts": "Sort products"
   },
   "grid": {
-    "noProducts": "No products found."
+    "noProducts": "No products found.",
+    "otherCategory": "Other"
   },
   "mobileFilters": {
     "title": "Filters",
