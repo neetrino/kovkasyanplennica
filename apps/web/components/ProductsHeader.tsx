@@ -144,7 +144,7 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4 bg-[#2F3F3D] -mx-4 sm:-mx-6 lg:-mx-8">
       {/* Desktop: All elements in one horizontal line */}
       <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
         {/* Left side: Clear filters + All products title */}
@@ -153,7 +153,7 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="inline-flex items-center gap-2 text-sm text-gray-900 hover:text-gray-700 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-gray-200 hover:text-white transition-colors"
             >
               <svg
                 width="16"
@@ -161,7 +161,7 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="text-gray-900"
+                className="text-gray-200"
               >
                 <path
                   d="M12 4L4 12M4 4L12 12"
@@ -175,7 +175,7 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
             </button>
           )}
           
-          <h1 className="text-xl font-bold text-gray-900">
+          <h1 className="text-xl font-bold text-white">
             {t('products.header.allProducts').replace('{total}', total.toString())}
           </h1>
         </div>
@@ -184,7 +184,7 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
         <div className="flex items-center gap-4">
           {/* Show dropdown */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-900">{t('products.header.show')}</span>
+            <span className="text-sm text-gray-200">{t('products.header.show')}</span>
             <select
               value={currentLimit === 'all' ? 'all' : currentLimit}
               onChange={(event) => handleLimitChange(event.target.value)}
@@ -205,8 +205,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
               onClick={() => handleViewModeChange('list')}
               className={`rounded-lg p-2 transition-colors ${
                 viewMode === 'list'
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-400 hover:text-gray-600'
+                  ? 'bg-white/20 text-white'
+                  : 'text-gray-400 hover:text-gray-200'
               }`}
               aria-label={t('products.header.viewModes.list')}
             >
@@ -222,8 +222,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
               onClick={() => handleViewModeChange('grid-2')}
               className={`rounded-lg p-2 transition-all ${
                 viewMode === 'grid-2'
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  ? 'bg-white/20 text-white'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/10'
               }`}
               aria-label={t('products.header.viewModes.grid2')}
             >
@@ -240,8 +240,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
               onClick={() => handleViewModeChange('grid-3')}
               className={`rounded-lg p-2 transition-all ${
                 viewMode === 'grid-3'
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                  ? 'bg-white/20 text-white'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-white/10'
               }`}
               aria-label={t('products.header.viewModes.grid3')}
             >
@@ -303,13 +303,13 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
       <div className="sm:hidden flex flex-col gap-4">
         {/* Top: All Products Title + Show dropdown */}
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-gray-900">
+          <h1 className="text-lg font-bold text-white">
             {t('products.header.allProducts').replace('{total}', total.toString())}
           </h1>
           
           {/* Show dropdown - Top right */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-600">{t('products.header.show')}</span>
+            <span className="text-xs text-gray-200">{t('products.header.show')}</span>
             <select
               value={currentLimit === 'all' ? 'all' : currentLimit}
               onChange={(event) => handleLimitChange(event.target.value)}
@@ -324,29 +324,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
           </div>
         </div>
 
-        {/* Bottom: Filters button + View Mode Icons + Sort */}
-        <div className="flex items-center justify-between gap-2">
-          {/* Left: Filters button */}
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event('mobile:filters-toggle'))}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-900"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <line x1="3" y1="5" x2="17" y2="5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <line x1="3" y1="10" x2="17" y2="10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              <line x1="3" y1="15" x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            <span>{t('products.header.filters')}</span>
-          </button>
-
-          {/* Right: View Mode Icons + Sort */}
+        {/* Bottom: View Mode Icons + Sort */}
+        <div className="flex items-center justify-end gap-2">
           <div className="flex items-center gap-2">
             {/* View Mode Icons */}
             <div className="flex items-center gap-1">
@@ -354,8 +333,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
                 onClick={() => handleViewModeChange('list')}
                 className={`rounded-lg p-2 transition-colors ${
                   viewMode === 'list'
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
+                    ? 'bg-white/20 text-white'
+                    : 'text-gray-400 hover:text-gray-200'
                 }`}
                 aria-label={t('products.header.viewModes.list')}
               >
@@ -369,8 +348,8 @@ function ProductsHeaderContent({ total, perPage }: ProductsHeaderProps) {
                 onClick={() => handleViewModeChange('grid-2')}
                 className={`rounded-lg p-2 transition-all ${
                   viewMode === 'grid-2'
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                    ? 'bg-white/20 text-white'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/10'
                 }`}
                 aria-label={t('products.header.viewModes.grid2')}
               >

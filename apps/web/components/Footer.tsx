@@ -12,26 +12,14 @@ export function Footer() {
   
   return (
     <footer className={`${isMenuPage ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'} overflow-hidden relative`}>
-      {/* Background Decorative Patterns */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Vector 1 - Top Left */}
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] md:w-[400px] md:h-[400px] lg:w-[500px] lg:h-[500px] opacity-30">
-          <img
-            src="/hero-vector-1.svg"
-            alt=""
-            className="w-full h-full object-contain"
-            aria-hidden="true"
-          />
-        </div>
-        {/* Vector 2 - Bottom Right */}
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] md:w-[500px] md:h-[500px] lg:w-[500px] lg:h-[500px] opacity-30">
-          <img
-            src="/hero-vector-1.svg"
-            alt=""
-            className="w-full h-full object-contain rotate-180"
-            aria-hidden="true"
-          />
-        </div>
+      {/* Background Decorative Pattern */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <img
+          src="/assets/hero/decorative-pattern.svg"
+          alt=""
+          className="w-full h-full object-contain opacity-80 rotate-180 translate-y-36"
+          aria-hidden
+        />
       </div>
 
       {/* Booking Section */}

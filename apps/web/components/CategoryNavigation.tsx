@@ -67,7 +67,7 @@ function CategoryNavigationContent() {
   const displayCategories = allCategoriesWithAll.slice(0, 10);
 
   return (
-    <div className="bg-white border-b border-gray-200 py-3 sm:py-4 md:py-6 w-full">
+    <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-3 sm:py-4 md:py-6 w-full">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
         <div className="relative">
           <CategoryScrollButtons

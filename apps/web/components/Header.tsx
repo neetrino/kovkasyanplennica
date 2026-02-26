@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../lib/i18n-client';
 import { useAuth } from '../lib/auth/AuthContext';
@@ -9,7 +10,14 @@ import { fetchCart } from '../app/cart/cart-fetcher';
 import { formatPrice, getStoredCurrency } from '../lib/currency';
 import type { Cart } from '../app/cart/types';
 
+const HEADER_BG_HOME = 'bg-[#ffe5c2]';
+const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
+
 export function Header() {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+  const headerBg = isHomePage ? HEADER_BG_HOME : HEADER_BG_OTHER;
+
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,22 +84,21 @@ export function Header() {
   }, [isLoggedIn, t]);
 
   return (
-    <header className="relative w-full bg-[#ffe5c2] h-[106px] flex items-center justify-between px-4 sm:px-6 lg:px-8">
-      {/* Logo Section - Left */}
+    <header className={`relative w-full ${headerBg} h-[106px] flex items-center justify-between px-4 sm:px-6 lg:px-8`}>
+      {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
       <div className="flex items-center gap-6">
         <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40">
+          <div className={`relative ${isHomePage ? 'w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40' : 'w-32 h-24 md:w-36 md:h-28 lg:w-40 lg:h-32'}`}>
             <Image
-              src="/assets/hero/logo-kp.png"
+              src={isHomePage ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
               alt={t('home.header.logoAlt')}
-              width={160}
-              height={160}
+              width={isHomePage ? 160 : 160}
+              height={isHomePage ? 160 : 120}
               className="object-contain"
               priority
               unoptimized
             />
           </div>
-        
         </Link>
       </div>
 
@@ -101,7 +108,7 @@ export function Header() {
           <Link
             key={link.label}
             href={link.href}
-            className="text-[#2f3f3d] text-base font-normal leading-6 hover:opacity-80 transition-opacity"
+            className={`text-base font-normal leading-6 hover:opacity-80 transition-opacity ${isHomePage ? 'text-[#2f3f3d]' : 'text-[#ffe5c2]'}`}
           >
             {link.label}
           </Link>
@@ -112,13 +119,13 @@ export function Header() {
       <div className="flex items-center gap-5">
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative">
-          <div className="relative bg-[#ffe5c2] border border-black rounded-full h-10 w-[240px] flex items-center px-3">
+          <div className={`relative rounded-full h-10 w-[240px] flex items-center px-3 ${isHomePage ? 'bg-[#ffe5c2] border border-black' : 'bg-white/15 border border-white/30'}`}>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('home.header.search.placeholder')}
-              className="flex-1 bg-transparent text-[#2f3f3d] text-sm font-medium placeholder:text-[rgba(47,63,61,0.65)] outline-none pr-6"
+              className={`flex-1 bg-transparent text-sm font-medium outline-none pr-6 ${isHomePage ? 'text-[#2f3f3d] placeholder:text-[rgba(47,63,61,0.65)]' : 'text-white placeholder:text-white/70'}`}
             />
             <button
               type="submit"
@@ -131,7 +138,7 @@ export function Header() {
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="text-[#2f3f3d]"
+                className={isHomePage ? 'text-[#2f3f3d]' : 'text-white'}
               >
                 <path
                   d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
@@ -155,7 +162,7 @@ export function Header() {
         {/* Cart Button */}
         <Link
           href="/coming-soon"
-          className={`bg-[#2f3f3d] rounded-[45px] flex items-center gap-1.5 hover:bg-[#1f2f2d] transition-colors ${isLoggedIn ? 'h-10 px-2.5' : 'h-8 px-2'}`}
+          className={`rounded-[45px] flex items-center gap-1.5 bg-[#2F3F3D] hover:opacity-90 transition-opacity ${isLoggedIn ? 'h-10 px-2.5' : 'h-8 px-2'}`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
           <div className={`flex items-center justify-center ${isLoggedIn ? 'w-4 h-4' : 'w-3 h-3'}`}>
@@ -168,7 +175,7 @@ export function Header() {
               unoptimized
             />
           </div>
-          <span className={`text-[#fff4de] font-bold ${isLoggedIn ? 'text-sm leading-5' : 'text-xs leading-4'}`}>
+          <span className={`font-bold text-[#fff4de] ${isLoggedIn ? 'text-sm leading-5' : 'text-xs leading-4'}`}>
             {formatPrice(cartTotal, currency)}
           </span>
         </Link>
@@ -178,7 +185,7 @@ export function Header() {
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="bg-[#2f3f3d] rounded-full h-10 w-10 flex items-center justify-center hover:bg-[#1f2f2d] transition-colors"
+              className="rounded-full h-10 w-10 flex items-center justify-center bg-[#ffe5c2] hover:opacity-90 transition-opacity"
               aria-label={t('home.header.profile.ariaLabel') || 'Profile'}
             >
               <Image
@@ -233,7 +240,7 @@ export function Header() {
         ) : (
           <Link
             href="/login"
-            className="bg-[#2f3f3d] border border-[#2f3f3d] text-white px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] hover:bg-[#1f2f2d] transition-colors"
+            className={`border px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] transition-colors ${isHomePage ? 'bg-[#2f3f3d] border-[#2f3f3d] text-white hover:bg-[#1f2f2d]' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
           >
             {t('home.header.login')}
           </Link>
@@ -242,7 +249,7 @@ export function Header() {
 
       {/* Mobile Menu Button */}
       <button
-        className="lg:hidden w-10 h-10 flex items-center justify-center text-[#2f3f3d]"
+        className={`lg:hidden w-10 h-10 flex items-center justify-center ${isHomePage ? 'text-[#2f3f3d]' : 'text-white'}`}
         aria-label={t('home.header.mobileMenu.ariaLabel')}
       >
         <svg

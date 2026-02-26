@@ -5,7 +5,6 @@ import './globals.css';
 import { ClientProviders } from '../components/ClientProviders';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import { Breadcrumb } from '../components/Breadcrumb';
 import { MobileBottomNav } from '../components/mobileHomePage/MobileBottomNav';
 import { MobileHeader } from '../components/mobileHomePage/MobileHeader';
 
@@ -29,19 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" className="h-full">
+    <html lang="ru" className="min-h-full">
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-full`}>
         <Suspense fallback={null}>
           <ClientProviders>
-            <div className="flex min-h-screen flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent">
+            <div className="flex min-h-screen h-auto flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent overflow-visible">
               <div className="hidden lg:block">
                 <Header />
-                <Breadcrumb />
               </div>
               <div className="block lg:hidden">
                 <MobileHeader />
               </div>
-              <main className="flex-1 w-full">
+              <main className="w-full flex-1 min-h-0 overflow-visible">
                 {children}
               </main>
               <div className="hidden lg:block">
