@@ -28,7 +28,7 @@ interface MenuProps {
 export function Menu({ items }: MenuProps) {
   return (
     <section className="relative bg-[#2f3f3d] overflow-hidden min-h-[893px] py-16 md:py-24 rounded-[37px] -mt-[26px] z-10">
-      <MenuClient items={items} />
+      <MenuClient initialItems={items} />
     </section>
   );
 }

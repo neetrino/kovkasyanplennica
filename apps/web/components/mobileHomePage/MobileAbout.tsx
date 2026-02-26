@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
 
-/**
+/**y
  * Mobile About — два блока (картинка + текст), заголовок О НАС, кнопка Узнать больше.
  */
 export function MobileAbout() {
@@ -37,7 +37,7 @@ export function MobileAbout() {
       </div>
 
       <div className="relative z-10 max-w-[430px] mx-auto">
-        <h2 className="text-[#2f3f3d] text-[53px] leading-[68px] font-light italic text-right mb-6">
+        <h2 className="text-[#2f3f3d] text-[53px] leading-[68px] font-light italic text-right pr-6 mb-6">
           {t('home.about.title')}
         </h2>
         <div className="relative w-[180px] h-[5px] mx-auto mb-8">

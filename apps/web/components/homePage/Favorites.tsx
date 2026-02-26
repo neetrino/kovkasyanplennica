@@ -83,9 +83,12 @@ export function Favorites({ items = [] }: FavoritesProps) {
 
         {/* Сетка с карточками продуктов - 2 ряда по 4 */}
         {displayItems.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-28 md:gap-y-32 mb-12 mt-24">
-            {displayItems.map((item) => (
-              <div key={item.id} className="flex justify-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-28 md:gap-y-32 mb-12 mt-24">
+            {displayItems.map((item, index) => (
+              <div
+                key={item.id}
+                className={`flex justify-center ${index >= 6 ? 'md:hidden lg:flex' : ''}`}
+              >
                 <ProductCard 
                   product={{
                     ...item,

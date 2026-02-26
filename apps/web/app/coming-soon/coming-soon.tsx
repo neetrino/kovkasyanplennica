@@ -11,8 +11,8 @@ const ASSETS_BASE_PATH = '/assets/coming-soon';
 export function ComingSoon() {
   return (
     <section className="relative overflow-hidden bg-[#ffe5c2] min-h-screen">
-      {/* Decorative Pattern Background */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+      {/* Decorative Pattern Background — մոբայլում փոքր scale */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 hidden sm:block scale-50 md:scale-75 lg:scale-100 origin-center">
         <Image
           src="/assets/hero/decorative-pattern.svg"
           alt=""
@@ -24,13 +24,13 @@ export function ComingSoon() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-2 sm:px-4 lg:px-6 pt-0 sm:pt-0">
-        <div className="relative mx-auto h-[480px] w-full max-w-[720px] sm:h-[540px] lg:h-[620px]">
+        <div className="relative mx-auto h-[50vh] w-full max-w-[720px] sm:h-[300px] md:h-[420px] lg:h-[520px]">
           <Image
             src={`${ASSETS_BASE_PATH}/dish.png`}
             alt=""
             fill
             priority
-            sizes="(max-width: 1024px) 100vw, 720px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 720px"
             className="object-contain"
             unoptimized
           />

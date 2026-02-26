@@ -1,6 +1,7 @@
 import { MobileHero } from './MobileHero';
 import { MobileMenuSection } from './MobileMenuSection';
 import { MobileAbout } from './MobileAbout';
+import { MobileImageCarousel } from './MobileImageCarousel';
 import { MobileFavoritesSection } from './MobileFavoritesSection';
 
 /**
@@ -11,11 +12,12 @@ import { MobileFavoritesSection } from './MobileFavoritesSection';
  */
 export function MobileHomePage() {
   return (
-    <div className="min-h-screen bg-[#ffe5c2] overflow-x-hidden">
+    <div className="min-h-screen bg-[#2f3f3d] overflow-x-hidden">
       <MobileHero />
       <MobileMenuSection />
       <MobileAbout />
       <MobileFavoritesSection />
+      <MobileImageCarousel />
     </div>
   );
 }

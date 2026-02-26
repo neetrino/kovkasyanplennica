@@ -126,21 +126,24 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
 
       <div className="relative z-10 max-w-7xl mx-auto px-4">
         {/* Заголовок секции */}
-        <div className="text-center mb-4 md:mb-6 -mt-4">
+        <div className="relative text-center mb-4 md:mb-6 -mt-4">
           <h2 className="text-[#fff4de] text-6xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px] mb-2">
             {t('home.menu.title')}
           </h2>
-          {/* Vector7 декоративный паттерн под заголовком - из Figma */}
-          <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-8 flex justify-center mx-auto">
-            <Image
-              src="/assets/hero/Vector7.svg"
-              alt=""
-              fill
-              className="object-contain"
-              aria-hidden="true"
-              unoptimized
-            />
+          {/* Vector7 декоративный паттерн под заголовком — строго по центру (в т.ч. на планшете) */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%+1rem)] w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] flex justify-center">
+            <div className="relative w-full h-full">
+              <Image
+                src="/assets/hero/Vector7.svg"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden="true"
+                unoptimized
+              />
+            </div>
           </div>
+          <div className="mt-4 mb-8 h-[8px] md:h-[10px] lg:h-[12px]" aria-hidden />
         </div>
 
         {/* Карточки продуктов */}
@@ -149,9 +152,12 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
             <div className="text-[#fff4de] text-lg">{t('home.menu.loading')}</div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-12 mt-24">
-            {items.slice(0, 4).map((item) => (
-              <div key={item.id} className="flex justify-center">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 mb-12 mt-24">
+            {items.slice(0, 4).map((item, index) => (
+              <div
+                key={item.id}
+                className={`flex justify-center ${index === 3 ? 'md:hidden lg:flex' : ''}`}
+              >
                 <ProductCard 
                   product={{
                     ...item,

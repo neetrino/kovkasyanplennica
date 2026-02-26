@@ -33,21 +33,21 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-full`}>
         <Suspense fallback={null}>
           <ClientProviders>
-            <div className="flex min-h-screen flex-col pb-24 lg:pb-0">
-              <div className="hidden md:block">
+            <div className="flex min-h-screen flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent">
+              <div className="hidden lg:block">
                 <Header />
                 <Breadcrumb />
               </div>
-              <div className="block md:hidden">
+              <div className="block lg:hidden">
                 <MobileHeader />
               </div>
               <main className="flex-1 w-full">
                 {children}
               </main>
-              <div className="hidden md:block">
+              <div className="hidden lg:block">
                 <Footer />
               </div>
-              <div className="block md:hidden">
+              <div className="block lg:hidden">
                 <MobileBottomNav />
               </div>
             </div>
