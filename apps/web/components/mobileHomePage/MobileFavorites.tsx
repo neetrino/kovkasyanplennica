@@ -53,7 +53,7 @@ export function MobileFavorites({ items = [] }: MobileFavoritesProps) {
           <div className="grid grid-cols-2 gap-x-4 gap-y-20 mb-6 mt-24">
             {displayItems.map((item) => (
               <div key={item.id} className="flex justify-center">
-                <ProductCard product={{ ...item, labels: undefined }} viewMode="grid-3" compactHeight />
+                <ProductCard product={{ ...item, labels: undefined, colors: undefined }} viewMode="grid-3" compactHeight />
               </div>
             ))}
           </div>

@@ -54,22 +54,25 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
       .then((response: { data?: unknown[] }) => {
         if (response.data && Array.isArray(response.data)) {
           setItems(
-            response.data.map((p: Record<string, unknown>) => ({
-              id: String(p.id),
-              slug: String(p.slug ?? ''),
-              title: String(p.title ?? ''),
-              price: Number(p.price ?? 0),
-              image: (p.image as string) ?? null,
-              inStock: Boolean(p.inStock ?? true),
-              brand: (p.brand as { id: string; name: string }) ?? null,
-              calories: Number(p.calories ?? 150),
-              category: (p.brand as { name?: string })?.name ?? String(p.category ?? t('home.menu.categoryFallback')),
-              labels: [],
-              compareAtPrice: (p.compareAtPrice as number | null) ?? null,
-              originalPrice: (p.originalPrice as number | null) ?? null,
-              discountPercent: (p.discountPercent as number | null) ?? null,
-              colors: (p.colors as MenuItem['colors']) ?? [],
-            }))
+            response.data.map((raw: unknown) => {
+              const p = raw as Record<string, unknown>;
+              return {
+                id: String(p.id),
+                slug: String(p.slug ?? ''),
+                title: String(p.title ?? ''),
+                price: Number(p.price ?? 0),
+                image: (p.image as string) ?? null,
+                inStock: Boolean(p.inStock ?? true),
+                brand: (p.brand as { id: string; name: string } | null) ?? null,
+                calories: Number(p.calories ?? 150),
+                category: (p.brand as { name?: string })?.name ?? String(p.category ?? t('home.menu.categoryFallback')),
+                labels: [],
+                compareAtPrice: (p.compareAtPrice as number | null) ?? null,
+                originalPrice: (p.originalPrice as number | null) ?? null,
+                discountPercent: (p.discountPercent as number | null) ?? null,
+                colors: (p.colors as MenuItem['colors']) ?? [],
+              } as MenuItem;
+            })
           );
         }
       })

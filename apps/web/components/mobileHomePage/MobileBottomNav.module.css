@@ -18,6 +18,25 @@
   overflow: visible;
 }
 
+@media (min-width: 768px) {
+  .bnb45 {
+    max-width: min(640px, 100%);
+  }
+
+  .navigationmenuLeftParent {
+    gap: 20px;
+    padding: 0 28px;
+  }
+
+  .navigationmenuLeft {
+    gap: 36px;
+  }
+
+  .navigationmenuRight {
+    gap: 36px;
+  }
+}
+
 /* Bar background #2f3f3d: rounded bottom corners (24px) + semicircular cutout for Home */
 .barShape {
   position: absolute;
@@ -134,7 +153,7 @@
 .navigationmenuRight {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
   z-index: 2;
   flex-shrink: 0;
 }

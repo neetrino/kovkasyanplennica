@@ -35,21 +35,21 @@ async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
     if (!response.data || !Array.isArray(response.data)) return [];
     const lang = getStoredLanguage() || 'en';
     const categoryFallback = t(lang, 'home.menu.categoryFallback');
-    return response.data.map((p: Record<string, unknown>) => ({
+    return response.data.map((p: Product) => ({
       id: String(p.id),
       slug: String(p.slug ?? ''),
       title: String(p.title ?? ''),
       price: Number(p.price ?? 0),
-      image: (p.image as string) ?? null,
+      image: p.image ?? null,
       inStock: Boolean(p.inStock ?? true),
-      brand: (p.brand as Product['brand']) ?? null,
+      brand: p.brand ?? null,
       calories: Number(p.calories ?? 150),
-      category: (p.brand as { name?: string })?.name ?? String(p.category ?? categoryFallback),
-      labels: (p.labels as Product['labels']) ?? [],
-      compareAtPrice: (p.compareAtPrice as number | null) ?? null,
-      originalPrice: (p.originalPrice as number | null) ?? null,
-      discountPercent: (p.discountPercent as number | null) ?? null,
-      colors: (p.colors as Product['colors']) ?? [],
+      category: (p.brand?.name ?? p.category ?? categoryFallback) as string,
+      labels: p.labels ?? [],
+      compareAtPrice: p.compareAtPrice ?? null,
+      originalPrice: p.originalPrice ?? null,
+      discountPercent: p.discountPercent ?? null,
+      colors: p.colors ?? [],
     }));
   } catch {
     return [];
