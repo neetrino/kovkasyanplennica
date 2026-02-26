@@ -3,7 +3,7 @@
   "description": "Find answers to common questions about our products, shipping, returns, and more.",
   "categories": {
     "ordersShipping": {
-      "title": "Orders & Shipping",
+      "title": "Orders & Shipping,",
       "questions": {
         "shippingTime": {
           "q": "How long does shipping take?",
