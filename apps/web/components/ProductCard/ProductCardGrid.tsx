@@ -30,6 +30,9 @@ interface ProductCardGridProps {
   imageError: boolean;
   isCompact?: boolean;
   compactHeight?: boolean;
+  largeSize?: boolean;
+  /** 1024+ էկրաններում ավելի մեծ height (products carousel) */
+  largeHeightOnDesktop?: boolean;
   onImageError: () => void;
   onWishlistToggle: (e: MouseEvent) => void;
   onCompareToggle: (e: MouseEvent) => void;
@@ -48,6 +51,8 @@ export function ProductCardGrid({
   imageError,
   isCompact = false,
   compactHeight = false,
+  largeSize = false,
+  largeHeightOnDesktop = false,
   onImageError,
   onWishlistToggle,
   onCompareToggle,
@@ -56,13 +61,25 @@ export function ProductCardGrid({
   return (
     <div
       className={`relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full w-full ${
-        compactHeight ? 'min-h-[180px]' : 'min-h-[240px]'
+        compactHeight
+          ? largeHeightOnDesktop
+            ? 'min-h-[180px] lg:min-h-[280px]'
+            : 'min-h-[180px]'
+          : largeSize
+            ? 'min-h-[320px]'
+            : 'min-h-[240px]'
       }`}
     >
       {/* Product Image - Circular plate at top, half outside card, half inside */}
       <div
         className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 ${
-          compactHeight ? 'w-[45%]' : 'w-[50%]'
+          compactHeight
+            ? largeHeightOnDesktop
+              ? 'w-[45%] lg:w-[52%]'
+              : 'w-[45%]'
+            : largeSize
+              ? 'w-[58%]'
+              : 'w-[50%]'
         }`}
       >
         <Link
@@ -104,10 +121,16 @@ export function ProductCardGrid({
         />
       </div>
 
-      {/* Product Info */}
+      {/* Product Info - relative z-20 so title, price and cart stay above the product image */}
       <div
-        className={`flex-1 flex flex-col px-[6.17%] ${
-          compactHeight ? 'pt-[14%] pb-[4%]' : 'pt-[18%] pb-[8%]'
+        className={`relative z-20 flex-1 flex flex-col px-[6.17%] ${
+          compactHeight
+            ? largeHeightOnDesktop
+              ? 'pt-[14%] pb-[4%] lg:pt-[18%] lg:pb-[8%]'
+              : 'pt-[14%] pb-[4%]'
+            : largeSize
+              ? 'pt-[20%] pb-[10%]'
+              : 'pt-[18%] pb-[8%]'
         }`}
       >
         <ProductCardInfo
@@ -121,9 +144,11 @@ export function ProductCardGrid({
           currency={currency}
           colors={product.colors}
           calories={(product as { calories?: number }).calories}
-          category={(product as { category?: string }).category}
+          category={product.category}
           isCompact={isCompact || compactHeight}
           compactHeight={compactHeight}
+          largeSize={largeSize}
+          largeHeightOnDesktop={largeHeightOnDesktop}
           inStock={product.inStock}
           isAddingToCart={isAddingToCart}
           onAddToCart={onAddToCart}

@@ -43,8 +43,14 @@
   },
   "grid": {
     "noProducts": "No products found.",
-    "otherCategory": "Other"
+    "otherCategory": "Other",
+    "viewAllInCategory": "View all in this category"
   },
+  "carousel": {
+    "previous": "Previous products",
+    "next": "Next products"
+  },
+  "categoryRowTitle": "Category {number}",
   "mobileFilters": {
     "title": "Filters",
     "close": "Close filters"

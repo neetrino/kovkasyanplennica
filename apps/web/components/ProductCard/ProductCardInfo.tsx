@@ -21,6 +21,9 @@ interface ProductCardInfoProps {
   category?: string;
   isCompact?: boolean;
   compactHeight?: boolean;
+  largeSize?: boolean;
+  /** 1024+ — price/cart block ավելի ցածր */
+  largeHeightOnDesktop?: boolean;
   inStock?: boolean;
   isAddingToCart?: boolean;
   onAddToCart?: (e: MouseEvent) => void;
@@ -44,6 +47,8 @@ export function ProductCardInfo({
   category,
   isCompact = false,
   compactHeight = false,
+  largeSize = false,
+  largeHeightOnDesktop = false,
   inStock = true,
   isAddingToCart = false,
   onAddToCart,
@@ -85,7 +90,9 @@ export function ProductCardInfo({
       </div>
 
       {/* Price Section - Figma design: Цена (left) | Cart Button (center) | Price (right) */}
-      <div className={`relative flex items-center justify-between ${compactHeight ? 'pt-3 pb-3' : 'pt-8 pb-[25px]'}`}>
+      <div
+        className={`relative flex items-center justify-between ${compactHeight ? 'pt-3 pb-3' : 'pt-8 pb-[25px]'} ${largeHeightOnDesktop ? 'lg:mt-6 lg:pt-8 lg:pb-6' : ''}`}
+      >
         {/* Price Label - Left, Grey, Medium */}
         <span className={`font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
           {t('common.price')}
@@ -96,7 +103,7 @@ export function ProductCardInfo({
           <button
             onClick={handleAddToCart}
             disabled={!inStock || isAddingToCart}
-            className={`absolute left-1/2 -translate-x-1/2 bottom-[-20px] translate-y-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-10 ${
+            className={`absolute left-1/2 -translate-x-1/2 bottom-[-8px] translate-y-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
               compactHeight ? 'w-10 h-10' : 'w-[58px] h-[58px]'
             }`}
             title={inStock ? t('common.buttons.addToCart') : t('common.stock.outOfStock')}

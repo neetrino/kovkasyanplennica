@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { getStoredLanguage } from '../../lib/language';
 import { t } from '../../lib/i18n';
-import { ProductsGrid } from '../../components/ProductsGrid';
+import { ProductsCategoryCarousel } from '../../components/ProductsCategoryCarousel';
 import { CategoryNavigation } from '../../components/CategoryNavigation';
 import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
 
@@ -151,6 +151,7 @@ export default async function ProductsPage({ searchParams }: any) {
     inStock: p.inStock ?? true,
     brand: p.brand ?? null,
     categories: p.categories ?? [],
+    category: p.categories?.[0]?.title ?? '',
     colors: p.colors ?? [],
     labels: p.labels ?? []
   }));
@@ -171,11 +172,14 @@ export default async function ProductsPage({ searchParams }: any) {
     }
     byCategory.get(slug)!.push(product);
   }
-  const categoryRows: CategoryRow[] = categoryOrder.map((slug) => ({
-    categorySlug: slug,
-    categoryTitle: slug === OTHER_SLUG ? t(language, 'products.grid.otherCategory') : (byCategory.get(slug)?.[0]?.categories?.[0]?.title ?? slug),
-    products: byCategory.get(slug) ?? []
-  }));
+  const categoryRows: CategoryRow[] = categoryOrder.map((slug) => {
+    const rowProducts = byCategory.get(slug) ?? [];
+    return {
+      categorySlug: slug,
+      categoryTitle: slug === OTHER_SLUG ? t(language, 'products.grid.otherCategory') : (rowProducts[0]?.categories?.[0]?.title ?? slug),
+      products: rowProducts.filter((p) => (p.categories?.[0]?.slug ?? OTHER_SLUG) === slug)
+    };
+  });
 
   // PAGINATION: build URL for page N, keep limit and other filters
   const buildPaginationUrl = (num: number) => {
@@ -223,14 +227,21 @@ export default async function ProductsPage({ searchParams }: any) {
       {/* Category Navigation - Full Width */}
       <CategoryNavigation />
 
-      <div className="max-w-7xl mx-auto pl-2 sm:pl-4 md:pl-6 lg:pl-8 pr-4 sm:pr-6 lg:pr-8 pt-[250px] pb-4 relative z-10">
+      <div className="max-w-7xl mx-auto pl-2 sm:pl-4 md:pl-6 lg:pl-8 pr-4 sm:pr-6 lg:pr-8 pt-[80px] sm:pt-[110px] pb-4 relative z-10">
 
           {normalizedProducts.length > 0 ? (
             <>
-              {categoryRows.map((row) => (
-                <section key={row.categorySlug} className="mb-8 last:mb-0">
-                  
-                  <ProductsGrid products={row.products} sortBy={params?.sort || "default"} />
+              {categoryRows.map((row, index) => (
+                <section key={row.categorySlug} className="mb-12 sm:mb-16 md:mb-20 last:mb-0" aria-labelledby={`category-row-${index}`}>
+                  <h2
+                    id={`category-row-${index}`}
+                    className="mb-12 md:mb-6 lg:mb-10 inline-block text-left min-h-[48px] leading-[48px] text-[43px] font-light text-[#fff4de]"
+                    style={{ fontFamily: "'Sansation Light', sans-serif" }}
+                  >
+                    {t(language, 'products.categoryRowTitle').replace('{number}', String(index + 1))}
+                  </h2>
+                  {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
+                  <ProductsCategoryCarousel products={row.products} sortBy={params?.sort || "default"} minVisibleCards={2} />
                 </section>
               ))}
 

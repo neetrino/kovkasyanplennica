@@ -43,8 +43,14 @@
   },
   "grid": {
     "noProducts": "Ապրանքներ չգտնվեցին։",
-    "otherCategory": "Այլ"
+    "otherCategory": "Այլ",
+    "viewAllInCategory": "Բոլորը այս կատեգորիայում"
   },
+  "carousel": {
+    "previous": "Նախորդ ապրանքներ",
+    "next": "Հաջորդ ապրանքներ"
+  },
+  "categoryRowTitle": "Կատեգորիա {number}",
   "mobileFilters": {
     "title": "Ֆիլտրեր",
     "close": "Փակել ֆիլտրերը"
