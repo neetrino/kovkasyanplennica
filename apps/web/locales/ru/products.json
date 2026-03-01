@@ -43,8 +43,14 @@
   },
   "grid": {
     "noProducts": "Товары не найдены.",
-    "otherCategory": "Другое"
+    "otherCategory": "Другое",
+    "viewAllInCategory": "Все в этой категории"
   },
+  "carousel": {
+    "previous": "Предыдущие товары",
+    "next": "Следующие товары"
+  },
+  "categoryRowTitle": "Категория {number}",
   "mobileFilters": {
     "title": "Фильтры",
     "close": "Закрыть фильтры"

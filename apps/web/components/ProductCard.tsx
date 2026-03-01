@@ -39,13 +39,17 @@ interface ProductCardProps {
   viewMode?: ViewMode;
   /** Մոբայլում քարտի բարձրությունը փոքր (compact) */
   compactHeight?: boolean;
+  /** Home page (Menu/Favorites) — ավելի մեծ քարտ, menu-ի նման */
+  largeSize?: boolean;
+  /** 1024+ էկրաններում ավելի մեծ height (products carousel) */
+  largeHeightOnDesktop?: boolean;
 }
 
 /**
  * Product card component with Compare, Wishlist and Cart icons
  * Displays product image, title, category, price and action buttons
  */
-export function ProductCard({ product, viewMode = 'grid-3', compactHeight = false }: ProductCardProps) {
+export function ProductCard({ product, viewMode = 'grid-3', compactHeight = false, largeSize = false, largeHeightOnDesktop = false }: ProductCardProps) {
   const isCompact = viewMode === 'grid-3';
   const router = useRouter();
   const { isLoggedIn } = useAuth();
@@ -115,6 +119,8 @@ export function ProductCard({ product, viewMode = 'grid-3', compactHeight = fals
       imageError={imageError}
       isCompact={isCompact}
       compactHeight={compactHeight}
+      largeSize={largeSize}
+      largeHeightOnDesktop={largeHeightOnDesktop}
       onImageError={() => setImageError(true)}
       onWishlistToggle={handleWishlistToggle}
       onCompareToggle={handleCompareToggle}

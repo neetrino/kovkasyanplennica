@@ -4,15 +4,17 @@
 
 @layer base {
   html {
-    min-height: 100%;
-    height: auto;
+    height: 100%;
+    overflow: hidden;
     overflow-x: hidden;
   }
   body {
     @apply bg-white text-gray-900;
     min-height: 100%;
-    height: auto;
+    height: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Highlight / selection — mobile header & menu popup palette (#2F3F3D, #ffe5c2) */

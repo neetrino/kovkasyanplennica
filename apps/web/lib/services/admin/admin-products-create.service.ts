@@ -328,11 +328,15 @@ class AdminProductsCreateService {
         console.log('📸 [ADMIN PRODUCTS CREATE SERVICE] Final main media count:', finalMedia.length);
         console.log('📸 [ADMIN PRODUCTS CREATE SERVICE] Variant images excluded:', allVariantImages.length);
 
+        const categoryIds = data.categoryIds || [];
         const product = await tx.product.create({
           data: {
             brandId: data.brandId || undefined,
             primaryCategoryId: data.primaryCategoryId || undefined,
-            categoryIds: data.categoryIds || [],
+            categoryIds,
+            ...(categoryIds.length > 0 && {
+              categories: { connect: categoryIds.map((id) => ({ id })) },
+            }),
             media: finalMedia,
             published: data.published,
             featured: data.featured ?? false,

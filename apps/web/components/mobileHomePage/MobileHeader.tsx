@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from '../../lib/i18n-client';
 import { useAuth } from '../../lib/auth/AuthContext';
 
@@ -11,6 +12,12 @@ import { useAuth } from '../../lib/auth/AuthContext';
  * Search icon opens a popup overlay with search input.
  */
 export function MobileHeader() {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+  const headerBg = isHomePage ? 'bg-[#ffe5c2]' : 'bg-[#2F3F3D]';
+  const iconButtonBg = isHomePage ? 'bg-[#2f3f3d]/10' : 'bg-white/15';
+  const iconStroke = isHomePage ? '#2f3f3d' : '#ffffff';
+
   const { t } = useTranslation();
   const { isLoggedIn, logout } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -67,21 +74,21 @@ export function MobileHeader() {
 
   return (
     <>
-      <header className="w-full bg-[#ffe5c2] flex items-center justify-between gap-5 px-4 py-3 lg:hidden">
+      <header className={`w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 lg:hidden`}>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setIsMenuOpen(true)}
-            className="relative w-12 h-12 flex items-center justify-center rounded-full bg-[#2f3f3d]/10"
+            className={`relative w-10 h-10 flex items-center justify-center rounded-full ${iconButtonBg}`}
             aria-label={t('home.header.mobileMenu.ariaLabel')}
             aria-expanded={isMenuOpen}
           >
             <svg
-              width="24"
-              height="24"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#2f3f3d"
+              stroke={iconStroke}
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -94,15 +101,15 @@ export function MobileHeader() {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="relative w-12 h-12 flex items-center justify-center rounded-full bg-[#2f3f3d]/10"
+            className={`relative w-10 h-10 flex items-center justify-center rounded-full ${iconButtonBg}`}
             aria-label={t('home.header.search.ariaLabel')}
           >
             <svg
-              width="24"
-              height="24"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#2f3f3d"
+              stroke={iconStroke}
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
