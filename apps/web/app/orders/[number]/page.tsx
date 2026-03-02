@@ -34,15 +34,9 @@ export default function OrderPage() {
 
     fetchOrder();
 
-    const handleCurrencyUpdate = () => {
-      setCurrency(getStoredCurrency());
-    };
-
+    const handleCurrencyUpdate = () => setCurrency(getStoredCurrency());
     window.addEventListener('currency-updated', handleCurrencyUpdate);
-
-    return () => {
-      window.removeEventListener('currency-updated', handleCurrencyUpdate);
-    };
+    return () => window.removeEventListener('currency-updated', handleCurrencyUpdate);
   }, [isLoggedIn, params.number, router]);
 
   async function fetchOrder() {
@@ -50,7 +44,7 @@ export default function OrderPage() {
       setLoading(true);
       const response = await apiClient.get<Order>(`/api/v1/orders/${params.number}`);
       setOrder(response);
-      
+
       if (response.shippingMethod === 'delivery' && response.shippingAddress?.city) {
         fetchShippingPrice(response.shippingAddress.city);
       } else {
@@ -65,18 +59,11 @@ export default function OrderPage() {
   }
 
   async function fetchShippingPrice(city: string) {
-    if (!city || city.trim().length === 0) {
-      setCalculatedShipping(0);
-      return;
-    }
-
+    if (!city.trim()) { setCalculatedShipping(0); return; }
     setLoadingShipping(true);
     try {
       const response = await apiClient.get<{ price: number }>('/api/v1/delivery/price', {
-        params: {
-          city: city.trim(),
-          country: 'Armenia',
-        },
+        params: { city: city.trim(), country: 'Armenia' },
       });
       setCalculatedShipping(response.price);
     } catch {
@@ -86,44 +73,63 @@ export default function OrderPage() {
     }
   }
 
-  if (loading) {
-    return <LoadingState />;
-  }
-
-  if (error || !order) {
-    return <ErrorState error={error} />;
-  }
+  if (loading) return <LoadingState />;
+  if (error || !order) return <ErrorState error={error} />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {t('orders.title').replace('{number}', order.number)}
-        </h1>
-        <p className="text-gray-600">
-          {t('orders.placedOn').replace('{date}', new Date(order.createdAt).toLocaleDateString())}
-        </p>
+    <div className="w-full bg-[#2F3F3D] relative min-h-screen">
+
+      {/* Decorative overlays */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[650px] aspect-square max-h-[650px] pointer-events-none z-0 opacity-40"
+        aria-hidden
+      >
+        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div
+        className="absolute bottom-0 right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-[1] opacity-25 translate-x-1/4 translate-y-1/4"
+        aria-hidden
+      >
+        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <OrderStatus
-            status={order.status}
-            paymentStatus={order.paymentStatus}
-            fulfillmentStatus={order.fulfillmentStatus}
-          />
-          <OrderItems items={order.items} currency={currency} />
-          {order.shippingAddress && (
-            <ShippingAddress shippingAddress={order.shippingAddress} />
-          )}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+
+        {/* Page header */}
+        <div className="mb-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-2">
+            {t('common.navigation.orders')}
+          </p>
+          <h1 className="text-[#fff4de] text-4xl md:text-5xl font-light italic">
+            {t('orders.title').replace('{number}', order.number)}
+          </h1>
+          <div className="w-16 h-[2px] bg-[#7CB342] mt-4 mb-3" />
+          <p className="text-[#fff4de]/50 text-sm">
+            {t('orders.placedOn').replace('{date}', new Date(order.createdAt).toLocaleDateString())}
+          </p>
         </div>
 
-        <OrderSummary
-          order={order}
-          currency={currency}
-          calculatedShipping={calculatedShipping}
-          loadingShipping={loadingShipping}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-5">
+            <OrderStatus
+              status={order.status}
+              paymentStatus={order.paymentStatus}
+              fulfillmentStatus={order.fulfillmentStatus}
+            />
+            <OrderItems items={order.items} currency={currency} />
+            {order.shippingAddress && (
+              <ShippingAddress shippingAddress={order.shippingAddress} />
+            )}
+          </div>
+
+          <OrderSummary
+            order={order}
+            currency={currency}
+            calculatedShipping={calculatedShipping}
+            loadingShipping={loadingShipping}
+          />
+        </div>
+
       </div>
     </div>
   );

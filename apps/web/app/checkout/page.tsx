@@ -126,7 +126,7 @@ export default function CheckoutPage() {
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
       <div
-        className="absolute bottom-0 right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-0 opacity-25 translate-x-1/4 translate-y-1/4"
+        className="absolute bottom-0 right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-[1] opacity-25 translate-x-1/4 translate-y-1/4"
         aria-hidden
       >
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
