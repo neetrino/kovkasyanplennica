@@ -145,6 +145,17 @@ export function useProductHandlers({
     }
   };
 
+  const handleDuplicateProduct = async (productId: string) => {
+    try {
+      await apiClient.post(`/api/v1/admin/products/${productId}/duplicate`);
+      await fetchProducts();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error('❌ [ADMIN] Error duplicating product:', err);
+      alert(t('admin.products.errorDuplicating').replace('{message}', message || t('admin.common.unknownErrorFallback')));
+    }
+  };
+
   const handleToggleAllFeatured = async () => {
     if (products.length === 0) return;
 
@@ -185,6 +196,7 @@ export function useProductHandlers({
     toggleSelectAll,
     handleBulkDelete,
     handleDeleteProduct,
+    handleDuplicateProduct,
     handleTogglePublished,
     handleToggleFeatured,
     handleToggleAllFeatured,
