@@ -43,6 +43,9 @@
     "delivery": "Առաքում",
     "stores": "Խանութներ"
   },
+  "language": {
+    "label": "Լեզու"
+  },
   "stock": {
     "inStock": "Պահեստում",
     "outOfStock": "Արտադրված"

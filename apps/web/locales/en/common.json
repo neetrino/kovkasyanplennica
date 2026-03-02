@@ -43,6 +43,9 @@
     "delivery": "Delivery",
     "stores": "Stores"
   },
+  "language": {
+    "label": "Language"
+  },
   "stock": {
     "inStock": "In Stock",
     "outOfStock": "Out of Stock"

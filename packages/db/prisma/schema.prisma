@@ -521,3 +521,29 @@ model ContactMessage {
   @@index([email])
   @@map("contact_messages")
 }
+
+// ============================================
+// TABLE RESERVATION MODEL
+// ============================================
+model TableReservation {
+  id          String   @id @default(cuid())
+  tableId     String
+  tableLabel  String
+  tableSeats  Int
+  firstName   String
+  lastName    String
+  email       String
+  phone       String
+  date        String
+  time        String
+  guestCount  Int      @default(1)
+  note        String?  @db.Text
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+  @@index([tableId])
+  @@index([date])
+  @@map("table_reservations")
+}
