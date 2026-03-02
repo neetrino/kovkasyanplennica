@@ -50,14 +50,17 @@
   "cart": {
     "title": "Գնումների զամբյուղ",
     "empty": "Ձեր զամբյուղը դատարկ է",
+    "emptyDescription": "Կարծես դուք դեռ ոչինչ չեք ավելացրել: Սկսեք դիտել մեր ապրանքները:",
     "orderSummary": "Պատվերի ամփոփում",
     "subtotal": "Ենթագումար",
+    "discount": "Զեղչ",
     "shipping": "Առաքում",
     "tax": "Հարկ",
     "total": "Ընդամենը",
     "free": "Անվճար",
     "items": "ապրանք",
-    "item": "ապրանք"
+    "item": "ապրանք",
+    "secureCheckout": "Անվտանգ վճարում"
   },
   "wishlist": {
     "title": "Իմ ցանկությունների ցուցակ",
@@ -135,7 +138,9 @@
     "product": "Ապրանք",
     "quantity": "Քանակ",
     "subtotal": "Ենթագումար",
-    "sku": "SKU"
+    "sku": "SKU",
+    "unit": "հատ",
+    "shopping": "Գնումներ"
   },
   "alerts": {
     "compareMaxReached": "Դուք կարող եք համեմատել առավելագույնը 4 ապրանք",
@@ -171,7 +176,9 @@
     "increaseQuantity": "Ավելացնել քանակ",
     "previousThumbnail": "Նախորդ մանրապատկեր",
     "nextThumbnail": "Հաջորդ մանրապատկեր",
-    "fullscreenImage": "Լիաէկրան պատկեր"
+    "fullscreenImage": "Լիաէկրան պատկեր",
+    "decreaseQuantity": "Նվազեցնել քանակը",
+    "increaseQuantity": "Ավելացնել քանակը"
   },
   "placeholders": {
     "search": "Որոնել ապրանքներ"

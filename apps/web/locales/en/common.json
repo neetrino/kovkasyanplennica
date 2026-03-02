@@ -50,14 +50,17 @@
   "cart": {
     "title": "Shopping Cart",
     "empty": "Your cart is empty",
+    "emptyDescription": "Looks like you haven't added anything yet. Start browsing our products.",
     "orderSummary": "Order Summary",
     "subtotal": "Subtotal",
+    "discount": "Discount",
     "shipping": "Shipping",
     "tax": "Tax",
     "total": "Total",
     "free": "Free",
     "items": "items",
-    "item": "item"
+    "item": "item",
+    "secureCheckout": "Secure & encrypted checkout"
   },
   "wishlist": {
     "title": "My Wishlist",
@@ -137,7 +140,9 @@
     "product": "Product",
     "quantity": "Quantity",
     "subtotal": "Subtotal",
-    "sku": "SKU"
+    "sku": "SKU",
+    "unit": "unit",
+    "shopping": "Shopping"
   },
   "alerts": {
     "compareMaxReached": "You can compare maximum 4 products",
@@ -170,7 +175,9 @@
     "goToSlide": "Go to slide {number}",
     "previousThumbnail": "Previous thumbnail",
     "nextThumbnail": "Next thumbnail",
-    "fullscreenImage": "Fullscreen image"
+    "fullscreenImage": "Fullscreen image",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity"
   },
   "placeholders": {
     "search": "Search for products"
