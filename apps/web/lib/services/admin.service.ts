@@ -63,6 +63,7 @@ class AdminService {
   getProducts = adminProductsService.getProducts.bind(adminProductsService);
   getProductById = adminProductsService.getProductById.bind(adminProductsService);
   createProduct = adminProductsService.createProduct.bind(adminProductsService);
+  duplicateProduct = adminProductsService.duplicateProduct.bind(adminProductsService);
   updateProduct = adminProductsService.updateProduct.bind(adminProductsService);
   deleteProduct = adminProductsService.deleteProduct.bind(adminProductsService);
   updateProductDiscount = adminProductsService.updateProductDiscount.bind(adminProductsService);

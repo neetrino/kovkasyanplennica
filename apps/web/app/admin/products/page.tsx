@@ -430,6 +430,7 @@ export default function ProductsPage() {
               handleHeaderSort={handleHeaderSort}
               currency={currency}
               handleDeleteProduct={handlers.handleDeleteProduct}
+              handleDuplicateProduct={handlers.handleDuplicateProduct}
               handleTogglePublished={handlers.handleTogglePublished}
               handleToggleFeatured={handlers.handleToggleFeatured}
               meta={meta}

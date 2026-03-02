@@ -17,6 +17,7 @@ interface ProductsTableProps {
   handleHeaderSort: (field: 'price' | 'createdAt' | 'title' | 'stock') => void;
   currency: CurrencyCode;
   handleDeleteProduct: (productId: string, productTitle: string) => void;
+  handleDuplicateProduct: (productId: string) => void;
   handleTogglePublished: (productId: string, currentStatus: boolean, productTitle: string) => void;
   handleToggleFeatured: (productId: string, currentStatus: boolean, productTitle: string) => void;
   meta: ProductsResponse['meta'] | null;
@@ -48,6 +49,7 @@ export function ProductsTable({
   handleHeaderSort,
   currency,
   handleDeleteProduct,
+  handleDuplicateProduct,
   handleTogglePublished,
   handleToggleFeatured,
   meta,
@@ -326,23 +328,37 @@ export function ProductsTable({
                           variant="ghost"
                           size="sm"
                           onClick={() => router.push(`/admin/products/add?id=${product.id}`)}
-                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2"
+                          title={t('admin.products.edit')}
+                          aria-label={t('admin.products.edit')}
                         >
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
-                          {t('admin.products.edit')}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDuplicateProduct(product.id)}
+                          className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 p-2"
+                          title={t('admin.products.duplicateTitle')}
+                          aria-label={t('admin.products.duplicate')}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteProduct(product.id, product.title)}
-                          className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2"
+                          title={t('admin.products.delete')}
+                          aria-label={t('admin.products.delete')}
                         >
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                          {t('admin.products.delete')}
                         </Button>
                         <button
                           type="button"

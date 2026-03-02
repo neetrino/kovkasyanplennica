@@ -17,6 +17,7 @@ class AdminProductsService {
 
   // Create methods
   createProduct = adminProductsCreateService.createProduct.bind(adminProductsCreateService);
+  duplicateProduct = adminProductsCreateService.duplicateProduct.bind(adminProductsCreateService);
 
   // Update methods
   updateProduct = adminProductsUpdateService.updateProduct.bind(adminProductsUpdateService);
