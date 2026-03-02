@@ -50,14 +50,17 @@
   "cart": {
     "title": "Корзина покупок",
     "empty": "Ваша корзина пуста",
+    "emptyDescription": "Похоже, вы ещё ничего не добавили. Начните просматривать наши товары.",
     "orderSummary": "Итоги заказа",
     "subtotal": "Промежуточный итог",
+    "discount": "Скидка",
     "shipping": "Доставка",
     "tax": "Налог",
     "total": "Итого",
     "free": "Бесплатно",
     "items": "товаров",
-    "item": "товар"
+    "item": "товар",
+    "secureCheckout": "Безопасная оплата"
   },
   "wishlist": {
     "title": "Мое избранное",
@@ -137,7 +140,9 @@
     "product": "Товар",
     "quantity": "Количество",
     "subtotal": "Промежуточный итог",
-    "sku": "Артикул"
+    "sku": "Артикул",
+    "unit": "шт",
+    "shopping": "Покупки"
   },
   "alerts": {
     "compareMaxReached": "Вы можете сравнить максимум 4 товара",
@@ -170,7 +175,9 @@
     "goToSlide": "Перейти к слайду {number}",
     "previousThumbnail": "Предыдущая миниатюра",
     "nextThumbnail": "Следующая миниатюра",
-    "fullscreenImage": "Полноэкранное изображение"
+    "fullscreenImage": "Полноэкранное изображение",
+    "decreaseQuantity": "Уменьшить количество",
+    "increaseQuantity": "Увеличить количество"
   },
   "placeholders": {
     "search": "Поиск товаров"
