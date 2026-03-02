@@ -83,7 +83,7 @@ export default function CartPage() {
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
       <div
-        className="absolute bottom-0 right-0 w-[300px] md:w-[500px] aspect-square max-h-[500px] pointer-events-none z-0 opacity-30 translate-x-1/4 translate-y-1/4"
+        className="absolute bottom-0 right-0 w-[300px] md:w-[500px] aspect-square max-h-[500px] pointer-events-none z-[1] opacity-30 translate-x-1/4 translate-y-1/4"
         aria-hidden
       >
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />

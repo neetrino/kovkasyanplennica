@@ -13,7 +13,7 @@ interface OrderItemProps {
 export function OrderItem({ item, currency }: OrderItemProps) {
   const { t } = useTranslation();
 
-  const allOptions = item.variantOptions || [];
+  const allOptions = item.variantOptions ?? [];
 
   const getAttributeLabel = (key: string): string => {
     if (key === 'color' || key === 'colour') return t('orders.itemDetails.color');
@@ -25,102 +25,91 @@ export function OrderItem({ item, currency }: OrderItemProps) {
     if (!colors) return [];
     if (Array.isArray(colors)) return colors;
     if (typeof colors === 'string') {
-      try {
-        const parsed = JSON.parse(colors);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
+      try { return JSON.parse(colors); } catch { return []; }
     }
     return [];
   };
 
-  const itemPriceDisplay = (() => {
-    const priceAMD = convertPrice(item.price, 'USD', 'AMD');
-    const priceDisplay = currency === 'AMD' ? priceAMD : convertPrice(priceAMD, 'AMD', currency);
-    return formatPriceInCurrency(priceDisplay, currency);
-  })();
+  const priceAMD = convertPrice(item.price, 'USD', 'AMD');
+  const priceDisplay = currency === 'AMD' ? priceAMD : convertPrice(priceAMD, 'AMD', currency);
+  const itemPriceDisplay = formatPriceInCurrency(priceDisplay, currency);
 
-  const itemTotalDisplay = (() => {
-    const totalAMD = convertPrice(item.total, 'USD', 'AMD');
-    const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency);
-    return formatPriceInCurrency(totalDisplay, currency);
-  })();
+  const totalAMD = convertPrice(item.total, 'USD', 'AMD');
+  const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency);
+  const itemTotalDisplay = formatPriceInCurrency(totalDisplay, currency);
 
   return (
-    <div className="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
-      {item.imageUrl && (
-        <div className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-          <img 
-            src={item.imageUrl} 
+    <div className="flex gap-4 pb-5 border-b border-[#3d504e] last:border-0 last:pb-0">
+
+      {/* Product image */}
+      {item.imageUrl ? (
+        <div className="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-[#2F3F3D] border border-[#3d504e]">
+          <img
+            src={item.imageUrl}
             alt={item.productTitle}
             className="w-full h-full object-cover"
           />
         </div>
+      ) : (
+        <div className="w-20 h-20 flex-shrink-0 rounded-xl bg-[#2F3F3D] border border-[#3d504e] flex items-center justify-center">
+          <svg className="w-8 h-8 text-[#fff4de]/15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
       )}
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.productTitle}</h3>
-        
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="text-[#fff4de] text-base font-medium mb-1 leading-snug">{item.productTitle}</h3>
+
+        {/* Variant options */}
         {allOptions.length > 0 && (
-          <div className="flex flex-wrap gap-3 mt-2 mb-2">
-            {allOptions.map((opt, optIndex) => {
+          <div className="flex flex-wrap gap-2 mt-2 mb-2">
+            {allOptions.map((opt, idx) => {
               if (!opt.attributeKey || !opt.value) return null;
-              
-              const attributeKey = opt.attributeKey.toLowerCase().trim();
-              const isColor = attributeKey === 'color' || attributeKey === 'colour';
-              const displayLabel = opt.label || opt.value;
-              const hasImage = opt.imageUrl && opt.imageUrl.trim() !== '';
+              const attrKey = opt.attributeKey.toLowerCase().trim();
+              const isColor = attrKey === 'color' || attrKey === 'colour';
+              const displayLabel = opt.label ?? opt.value;
+              const hasImage = opt.imageUrl?.trim();
               const colors = getColorsArray(opt.colors);
               const colorHex = colors.length > 0 ? colors[0] : (isColor ? getColorValue(opt.value) : null);
-              
+
               return (
-                <div key={optIndex} className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    {getAttributeLabel(opt.attributeKey)}:
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {hasImage ? (
-                      <img 
-                        src={opt.imageUrl!} 
-                        alt={displayLabel}
-                        className="w-6 h-6 rounded border border-gray-300 object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    ) : isColor && colorHex ? (
-                      <div 
-                        className="w-5 h-5 rounded-full border border-gray-300"
-                        style={{ backgroundColor: colorHex }}
-                        title={displayLabel}
-                      />
-                    ) : null}
-                    <span className="text-sm text-gray-900 capitalize">
-                      {displayLabel}
-                    </span>
-                  </div>
+                <div key={idx} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#2F3F3D] border border-[#3d504e] rounded-lg">
+                  <span className="text-[#fff4de]/40 text-xs">{getAttributeLabel(opt.attributeKey)}:</span>
+                  {hasImage ? (
+                    <img
+                      src={opt.imageUrl!}
+                      alt={displayLabel}
+                      className="w-4 h-4 rounded border border-[#3d504e] object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  ) : isColor && colorHex ? (
+                    <span
+                      className="w-3.5 h-3.5 rounded-full border border-white/20 flex-shrink-0"
+                      style={{ backgroundColor: colorHex }}
+                      title={displayLabel}
+                    />
+                  ) : null}
+                  <span className="text-[#fff4de] text-xs capitalize">{displayLabel}</span>
                 </div>
               );
             })}
           </div>
         )}
-        
-        <p className="text-sm text-gray-600">{t('orders.itemDetails.sku').replace('{sku}', item.sku)}</p>
-        <p className="text-sm text-gray-600 mt-2">
-          {t('orders.itemDetails.quantity')
-            .replace('{qty}', item.quantity.toString())
-            .replace('{price}', itemPriceDisplay)
-            .replace('{total}', itemTotalDisplay)}
+
+        <p className="text-[#fff4de]/35 text-xs font-mono mt-1">
+          {t('orders.itemDetails.sku').replace('{sku}', item.sku)}
         </p>
+        <p className="text-[#fff4de]/50 text-xs mt-1">
+          {item.quantity} × {itemPriceDisplay}
+        </p>
+      </div>
+
+      {/* Total */}
+      <div className="flex-shrink-0 text-right pt-1">
+        <span className="text-[#7CB342] font-semibold text-base">{itemTotalDisplay}</span>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-

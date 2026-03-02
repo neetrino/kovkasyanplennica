@@ -27,11 +27,11 @@ export function Header() {
 
   const navigationLinks = [
     { href: '/', label: t('home.header.navigation.home') },
-    { href: '/coming-soon', label: t('home.header.navigation.menu') },
-    { href: '/coming-soon', label: t('home.header.navigation.about') },
+    { href: '/products', label: t('home.header.navigation.menu') },
+    { href: '/about', label: t('home.header.navigation.about') },
     { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
     { href: '/coming-soon', label: t('home.header.navigation.team') },
-    { href: '/coming-soon', label: t('home.header.navigation.contact') },
+    { href: '/contact', label: t('home.header.navigation.contact') },
     { href: '/coming-soon', label: t('home.header.navigation.delivery') },
   ];
 
@@ -161,7 +161,7 @@ export function Header() {
 
         {/* Cart Button */}
         <Link
-          href="/coming-soon"
+          href="/cart"
           className={`rounded-[45px] flex items-center gap-1.5 bg-[#2F3F3D] hover:opacity-90 transition-opacity ${isLoggedIn ? 'h-10 px-2.5' : 'h-8 px-2'}`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >

@@ -1,6 +1,5 @@
 'use client';
 
-import { Button, Input } from '@shop/ui';
 import { useState, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { getStoredLanguage } from '@/lib/language';
@@ -8,228 +7,390 @@ import { useTranslation } from '../../lib/i18n-client';
 import { apiClient } from '../../lib/api-client';
 import contactData from '../../../../json/contact.json';
 
-// Icons
-const PhoneIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22 16.92V19.92C22.0011 20.1985 21.9441 20.4742 21.8325 20.7292C21.7209 20.9842 21.5573 21.2131 21.3523 21.4011C21.1473 21.5891 20.9053 21.732 20.6393 21.8207C20.3733 21.9094 20.0892 21.9418 19.81 21.9159C16.7428 21.5811 13.787 20.5306 11.19 18.8499C8.77382 17.3147 6.72533 15.2662 5.19 12.8499C3.49997 10.2412 2.44824 7.27099 2.12 4.18994C2.09413 3.91078 2.12653 3.62669 2.21523 3.36069C2.30393 3.09469 2.44684 2.85273 2.63482 2.64773C2.8228 2.44273 3.05172 2.27912 3.30672 2.16753C3.56172 2.05594 3.83743 1.99899 4.116 1.99994H7.116C7.68157 1.98944 8.23512 2.16393 8.69506 2.49952C9.155 2.83512 9.49782 3.31473 9.676 3.86994C9.94479 4.78626 10.3155 5.67019 10.78 6.50994C10.9867 6.89183 11.0672 7.33164 11.01 7.76494C10.9528 8.19824 10.7608 8.60612 10.46 8.93994L9.09 10.3099C10.5144 12.7895 12.7305 15.0056 15.21 16.4299L16.58 15.0599C16.9138 14.7592 17.3217 14.5672 17.755 14.51C18.1883 14.4528 18.6281 14.5333 19.01 14.7399C19.8498 15.2045 20.7337 15.5752 21.65 15.8439C22.2052 16.0221 22.6848 16.365 23.0204 16.8249C23.356 17.2849 23.5305 17.8384 23.52 18.4039L22 16.92Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const EnvelopeIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 8L10.89 13.26C11.2187 13.4793 11.6049 13.5963 12 13.5963C12.3951 13.5963 12.7813 13.4793 13.11 13.26L21 8M5 19H19C19.5304 19 20.0391 18.7893 20.4142 18.4142C20.7893 18.0391 21 17.5304 21 17V7C21 6.46957 20.7893 5.96086 20.4142 5.58579C20.0391 5.21071 19.5304 5 19 5H5C4.46957 5 3.96086 5.21071 3.58579 5.58579C3.21071 5.96086 3 6.46957 3 7V17C3 17.5304 3.21071 18.0391 3.58579 18.4142C3.96086 18.7893 4.46957 19 5 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-const MapPinIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
 
 export default function ContactPage() {
   const { t } = useTranslation();
   const [language, setLanguage] = useState<'en' | 'ru' | 'am'>('ru');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedLang = getStoredLanguage();
-    const mappedLang = storedLang === 'hy' ? 'am' : (storedLang === 'ka' ? 'en' : storedLang);
-    if (mappedLang === 'am' || mappedLang === 'ru' || mappedLang === 'en') {
-      setLanguage(mappedLang as 'en' | 'ru' | 'am');
-    } else {
-      setLanguage('ru');
-    }
+    const stored = getStoredLanguage();
+    const mapped = stored === 'hy' ? 'am' : stored === 'ka' ? 'en' : stored;
+    setLanguage((mapped === 'am' || mapped === 'ru' || mapped === 'en') ? (mapped as 'en' | 'ru' | 'am') : 'ru');
   }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    
+    setSubmitError(null);
     try {
-      await apiClient.post('/api/v1/contact', {
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-      }, {
-        skipAuth: true, // Contact form doesn't require authentication
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-      });
-      
-      alert(t('contact.form.submitSuccess') || 'Ձեր հաղորդագրությունը հաջողությամբ ուղարկվեց');
-    } catch (error: any) {
-      console.error('Error submitting contact form:', error);
-      alert(t('contact.form.submitError') || 'Սխալ: ' + (error.message || 'Չհաջողվեց ուղարկել հաղորդագրությունը'));
+      await apiClient.post('/api/v1/contact', formData, { skipAuth: true });
+      setFormData(EMPTY_FORM);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      setSubmitError(t('contact.form.submitError') + (msg ? `: ${msg}` : ''));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (submitted) setSubmitted(false);
+    if (submitError) setSubmitError(null);
   };
 
-  const address = contactData.address[language] || contactData.address.en;
+  const address = contactData.address[language] ?? contactData.address.en;
+  const workingHours = contactData.workingHours[language] ?? contactData.workingHours.en;
+
+  const INFO_CARDS = [
+    {
+      key: 'phone',
+      title: t('contact.callToUs.title'),
+      desc: t('contact.callToUs.description'),
+      value: contactData.phone,
+      href: `tel:${contactData.phone}`,
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+        </svg>
+      ),
+    },
+    {
+      key: 'email',
+      title: t('contact.writeToUs.title'),
+      desc: t('contact.writeToUs.description'),
+      value: contactData.email,
+      href: `mailto:${contactData.email}`,
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+        </svg>
+      ),
+    },
+    {
+      key: 'address',
+      title: t('contact.headquarter.title'),
+      desc: `${t('contact.headquarter.hours.weekdays')} · ${t('contact.headquarter.hours.saturday')}`,
+      value: address,
+      href: null,
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <div className="bg-white">
-      {/* Top Section: Contact Info and Form */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Side: Contact Information */}
-          <div className="space-y-8">
-            {/* Call to Us */}
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
-                  <PhoneIcon />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">{t('contact.callToUs.title')}</h3>
+    <div className="w-full bg-[#2F3F3D] relative">
+
+      {/* ── Decorative overlays ── */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[650px] aspect-square max-h-[650px] pointer-events-none z-0 opacity-40"
+        aria-hidden
+      >
+        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div
+        className="absolute top-[55%] right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-0 opacity-25 translate-x-1/4"
+        aria-hidden
+      >
+        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+
+        {/* ── Page header ── */}
+        <div className="mb-14 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#7CB342] mb-3">
+            {t('common.navigation.contact')}
+          </p>
+          <h1 className="text-[#fff4de] text-5xl md:text-6xl lg:text-7xl font-light italic mb-5">
+            {t('contact.callToUs.title').replace(':', '')}
+          </h1>
+          <div className="w-16 h-[2px] bg-[#7CB342] mx-auto mb-5" />
+          <p className="text-[#fff4de]/50 text-base md:text-lg max-w-lg mx-auto">
+            {t('contact.writeToUs.description')}
+          </p>
+        </div>
+
+        {/* ── Info cards ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+          {INFO_CARDS.map((card) => (
+            <div
+              key={card.key}
+              className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl p-6 hover:border-[#7CB342]/40 transition-colors duration-300"
+            >
+              <div className="w-12 h-12 rounded-xl bg-[#7CB342]/15 border border-[#7CB342]/30 flex items-center justify-center text-[#7CB342] mb-5">
+                {card.icon}
               </div>
-              <p className="text-gray-600 mb-2">{t('contact.callToUs.description')}</p>
-              <a href={`tel:${contactData.phone}`} className="text-orange-500 hover:text-orange-600 font-medium">
-                {contactData.phone}
-              </a>
+              <h3 className="text-[#fff4de] font-light italic text-lg mb-2">{card.title}</h3>
+              <p className="text-[#fff4de]/45 text-sm leading-relaxed mb-3">{card.desc}</p>
+              {card.href ? (
+                <a
+                  href={card.href}
+                  className="text-[#7CB342] text-sm font-medium hover:text-[#8fd44d] transition-colors"
+                >
+                  {card.value}
+                </a>
+              ) : (
+                <p className="text-[#7CB342] text-sm font-medium">{card.value}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* ── Main grid: form + extra info ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
+
+          {/* Form — 3/5 */}
+          <div className="lg:col-span-3 bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl overflow-hidden">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-[#3d504e] bg-[#3d504e]/60">
+              <svg className="w-5 h-5 text-[#7CB342]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+              </svg>
+              <h2 className="text-[#fff4de] font-light italic text-lg">{t('contact.writeToUs.title')}</h2>
             </div>
 
-            {/* Write to Us */}
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
-                  <EnvelopeIcon />
+            <div className="p-6">
+              {/* Success state */}
+              {submitted && (
+                <div className="mb-6 p-4 bg-[#7CB342]/15 border border-[#7CB342]/40 rounded-xl flex items-start gap-3">
+                  <svg className="w-5 h-5 text-[#7CB342] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-[#7CB342] text-sm">{t('contact.form.submitSuccess')}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">{t('contact.writeToUs.title')}</h3>
-              </div>
-              <p className="text-gray-600 mb-2">{t('contact.writeToUs.description')}</p>
-              <a href={`mailto:${contactData.email}`} className="text-orange-500 hover:text-orange-600 font-medium">
-                {t('contact.writeToUs.emailLabel')} {contactData.email}
-              </a>
-            </div>
+              )}
 
-            {/* Headquarter */}
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700">
-                  <MapPinIcon />
+              {/* Error state */}
+              {submitError && (
+                <div className="mb-6 p-4 bg-red-400/10 border border-red-400/30 rounded-xl flex items-start gap-3">
+                  <svg className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                  </svg>
+                  <p className="text-red-400 text-sm">{submitError}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">{t('contact.headquarter.title')}</h3>
-              </div>
-              <div className="text-gray-600 mb-2 space-y-1">
-                <p>{t('contact.headquarter.hours.weekdays')}</p>
-                <p>{t('contact.headquarter.hours.saturday')}</p>
-              </div>
-              <p className="text-orange-500 hover:text-orange-600 font-medium">
-                {address}
-              </p>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Name */}
+                  <div>
+                    <label htmlFor="name" className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#fff4de]/50 mb-1.5">
+                      {t('contact.form.name')}
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder={t('contact.form.namePlaceholder')}
+                      disabled={submitting}
+                      className="w-full px-4 py-3 bg-[#2F3F3D] border border-[#3d504e] rounded-xl text-[#fff4de] text-sm placeholder-[#fff4de]/25 focus:outline-none focus:border-[#7CB342]/70 focus:ring-1 focus:ring-[#7CB342]/30 disabled:opacity-40 transition-colors"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="email" className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#fff4de]/50 mb-1.5">
+                      {t('contact.form.email')}
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder={t('contact.form.emailPlaceholder')}
+                      disabled={submitting}
+                      className="w-full px-4 py-3 bg-[#2F3F3D] border border-[#3d504e] rounded-xl text-[#fff4de] text-sm placeholder-[#fff4de]/25 focus:outline-none focus:border-[#7CB342]/70 focus:ring-1 focus:ring-[#7CB342]/30 disabled:opacity-40 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div>
+                  <label htmlFor="subject" className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#fff4de]/50 mb-1.5">
+                    {t('contact.form.subject')}
+                  </label>
+                  <input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    required
+                    value={formData.subject}
+                    onChange={handleChange}
+                    placeholder={t('contact.form.subjectPlaceholder')}
+                    disabled={submitting}
+                    className="w-full px-4 py-3 bg-[#2F3F3D] border border-[#3d504e] rounded-xl text-[#fff4de] text-sm placeholder-[#fff4de]/25 focus:outline-none focus:border-[#7CB342]/70 focus:ring-1 focus:ring-[#7CB342]/30 disabled:opacity-40 transition-colors"
+                  />
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label htmlFor="message" className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#fff4de]/50 mb-1.5">
+                    {t('contact.form.message')}
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder={t('contact.form.messagePlaceholder')}
+                    disabled={submitting}
+                    className="w-full px-4 py-3 bg-[#2F3F3D] border border-[#3d504e] rounded-xl text-[#fff4de] text-sm placeholder-[#fff4de]/25 focus:outline-none focus:border-[#7CB342]/70 focus:ring-1 focus:ring-[#7CB342]/30 disabled:opacity-40 transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-3.5 px-6 bg-[#7CB342] hover:bg-[#6aa535] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#7CB342]/20 hover:-translate-y-0.5 active:translate-y-0 text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      {t('contact.form.submitting')}
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                      </svg>
+                      {t('contact.form.submit')}
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
           </div>
 
-          {/* Right Side: Contact Form */}
-          <div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
-                  {t('contact.form.name')}
-                </label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full"
-                  placeholder={t('contact.form.namePlaceholder')}
-                />
+          {/* Side info — 2/5 */}
+          <div className="lg:col-span-2 space-y-5">
+
+            {/* Working hours card */}
+            <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-[#7CB342]/15 border border-[#7CB342]/30 flex items-center justify-center text-[#7CB342]">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-[#fff4de] font-light italic">Working Hours</h3>
               </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
-                  {t('contact.form.email')}
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full"
-                  placeholder={t('contact.form.emailPlaceholder')}
-                />
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-[#3d504e]">
+                  <span className="text-[#fff4de]/50 text-sm">{t('contact.headquarter.hours.weekdays').split(':')[0]}</span>
+                  <span className="text-[#7CB342] text-sm font-medium">{t('contact.headquarter.hours.weekdays').split(': ')[1] ?? '9:00–20:00'}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-[#fff4de]/50 text-sm">{t('contact.headquarter.hours.saturday').split(':')[0]}</span>
+                  <span className="text-[#7CB342] text-sm font-medium">{t('contact.headquarter.hours.saturday').split(': ')[1] ?? '11:00–15:00'}</span>
+                </div>
               </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-900 mb-2">
-                  {t('contact.form.subject')}
-                </label>
-                <Input
-                  id="subject"
-                  name="subject"
-                  type="text"
-                  required
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="w-full"
-                  placeholder={t('contact.form.subjectPlaceholder')}
-                />
+            </div>
+
+            {/* Social links card */}
+            <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl p-6">
+              <h3 className="text-[#fff4de] font-light italic mb-5">Social Media</h3>
+              <div className="flex gap-3">
+                {[
+                  {
+                    label: 'Instagram',
+                    href: '#',
+                    icon: (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    label: 'Facebook',
+                    href: '#',
+                    icon: (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    label: 'Telegram',
+                    href: '#',
+                    icon: (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                      </svg>
+                    ),
+                  },
+                ].map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    className="w-10 h-10 rounded-xl bg-[#2F3F3D] border border-[#3d504e] hover:border-[#7CB342]/60 flex items-center justify-center text-[#fff4de]/40 hover:text-[#7CB342] transition-all duration-200"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
               </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-2">
-                  {t('contact.form.message')}
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={6}
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-                  placeholder={t('contact.form.messagePlaceholder')}
-                />
+            </div>
+
+            {/* Working hours display */}
+            <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#7CB342]/15 border border-[#7CB342]/30 flex items-center justify-center text-[#7CB342]">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-[#fff4de] font-light italic">{t('contact.headquarter.title')}</h3>
               </div>
-              <Button
-                type="submit"
-                variant="primary"
-                className="w-full bg-gray-900 text-white hover:bg-gray-800 rounded-md py-3 font-semibold uppercase tracking-wide"
-                disabled={submitting}
-              >
-                {submitting ? (t('contact.form.submitting') || 'Ուղարկվում է...') : t('contact.form.submit')}
-              </Button>
-            </form>
+              <p className="text-[#7CB342] text-sm font-medium">{address}</p>
+              <p className="text-[#fff4de]/45 text-xs mt-2">{workingHours}</p>
+            </div>
+
           </div>
         </div>
       </div>
 
-      {/* Bottom Section: Map */}
-      <div className="w-full h-[500px] bg-gray-100">
+      {/* ── Map ── */}
+      <div className="relative w-full h-[420px] md:h-[500px] border-t border-[#3d504e]">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.1234567890123!2d44.5150!3d40.1812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x406aa2dab8fc8b5b%3A0x3d1479ab4e9b8c5e!2sAbovyan%20St%2C%20Yerevan%2C%20Armenia!5e0!3m2!1sen!2sam!4v1234567890123!5m2!1sen!2sam"
           width="100%"
           height="100%"
-          style={{ border: 0 }}
+          style={{ border: 0, filter: 'grayscale(30%) invert(5%) sepia(5%) saturate(200%) hue-rotate(140deg)' }}
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          className="w-full h-full"
+          title="Location map"
         />
+        {/* Address overlay badge */}
+        <div className="absolute bottom-6 left-6 bg-[#2F3F3D]/90 backdrop-blur-sm border border-[#3d504e] rounded-xl px-5 py-3 pointer-events-none">
+          <p className="text-[#7CB342] text-xs font-semibold uppercase tracking-widest mb-0.5">
+            {t('contact.headquarter.title')}
+          </p>
+          <p className="text-[#fff4de] text-sm">{address}</p>
+        </div>
       </div>
+
     </div>
   );
 }
