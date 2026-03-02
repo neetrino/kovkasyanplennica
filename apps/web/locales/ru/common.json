@@ -43,6 +43,9 @@
     "delivery": "Доставка",
     "stores": "Магазины"
   },
+  "language": {
+    "label": "Язык"
+  },
   "stock": {
     "inStock": "В наличии",
     "outOfStock": "Нет в наличии"

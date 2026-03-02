@@ -29,7 +29,7 @@ export function Header() {
     { href: '/', label: t('home.header.navigation.home') },
     { href: '/products', label: t('home.header.navigation.menu') },
     { href: '/about', label: t('home.header.navigation.about') },
-    { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
+    { href: '/desktops', label: t('home.header.navigation.vacancies') },
     { href: '/coming-soon', label: t('home.header.navigation.team') },
     { href: '/contact', label: t('home.header.navigation.contact') },
     { href: '/coming-soon', label: t('home.header.navigation.delivery') },
@@ -246,28 +246,6 @@ export function Header() {
           </Link>
         )}
       </div>
-
-      {/* Mobile Menu Button */}
-      <button
-        className={`lg:hidden w-10 h-10 flex items-center justify-center ${isHomePage ? 'text-[#2f3f3d]' : 'text-white'}`}
-        aria-label={t('home.header.mobileMenu.ariaLabel')}
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3 12H21M3 6H21M3 18H21"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
     </header>
   );
 }

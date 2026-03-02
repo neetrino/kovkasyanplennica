@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../../lib/i18n-client';
 import { useAuth } from '../../lib/auth/AuthContext';
+import { LANGUAGES, getStoredLanguage, setStoredLanguage } from '../../lib/language';
+import type { LanguageCode } from '../../lib/language';
 
 /**
  * Mobile Header — Figma Frame1000002326 (node-id=75-2062).
@@ -30,6 +32,13 @@ export function MobileHeader() {
   }, []);
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+  const currentLang = getStoredLanguage();
+
+  const handleLanguageSelect = (code: LanguageCode) => {
+    if (code === currentLang) return;
+    setStoredLanguage(code);
+    closeMenu();
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,6 +246,28 @@ export function MobileHeader() {
               >
                 {t('home.header.navigation.about')}
               </Link>
+            </div>
+            {/* Language selector */}
+            <div className="pt-3 mt-3 border-t border-[#2f3f3d]/20">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#2f3f3d]/70 mb-2">
+                {t('common.language.label')}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {(Object.keys(LANGUAGES) as LanguageCode[]).map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => handleLanguageSelect(code)}
+                    className={`py-2 px-3 rounded-full text-xs font-semibold transition-colors ${
+                      currentLang === code
+                        ? 'bg-[#2f3f3d] text-[#ffe5c2]'
+                        : 'bg-[#2f3f3d]/15 text-[#2f3f3d] hover:bg-[#2f3f3d]/25'
+                    }`}
+                  >
+                    {LANGUAGES[code].nativeName}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
