@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Card, Button, Input } from '@shop/ui';
 import { useTranslation } from '../../../../lib/i18n-client';
 
@@ -86,7 +87,7 @@ export function BrandDiscountsCard({
                     max="100"
                     step="0.1"
                     value={currentValue === undefined ? '' : currentValue}
-                    onChange={(e) => updateBrandDiscountValue(brand.id, e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => updateBrandDiscountValue(brand.id, e.target.value)}
                     className="w-24"
                     placeholder="0"
                   />

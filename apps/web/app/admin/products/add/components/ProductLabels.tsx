@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Button, Input } from '@shop/ui';
 import { useTranslation } from '../../../../../lib/i18n-client';
 import type { ProductLabel } from '../types';
@@ -48,7 +49,7 @@ export function ProductLabels({ labels, onAddLabel, onRemoveLabel, onUpdateLabel
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={label.type}
-                    onChange={(e) => onUpdateLabel(index, 'type', e.target.value as 'text' | 'percentage')}
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => onUpdateLabel(index, 'type', e.target.value as 'text' | 'percentage')}
                     required
                   >
                     <option value="text">{t('admin.products.add.textType')}</option>
@@ -64,7 +65,7 @@ export function ProductLabels({ labels, onAddLabel, onRemoveLabel, onUpdateLabel
                   <Input
                     type="text"
                     value={label.value}
-                    onChange={(e) => onUpdateLabel(index, 'value', e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => onUpdateLabel(index, 'value', e.target.value)}
                     placeholder={
                       label.type === 'percentage' ? t('admin.products.add.percentagePlaceholder') : t('admin.products.add.newProductLabel')
                     }
@@ -84,7 +85,7 @@ export function ProductLabels({ labels, onAddLabel, onRemoveLabel, onUpdateLabel
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={label.position}
-                    onChange={(e) => onUpdateLabel(index, 'position', e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => onUpdateLabel(index, 'position', e.target.value)}
                     required
                   >
                     <option value="top-left">{t('admin.products.add.topLeft')}</option>
@@ -102,7 +103,7 @@ export function ProductLabels({ labels, onAddLabel, onRemoveLabel, onUpdateLabel
                   <Input
                     type="text"
                     value={label.color || ''}
-                    onChange={(e) => onUpdateLabel(index, 'color', e.target.value || null)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => onUpdateLabel(index, 'color', e.target.value || null)}
                     placeholder={t('admin.products.add.colorHexPlaceholder')}
                     className="w-full"
                   />

@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../../../lib/auth/AuthContext';
@@ -344,7 +345,7 @@ export default function PriceFilterSettingsPage() {
                       <Input
                         type="number"
                         value={stepSizeUSD}
-                        onChange={(e) => handleStepSizeChange(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleStepSizeChange(e.target.value)}
                         placeholder="100"
                         min="1"
                         step="1"
@@ -358,7 +359,7 @@ export default function PriceFilterSettingsPage() {
                       <Input
                         type="number"
                         value={stepSizeAMD}
-                        onChange={(e) => setStepSizeAMD(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeAMD(e.target.value)}
                         placeholder="5000"
                         min="1"
                         step="1"
@@ -372,7 +373,7 @@ export default function PriceFilterSettingsPage() {
                       <Input
                         type="number"
                         value={stepSizeRUB}
-                        onChange={(e) => setStepSizeRUB(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeRUB(e.target.value)}
                         placeholder="500"
                         min="1"
                         step="1"
@@ -386,7 +387,7 @@ export default function PriceFilterSettingsPage() {
                       <Input
                         type="number"
                         value={stepSizeGEL}
-                        onChange={(e) => setStepSizeGEL(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeGEL(e.target.value)}
                         placeholder="10"
                         min="1"
                         step="1"

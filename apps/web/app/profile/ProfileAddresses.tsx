@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { Button, Input, Card } from '@shop/ui';
 import type { Address, UserProfile } from './types';
 
@@ -59,13 +59,13 @@ export function ProfileAddresses({
               <Input
                 label={t('profile.addresses.form.addressLine1')}
                 value={addressForm.addressLine1}
-                onChange={(e) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setAddressForm({ ...addressForm, addressLine1: e.target.value })}
                 required
               />
               <Input
                 label={t('profile.addresses.form.city')}
                 value={addressForm.city}
-                onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setAddressForm({ ...addressForm, city: e.target.value })}
                 required
               />
             </div>
@@ -73,7 +73,7 @@ export function ProfileAddresses({
               <input
                 type="checkbox"
                 checked={addressForm.isDefault || false}
-                onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
                 className="rounded border-gray-300 text-gray-900 focus:ring-gray-900"
               />
               <span className="ml-2 text-sm text-gray-700">{t('profile.addresses.form.isDefault')}</span>

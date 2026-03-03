@@ -266,7 +266,7 @@ export function VariantBuilder({
                             <Input
                               type="number"
                               value={variant.price}
-                              onChange={(e) => {
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 onVariantUpdate((prev) =>
                                   prev.map((v) => (v.id === variant.id ? { ...v, price: e.target.value } : v))
                                 );
@@ -284,7 +284,7 @@ export function VariantBuilder({
                             <Input
                               type="number"
                               value={variant.compareAtPrice}
-                              onChange={(e) => {
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 onVariantUpdate((prev) =>
                                   prev.map((v) => (v.id === variant.id ? { ...v, compareAtPrice: e.target.value } : v))
                                 );
@@ -301,7 +301,7 @@ export function VariantBuilder({
                           <Input
                             type="number"
                             value={variant.stock}
-                            onChange={(e) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                               onVariantUpdate((prev) =>
                                 prev.map((v) => (v.id === variant.id ? { ...v, stock: e.target.value } : v))
                               );
@@ -315,7 +315,7 @@ export function VariantBuilder({
                           <Input
                             type="text"
                             value={variant.sku}
-                            onChange={(e) => {
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
                               onVariantUpdate((prev) =>
                                 prev.map((v) => (v.id === variant.id ? { ...v, sku: e.target.value } : v))
                               );
@@ -375,7 +375,7 @@ export function VariantBuilder({
                               }}
                               type="file"
                               accept="image/*"
-                              onChange={(e) => onVariantImageUpload(variant.id, e)}
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => onVariantImageUpload(variant.id, e)}
                               className="hidden"
                             />
                           </div>
