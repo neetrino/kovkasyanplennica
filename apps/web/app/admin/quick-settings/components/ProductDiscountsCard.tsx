@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Card, Button, Input } from '@shop/ui';
 import { useTranslation } from '../../../../lib/i18n-client';
 
@@ -106,7 +107,7 @@ export function ProductDiscountsCard({
                     max="100"
                     step="0.1"
                     value={productDiscounts[product.id] ?? product.discountPercent ?? 0}
-                    onChange={(e) => {
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;
                       const discountValue = value === '' ? 0 : parseFloat(value) || 0;
                       console.log(`🔄 [QUICK SETTINGS] Updating discount for product ${product.id}: ${discountValue}%`);

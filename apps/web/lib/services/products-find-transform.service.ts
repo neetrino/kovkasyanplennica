@@ -54,7 +54,7 @@ class ProductsFindTransformService {
         where: { id: { in: Array.from(categoryIdsToResolve) } },
         include: { translations: true },
       });
-      categoriesFromDb.forEach((c) => categoryByIdMap.set(c.id, c));
+      categoriesFromDb.forEach((c: (typeof categoriesFromDb)[number]) => categoryByIdMap.set(c.id, c));
     }
 
     // Format response

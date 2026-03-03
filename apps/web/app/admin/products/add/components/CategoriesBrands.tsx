@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Input } from '@shop/ui';
 import { useTranslation } from '../../../../../lib/i18n-client';
 import type { Category, Brand } from '../types';
@@ -205,7 +206,7 @@ export function CategoriesBrands({
                             <input
                               type="checkbox"
                               checked={categoryIds.includes(category.id)}
-                              onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => handleCategoryChange(category.id, e.target.checked)}
                               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
                             <span
@@ -227,7 +228,7 @@ export function CategoriesBrands({
                 <Input
                   type="text"
                   value={newCategoryName}
-                  onChange={(e) => onNewCategoryNameChange(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => onNewCategoryNameChange(e.target.value)}
                   placeholder={t('admin.products.add.enterNewCategoryName')}
                   className="w-full"
                 />
@@ -310,7 +311,7 @@ export function CategoriesBrands({
                             <input
                               type="checkbox"
                               checked={brandIds.includes(brand.id)}
-                              onChange={(e) => {
+                              onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                 const newBrandIds = e.target.checked
                                   ? [...brandIds, brand.id]
                                   : brandIds.filter((id) => id !== brand.id);
@@ -330,7 +331,7 @@ export function CategoriesBrands({
               <Input
                 type="text"
                 value={newBrandName}
-                onChange={(e) => onNewBrandNameChange(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onNewBrandNameChange(e.target.value)}
                 placeholder={t('admin.products.add.enterNewBrandName')}
                 className="w-full"
               />

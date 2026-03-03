@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, Input } from '@shop/ui';
@@ -169,7 +170,7 @@ export function BrandFilter({ category, search, minPrice, maxPrice, selectedBran
           type="text"
           placeholder={t('products.filters.brand.searchPlaceholder')}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
           className="w-full pr-10"
         />
         <svg

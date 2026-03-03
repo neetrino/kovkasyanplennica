@@ -22,6 +22,7 @@ interface ProductCardGridProps {
     originalPrice?: number | null;
     discountPercent?: number | null;
     colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
+    category?: string;
   };
   currency: CurrencyCode;
   isInWishlist: boolean;

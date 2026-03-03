@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { Button, Input, Card } from '@shop/ui';
 import type { UserProfile } from './types';
 
@@ -32,13 +32,13 @@ export function ProfilePersonalInfo({
           <Input
             label={t('profile.personal.firstName')}
             value={personalInfo.firstName}
-            onChange={(e) => setPersonalInfo({ ...personalInfo, firstName: e.target.value })}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalInfo({ ...personalInfo, firstName: e.target.value })}
             placeholder={t('profile.personal.firstNamePlaceholder')}
           />
           <Input
             label={t('profile.personal.lastName')}
             value={personalInfo.lastName}
-            onChange={(e) => setPersonalInfo({ ...personalInfo, lastName: e.target.value })}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalInfo({ ...personalInfo, lastName: e.target.value })}
             placeholder={t('profile.personal.lastNamePlaceholder')}
           />
         </div>
@@ -46,14 +46,14 @@ export function ProfilePersonalInfo({
           label={t('profile.personal.email')}
           type="email"
           value={personalInfo.email}
-          onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
           placeholder={t('profile.personal.emailPlaceholder')}
         />
         <Input
           label={t('profile.personal.phone')}
           type="tel"
           value={personalInfo.phone}
-          onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
           placeholder={t('profile.personal.phonePlaceholder')}
         />
         <div className="flex items-center gap-2 pt-4">

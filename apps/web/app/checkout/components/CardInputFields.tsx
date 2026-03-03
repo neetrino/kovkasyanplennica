@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Input } from '@shop/ui';
 import { UseFormRegister, UseFormSetValue, FieldErrors } from 'react-hook-form';
 import { useTranslation } from '../../../lib/i18n-client';
@@ -32,7 +33,7 @@ export function CardInputFields({
           {...register('cardNumber')}
           error={errors.cardNumber?.message}
           disabled={isSubmitting}
-          onChange={(e) => {
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
             const formatted = formatCardNumber(e.target.value);
             setValue('cardNumber', formatted);
           }}
@@ -48,7 +49,7 @@ export function CardInputFields({
             {...register('cardExpiry')}
             error={errors.cardExpiry?.message}
             disabled={isSubmitting}
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
               const formatted = formatCardExpiry(e.target.value);
               setValue('cardExpiry', formatted);
             }}
@@ -63,7 +64,7 @@ export function CardInputFields({
             {...register('cardCvv')}
             error={errors.cardCvv?.message}
             disabled={isSubmitting}
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
               const formatted = formatCardCvv(e.target.value);
               setValue('cardCvv', formatted);
             }}

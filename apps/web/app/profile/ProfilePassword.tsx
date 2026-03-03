@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 import { Button, Input, Card } from '@shop/ui';
 
 interface ProfilePasswordProps {
@@ -28,7 +28,7 @@ export function ProfilePassword({
           label={t('profile.password.currentPassword')}
           type="password"
           value={passwordForm.currentPassword}
-          onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
           placeholder={t('profile.password.currentPasswordPlaceholder')}
           required
         />
@@ -36,7 +36,7 @@ export function ProfilePassword({
           label={t('profile.password.newPassword')}
           type="password"
           value={passwordForm.newPassword}
-          onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
           placeholder={t('profile.password.newPasswordPlaceholder')}
           required
         />
@@ -44,7 +44,7 @@ export function ProfilePassword({
           label={t('profile.password.confirmPassword')}
           type="password"
           value={passwordForm.confirmPassword}
-          onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
           placeholder={t('profile.password.confirmPasswordPlaceholder')}
           required
         />

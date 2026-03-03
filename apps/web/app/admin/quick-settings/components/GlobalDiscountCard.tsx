@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent } from 'react';
 import { Card, Button, Input } from '@shop/ui';
 import { useTranslation } from '../../../../lib/i18n-client';
 
@@ -47,7 +48,7 @@ export function GlobalDiscountCard({
               max="100"
               step="0.1"
               value={globalDiscount}
-              onChange={(e) => {
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 setGlobalDiscount(value === '' ? 0 : parseFloat(value) || 0);
               }}
