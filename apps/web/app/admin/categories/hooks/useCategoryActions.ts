@@ -23,6 +23,7 @@ interface UseCategoryActionsReturn {
 
 const initialFormData: CategoryFormData = {
   title: '',
+  slug: '',
   parentId: '',
   requiresSizes: false,
   subcategoryIds: [],
@@ -53,6 +54,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
     try {
       await apiClient.post('/api/v1/admin/categories', {
         title: formData.title.trim(),
+        slug: formData.slug.trim() || undefined,
         parentId: formData.parentId || undefined,
         requiresSizes: formData.requiresSizes,
         locale: 'en',
@@ -83,6 +85,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
       
       setFormData({
         title: category.title,
+        slug: category.slug || '',
         parentId: category.parentId || '',
         requiresSizes: category.requiresSizes || false,
         subcategoryIds: categoryWithChildren.children?.map(child => child.id) || [],
@@ -91,6 +94,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
       logger.error('Error fetching category children', { error: err });
       setFormData({
         title: category.title,
+        slug: category.slug || '',
         parentId: category.parentId || '',
         requiresSizes: category.requiresSizes || false,
         subcategoryIds: [],
@@ -110,6 +114,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
     try {
       await apiClient.put(`/api/v1/admin/categories/${editingCategory.id}`, {
         title: formData.title.trim(),
+        slug: formData.slug.trim() || undefined,
         parentId: formData.parentId || null,
         requiresSizes: formData.requiresSizes,
         subcategoryIds: formData.subcategoryIds,

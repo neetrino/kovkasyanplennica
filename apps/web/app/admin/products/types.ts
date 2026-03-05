@@ -14,6 +14,8 @@ export interface Product {
   }>;
   image: string | null;
   createdAt: string;
+  /** Category title + slug for display (e.g. in admin products table) */
+  categoryItems?: Array<{ title: string; slug: string }>;
 }
 
 export interface ProductsResponse {

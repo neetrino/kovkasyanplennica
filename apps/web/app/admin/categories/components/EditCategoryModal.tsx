@@ -49,6 +49,18 @@ export function EditCategoryModal({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.categories.categorySlug')}
+            </label>
+            <Input
+              type="text"
+              value={formData.slug}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => onFormDataChange({ ...formData, slug: e.target.value })}
+              placeholder={t('admin.categories.categorySlugPlaceholder')}
+              className="w-full font-mono text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               {t('admin.categories.parentCategory')}
             </label>
             <select
