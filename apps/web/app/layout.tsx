@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-full`}>
         <Suspense fallback={null}>
           <ClientProviders>
-            <div className="flex min-h-screen h-auto flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent overflow-visible">
+            <div className="flex min-h-screen h-auto flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent overflow-visible [transform:translateZ(0)] [backface-visibility:hidden]">
               <div className="hidden lg:block">
                 <Header />
               </div>

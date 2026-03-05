@@ -116,7 +116,7 @@ export function HomePageImageCarousel() {
   const currentImages = getCurrentSlideImages();
 
   return (
-    <section className="relative w-full bg-[#2f3f3d] py-16 md:py-24 overflow-hidden">
+    <section className="relative w-full bg-[#2f3f3d] py-16 md:py-24 overflow-hidden -mt-1 -mb-1 [contain:paint]">
       <div className="max-w-7xl mx-auto px-4">
         {/* Carousel Container */}
         <div className="relative">
