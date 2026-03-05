@@ -6,6 +6,8 @@ import { ProductsCategoryCarousel } from '../../components/ProductsCategoryCarou
 import { CategoryNavigation } from '../../components/CategoryNavigation';
 import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
 
+export const dynamic = 'force-dynamic';
+
 interface ProductCategory {
   id: string;
   slug: string;
