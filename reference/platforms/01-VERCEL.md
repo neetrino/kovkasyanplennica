@@ -133,18 +133,19 @@ vercel --prod   # production
 ### Պարտադիր փոփոխականներ.
 
 ```bash
-# Database
+# Database (Prisma)
 DATABASE_URL=postgresql://...
-DIRECT_URL=postgresql://...      # Առանց pooling միգրացիաների համար
 
-# Auth
-NEXTAUTH_SECRET=your-secret-32-chars-min
-NEXTAUTH_URL=https://your-domain.com
+# Auth (այս նախագիծ — custom JWT, ոչ NextAuth)
+JWT_SECRET=your-secret-32-chars-min   # Պարտադիր. Բացակայության դեպքում login/register → 500 "Server configuration error"
+JWT_EXPIRES_IN=7d                     # Ոչ պարտադիր, լռելյայն 7d
 
 # Հրապարակային (հասանելի բրաուզերում)
-NEXT_PUBLIC_API_URL=https://api.example.com
-NEXT_PUBLIC_APP_URL=https://your-domain.com
+NEXT_PUBLIC_APP_URL=https://your-domain.com   # Server-side URL-ի համար (Vercel-ում VERCEL_URL ավտո լրացվում է)
+# NEXT_PUBLIC_API_URL — դատարկ = նույն origin (API routes նույն app-ում)
 ```
+
+> **Ծանոթություն.** Եթե օգտագործվում է NextAuth, ապա NEXTAUTH_SECRET և NEXTAUTH_URL նույնպես պետք են։
 
 ### CLI-ով.
 
@@ -549,10 +550,9 @@ export default function RootLayout({ children }) {
 
 ### Environment Variables.
 
-- [ ] DATABASE_URL կարգավորված
-- [ ] NEXTAUTH_SECRET կարգավորված
-- [ ] NEXTAUTH_URL կարգավորված
-- [ ] Հրապարակային փոփոխականներ (NEXT_PUBLIC_*) կարգավորված
+- [ ] DATABASE_URL կարգավորված (Neon կամ այլ PostgreSQL)
+- [ ] JWT_SECRET կարգավորված (այս նախագիծ — login/register-ի համար)
+- [ ] Հրապարակային փոփոխականներ (NEXT_PUBLIC_*) անհրաժեշտության դեպքում
 - [ ] Preview և Production բաժանված
 
 ### Domains.
@@ -585,6 +585,25 @@ export default function RootLayout({ children }) {
 - [ ] Region ընտրված (մոտ օգտատերերին/DB-ին)
 - [ ] Edge functions որտեղ պետք է
 - [ ] Caching headers կարգավորված
+
+---
+
+## 🔧 Troubleshooting
+
+### Login → 500 "Server configuration error"
+
+**Պատճառ.** `JWT_SECRET` env փոփոխականը Vercel-ում սահմանված չէ։  
+**Լուծում.** Project → Settings → Environment Variables → ավելացրու `JWT_SECRET` (առնվազն 32 նիշ, Secret), Production + Preview։
+
+### /search → 404
+
+**Պատճառ.** `apps/web/app/search/page.tsx` commit արված չէ, ուստի Vercel դեպլոյում route-ը չկա։  
+**Լուծում.** `git add apps/web/app/search/page.tsx` → commit → push։
+
+### Products / Favorites չեն ցուցադրվում
+
+**Պատճառ.** Սովորաբար `DATABASE_URL` բացակայում է կամ սխալ է Vercel-ում, կամ API-ը 500 է վերադարձնում (օր. JWT_SECRET)։  
+**Լուծում.** Ստուգի՛ր DATABASE_URL (Neon connection string) և JWT_SECRET; Vercel → Deployments → ընտրի՛ր deployment → Logs/Function logs ստուգել սխալների համար։
 
 ---
 
