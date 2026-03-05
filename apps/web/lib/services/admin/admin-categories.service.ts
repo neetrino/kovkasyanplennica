@@ -41,6 +41,7 @@ class AdminCategoriesService {
    */
   async createCategory(data: {
     title: string;
+    slug?: string;
     locale?: string;
     parentId?: string;
     requiresSizes?: boolean;
@@ -63,7 +64,7 @@ class AdminCategoriesService {
       }
     }
     
-    const slug = toSlug(data.title);
+    const slug = (data.slug && data.slug.trim()) ? toSlug(data.slug.trim()) : toSlug(data.title);
 
     const category = await db.category.create({
       data: {
@@ -153,6 +154,7 @@ class AdminCategoriesService {
    */
   async updateCategory(categoryId: string, data: {
     title?: string;
+    slug?: string;
     locale?: string;
     parentId?: string | null;
     requiresSizes?: boolean;
@@ -267,31 +269,33 @@ class AdminCategoriesService {
       updateData.requiresSizes = data.requiresSizes;
     }
 
-    // Update translation if title is provided
-    if (data.title) {
-      const slug = toSlug(data.title);
+    // Update translation if title or slug is provided
+    const existingCategoryTranslations = Array.isArray(category.translations) ? category.translations : [];
+    const existingTranslation = existingCategoryTranslations.find((t: { locale: string }) => t.locale === locale) as { id: string; title: string; slug: string } | undefined;
 
-      const categoryTranslations = Array.isArray(category.translations) ? category.translations : [];
-      const existingTranslation = categoryTranslations.find((t: { locale: string }) => t.locale === locale);
+    if (data.title !== undefined || data.slug !== undefined) {
+      const newTitle = data.title !== undefined ? data.title : (existingTranslation?.title ?? "");
+      const newSlug = data.slug !== undefined && String(data.slug).trim()
+        ? toSlug(String(data.slug).trim())
+        : (data.title !== undefined ? toSlug(data.title) : (existingTranslation?.slug ?? ""));
 
       if (existingTranslation) {
-        // Update existing translation
         await db.categoryTranslation.update({
           where: { id: existingTranslation.id },
           data: {
-            title: data.title,
-            slug,
+            title: newTitle,
+            slug: newSlug,
+            fullPath: newSlug,
           },
         });
       } else {
-        // Create new translation
         await db.categoryTranslation.create({
           data: {
             categoryId: category.id,
             locale,
-            title: data.title,
-            slug,
-            fullPath: slug,
+            title: newTitle,
+            slug: newSlug,
+            fullPath: newSlug,
           },
         });
       }
@@ -306,8 +310,8 @@ class AdminCategoriesService {
       },
     });
 
-    const categoryTranslations = Array.isArray(updatedCategory.translations) ? updatedCategory.translations : [];
-    const translation = categoryTranslations.find((t: { locale: string }) => t.locale === locale) || categoryTranslations[0] || null;
+    const updatedTranslations = Array.isArray(updatedCategory.translations) ? updatedCategory.translations : [];
+    const translation = updatedTranslations.find((t: { locale: string }) => t.locale === locale) || updatedTranslations[0] || null;
 
     return {
       data: {

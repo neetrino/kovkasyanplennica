@@ -28,11 +28,13 @@ export function CategoryItem({ category, parentCategory, onEdit, onDelete }: Cat
             </span>
           )}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
-          {category.slug}
+        <div className="text-xs text-gray-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+          <span className="font-mono text-gray-600">
+            <span className="text-gray-400">{t('admin.categories.slugLabel')}:</span> {category.slug || '—'}
+          </span>
           {parentCategory && (
-            <span className="ml-2 text-gray-400">
-              → Parent: {parentCategory.title}
+            <span className="text-gray-400">
+              → {t('admin.categories.parentCategory')}: {parentCategory.title}
             </span>
           )}
         </div>

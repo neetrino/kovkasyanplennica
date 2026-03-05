@@ -17,6 +17,9 @@ export function formatProductForList(product: {
     compareAtPrice: number | null;
   }>;
   media?: unknown[];
+  categories?: Array<{
+    translations?: Array<{ title: string; slug: string }>;
+  }>;
 }) {
   // Безопасное получение translation с проверкой на существование массива
   const translation = Array.isArray(product.translations) && product.translations.length > 0
@@ -29,6 +32,16 @@ export function formatProductForList(product: {
     : null;
   
   const image = extractImageFromMedia(product.media);
+
+  const categoryItems = Array.isArray(product.categories)
+    ? product.categories
+        .map((cat) => {
+          const t = cat.translations?.[0];
+          if (!t || t.title == null) return null;
+          return { title: t.title, slug: typeof t.slug === 'string' ? t.slug : '' };
+        })
+        .filter((item): item is { title: string; slug: string } => item != null)
+    : [];
 
   return {
     id: product.id,
@@ -43,6 +56,7 @@ export function formatProductForList(product: {
     colorStocks: [], // Can be enhanced later
     image,
     createdAt: product.createdAt.toISOString(),
+    categoryItems,
   };
 }
 

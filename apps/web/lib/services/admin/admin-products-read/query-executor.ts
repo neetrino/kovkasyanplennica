@@ -17,6 +17,15 @@ const getProductListInclude = () => ({
     orderBy: { price: "asc" },
   },
   labels: true,
+  categories: {
+    include: {
+      translations: {
+        where: { locale: "en" },
+        take: 1,
+        select: { title: true, slug: true },
+      },
+    },
+  },
 });
 
 /**

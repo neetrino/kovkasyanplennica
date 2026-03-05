@@ -190,6 +190,9 @@ export function ProductsTable({
                     </button>
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {t('admin.products.category')}
+                  </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <button
                       type="button"
                       onClick={() => handleHeaderSort('createdAt')}
@@ -294,6 +297,23 @@ export function ProductsTable({
                           </div>
                         ) : null}
                       </div>
+                    </td>
+                    <td className="px-3 py-4 text-sm text-gray-700">
+                      {product.categoryItems && product.categoryItems.length > 0 ? (
+                        <div className="flex flex-col gap-2">
+                          {product.categoryItems.map((c, idx) => (
+                            <div key={c.slug || `${c.title}-${idx}`} className="flex flex-col gap-0.5">
+                              <span className="font-medium text-gray-900">{c.title}</span>
+                              <span className="text-xs text-gray-500" title={t('admin.products.categorySlugHint')}>
+                                <span className="text-gray-400">{t('admin.products.slugLabel')}:</span>{' '}
+                                <span className="font-mono text-gray-600">{c.slug || '—'}</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        '—'
+                      )}
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(product.createdAt).toLocaleDateString('hy-AM')}

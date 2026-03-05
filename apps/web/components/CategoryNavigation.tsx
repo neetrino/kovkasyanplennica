@@ -45,11 +45,9 @@ function CategoryNavigationContent() {
   };
 
   useEffect(() => {
-    // Обновляем состояние кнопок после загрузки категорий и продуктов
     if (!loading && categories.length > 0) {
-      setTimeout(() => {
-        updateScrollButtons();
-      }, 200);
+      const timeoutId = setTimeout(() => updateScrollButtons(), 200);
+      return () => clearTimeout(timeoutId);
     }
   }, [categories.length, Object.keys(categoryProducts).length, loading, updateScrollButtons]);
 
