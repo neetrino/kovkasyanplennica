@@ -5,6 +5,7 @@ import { t } from '../../lib/i18n';
 import { ProductsCategoryCarousel } from '../../components/ProductsCategoryCarousel';
 import { CategoryNavigation } from '../../components/CategoryNavigation';
 import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
+import { productsService } from '../../lib/services/products.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,7 +48,8 @@ interface ProductsResponse {
 }
 
 /**
- * Fetch products (PRODUCTION SAFE)
+ * Fetch products directly via service (no self-referencing HTTP call).
+ * HTTP-based fetch breaks on Vercel when NEXT_PUBLIC_APP_URL is not set.
  */
 async function getProducts(
   page: number = 1,
@@ -62,52 +64,27 @@ async function getProducts(
 ): Promise<ProductsResponse> {
   try {
     const language = getStoredLanguage();
-    const params: Record<string, string> = {
-      page: page.toString(),
-      limit: limit.toString(),
+    const result = await productsService.findAll({
+      page,
+      limit,
       lang: language,
-    };
-
-    if (search?.trim()) params.search = search.trim();
-    if (category?.trim()) params.category = category.trim();
-    if (minPrice?.trim()) params.minPrice = minPrice.trim();
-    if (maxPrice?.trim()) params.maxPrice = maxPrice.trim();
-    if (colors?.trim()) params.colors = colors.trim();
-    if (sizes?.trim()) params.sizes = sizes.trim();
-    if (brand?.trim()) params.brand = brand.trim();
-
-    const queryString = new URLSearchParams(params).toString();
-
-    // Fallback chain: NEXT_PUBLIC_APP_URL -> VERCEL_URL -> localhost (for local dev)
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
-    const targetUrl = `${baseUrl}/api/v1/products?${queryString}`;
-    console.log("🌐 [PRODUCTS] Fetch products", { targetUrl, baseUrl });
-
-    const res = await fetch(targetUrl, {
-      cache: "no-store"
+      search: search?.trim() || undefined,
+      category: category?.trim() || undefined,
+      minPrice: minPrice?.trim() ? parseFloat(minPrice.trim()) : undefined,
+      maxPrice: maxPrice?.trim() ? parseFloat(maxPrice.trim()) : undefined,
+      colors: colors?.trim() || undefined,
+      sizes: sizes?.trim() || undefined,
+      brand: brand?.trim() || undefined,
     });
 
-    if (!res.ok) throw new Error(`API failed: ${res.status}`);
-
-    const response = await res.json();
-    if (!response.data || !Array.isArray(response.data)) {
-      return {
-        data: [],
-        meta: { total: 0, page: 1, limit: 24, totalPages: 0 }
-      };
+    if (!result.data || !Array.isArray(result.data)) {
+      return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
     }
 
-    return response;
-
+    return result as ProductsResponse;
   } catch (e) {
     console.error("❌ PRODUCT ERROR", e);
-    return {
-      data: [],
-      meta: { total: 0, page: 1, limit: 24, totalPages: 0 }
-    };
+    return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
   }
 }
 
