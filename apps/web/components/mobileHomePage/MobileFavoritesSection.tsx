@@ -1,6 +1,7 @@
 import { MobileFavorites } from './MobileFavorites';
 import { t } from '../../lib/i18n';
 import { getStoredLanguage } from '../../lib/language';
+import { productsService } from '../../lib/services/products.service';
 
 interface Product {
   id: string;
@@ -19,23 +20,13 @@ interface Product {
   colors?: unknown[];
 }
 
-interface ProductsResponse {
-  data: Product[];
-}
-
 async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-    const params = new URLSearchParams({ page: '1', limit: limit.toString(), lang: 'en' });
-    const res = await fetch(`${baseUrl}/api/v1/products?${params}`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    const response: ProductsResponse = await res.json();
-    if (!response.data || !Array.isArray(response.data)) return [];
     const lang = getStoredLanguage() || 'en';
+    const result = await productsService.findAll({ page: 1, limit, lang });
+    if (!result.data || !Array.isArray(result.data)) return [];
     const categoryFallback = t(lang, 'home.menu.categoryFallback');
-    return response.data.map((p: Product) => ({
+    return result.data.map((p: any) => ({
       id: String(p.id),
       slug: String(p.slug ?? ''),
       title: String(p.title ?? ''),

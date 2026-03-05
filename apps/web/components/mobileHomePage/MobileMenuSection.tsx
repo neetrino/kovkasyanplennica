@@ -1,6 +1,7 @@
 import { MobileMenuClient } from './MobileMenuClient';
 import { t } from '../../lib/i18n';
 import { getStoredLanguage } from '../../lib/language';
+import { productsService } from '../../lib/services/products.service';
 
 interface Product {
   id: string;
@@ -25,27 +26,16 @@ interface Product {
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
 }
 
-interface ProductsResponse {
-  data: Product[];
-  meta: { totalPages: number };
-}
-
 async function getMenuProducts(
   page: number = 1,
   limit: number = 4
 ): Promise<{ products: Product[]; totalPages: number }> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString(), lang: 'en' });
-    const res = await fetch(`${baseUrl}/api/v1/products?${params}`, { cache: 'no-store' });
-    if (!res.ok) return { products: [], totalPages: 0 };
-    const response: ProductsResponse = await res.json();
-    if (!response.data || !Array.isArray(response.data)) return { products: [], totalPages: 0 };
     const lang = getStoredLanguage() || 'en';
+    const result = await productsService.findAll({ page, limit, lang });
+    if (!result.data || !Array.isArray(result.data)) return { products: [], totalPages: 0 };
     const categoryFallback = t(lang, 'home.menu.categoryFallback');
-    const products = response.data.map((p: Product) => ({
+    const products = result.data.map((p: any) => ({
       id: String(p.id),
       slug: String(p.slug ?? ''),
       title: String(p.title ?? ''),
@@ -61,7 +51,7 @@ async function getMenuProducts(
       discountPercent: p.discountPercent ?? null,
       colors: p.colors ?? [],
     }));
-    return { products, totalPages: response.meta?.totalPages ?? 0 };
+    return { products, totalPages: result.meta?.totalPages ?? 0 };
   } catch {
     return { products: [], totalPages: 0 };
   }

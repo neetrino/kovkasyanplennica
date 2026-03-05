@@ -1,6 +1,7 @@
 import { MenuClient } from './MenuClient';
 import { t } from '../../lib/i18n';
 import { getStoredLanguage } from '../../lib/language';
+import { productsService } from '../../lib/services/products.service';
 
 interface Product {
   id: string;
@@ -29,58 +30,20 @@ interface Product {
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
 }
 
-interface ProductsResponse {
-  data: Product[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
 /**
- * Fetch products for Menu section
+ * Fetch products for Menu section directly via service (no HTTP self-call).
  */
 async function getMenuProducts(page: number = 1, limit: number = 4): Promise<{ products: Product[]; totalPages: number }> {
   try {
-    // Use default language 'en' for now
-    const language = 'en';
-
-    const params: Record<string, string> = {
-      page: page.toString(),
-      limit: limit.toString(),
-      lang: language,
-    };
-
-    const queryString = new URLSearchParams(params).toString();
-
-    // Fallback chain: NEXT_PUBLIC_APP_URL -> VERCEL_URL -> localhost (for local dev)
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
-    const targetUrl = `${baseUrl}/api/v1/products?${queryString}`;
-    console.log("🌐 [MENU SECTION] Fetch products", { targetUrl, baseUrl, page, limit });
-
-    const res = await fetch(targetUrl, {
-      cache: "no-store"
-    });
-
-    if (!res.ok) {
-      console.error("❌ [MENU SECTION] API failed:", res.status);
-      return { products: [], totalPages: 0 };
-    }
-
-    const response: ProductsResponse = await res.json();
-    if (!response.data || !Array.isArray(response.data)) {
-      return { products: [], totalPages: 0 };
-    }
-
-    // Normalize products
     const lang = getStoredLanguage() || 'en';
+    const result = await productsService.findAll({ page, limit, lang });
+
+    if (!result.data || !Array.isArray(result.data)) {
+      return { products: [], totalPages: 0 };
+    }
+
     const categoryFallback = t(lang, 'home.menu.categoryFallback');
-    const products = response.data.map((p: any) => ({
+    const products = result.data.map((p: any) => ({
       id: p.id,
       slug: p.slug,
       title: p.title,
@@ -95,11 +58,7 @@ async function getMenuProducts(page: number = 1, limit: number = 4): Promise<{ p
       category: p.brand?.name || p.category || categoryFallback,
     }));
 
-    return {
-      products,
-      totalPages: response.meta?.totalPages || 0,
-    };
-
+    return { products, totalPages: result.meta?.totalPages || 0 };
   } catch (e) {
     console.error("❌ [MENU SECTION] Error fetching products:", e);
     return { products: [], totalPages: 0 };
