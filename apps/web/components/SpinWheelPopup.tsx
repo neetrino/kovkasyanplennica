@@ -79,12 +79,12 @@ const WHEEL_SLOT_COUNT = WHEEL_SLOT_COUNT_CONST;
 
 /**
  * Wheel rotation (deg) so that slot at index i is under the pointer (12 o'clock).
- * Wheel angle 0 = 3 o'clock; slot i center is at -90 + (i+0.5)*45; pointer at top = 90°.
- * So R = 90 - (-90 + (i+0.5)*45) = 180 - (i+0.5)*45.
+ * Slot center starts at -90 + (i + 0.5) * segmentDeg.
+ * To move it under the top pointer (-90deg), rotate wheel by -(i + 0.5) * segmentDeg.
  */
 function getBaseAngleForSlot(slotIndex: number): number {
   const segmentDeg = 360 / WHEEL_SLOT_COUNT;
-  return (180 - (slotIndex + 0.5) * segmentDeg + 360) % 360;
+  return (360 - (slotIndex + 0.5) * segmentDeg) % 360;
 }
 
 function getPrizePreview(prize: SpinWheelPrize) {
@@ -123,6 +123,7 @@ export function SpinWheelPopup() {
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
   const [wheelTransitioning, setWheelTransitioning] = useState(false);
+  const [pointerTickDurationMs, setPointerTickDurationMs] = useState(180);
   const spinEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const visiblePrizes = useMemo(() => {
@@ -237,7 +238,6 @@ export function SpinWheelPopup() {
     try {
       const response = await apiClient.post<SpinResponse>('/api/v1/spin-wheel/spin');
       const prize = response.data.prize;
-      const slotsCount = visiblePrizes.length;
       const matchingIndexes = visiblePrizes
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.id === prize.id && item.productId === prize.productId)
@@ -255,7 +255,11 @@ export function SpinWheelPopup() {
       const currentRot = wheelRotation % 360;
       const delta = (baseAngle - currentRot + 360) % 360;
       const targetRotation = wheelRotation + SPIN_FULL_TURNS * 360 + delta;
+      const segmentDegrees = 360 / WHEEL_SLOT_COUNT;
+      const crossedSegments = Math.max(1, Math.round((targetRotation - wheelRotation) / segmentDegrees));
+      const tickDuration = Math.max(130, Math.round((SPIN_DURATION_MS / crossedSegments) * 2.15));
 
+      setPointerTickDurationMs(tickDuration);
       setWheelTransitioning(true);
       setWheelRotation(targetRotation);
 
@@ -350,10 +354,24 @@ export function SpinWheelPopup() {
           <div className="pointer-events-none absolute inset-6 rounded-full bg-[radial-gradient(circle,_rgba(248,197,110,0.3),_transparent_62%)] blur-2xl" />
           <div className="mx-auto relative h-[22rem] w-[22rem] rounded-full border border-white/12 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.06),rgba(255,255,255,0.015),rgba(255,255,255,0.07),rgba(255,255,255,0.015),rgba(255,255,255,0.06))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_80px_rgba(5,14,13,0.55)] md:h-[25rem] md:w-[25rem]">
             <div className="absolute inset-[18px] rounded-full border-[10px] border-[#f5d9a8]/80 bg-[radial-gradient(circle_at_50%_35%,#fff4de_0%,#f4d59d_34%,#d9aa67_100%)] shadow-[inset_0_10px_22px_rgba(255,255,255,0.35),inset_0_-14px_24px_rgba(120,78,23,0.22),0_0_0_10px_rgba(255,255,255,0.05)]" />
-          <div className="absolute left-1/2 top-[6px] z-10 -translate-x-1/2">
+          <div
+            className={`absolute left-1/2 -top-[18px] z-10 -translate-x-1/2 ${wheelTransitioning ? 'pointer-tick' : ''}`}
+            style={
+              wheelTransitioning
+                ? ({ ['--pointer-tick-duration' as string]: `${pointerTickDurationMs}ms` } as CSSProperties)
+                : undefined
+            }
+          >
             <div className="flex flex-col items-center">
               <div className="h-10 w-10 rounded-full border border-[#f8d899]/70 bg-[#fff4de] shadow-[0_10px_24px_rgba(248,197,110,0.45)]" />
-              <div className="-mt-2 h-0 w-0 border-x-[18px] border-t-[26px] border-x-transparent border-t-[#fff4de] drop-shadow-[0_8px_10px_rgba(0,0,0,0.18)]" />
+              <div
+                className={`-mt-2 h-0 w-0 border-x-[18px] border-t-[26px] border-x-transparent border-t-[#fff4de] drop-shadow-[0_8px_10px_rgba(0,0,0,0.18)] ${wheelTransitioning ? 'pointer-tip-tick' : ''}`}
+                style={
+                  wheelTransitioning
+                    ? ({ ['--pointer-tick-duration' as string]: `${pointerTickDurationMs}ms` } as CSSProperties)
+                    : undefined
+                }
+              />
             </div>
           </div>
           <div
@@ -504,6 +522,16 @@ export function SpinWheelPopup() {
           animation: flash-fade 550ms ease-out forwards;
         }
 
+        .pointer-tick {
+          transform-origin: 50% 18%;
+          animation: pointer-tick var(--pointer-tick-duration) ease-in-out infinite;
+        }
+
+        .pointer-tip-tick {
+          transform-origin: 50% 0;
+          animation: pointer-tip-tick var(--pointer-tick-duration) ease-in-out infinite;
+        }
+
         .spin-core::after {
           content: '';
           position: absolute;
@@ -528,6 +556,32 @@ export function SpinWheelPopup() {
             opacity: 0;
             transform: translate(calc(-50% + var(--confetti-x)), calc(-50% + var(--confetti-y)))
               scale(1) rotate(var(--confetti-r));
+          }
+        }
+
+        @keyframes pointer-tick {
+          0%,
+          100% {
+            transform: translateX(-50%) rotate(0deg);
+          }
+          35% {
+            transform: translateX(-50%) rotate(-8deg) translateY(-2px);
+          }
+          70% {
+            transform: translateX(-50%) rotate(1deg);
+          }
+        }
+
+        @keyframes pointer-tip-tick {
+          0%,
+          100% {
+            transform: rotate(0deg);
+          }
+          35% {
+            transform: rotate(-10deg);
+          }
+          70% {
+            transform: rotate(2deg);
           }
         }
 
