@@ -122,6 +122,21 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
     ),
   },
   {
+    id: 'spin-wheel',
+    label: t('admin.menu.spinWheel'),
+    path: '/admin/spin-wheel',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 3v3m0 12v3m9-9h-3M6 12H3m14.364 6.364l-2.121-2.121M8.757 8.757L6.636 6.636m10.728 0l-2.121 2.121M8.757 15.243l-2.121 2.121M12 9a3 3 0 100 6 3 3 0 000-6z"
+        />
+      </svg>
+    ),
+  },
+  {
     id: 'users',
     label: t('admin.menu.users'),
     path: '/admin/users',

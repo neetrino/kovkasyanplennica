@@ -22,6 +22,17 @@
     "title": "ՄԵՐ ՖԱՎՈՐԻՏՆԵՐԸ",
     "viewMenuButton": "ԴԻՏԵԼ ՄԵՆՅՈՒ"
   },
+  "spinWheel": {
+    "title": "Շնորհավորական Spin Wheel",
+    "subtitle": "Պտտեցրու անիվը ու շահիր նվեր",
+    "spinNow": "Պտտեցնել հիմա",
+    "spinning": "Պտտվում է...",
+    "remainingSpins": "Մնացած փորձեր՝ {count}",
+    "youWon": "Դու շահեցիր",
+    "winMessage": "Շնորհավորում ենք. դու շահեցիր այս ապրանքը՝ {title}",
+    "noImage": "Նկար չկա",
+    "viewProduct": "Դիտել ապրանքը"
+  },
   "header": {
     "logoAlt": "ԿՈՎԿԱՍՅԱՆ ՊԼԵՆՆԻՑԱ",
     "navigation": {

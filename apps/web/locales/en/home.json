@@ -22,6 +22,17 @@
     "title": "OUR FAVORITES",
     "viewMenuButton": "VIEW MENU"
   },
+  "spinWheel": {
+    "title": "Lucky Spin Wheel",
+    "subtitle": "Spin and win a gift",
+    "spinNow": "Spin Now",
+    "spinning": "Spinning...",
+    "remainingSpins": "Remaining spins: {count}",
+    "youWon": "You won",
+    "winMessage": "Congratulations! You won this product: {title}",
+    "noImage": "No image",
+    "viewProduct": "View product"
+  },
   "header": {
     "logoAlt": "KOVKASYAN PLENNITSA",
     "navigation": {
