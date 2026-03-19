@@ -22,6 +22,17 @@
     "title": "НАШИ ФАВОРИТЫ",
     "viewMenuButton": "СМОТРЕТЬ МЕНЮ"
   },
+  "spinWheel": {
+    "title": "Колесо удачи",
+    "subtitle": "Крутите колесо и выигрывайте подарок",
+    "spinNow": "Крутить",
+    "spinning": "Крутится...",
+    "remainingSpins": "Осталось попыток: {count}",
+    "youWon": "Вы выиграли",
+    "winMessage": "Поздравляем! Вы выиграли этот товар: {title}",
+    "noImage": "Нет изображения",
+    "viewProduct": "Смотреть товар"
+  },
   "header": {
     "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
     "navigation": {

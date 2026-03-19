@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { MouseEvent } from 'react';
 import { ProductCardInfo } from './ProductCardInfo';
-import { ProductCardActions } from './ProductCardActions';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
 
@@ -25,8 +24,6 @@ interface ProductCardGridProps {
     category?: string;
   };
   currency: CurrencyCode;
-  isInWishlist: boolean;
-  isInCompare: boolean;
   isAddingToCart: boolean;
   imageError: boolean;
   isCompact?: boolean;
@@ -35,8 +32,6 @@ interface ProductCardGridProps {
   /** 1024+ էկրաններում ավելի մեծ height (products carousel) */
   largeHeightOnDesktop?: boolean;
   onImageError: () => void;
-  onWishlistToggle: (e: MouseEvent) => void;
-  onCompareToggle: (e: MouseEvent) => void;
   onAddToCart: (e: MouseEvent) => void;
 }
 
@@ -46,8 +41,6 @@ interface ProductCardGridProps {
 export function ProductCardGrid({
   product,
   currency,
-  isInWishlist,
-  isInCompare,
   isAddingToCart,
   imageError,
   isCompact = false,
@@ -55,8 +48,6 @@ export function ProductCardGrid({
   largeSize = false,
   largeHeightOnDesktop = false,
   onImageError,
-  onWishlistToggle,
-  onCompareToggle,
   onAddToCart,
 }: ProductCardGridProps) {
   return (
@@ -105,21 +96,6 @@ export function ProductCardGrid({
             </div>
           )}
         </Link>
-      </div>
-      
-      {/* Action Buttons - Show on Hover */}
-      <div className="absolute top-[8%] right-3 z-20">
-        <ProductCardActions
-          isInWishlist={isInWishlist}
-          isInCompare={isInCompare}
-          isAddingToCart={isAddingToCart}
-          inStock={product.inStock}
-          isCompact={isCompact}
-          onWishlistToggle={onWishlistToggle}
-          onCompareToggle={onCompareToggle}
-          onAddToCart={onAddToCart}
-          showOnHover={true}
-        />
       </div>
 
       {/* Product Info - relative z-20 so title, price and cart stay above the product image */}
