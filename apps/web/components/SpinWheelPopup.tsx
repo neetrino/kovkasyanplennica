@@ -88,20 +88,22 @@ function getBaseAngleForSlot(slotIndex: number): number {
 }
 
 function getPrizePreview(prize: SpinWheelPrize) {
+  const matchedProduct = prize.products?.find((product) => product.productId === prize.productId);
   const productWithImage = prize.products?.find((product) =>
     Boolean(product.productImageUrl ?? product.imageUrl ?? product.image ?? product.url)
   );
-  const firstProduct = productWithImage ?? prize.products?.[0];
+  const firstProduct = matchedProduct ?? productWithImage ?? prize.products?.[0];
   const imageUrl =
+    prize.productImageUrl ??
     firstProduct?.productImageUrl ??
     firstProduct?.imageUrl ??
     firstProduct?.image ??
     firstProduct?.url ??
-    prize.productImageUrl;
+    null;
 
   return {
-    title: firstProduct?.productTitle ?? prize.productTitle,
-    slug: firstProduct?.productSlug ?? prize.productSlug,
+    title: firstProduct?.productTitle || prize.productTitle || '',
+    slug: firstProduct?.productSlug || prize.productSlug || '',
     imageUrl,
   };
 }
@@ -127,7 +129,30 @@ export function SpinWheelPopup() {
     if (prizes.length === 0) {
       return [];
     }
-    const source = prizes.slice(0, WHEEL_SLOT_COUNT);
+
+    const source = prizes
+      .flatMap((prize) => {
+        const prizeProducts = prize.products?.length
+          ? prize.products
+          : [
+              {
+                productId: prize.productId,
+                productTitle: prize.productTitle,
+                productSlug: prize.productSlug,
+                productImageUrl: prize.productImageUrl,
+              },
+            ];
+
+        return prizeProducts.map((product) => ({
+          ...prize,
+          productId: product.productId,
+          productTitle: product.productTitle,
+          productSlug: product.productSlug,
+          productImageUrl: product.productImageUrl,
+        }));
+      })
+      .slice(0, WHEEL_SLOT_COUNT);
+
     if (source.length === WHEEL_SLOT_COUNT) {
       return source;
     }
@@ -215,13 +240,15 @@ export function SpinWheelPopup() {
       const slotsCount = visiblePrizes.length;
       const matchingIndexes = visiblePrizes
         .map((item, index) => ({ item, index }))
-        .filter(({ item }) => item.id === prize.id)
+        .filter(({ item }) => item.id === prize.id && item.productId === prize.productId)
         .map(({ index }) => index);
       const winnerIndex =
         matchingIndexes.length > 0
           ? matchingIndexes[Math.floor(Math.random() * matchingIndexes.length)]
-          : visiblePrizes.findIndex((p) => p.id === prize.id) >= 0
-            ? visiblePrizes.findIndex((p) => p.id === prize.id)
+          : visiblePrizes.findIndex((p) => p.id === prize.id && p.productId === prize.productId) >= 0
+            ? visiblePrizes.findIndex((p) => p.id === prize.id && p.productId === prize.productId)
+            : visiblePrizes.findIndex((p) => p.id === prize.id) >= 0
+              ? visiblePrizes.findIndex((p) => p.id === prize.id)
             : 0;
 
       const baseAngle = getBaseAngleForSlot(winnerIndex);
@@ -324,7 +351,7 @@ export function SpinWheelPopup() {
               const preview = getPrizePreview(prize);
               return (
                 <div
-                  key={prize.id}
+                  key={`${prize.id}-${prize.productId}-${index}`}
                   className={`wheel-slot-${index} absolute flex h-[74px] w-[108px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-all ${
                     isHighlighted ? 'scale-110' : ''
                   }`}
