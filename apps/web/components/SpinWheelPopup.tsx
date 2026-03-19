@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth/AuthContext';
@@ -72,14 +72,19 @@ const SLOT_CIRCLE_POSITIONS = Array.from({ length: WHEEL_SLOT_COUNT_CONST }, (_,
 );
 
 const POPUP_DELAY_MS = 3500;
-const SPIN_MIN_STEP_DELAY_MS = 65;
-const SPIN_MAX_STEP_DELAY_MS = 230;
-const SPIN_EXTRA_LOOPS = 4;
+const SPIN_DURATION_MS = 5500;
+const SPIN_FULL_TURNS = 5;
 const CELEBRATION_DURATION_MS = 1400;
 const WHEEL_SLOT_COUNT = WHEEL_SLOT_COUNT_CONST;
 
-async function wait(ms: number): Promise<void> {
-  await new Promise((resolve) => window.setTimeout(resolve, ms));
+/**
+ * Wheel rotation (deg) so that slot at index i is under the pointer (12 o'clock).
+ * Wheel angle 0 = 3 o'clock; slot i center is at -90 + (i+0.5)*45; pointer at top = 90°.
+ * So R = 90 - (-90 + (i+0.5)*45) = 180 - (i+0.5)*45.
+ */
+function getBaseAngleForSlot(slotIndex: number): number {
+  const segmentDeg = 360 / WHEEL_SLOT_COUNT;
+  return (180 - (slotIndex + 0.5) * segmentDeg + 360) % 360;
 }
 
 function getPrizePreview(prize: SpinWheelPrize) {
@@ -113,9 +118,10 @@ export function SpinWheelPopup() {
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [wonPrize, setWonPrize] = useState<SpinWheelPrize | null>(null);
   const [remainingSpins, setRemainingSpins] = useState(0);
-  const [pointerTick, setPointerTick] = useState(false);
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
+  const [wheelTransitioning, setWheelTransitioning] = useState(false);
+  const spinEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const visiblePrizes = useMemo(() => {
     if (prizes.length === 0) {
@@ -168,14 +174,15 @@ export function SpinWheelPopup() {
         setLoading(true);
 
         const response = await apiClient.get<ActivePrizesResponse>('/api/v1/spin-wheel/active-prizes');
-        const activePrizes = response.data || [];
+        const activePrizes = Array.isArray(response?.data) ? response.data : [];
+        const remaining = response?.meta?.remainingSpins ?? 0;
 
-        if (activePrizes.length === 0 || response.meta.remainingSpins <= 0) {
+        if (activePrizes.length === 0 || remaining <= 0) {
           return;
         }
 
         setPrizes(activePrizes);
-        setRemainingSpins(response.meta.remainingSpins);
+        setRemainingSpins(remaining);
         setOpen(true);
       } catch {
         // Ignore popup fetch errors to keep user flow unaffected.
@@ -197,51 +204,55 @@ export function SpinWheelPopup() {
     setSpinning(true);
     setWonPrize(null);
 
+    if (spinEndTimerRef.current) {
+      clearTimeout(spinEndTimerRef.current);
+      spinEndTimerRef.current = null;
+    }
+
     try {
       const response = await apiClient.post<SpinResponse>('/api/v1/spin-wheel/spin');
       const prize = response.data.prize;
       const slotsCount = visiblePrizes.length;
-      const finalIndex = visiblePrizes.findIndex((p) => p.id === prize.id);
       const matchingIndexes = visiblePrizes
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.id === prize.id)
         .map(({ index }) => index);
-      const safeFinalIndex =
+      const winnerIndex =
         matchingIndexes.length > 0
           ? matchingIndexes[Math.floor(Math.random() * matchingIndexes.length)]
-          : finalIndex >= 0
-            ? finalIndex
+          : visiblePrizes.findIndex((p) => p.id === prize.id) >= 0
+            ? visiblePrizes.findIndex((p) => p.id === prize.id)
             : 0;
-      const startIndex = highlightedIndex;
-      const stepsToTarget = (safeFinalIndex - startIndex + slotsCount) % slotsCount;
-      const totalSteps = SPIN_EXTRA_LOOPS * slotsCount + stepsToTarget;
-      const rotationStep = 360 / slotsCount;
 
-      for (let step = 0; step < totalSteps; step += 1) {
-        const nextIndex = (startIndex + step + 1) % slotsCount;
-        const progress = step / Math.max(1, totalSteps - 1);
-        const easedProgress = progress ** 2.2;
-        const stepDelay =
-          SPIN_MIN_STEP_DELAY_MS +
-          Math.round((SPIN_MAX_STEP_DELAY_MS - SPIN_MIN_STEP_DELAY_MS) * easedProgress);
+      const baseAngle = getBaseAngleForSlot(winnerIndex);
+      const currentRot = wheelRotation % 360;
+      const delta = (baseAngle - currentRot + 360) % 360;
+      const targetRotation = wheelRotation + SPIN_FULL_TURNS * 360 + delta;
 
-        setHighlightedIndex(nextIndex);
-        setWheelRotation((prev) => prev + rotationStep);
-        setPointerTick((prev) => !prev);
-        await wait(stepDelay);
-      }
+      setWheelTransitioning(true);
+      setWheelRotation(targetRotation);
 
-      setHighlightedIndex(safeFinalIndex);
-      setPointerTick(false);
-      setWonPrize(prize);
-      setIsCelebrating(true);
-      setRemainingSpins((prev) => Math.max(0, prev - 1));
-      setSpinning(false);
+      spinEndTimerRef.current = setTimeout(() => {
+        spinEndTimerRef.current = null;
+        setWheelTransitioning(false);
+        setHighlightedIndex(winnerIndex);
+        setWonPrize(prize);
+        setIsCelebrating(true);
+        setRemainingSpins((prev) => Math.max(0, prev - 1));
+        setSpinning(false);
+      }, SPIN_DURATION_MS);
     } catch {
       setSpinning(false);
+      setWheelTransitioning(false);
       alert('Something went wrong. Please try again.');
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (spinEndTimerRef.current) clearTimeout(spinEndTimerRef.current);
+    };
+  }, []);
 
   if (!open || loading || visiblePrizes.length === 0) {
     return null;
@@ -290,16 +301,17 @@ export function SpinWheelPopup() {
         <p className="text-sm text-[#fff4de]/80 mb-6">{t('home.spinWheel.subtitle')}</p>
 
         <div className="mx-auto relative h-80 w-80 rounded-full border-[10px] border-[#fff4de]/70 bg-gradient-to-br from-[#f8e3bf] to-[#e3c494] shadow-[0_0_0_8px_rgba(47,63,61,0.7)]">
-          <div
-            className={`absolute -top-5 left-1/2 -translate-x-1/2 text-[#f8c56e] drop-shadow text-3xl origin-bottom transition-transform duration-100 ${
-              spinning ? (pointerTick ? '-rotate-12' : 'rotate-0') : 'rotate-0'
-            }`}
-          >
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[#f8c56e] drop-shadow text-3xl origin-bottom z-10">
             ▼
           </div>
           <div
-            className="absolute inset-0 rounded-full transition-transform will-change-transform"
-            style={{ transform: `rotate(${wheelRotation}deg)` }}
+            className="absolute inset-0 rounded-full will-change-transform"
+            style={{
+              transform: `rotate(${wheelRotation}deg)`,
+              transition: wheelTransitioning
+                ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.25, 0.1, 0.25, 1)`
+                : 'none',
+            }}
           >
             {Array.from({ length: WHEEL_SLOT_COUNT }, (_, i) => (
               <div
@@ -319,7 +331,12 @@ export function SpinWheelPopup() {
                 >
                   <div
                     className="flex h-full w-full flex-col items-center justify-center"
-                    style={{ transform: `rotate(${-wheelRotation}deg)` }}
+                    style={{
+                      transform: `rotate(${-wheelRotation}deg)`,
+                      transition: wheelTransitioning
+                        ? `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.25, 0.1, 0.25, 1)`
+                        : 'none',
+                    }}
                   >
                     {preview.imageUrl ? (
                       <div className="h-9 w-9 overflow-hidden rounded-full border border-black/10 bg-white shadow-sm">

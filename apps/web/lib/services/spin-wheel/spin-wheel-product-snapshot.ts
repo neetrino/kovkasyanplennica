@@ -71,3 +71,28 @@ export async function getProductSnapshots(
   );
   return snapshots;
 }
+
+/**
+ * Same as getProductSnapshots but skips missing/deleted products instead of throwing.
+ * Use when hydrating prizes for display (e.g. active-prizes API).
+ */
+export async function getProductSnapshotsSafe(
+  productIds: string[]
+): Promise<SpinWheelPrizeProduct[]> {
+  if (productIds.length === 0) return [];
+  const results = await Promise.allSettled(
+    productIds.map((id) => getProductSnapshot(id))
+  );
+  const snapshots: SpinWheelPrizeProduct[] = [];
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      snapshots.push({
+        productId: result.value.productId,
+        productTitle: result.value.productTitle,
+        productSlug: result.value.productSlug,
+        productImageUrl: result.value.productImageUrl,
+      });
+    }
+  }
+  return snapshots;
+}
