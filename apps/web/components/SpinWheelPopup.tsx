@@ -281,20 +281,23 @@ export function SpinWheelPopup() {
     };
   }, []);
 
+  const wonPrizePreview = wonPrize ? getPrizePreview(wonPrize) : null;
+
   if (!open || loading || visiblePrizes.length === 0) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#fff4de]/15 bg-gradient-to-b from-[#354846] to-[#273633] shadow-2xl p-5 md:p-7">
-        <div className="pointer-events-none absolute -top-24 -left-16 h-52 w-52 rounded-full bg-[#fff4de]/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -right-10 h-44 w-44 rounded-full bg-[#f1bb7d]/20 blur-3xl" />
-        {/* Декоративный вектор: верх справа и низ слева */}
-        <div className="pointer-events-none absolute top-4 right-4 w-32 h-36 md:w-40 md:h-44 opacity-40" aria-hidden>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#081311]/75 p-4 backdrop-blur-md">
+      <div className="relative w-full max-w-3xl overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,244,222,0.14),_transparent_34%),linear-gradient(145deg,_rgba(34,51,49,0.96),_rgba(15,27,25,0.98))] p-5 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:p-7">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_36%,transparent_64%,rgba(255,255,255,0.04))]" />
+        <div className="pointer-events-none absolute -top-24 -left-16 h-56 w-56 rounded-full bg-[#fff4de]/10 blur-3xl" />
+        <div className="pointer-events-none absolute top-1/3 -right-12 h-40 w-40 rounded-full bg-[#f8c56e]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 left-1/4 h-52 w-52 rounded-full bg-[#76c6b4]/12 blur-3xl" />
+        <div className="pointer-events-none absolute top-4 right-4 w-32 h-36 md:w-40 md:h-44 opacity-35" aria-hidden>
           <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-top object-right" />
         </div>
-        <div className="pointer-events-none absolute bottom-4 left-4 w-32 h-36 md:w-40 md:h-44 opacity-40 rotate-180" aria-hidden>
+        <div className="pointer-events-none absolute bottom-4 left-4 w-32 h-36 md:w-40 md:h-44 opacity-35 rotate-180" aria-hidden>
           <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-bottom object-left" />
         </div>
         {isCelebrating && (
@@ -319,20 +322,42 @@ export function SpinWheelPopup() {
           type="button"
           aria-label={t('common.buttons.close')}
           onClick={() => setOpen(false)}
-          className="absolute top-3 right-3 z-10 h-9 w-9 rounded-full border border-[#fff4de]/30 bg-[#fff4de]/10 text-[#fff4de] transition-colors hover:bg-[#fff4de]/20"
+          className="absolute top-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/8 text-[#fff4de] backdrop-blur transition-all hover:scale-105 hover:bg-white/15"
         >
           ×
         </button>
 
-        <h2 className="text-2xl font-bold text-[#fff4de] mb-2">{t('home.spinWheel.title')}</h2>
-        <p className="text-sm text-[#fff4de]/80 mb-6">{t('home.spinWheel.subtitle')}</p>
+        <div className="relative z-[1] mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <span className="inline-flex items-center rounded-full border border-[#f8c56e]/30 bg-[#f8c56e]/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#f8d899]">
+              Lucky Drop
+            </span>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-[#fff4de] md:text-4xl">
+              {t('home.spinWheel.title')}
+            </h2>
+            <p className="mt-2 max-w-md text-sm leading-6 text-[#fff4de]/72">{t('home.spinWheel.subtitle')}</p>
+          </div>
+          <div className="inline-flex items-center rounded-2xl border border-white/10 bg-white/8 px-4 py-3 backdrop-blur">
+            <div className="mr-3 h-2.5 w-2.5 rounded-full bg-[#7ef2c6] shadow-[0_0_12px_rgba(126,242,198,0.95)]" />
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[#fff4de]/55">Spins left</p>
+              <p className="text-lg font-semibold text-white">{remainingSpins}</p>
+            </div>
+          </div>
+        </div>
 
-        <div className="mx-auto relative h-80 w-80 rounded-full border-[10px] border-[#fff4de]/70 bg-gradient-to-br from-[#f8e3bf] to-[#e3c494] shadow-[0_0_0_8px_rgba(47,63,61,0.7)]">
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[#f8c56e] drop-shadow text-3xl origin-bottom z-10">
-            ▼
+        <div className="relative z-[1] mx-auto">
+          <div className="pointer-events-none absolute inset-6 rounded-full bg-[radial-gradient(circle,_rgba(248,197,110,0.3),_transparent_62%)] blur-2xl" />
+          <div className="mx-auto relative h-[22rem] w-[22rem] rounded-full border border-white/12 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.06),rgba(255,255,255,0.015),rgba(255,255,255,0.07),rgba(255,255,255,0.015),rgba(255,255,255,0.06))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_80px_rgba(5,14,13,0.55)] md:h-[25rem] md:w-[25rem]">
+            <div className="absolute inset-[18px] rounded-full border-[10px] border-[#f5d9a8]/80 bg-[radial-gradient(circle_at_50%_35%,#fff4de_0%,#f4d59d_34%,#d9aa67_100%)] shadow-[inset_0_10px_22px_rgba(255,255,255,0.35),inset_0_-14px_24px_rgba(120,78,23,0.22),0_0_0_10px_rgba(255,255,255,0.05)]" />
+          <div className="absolute left-1/2 top-[6px] z-10 -translate-x-1/2">
+            <div className="flex flex-col items-center">
+              <div className="h-10 w-10 rounded-full border border-[#f8d899]/70 bg-[#fff4de] shadow-[0_10px_24px_rgba(248,197,110,0.45)]" />
+              <div className="-mt-2 h-0 w-0 border-x-[18px] border-t-[26px] border-x-transparent border-t-[#fff4de] drop-shadow-[0_8px_10px_rgba(0,0,0,0.18)]" />
+            </div>
           </div>
           <div
-            className="absolute inset-0 rounded-full will-change-transform"
+            className="absolute inset-[18px] rounded-full will-change-transform"
             style={{
               transform: `rotate(${wheelRotation}deg)`,
               transition: wheelTransitioning
@@ -352,12 +377,12 @@ export function SpinWheelPopup() {
               return (
                 <div
                   key={`${prize.id}-${prize.productId}-${index}`}
-                  className={`wheel-slot-${index} absolute flex h-[74px] w-[108px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-all ${
-                    isHighlighted ? 'scale-110' : ''
+                  className={`wheel-slot-${index} absolute flex h-[108px] w-[124px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                    isHighlighted ? 'scale-[1.08]' : ''
                   }`}
                 >
                   <div
-                    className="flex h-full w-full flex-col items-center justify-center"
+                    className="flex h-full w-full flex-col items-center justify-center px-2 py-2 text-center"
                     style={{
                       transform: `rotate(${-wheelRotation}deg)`,
                       transition: wheelTransitioning
@@ -366,17 +391,17 @@ export function SpinWheelPopup() {
                     }}
                   >
                     {preview.imageUrl ? (
-                      <div className="h-9 w-9 overflow-hidden rounded-full border border-black/10 bg-white shadow-sm">
+                      <div className="h-14 w-14 overflow-hidden rounded-2xl border border-white/70 bg-white shadow-sm">
                         <img src={preview.imageUrl} alt={preview.title} className="h-full w-full object-cover" />
                       </div>
                     ) : (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-black/20 bg-black/5 text-[8px]">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-black/5 text-[8px]">
                         IMG
                       </div>
                     )}
                     <p
-                      className={`mt-1 text-[10px] leading-tight font-semibold line-clamp-2 text-center ${
-                        isHighlighted ? 'text-[#1d2927] drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]' : 'text-[#2f3f3d]'
+                      className={`mt-2 max-w-[110px] line-clamp-2 text-center text-[10px] font-semibold leading-tight ${
+                        isHighlighted ? 'text-[#1d2927] drop-shadow-[0_2px_8px_rgba(255,255,255,0.7)]' : 'text-[#2f3f3d]'
                       }`}
                     >
                       {preview.title}
@@ -386,55 +411,65 @@ export function SpinWheelPopup() {
               );
             })}
           </div>
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="h-24 w-24 rounded-full bg-[#2f3f3d] text-[#fff4de] border-4 border-[#f4dcb3] flex items-center justify-center text-sm font-bold shadow-xl">
-              SPIN
-            </div>
+          <div className="absolute inset-[18px] flex items-center justify-center">
+            <button
+              type="button"
+              onClick={handleSpin}
+              disabled={spinning || remainingSpins <= 0}
+              className="spin-core relative flex h-28 w-28 items-center justify-center rounded-full border-[6px] border-[#ffe7b9] bg-[radial-gradient(circle_at_35%_30%,#496661_0%,#243330_62%,#172220_100%)] text-[#fff4de] shadow-[0_18px_40px_rgba(10,20,18,0.45)] transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+            >
+              <div className="absolute inset-2 rounded-full border border-white/10" />
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(248,197,110,0.18),_transparent_60%)]" />
+              <span className="relative text-sm font-extrabold tracking-[0.3em] text-[#fff4de]">SPIN</span>
+            </button>
           </div>
         </div>
+        </div>
 
-        <div className="mt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-sm text-[#fff4de]/85">
+        <div className="relative z-[1] mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <p className="max-w-md text-sm leading-6 text-[#fff4de]/72">
             {t('home.spinWheel.remainingSpins').replace('{count}', String(remainingSpins))}
           </p>
           <button
             type="button"
             onClick={handleSpin}
             disabled={spinning || remainingSpins <= 0}
-            className="rounded-xl bg-[#fff4de] text-[#2f3f3d] px-5 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
+            className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#fff4de,#f7cb7d)] px-6 py-3 text-sm font-bold text-[#21312f] shadow-[0_16px_30px_rgba(248,197,110,0.28)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_34px_rgba(248,197,110,0.34)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
           >
             {spinning ? t('home.spinWheel.spinning') : t('home.spinWheel.spinNow')}
           </button>
         </div>
 
-        {wonPrize && (
-          <div className="mt-6 rounded-2xl border border-[#f1bb7d]/60 bg-[#fff4de] p-5 shadow-sm">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#8c5a16] mb-3">
+        {wonPrize && wonPrizePreview && (
+          <div className="relative z-[1] mt-6 overflow-hidden rounded-[28px] border border-[#f8c56e]/30 bg-[linear-gradient(135deg,rgba(255,244,222,0.96),rgba(255,232,188,0.92))] p-5 shadow-[0_18px_40px_rgba(20,28,26,0.18)]">
+            <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-[#f8c56e]/25 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-10 left-10 h-24 w-24 rounded-full bg-white/45 blur-2xl" />
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-[#8c5a16]">
               {t('home.spinWheel.youWon')}
             </p>
-            <div className="flex items-center gap-4">
-              {getPrizePreview(wonPrize).imageUrl ? (
-                <div className="relative h-20 w-20 flex-shrink-0 rounded-full overflow-hidden bg-gray-100">
+            <div className="relative flex items-center gap-4">
+              {wonPrizePreview.imageUrl ? (
+                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[22px] border border-white/70 bg-white shadow-sm">
                   <img
-                    src={getPrizePreview(wonPrize).imageUrl || ''}
-                    alt={getPrizePreview(wonPrize).title}
+                    src={wonPrizePreview.imageUrl}
+                    alt={wonPrizePreview.title}
                     className="h-full w-full object-cover"
                   />
                 </div>
               ) : (
-                <div className="h-20 w-20 flex-shrink-0 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-[22px] bg-gray-200 text-xs text-gray-500">
                   {t('home.spinWheel.noImage')}
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="font-bold text-[#2f3f3d] text-lg">{getPrizePreview(wonPrize).title}</p>
-                <p className="text-sm text-[#6d4715] mt-1">
-                  {t('home.spinWheel.winMessage').replace('{title}', getPrizePreview(wonPrize).title)}
+                <p className="text-lg font-bold text-[#2f3f3d]">{wonPrizePreview.title}</p>
+                <p className="mt-1 text-sm text-[#6d4715]">
+                  {t('home.spinWheel.winMessage').replace('{title}', wonPrizePreview.title)}
                 </p>
-                {getPrizePreview(wonPrize).slug && (
+                {wonPrizePreview.slug && (
                   <Link
-                    href={`/products/${getPrizePreview(wonPrize).slug}`}
-                    className="inline-block mt-2 text-sm font-medium text-[#2f3f3d] underline hover:text-[#1d2927]"
+                    href={`/products/${wonPrizePreview.slug}`}
+                    className="mt-3 inline-flex items-center rounded-full border border-[#2f3f3d]/12 bg-white/65 px-4 py-2 text-sm font-medium text-[#2f3f3d] transition-colors hover:bg-white"
                   >
                     {t('home.spinWheel.viewProduct')}
                   </Link>
@@ -469,6 +504,18 @@ export function SpinWheelPopup() {
           animation: flash-fade 550ms ease-out forwards;
         }
 
+        .spin-core::after {
+          content: '';
+          position: absolute;
+          inset: -14px;
+          border-radius: 9999px;
+          border: 1px solid rgba(248, 197, 110, 0.24);
+          opacity: ${spinning ? 1 : 0.55};
+          transform: scale(${spinning ? 1.08 : 1});
+          transition: transform 220ms ease, opacity 220ms ease;
+          animation: spin-core-pulse 1800ms ease-in-out infinite;
+        }
+
         @keyframes confetti-burst {
           0% {
             opacity: 0;
@@ -493,6 +540,18 @@ export function SpinWheelPopup() {
           }
           100% {
             opacity: 0;
+          }
+        }
+
+        @keyframes spin-core-pulse {
+          0%,
+          100% {
+            opacity: 0.45;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.95;
+            transform: scale(1.08);
           }
         }
       `}</style>
