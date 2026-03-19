@@ -2,10 +2,6 @@
 
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../lib/auth/AuthContext';
-import { useWishlist } from './hooks/useWishlist';
-import { useCompare } from './hooks/useCompare';
 import { useAddToCart } from './hooks/useAddToCart';
 import { useCurrency } from './hooks/useCurrency';
 import { ProductCardList } from './ProductCard/ProductCardList';
@@ -46,16 +42,12 @@ interface ProductCardProps {
 }
 
 /**
- * Product card component with Compare, Wishlist and Cart icons
- * Displays product image, title, category, price and action buttons
+ * Product card component with Cart action
+ * Displays product image, title, category, price and add to cart button
  */
 export function ProductCard({ product, viewMode = 'grid-3', compactHeight = false, largeSize = false, largeHeightOnDesktop = false }: ProductCardProps) {
   const isCompact = viewMode === 'grid-3';
-  const router = useRouter();
-  const { isLoggedIn } = useAuth();
   const currency = useCurrency();
-  const { isInWishlist, toggleWishlist } = useWishlist(product.id);
-  const { isInCompare, toggleCompare } = useCompare(product.id);
   const { isAddingToCart, addToCart } = useAddToCart({
     productId: product.id,
     productSlug: product.slug,
@@ -63,58 +55,29 @@ export function ProductCard({ product, viewMode = 'grid-3', compactHeight = fals
   });
   const [imageError, setImageError] = useState(false);
 
-  // Handle wishlist toggle with auth check
-  const handleWishlistToggle = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!isLoggedIn) {
-      router.push(`/login?redirect=/products`);
-      return;
-    }
-    
-    toggleWishlist();
-  };
-
-  // Handle compare toggle
-  const handleCompareToggle = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleCompare();
-  };
-
-  // Handle add to cart
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart();
   };
 
-  // List view layout
   if (viewMode === 'list') {
     return (
       <ProductCardList
         product={product}
         currency={currency}
-        isInWishlist={isInWishlist}
-        isInCompare={isInCompare}
         isAddingToCart={isAddingToCart}
         imageError={imageError}
         onImageError={() => setImageError(true)}
-        onWishlistToggle={handleWishlistToggle}
-        onCompareToggle={handleCompareToggle}
         onAddToCart={handleAddToCart}
       />
     );
   }
 
-  // Grid view layout
   return (
     <ProductCardGrid
       product={product}
       currency={currency}
-      isInWishlist={isInWishlist}
-      isInCompare={isInCompare}
       isAddingToCart={isAddingToCart}
       imageError={imageError}
       isCompact={isCompact}
@@ -122,8 +85,6 @@ export function ProductCard({ product, viewMode = 'grid-3', compactHeight = fals
       largeSize={largeSize}
       largeHeightOnDesktop={largeHeightOnDesktop}
       onImageError={() => setImageError(true)}
-      onWishlistToggle={handleWishlistToggle}
-      onCompareToggle={handleCompareToggle}
       onAddToCart={handleAddToCart}
     />
   );

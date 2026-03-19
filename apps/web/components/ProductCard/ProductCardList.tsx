@@ -5,27 +5,9 @@ import Image from 'next/image';
 import type { MouseEvent } from 'react';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
-import { CompareIcon } from '../icons/CompareIcon';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
-
-interface WishlistIconProps {
-  filled?: boolean;
-}
-
-const WishlistIcon = ({ filled = false }: WishlistIconProps) => (
-  <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path 
-      d="M10 17L8.55 15.7C4.4 12.2 2 10.1 2 7.5C2 5.4 3.4 4 5.5 4C6.8 4 8.1 4.6 9 5.5C9.9 4.6 11.2 4 12.5 4C14.6 4 16 5.4 16 7.5C16 10.1 13.6 12.2 9.45 15.7L10 17Z" 
-      stroke="currentColor" 
-      strokeWidth="1.8" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      fill={filled ? "currentColor" : "none"} 
-    />
-  </svg>
-);
 
 interface ProductCardListProps {
   product: {
@@ -43,13 +25,9 @@ interface ProductCardListProps {
     colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
   };
   currency: CurrencyCode;
-  isInWishlist: boolean;
-  isInCompare: boolean;
   isAddingToCart: boolean;
   imageError: boolean;
   onImageError: () => void;
-  onWishlistToggle: (e: MouseEvent) => void;
-  onCompareToggle: (e: MouseEvent) => void;
   onAddToCart: (e: MouseEvent) => void;
 }
 
@@ -59,13 +37,9 @@ interface ProductCardListProps {
 export function ProductCardList({
   product,
   currency,
-  isInWishlist,
-  isInCompare,
   isAddingToCart,
   imageError,
   onImageError,
-  onWishlistToggle,
-  onCompareToggle,
   onAddToCart,
 }: ProductCardListProps) {
   const { t } = useTranslation();
@@ -138,35 +112,6 @@ export function ProductCardList({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 self-start sm:self-center">
-            {/* Compare Icon */}
-            <button
-              onClick={onCompareToggle}
-              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                isInCompare
-                  ? 'border-gray-900 text-gray-900 bg-white shadow-sm'
-                  : 'border-gray-200 text-gray-700 bg-white hover:border-gray-300 hover:bg-gray-50'
-              }`}
-              title={isInCompare ? t('common.messages.removedFromCompare') : t('common.messages.addedToCompare')}
-              aria-label={isInCompare ? t('common.messages.removedFromCompare') : t('common.messages.addedToCompare')}
-            >
-              <CompareIcon isActive={isInCompare} />
-            </button>
-
-            {/* Wishlist Icon */}
-            <button
-              onClick={onWishlistToggle}
-              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-200 ${
-                isInWishlist
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              title={isInWishlist ? t('common.messages.removedFromWishlist') : t('common.messages.addedToWishlist')}
-              aria-label={isInWishlist ? t('common.messages.removedFromWishlist') : t('common.messages.addedToWishlist')}
-            >
-              <WishlistIcon filled={isInWishlist} />
-            </button>
-
-            {/* Cart Icon */}
             <button
               onClick={onAddToCart}
               disabled={!product.inStock || isAddingToCart}
