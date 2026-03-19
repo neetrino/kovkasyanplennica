@@ -61,11 +61,7 @@ export function MobileHeader() {
       if (e.key === 'Escape') closeSearch();
     };
     document.addEventListener('keydown', onEscape);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onEscape);
-      document.body.style.overflow = '';
-    };
+    return () => document.removeEventListener('keydown', onEscape);
   }, [isSearchOpen, closeSearch]);
 
   useEffect(() => {
@@ -74,11 +70,7 @@ export function MobileHeader() {
       if (e.key === 'Escape') closeMenu();
     };
     document.addEventListener('keydown', onEscape);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onEscape);
-      document.body.style.overflow = '';
-    };
+    return () => document.removeEventListener('keydown', onEscape);
   }, [isMenuOpen, closeMenu]);
 
   return (

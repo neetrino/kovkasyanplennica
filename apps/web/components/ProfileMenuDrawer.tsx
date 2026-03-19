@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export interface ProfileMenuItem {
   id: string;
@@ -21,18 +21,7 @@ interface ProfileMenuDrawerProps {
 export function ProfileMenuDrawer({ tabs, activeTab, onSelect }: ProfileMenuDrawerProps) {
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (open) {
-      console.info('[ProfileMenuDrawer] Locking body scroll');
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
+  // Scroll is allowed when drawer is open (no body overflow lock).
 
   const handleSelect = (tabId: string) => {
     console.info('[ProfileMenuDrawer] Selecting tab', { tabId });

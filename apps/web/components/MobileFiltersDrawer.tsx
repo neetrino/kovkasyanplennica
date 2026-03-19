@@ -25,16 +25,7 @@ export function MobileFiltersDrawer({
   const defaultTriggerLabel = triggerLabel || t('products.mobileFilters.title');
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
+  // Scroll is allowed when drawer is open (no body overflow lock).
 
   useEffect(() => {
     if (!openEventName) return;

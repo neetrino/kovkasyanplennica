@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export interface AdminMenuItem {
@@ -24,18 +24,7 @@ export function AdminMenuDrawer({ tabs, currentPath }: AdminMenuDrawerProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (open) {
-      console.info('[AdminMenuDrawer] Locking body scroll for open drawer');
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
+  // Scroll is allowed when drawer is open (no body overflow lock).
 
   /**
    * Handles navigation button clicks inside the drawer.

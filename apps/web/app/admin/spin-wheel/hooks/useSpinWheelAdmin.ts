@@ -169,15 +169,7 @@ export function useSpinWheelAdmin() {
     return () => clearTimeout(timer);
   }, [productPickerOpen, pickerCategoryId, pickerSearch, fetchPickerProducts]);
 
-  useEffect(() => {
-    if (prizeModalOpen) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [prizeModalOpen]);
+  // Scroll is allowed when prize modal is open (no body overflow lock).
 
   const openNewPrizeModal = useCallback(() => {
     resetForm();

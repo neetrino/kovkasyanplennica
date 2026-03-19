@@ -50,11 +50,7 @@ export function ReservationModal({ table, onClose }: ReservationModalProps) {
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Lock body scroll
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
-  }, []);
+  // Scroll is allowed when modal is open (no body overflow lock).
 
   const today = new Date().toISOString().split('T')[0];
 
