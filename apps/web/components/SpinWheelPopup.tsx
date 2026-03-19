@@ -54,10 +54,12 @@ const WHEEL_SLOT_RADIUS_PERCENT = 38;
 
 /**
  * Returns left/top in % for a slot on the wheel circle.
- * Index 0 = 12 o'clock, then clockwise like clock numbers.
+ * Each slot is placed in the center of its segment (between two divider lines).
+ * Index 0 = first segment from 12 o'clock, then clockwise.
  */
 function getSlotPositionOnCircle(index: number): { left: number; top: number } {
-  const angleDeg = -90 + (360 / WHEEL_SLOT_COUNT_CONST) * index;
+  const segmentAngle = 360 / WHEEL_SLOT_COUNT_CONST;
+  const angleDeg = -90 + segmentAngle * (index + 0.5);
   const angleRad = (angleDeg * Math.PI) / 180;
   const left = 50 + WHEEL_SLOT_RADIUS_PERCENT * Math.cos(angleRad);
   const top = 50 + WHEEL_SLOT_RADIUS_PERCENT * Math.sin(angleRad);
@@ -250,6 +252,13 @@ export function SpinWheelPopup() {
       <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#fff4de]/15 bg-gradient-to-b from-[#354846] to-[#273633] shadow-2xl p-5 md:p-7">
         <div className="pointer-events-none absolute -top-24 -left-16 h-52 w-52 rounded-full bg-[#fff4de]/10 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -right-10 h-44 w-44 rounded-full bg-[#f1bb7d]/20 blur-3xl" />
+        {/* Декоративный вектор: верх справа и низ слева */}
+        <div className="pointer-events-none absolute top-4 right-4 w-32 h-36 md:w-40 md:h-44 opacity-40" aria-hidden>
+          <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-top object-right" />
+        </div>
+        <div className="pointer-events-none absolute bottom-4 left-4 w-32 h-36 md:w-40 md:h-44 opacity-40 rotate-180" aria-hidden>
+          <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-bottom object-left" />
+        </div>
         {isCelebrating && (
           <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
             <div className="celebrate-flash absolute inset-0" />
@@ -292,6 +301,12 @@ export function SpinWheelPopup() {
             className="absolute inset-0 rounded-full transition-transform will-change-transform"
             style={{ transform: `rotate(${wheelRotation}deg)` }}
           >
+            {Array.from({ length: WHEEL_SLOT_COUNT }, (_, i) => (
+              <div
+                key={`divider-${i}`}
+                className={`wheel-divider-${i} absolute left-1/2 top-1/2 h-px w-1/2 origin-left bg-[#2f3f3d]/50`}
+              />
+            ))}
             {visiblePrizes.map((prize, index) => {
               const isHighlighted = index === highlightedIndex;
               const preview = getPrizePreview(prize);
@@ -388,6 +403,11 @@ export function SpinWheelPopup() {
       <style jsx>{`
         ${SLOT_CIRCLE_POSITIONS.map(
           (pos, i) => `.wheel-slot-${i} { left: ${pos.left}%; top: ${pos.top}%; }`
+        ).join('\n')}
+        ${Array.from(
+          { length: WHEEL_SLOT_COUNT },
+          (_, i) =>
+            `.wheel-divider-${i} { transform: translateY(-50%) rotate(${-90 + (360 / WHEEL_SLOT_COUNT) * i}deg); }`
         ).join('\n')}
         .confetti-piece {
           position: absolute;

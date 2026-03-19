@@ -15,33 +15,6 @@ export function About() {
   const { t } = useTranslation();
   return (
     <section className="relative bg-[#ffe5c2] overflow-hidden py-16 md:py-24 lg:py-32 rounded-t-[47px] -mt-[45px] z-10">
-      {/* Декоративные паттерны на фоне - как в Hero */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        {/* Вектор 1 - верхний правый угол, ближе к центру */}
-        <div className="absolute top-8 right-8 md:top-12 md:right-12 lg:top-16 lg:right-16 w-[280px] h-[315px] md:w-[350px] md:h-[385px] lg:w-[420px] lg:h-[455px] ">
-          <Image
-            src="/hero-vector-1.svg"
-            alt=""
-            fill
-            className="object-contain"
-            aria-hidden="true"
-            unoptimized
-          />
-        </div>
-        
-        {/* Вектор 2 - нижний левый угол, ближе к центру */}
-        <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12 lg:bottom-16 lg:left-16 w-[280px] h-[315px] md:w-[350px] md:h-[385px] lg:w-[420px] lg:h-[455px] rotate-180">
-          <Image
-            src="/hero-vector-2.svg"
-            alt=""
-            fill
-            className="object-contain"
-            aria-hidden="true"
-            unoptimized
-          />
-        </div>
-      </div>
-      
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Первая секция: Заголовок сверху, изображение слева, текст справа */}
         <div className="mb-16 md:mb-24">
