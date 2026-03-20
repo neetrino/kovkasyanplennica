@@ -35,9 +35,13 @@ const TIME_SLOTS = [
 interface ReservationModalProps {
   table: TableConfig;
   onClose: () => void;
+  /** Ապրանքի տվյալներ spin wheel-ից (query params) */
+  productTitle?: string | null;
+  productImageUrl?: string | null;
+  profitCents?: number | null;
 }
 
-export function ReservationModal({ table, onClose }: ReservationModalProps) {
+export function ReservationModal({ table, onClose, productTitle, productImageUrl, profitCents }: ReservationModalProps) {
   const [form, setForm] = useState<ReservationForm>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<ReservationForm>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -93,6 +97,9 @@ export function ReservationModal({ table, onClose }: ReservationModalProps) {
           time: form.time,
           guestCount: parseInt(form.guestCount, 10) || 1,
           note: form.note.trim() || null,
+          ...(productTitle && { productTitle: productTitle.trim() }),
+          ...(productImageUrl && { productImageUrl: productImageUrl.trim() }),
+          ...(profitCents != null && Number.isFinite(profitCents) && { profitCents: Math.round(Number(profitCents)) }),
         }),
       });
 

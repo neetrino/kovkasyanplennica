@@ -7,7 +7,6 @@ import { apiClient } from '../../../../lib/api-client';
 import { useTranslation } from '../../../../lib/i18n-client';
 import type {
   SpinWheelPrize,
-  SpinWinRow,
   UserOption,
   CategoryOption,
   PickerProductItem,
@@ -37,10 +36,6 @@ interface UsersResponse {
   data: UserOption[];
 }
 
-interface WinsResponse {
-  data: SpinWinRow[];
-}
-
 function getProductImageFromUnknown(product: unknown): string | null {
   if (!product || typeof product !== 'object') {
     return null;
@@ -65,7 +60,6 @@ export function useSpinWheelAdmin() {
   const [users, setUsers] = useState<UserOption[]>([]);
   const [form, setForm] = useState<PrizeFormState>(INITIAL_FORM_STATE);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [wins, setWins] = useState<SpinWinRow[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [prizeModalOpen, setPrizeModalOpen] = useState(false);
@@ -124,23 +118,14 @@ export function useSpinWheelAdmin() {
     setUsers(response.data || []);
   }, []);
 
-  const fetchWins = useCallback(async () => {
-    try {
-      const response = await apiClient.get<WinsResponse>('/api/v1/admin/spin-wheel/wins');
-      setWins(response.data || []);
-    } catch {
-      setWins([]);
-    }
-  }, []);
-
   const fetchAll = useCallback(async () => {
     setPageLoading(true);
     try {
-      await Promise.all([fetchPrizes(), fetchUsers(), fetchWins()]);
+      await Promise.all([fetchPrizes(), fetchUsers()]);
     } finally {
       setPageLoading(false);
     }
-  }, [fetchPrizes, fetchUsers, fetchWins]);
+  }, [fetchPrizes, fetchUsers]);
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || !isAdmin)) {
@@ -220,7 +205,6 @@ export function useSpinWheelAdmin() {
       }
 
       await fetchPrizes();
-      await fetchWins();
       resetForm();
       setPrizeModalOpen(false);
       alert(t('admin.spinWheel.savedSuccess'));
@@ -238,7 +222,6 @@ export function useSpinWheelAdmin() {
     t,
     resetForm,
     fetchPrizes,
-    fetchWins,
   ]);
 
   const handleEdit = useCallback((prize: SpinWheelPrize) => {
@@ -277,27 +260,12 @@ export function useSpinWheelAdmin() {
       try {
         await apiClient.delete(`/api/v1/admin/spin-wheel/prizes/${prizeId}`);
         await fetchPrizes();
-        await fetchWins();
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : t('admin.common.error');
         alert(t('admin.spinWheel.deleteError').replace('{message}', errorMessage));
       }
     },
-    [t, fetchPrizes, fetchWins]
-  );
-
-  const handleDeleteWin = useCallback(
-    async (winId: string) => {
-      if (!window.confirm(t('admin.spinWheel.deleteWinConfirm'))) return;
-      try {
-        await apiClient.delete(`/api/v1/admin/spin-wheel/wins/${winId}`);
-        await fetchWins();
-      } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : t('admin.common.error');
-        alert(t('admin.spinWheel.deleteError').replace('{message}', errorMessage));
-      }
-    },
-    [t, fetchWins]
+    [t, fetchPrizes]
   );
 
   const openProductPicker = useCallback(() => {
@@ -323,7 +291,6 @@ export function useSpinWheelAdmin() {
     isAdmin,
     pageLoading,
     prizes,
-    wins,
     users,
     form,
     setForm,
@@ -338,7 +305,6 @@ export function useSpinWheelAdmin() {
     handleSubmit,
     handleEdit,
     handleDelete,
-    handleDeleteWin,
     openProductPicker,
     productPickerOpen,
     setProductPickerOpen,

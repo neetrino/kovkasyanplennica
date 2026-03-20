@@ -31,7 +31,8 @@
     "youWon": "You won",
     "winMessage": "Congratulations! You won this product: {title}",
     "noImage": "No image",
-    "viewProduct": "View product"
+    "viewProduct": "View product",
+    "bookTable": "table"
   },
   "header": {
     "logoAlt": "KOVKASYAN PLENNITSA",
