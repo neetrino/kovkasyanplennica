@@ -9,7 +9,22 @@ import { logger } from "@/lib/utils/logger";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { tableId, tableLabel, tableSeats, firstName, lastName, email, phone, date, time, guestCount, note } = body;
+    const {
+      tableId,
+      tableLabel,
+      tableSeats,
+      firstName,
+      lastName,
+      email,
+      phone,
+      date,
+      time,
+      guestCount,
+      note,
+      productTitle,
+      productImageUrl,
+      profitCents,
+    } = body;
 
     if (!tableId || typeof tableId !== "string") {
       return NextResponse.json(
@@ -87,6 +102,9 @@ export async function POST(req: NextRequest) {
         guestCount: Number(guestCount) || 1,
         note: note ? String(note).trim() : null,
         status: "pending",
+        productTitle: productTitle != null && typeof productTitle === "string" ? productTitle.trim() || null : null,
+        productImageUrl: productImageUrl != null && typeof productImageUrl === "string" ? productImageUrl.trim() || null : null,
+        profitCents: typeof profitCents === "number" && Number.isFinite(profitCents) ? Math.round(profitCents) : null,
       },
     });
 

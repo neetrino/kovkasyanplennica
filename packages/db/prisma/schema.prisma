@@ -538,9 +538,12 @@ model TableReservation {
   time        String
   guestCount  Int      @default(1)
   note        String?  @db.Text
-  status      String   @default("pending")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status           String   @default("pending")
+  profitCents      Int?
+  productTitle     String?
+  productImageUrl  String?
+  createdAt        DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@index([createdAt(sort: Desc)])
   @@index([tableId])

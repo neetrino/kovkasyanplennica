@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { TABLES, type TableConfig } from './table-data';
 import { ReservationModal } from './ReservationModal';
 
@@ -91,7 +92,20 @@ function TableCard({
 
 // ---- Floor plan zones ----
 export default function DesktopsPage() {
+  const searchParams = useSearchParams();
   const [selectedTable, setSelectedTable] = useState<TableConfig | null>(null);
+
+  const productFromUrl = useMemo(() => {
+    const title = searchParams.get('productTitle');
+    const imageUrl = searchParams.get('productImageUrl');
+    const profit = searchParams.get('profitCents');
+    const profitNum = profit != null ? parseInt(profit, 10) : null;
+    return {
+      productTitle: title || null,
+      productImageUrl: imageUrl || null,
+      profitCents: profitNum != null && Number.isFinite(profitNum) ? profitNum : null,
+    };
+  }, [searchParams]);
 
   const topTables   = TABLES.filter(t => t.zone === 'top');
   const leftTables  = TABLES.filter(t => t.zone === 'left');
@@ -220,6 +234,9 @@ export default function DesktopsPage() {
         <ReservationModal
           table={selectedTable}
           onClose={() => setSelectedTable(null)}
+          productTitle={productFromUrl.productTitle}
+          productImageUrl={productFromUrl.productImageUrl}
+          profitCents={productFromUrl.profitCents}
         />
       )}
     </div>

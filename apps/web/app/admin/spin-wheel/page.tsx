@@ -5,7 +5,6 @@ import { AdminSidebar } from '../components/AdminSidebar';
 import { useSpinWheelAdmin } from './hooks/useSpinWheelAdmin';
 import { PrizeFormModal } from './components/PrizeFormModal';
 import { ProductPickerModal } from './components/ProductPickerModal';
-import { WinsTable } from './components/WinsTable';
 import { ActivePrizesList } from './components/ActivePrizesList';
 
 export default function AdminSpinWheelPage() {
@@ -18,7 +17,6 @@ export default function AdminSpinWheelPage() {
     isAdmin,
     pageLoading,
     prizes,
-    wins,
     users,
     form,
     setForm,
@@ -33,7 +31,6 @@ export default function AdminSpinWheelPage() {
     handleSubmit,
     handleEdit,
     handleDelete,
-    handleDeleteWin,
     openProductPicker,
     productPickerOpen,
     setProductPickerOpen,
@@ -116,8 +113,6 @@ export default function AdminSpinWheelPage() {
               onSelectProduct={handleSelectProduct}
               t={t}
             />
-
-            <WinsTable wins={wins} onDeleteWin={handleDeleteWin} t={t} />
 
             <ActivePrizesList
               prizes={prizes}

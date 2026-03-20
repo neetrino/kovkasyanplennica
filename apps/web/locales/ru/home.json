@@ -31,7 +31,8 @@
     "youWon": "Вы выиграли",
     "winMessage": "Поздравляем! Вы выиграли этот товар: {title}",
     "noImage": "Нет изображения",
-    "viewProduct": "Смотреть товар"
+    "viewProduct": "Смотреть товар",
+    "bookTable": "стол"
   },
   "header": {
     "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
