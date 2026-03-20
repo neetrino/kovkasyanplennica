@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -308,7 +308,7 @@ export function CategoryGrid() {
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}
-                onClick={(e) => {
+                onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                   e.preventDefault();
                   handleCategoryClick(category.slug);
                 }}
