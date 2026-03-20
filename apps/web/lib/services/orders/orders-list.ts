@@ -1,7 +1,12 @@
 import { db } from "@white-shop/db";
+import type { Prisma } from "@prisma/client";
+
+type OrderWithRelations = Prisma.OrderGetPayload<{
+  include: { items: true; payments: true };
+}>;
 
 export async function listOrders(userId: string) {
-  const orders = await db.order.findMany({
+  const orders: OrderWithRelations[] = await db.order.findMany({
     where: { userId },
     include: { items: true, payments: true },
     orderBy: { createdAt: "desc" },

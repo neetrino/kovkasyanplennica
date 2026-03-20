@@ -500,7 +500,7 @@ export function SpinWheelPopup() {
           </Link>
         )}
       </div>
-      <style jsx>{`
+      <style>{`
         ${SLOT_CIRCLE_POSITIONS.map(
           (pos, i) => `.wheel-slot-${i} { left: ${pos.left}%; top: ${pos.top}%; }`
         ).join('\n')}

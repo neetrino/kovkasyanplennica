@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { MouseEvent } from 'react';
 import { CategoryIcon } from './CategoryIcon';
 import type { Category } from './utils';
 
@@ -47,7 +48,7 @@ export function CategoryItem({
   return (
     <Link
       href={category.slug === 'all' ? '/products' : `/products?category=${category.slug}`}
-      onClick={(e) => {
+      onClick={(e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         onCategoryClick(category.slug === 'all' ? null : category.slug);
       }}

@@ -70,7 +70,7 @@ export function RelatedProductCard({
         <Link
           href={`/products/${product.slug}`}
           className="block cursor-pointer flex-1 flex flex-col"
-          onClick={(e) => {
+          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
             // Prevent navigation only if we actually dragged (moved more than threshold)
             if (hasMoved) {
               e.preventDefault();

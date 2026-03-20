@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../lib/i18n-client';
 import { useAuth } from '../lib/auth/AuthContext';
-import { fetchCart } from '../app/cart/cart-fetcher';
+import { fetchCart } from '../app/(main)/cart/cart-fetcher';
 import { formatPrice, getStoredCurrency } from '../lib/currency';
-import type { Cart } from '../app/cart/types';
+import type { Cart } from '../app/(main)/cart/types';
 
 const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
