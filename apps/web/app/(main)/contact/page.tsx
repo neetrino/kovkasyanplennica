@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
-import { getStoredLanguage } from '@/lib/language';
 import { useTranslation } from '@/lib/i18n-client';
 import { apiClient } from '@/lib/api-client';
 import contactData from '../../../../../json/contact.json';
@@ -11,17 +10,11 @@ const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
 
 export default function ContactPage() {
   const { t } = useTranslation();
-  const [language, setLanguage] = useState<'en' | 'ru' | 'am'>('ru');
+  const language = 'ru' as const;
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const stored = getStoredLanguage();
-    const mapped = stored === 'hy' ? 'am' : stored === 'ka' ? 'en' : stored;
-    setLanguage((mapped === 'am' || mapped === 'ru' || mapped === 'en') ? (mapped as 'en' | 'ru' | 'am') : 'ru');
-  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

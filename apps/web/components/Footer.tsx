@@ -157,6 +157,11 @@ export function Footer() {
                   </a>
                 </li>
                 <li className={`${isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'} text-sm`}>
+                  <a href="tel:+73452288244" className={`${isMenuPage ? 'hover:text-[#2f3f3d]' : 'hover:text-white'} transition-colors`}>
+                    {t('home.footer.contacts.deliveryPhone')}
+                  </a>
+                </li>
+                <li className={`${isMenuPage ? 'text-[#2f3f3d]/75' : 'text-[#ececec]'} text-sm`}>
                   <a href="mailto:info@vkavkazan.ru" className={`${isMenuPage ? 'hover:text-[#2f3f3d]' : 'hover:text-white'} transition-colors`}>
                     {t('home.footer.contacts.email')}
                   </a>

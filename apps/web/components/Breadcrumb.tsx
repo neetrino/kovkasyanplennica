@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { getStoredLanguage } from '../lib/language';
+import { getStoredLanguage, type LanguageCode } from '../lib/language';
 import { t } from '../lib/i18n';
 import { useState, useEffect } from 'react';
 
@@ -13,7 +13,7 @@ interface BreadcrumbItem {
 
 export function Breadcrumb() {
   const pathname = usePathname();
-  const [language, setLanguage] = useState<'en' | 'ru' | 'hy' | 'ka'>('en');
+  const [language, setLanguage] = useState<LanguageCode>('ru');
 
   useEffect(() => {
     const storedLang = getStoredLanguage();

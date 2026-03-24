@@ -51,7 +51,7 @@ export async function createAndSubmitPayload({
       categoryIds: formData.categoryIds.length > 0 ? formData.categoryIds : undefined,
       published: isEditMode ? formData.published : true,
       featured: formData.featured,
-      locale: 'en',
+      locale: 'ru',
       variants: variants,
       attributeIds: attributeIds.length > 0 ? attributeIds : undefined,
     };

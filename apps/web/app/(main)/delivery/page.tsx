@@ -1,21 +1,16 @@
 'use client';
 
 import { Card } from '@shop/ui';
-import { useEffect, useState } from 'react';
 import shippingData from '../../../../../json/shipping.json';
 import { useTranslation } from '@/lib/i18n-client';
 import { getStoredLanguage } from '@/lib/language';
 import { loadTranslation } from '@/lib/i18n';
+import ruDelivery from '@/locales/ru/delivery.json';
+
+const UI_LANG = 'ru' as const;
 
 export default function DeliveryPage() {
   const { t } = useTranslation();
-  const [lang, setLang] = useState<'en' | 'ru' | 'am'>('ru');
-
-  useEffect(() => {
-    const language = getStoredLanguage();
-    const mappedLang = language === 'hy' ? 'am' : (language === 'ka' ? 'en' : language);
-    setLang(mappedLang as 'en' | 'ru' | 'am');
-  }, []);
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -28,7 +23,7 @@ export default function DeliveryPage() {
           <div className="space-y-4 text-gray-700">
             {shippingData.methods.map((method) => {
               if (!method.enabled) return null;
-              const methodName = method.name[lang as keyof typeof method.name] || method.name.en;
+              const methodName = method.name[UI_LANG] ?? method.name.en;
               const freeAbove = method.freeAbove ? new Intl.NumberFormat('hy-AM', {
                 style: 'currency',
                 currency: 'AMD',
@@ -65,10 +60,10 @@ export default function DeliveryPage() {
                       <ul className="list-disc list-inside space-y-1">
                         {method.locations.map((location, idx) => (
                           <li key={idx}>
-                            {location.name[lang as keyof typeof location.name] || location.name.en} - {location.address}
+                            {location.name[UI_LANG] ?? location.name.en} - {location.address}
                             {location.workingHours && (
                               <span className="text-gray-500">
-                                {' '}({location.workingHours[lang as keyof typeof location.workingHours] || location.workingHours.en})
+                                {' '}({location.workingHours[UI_LANG] ?? location.workingHours.en})
                               </span>
                             )}
                           </li>
@@ -97,7 +92,7 @@ export default function DeliveryPage() {
               <ul className="list-disc list-inside text-gray-600 space-y-1">
                 {(() => {
                   const lang = getStoredLanguage();
-                  const deliveryData = loadTranslation(lang, 'delivery');
+                  const deliveryData = loadTranslation(lang, 'delivery') as typeof ruDelivery;
                   const items = deliveryData?.returnPolicy?.returnConditions?.items || [];
                   return Array.isArray(items) ? items.map((item: string, idx: number) => (
                     <li key={idx}>{item}</li>
@@ -110,7 +105,7 @@ export default function DeliveryPage() {
               <ol className="list-decimal list-inside text-gray-600 space-y-1">
                 {(() => {
                   const lang = getStoredLanguage();
-                  const deliveryData = loadTranslation(lang, 'delivery');
+                  const deliveryData = loadTranslation(lang, 'delivery') as typeof ruDelivery;
                   const steps = deliveryData?.returnPolicy?.howToReturn?.steps || [];
                   return Array.isArray(steps) ? steps.map((step: string, idx: number) => (
                     <li key={idx}>{step}</li>
@@ -129,7 +124,7 @@ export default function DeliveryPage() {
               <ul className="list-disc list-inside text-gray-600 space-y-1">
                 {(() => {
                   const lang = getStoredLanguage();
-                  const deliveryData = loadTranslation(lang, 'delivery');
+                  const deliveryData = loadTranslation(lang, 'delivery') as typeof ruDelivery;
                   const items = deliveryData?.returnPolicy?.nonReturnableItems?.items || [];
                   return Array.isArray(items) ? items.map((item: string, idx: number) => (
                     <li key={idx}>{item}</li>

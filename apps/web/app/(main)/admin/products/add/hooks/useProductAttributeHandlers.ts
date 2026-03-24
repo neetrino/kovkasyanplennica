@@ -41,7 +41,7 @@ export function useProductAttributeHandlers({
       setAddingColor(true);
       const response = await apiClient.post<{ data: Attribute }>(`/api/v1/admin/attributes/${colorAttribute.id}/values`, {
         label: newColorName.trim(),
-        locale: 'en',
+        locale: 'ru',
       });
       
       if (response.data) {
@@ -78,7 +78,7 @@ export function useProductAttributeHandlers({
       setAddingSize(true);
       const response = await apiClient.post<{ data: Attribute }>(`/api/v1/admin/attributes/${sizeAttribute.id}/values`, {
         label: newSizeName.trim(),
-        locale: 'en',
+        locale: 'ru',
       });
       
       if (response.data) {

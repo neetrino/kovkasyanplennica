@@ -1,9 +1,6 @@
 // Language utilities
 export const LANGUAGES = {
-  en: { code: 'en', name: 'English', nativeName: 'English' },
-  hy: { code: 'hy', name: 'Armenian', nativeName: 'Հայերեն' },
   ru: { code: 'ru', name: 'Russian', nativeName: 'Русский' },
-  ka: { code: 'ka', name: 'Georgian', nativeName: 'ქართული' },
 } as const;
 
 export type LanguageCode = keyof typeof LANGUAGES;

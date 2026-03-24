@@ -134,29 +134,9 @@ export function useProductData({
     try {
       setLoading(true);
       const currentLang = getStoredLanguage();
-
-      // Try to fetch with current language first
-      let data: Product;
-      try {
-        data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
-          params: { lang: currentLang },
-        });
-      } catch (error: any) {
-        // If 404 and not English, try fallback to English
-        if (error?.status === 404 && currentLang !== 'en') {
-          try {
-            data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
-              params: { lang: 'en' },
-            });
-          } catch (fallbackError) {
-            // If English also fails, throw the original error
-            throw error;
-          }
-        } else {
-          // Re-throw if it's not a 404 or if we're already trying English
-          throw error;
-        }
-      }
+      const data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
+        params: { lang: currentLang },
+      });
 
       setProduct(data);
       // Don't reset image index here - let the component handle it

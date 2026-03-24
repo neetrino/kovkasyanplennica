@@ -82,7 +82,8 @@
     "contacts": {
       "title": "КОНТАКТЫ",
       "address": "ул. Пушкина, д. 10",
-      "phone": "+7 (999) 999-00-00",
+      "phone": "+7 (3452) 73-33-00",
+      "deliveryPhone": "Доставка +7 (3452) 28-82-44",
       "email": "info@vkavkazan.ru"
     },
     "workingHours": {

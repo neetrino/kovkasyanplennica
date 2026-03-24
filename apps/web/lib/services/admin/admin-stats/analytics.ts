@@ -229,13 +229,13 @@ export async function getAnalytics(period: string = 'week', startDate?: string, 
               product: {
                 include: {
                   translations: {
-                    where: { locale: 'en' },
+                    where: { locale: 'ru' },
                     take: 1,
                   },
                   categories: {
                     include: {
                       translations: {
-                        where: { locale: 'en' },
+                        where: { locale: 'ru' },
                         take: 1,
                       },
                     },

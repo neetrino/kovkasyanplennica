@@ -26,7 +26,7 @@ interface RelatedProductsProps {
 export function RelatedProducts({ categorySlug, currentProductId }: RelatedProductsProps) {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
-  const [language, setLanguage] = useState<LanguageCode>('en');
+  const [language, setLanguage] = useState<LanguageCode>('ru');
   const [addingToCart, setAddingToCart] = useState<Set<string>>(new Set());
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   

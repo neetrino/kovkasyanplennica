@@ -57,7 +57,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         slug: formData.slug.trim() || undefined,
         parentId: formData.parentId || undefined,
         requiresSizes: formData.requiresSizes,
-        locale: 'en',
+        locale: 'ru',
       });
       setShowAddModal(false);
       resetForm();
@@ -118,7 +118,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         parentId: formData.parentId || null,
         requiresSizes: formData.requiresSizes,
         subcategoryIds: formData.subcategoryIds,
-        locale: 'en',
+        locale: 'ru',
       });
       setShowEditModal(false);
       setEditingCategory(null);

@@ -45,7 +45,7 @@ export function LanguageSwitcher() {
         aria-label="Change language"
       >
         <span className="text-lg" role="img" aria-label={currentLanguage.nativeName}>
-          {currentLang === 'en' ? '🇬🇧' : currentLang === 'hy' ? '🇦🇲' : currentLang === 'ru' ? '🇷🇺' : '🇬🇪'}
+          🇷🇺
         </span>
         <span className="hidden sm:inline">{currentLanguage.nativeName}</span>
         <span className="sm:hidden">{currentLanguage.code.toUpperCase()}</span>
@@ -71,7 +71,7 @@ export function LanguageSwitcher() {
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
             {Object.entries(LANGUAGES).map(([code, lang]) => {
               const isActive = code === currentLang;
-              const flag = code === 'en' ? '🇬🇧' : code === 'hy' ? '🇦🇲' : code === 'ru' ? '🇷🇺' : '🇬🇪';
+              const flag = '🇷🇺';
               
               return (
                 <button
@@ -139,7 +139,7 @@ export function SimpleLanguageSwitcher() {
     <div className="flex items-center gap-2">
       {Object.entries(LANGUAGES).map(([code, lang]) => {
         const isActive = code === currentLang;
-        const flag = code === 'en' ? '🇬🇧' : code === 'hy' ? '🇦🇲' : code === 'ru' ? '🇷🇺' : '🇬🇪';
+        const flag = '🇷🇺';
         
         return (
           <button

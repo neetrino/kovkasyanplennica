@@ -48,7 +48,7 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
     setLoading(true);
     const baseUrl =
       typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const params = new URLSearchParams({ page: currentPage.toString(), limit: '2', lang: 'en' });
+    const params = new URLSearchParams({ page: currentPage.toString(), limit: '2', lang: 'ru' });
     fetch(`${baseUrl}/api/v1/products?${params}`, { cache: 'no-store' })
       .then((res) => res.ok ? res.json() : { data: [] })
       .then((response: { data?: unknown[] }) => {
@@ -95,10 +95,10 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
       </div>
 
       <div className="relative z-10 px-4 max-w-[430px] mx-auto">
-        <h2 className="text-[#fff4de] text-[41px] leading-[68px] font-light italic text-center mt-0 mb-4">
+        <h2 className="text-[#fff4de] text-[41px] leading-[68px] font-light italic text-center mt-0 mb-2 -translate-y-2">
           {t('home.menu.title')}
         </h2>
-        <div className="relative w-[180px] h-[5px] mx-auto mb-6">
+        <div className="relative w-[180px] h-[5px] mx-auto mb-6 -translate-y-4">
           <Image src="/assets/hero/Vector7.svg" alt="" fill className="object-contain" aria-hidden unoptimized />
         </div>
 
