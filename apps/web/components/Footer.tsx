@@ -87,7 +87,7 @@ export function Footer() {
                   </svg>
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/reel/DWBtLxejGq8/?igsh=NWhmcnR5d3FoNGZs"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`${isMenuPage ? 'text-[#2f3f3d]/70 hover:text-[#2f3f3d]' : 'text-white/70 hover:text-white'} transition-colors`}
