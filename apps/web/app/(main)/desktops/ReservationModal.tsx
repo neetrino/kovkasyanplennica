@@ -148,14 +148,14 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-hidden />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg bg-[#2F3F3D] border border-[#3d504e] rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-xl bg-[#2F3F3D] border border-[#3d504e] rounded-3xl shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto -mt-[516px]">
 
         {/* Header */}
         <div className="sticky top-0 bg-[#2F3F3D] border-b border-[#3d504e] px-6 py-5 flex items-start justify-between z-10">
