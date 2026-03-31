@@ -10,6 +10,8 @@ interface Product {
   price: number;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: {
     id: string;
     name: string;
@@ -51,6 +53,8 @@ async function getMenuProducts(page: number = 1, limit: number = 4): Promise<{ p
       compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
       image: p.image ?? null,
       inStock: p.inStock ?? true,
+      defaultVariantId: p.defaultVariantId ?? null,
+      stock: typeof p.stock === 'number' ? p.stock : undefined,
       brand: p.brand ?? null,
       colors: p.colors ?? [],
       labels: p.labels ?? [],

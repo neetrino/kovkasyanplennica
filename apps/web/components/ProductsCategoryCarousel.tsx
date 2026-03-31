@@ -14,6 +14,8 @@ interface Product {
   compareAtPrice: number | null;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: { id: string; name: string } | null;
   category?: string;
 }

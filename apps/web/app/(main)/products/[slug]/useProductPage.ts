@@ -19,7 +19,6 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currency, setCurrency] = useState(getStoredCurrency());
   const [language, setLanguage] = useState<LanguageCode>('ru');
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [showMessage, setShowMessage] = useState<string | null>(null);
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
 
@@ -173,8 +172,6 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
     selectedColor,
     selectedSize,
     selectedAttributeValues,
-    isAddingToCart,
-    setIsAddingToCart,
     showMessage,
     setShowMessage,
     isInWishlist,

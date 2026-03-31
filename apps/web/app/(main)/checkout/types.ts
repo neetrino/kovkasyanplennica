@@ -13,34 +13,4 @@ export type CheckoutFormData = {
   cardHolderName?: string;
 };
 
-export interface CartItem {
-  id: string;
-  variant: {
-    id: string;
-    sku: string;
-    product: {
-      id: string;
-      title: string;
-      slug: string;
-      image?: string | null;
-    };
-  };
-  quantity: number;
-  price: number;
-  total: number;
-}
-
-export interface Cart {
-  id: string;
-  items: CartItem[];
-  totals: {
-    subtotal: number;
-    discount: number;
-    shipping: number;
-    tax: number;
-    total: number;
-    currency: string;
-  };
-  itemsCount: number;
-}
-
+export type { Cart, CartItem } from '@/app/(main)/cart/types';

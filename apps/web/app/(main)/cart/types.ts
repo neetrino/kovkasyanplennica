@@ -38,13 +38,19 @@ export interface Cart {
 }
 
 /**
- * Guest cart item interface
+ * Guest cart item interface (localStorage). Optional fields are UI snapshots for instant cart load.
  */
 export interface GuestCartItem {
   productId: string;
   productSlug?: string;
   variantId: string;
   quantity: number;
+  title?: string;
+  image?: string | null;
+  price?: number;
+  originalPrice?: number | null;
+  sku?: string;
+  stock?: number;
 }
 
 

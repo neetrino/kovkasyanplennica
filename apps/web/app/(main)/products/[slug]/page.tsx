@@ -1,8 +1,6 @@
 'use client';
 
 import { use } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api-client';
 import { getStoredCurrency } from '@/lib/currency';
 import { t } from '@/lib/i18n';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -14,7 +12,6 @@ import { useProductPage } from './useProductPage';
 import type { ProductPageProps } from './types';
 
 export default function ProductPage({ params }: ProductPageProps) {
-  const router = useRouter();
   const { isLoggedIn } = useAuth();
   
   const {
@@ -30,10 +27,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     selectedColor,
     selectedSize,
     selectedAttributeValues,
-    isAddingToCart,
-    setIsAddingToCart,
     showMessage,
-    setShowMessage,
     isInWishlist,
     isInCompare,
     quantity,
@@ -64,32 +58,6 @@ export default function ProductPage({ params }: ProductPageProps) {
     handleCompareToggle,
     getRequiredAttributesMessage,
   } = useProductPage(params);
-
-  const handleAddToCart = async () => {
-    if (!canAddToCart || !product || !currentVariant) return;
-    setIsAddingToCart(true);
-    try {
-      if (!isLoggedIn) {
-        const stored = localStorage.getItem('shop_cart_guest');
-        const cart = stored ? JSON.parse(stored) : [];
-        const existing = cart.find((i: unknown): i is { variantId: string; quantity: number; productId?: string; productSlug?: string } => 
-          typeof i === 'object' && i !== null && 'variantId' in i && i.variantId === currentVariant.id
-        );
-        if (existing) existing.quantity += quantity;
-        else cart.push({ productId: product.id, productSlug: product.slug, variantId: currentVariant.id, quantity });
-        localStorage.setItem('shop_cart_guest', JSON.stringify(cart));
-      } else {
-        await apiClient.post('/api/v1/cart/items', { productId: product.id, variantId: currentVariant.id, quantity });
-      }
-      setShowMessage(`${t(language, 'product.addedToCart')} ${quantity} ${t(language, 'product.pcs')}`);
-      window.dispatchEvent(new Event('cart-updated'));
-    } catch (err) { 
-      setShowMessage(t(language, 'product.errorAddingToCart')); 
-    } finally { 
-      setIsAddingToCart(false); 
-      setTimeout(() => setShowMessage(null), 2000); 
-    }
-  };
 
   if (loading || !product) {
     return (
@@ -130,7 +98,6 @@ export default function ProductPage({ params }: ProductPageProps) {
             hasUnavailableAttributes={hasUnavailableAttributes}
             unavailableAttributes={unavailableAttributes}
             canAddToCart={canAddToCart}
-            isAddingToCart={isAddingToCart}
             isInWishlist={isInWishlist}
             isInCompare={isInCompare}
             showMessage={showMessage}
@@ -143,7 +110,6 @@ export default function ProductPage({ params }: ProductPageProps) {
             colorGroups={colorGroups}
             sizeGroups={sizeGroups}
             onQuantityAdjust={adjustQuantity}
-            onAddToCart={handleAddToCart}
             onAddToWishlist={handleAddToWishlist}
             onCompareToggle={handleCompareToggle}
             onScrollToReviews={scrollToReviews}
