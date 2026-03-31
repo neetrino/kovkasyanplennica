@@ -13,7 +13,8 @@
     "analytics": "Аналитика",
     "filterByPrice": "Фильтр по цене",
     "delivery": "Доставка",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "desktops": "Бронирования столов"
   },
   "dashboard": {
     "title": "Админ страница",
@@ -702,6 +703,37 @@
     "showingPage": "Показана страница {page} из {totalPages} ({total} всего)",
     "previous": "Предыдущая",
     "next": "Следующая"
+  },
+  "desktopsReservations": {
+    "back": "Назад",
+    "title": "Бронирования столов",
+    "totalSubtitle": "Всего {count} бронирований",
+    "statusFilter": "Статус",
+    "filterAll": "Все",
+    "statusPending": "Ожидание",
+    "statusConfirmed": "Подтверждён",
+    "statusCancelled": "Отменён",
+    "loading": "Загрузка...",
+    "empty": "Нет бронирований",
+    "colTable": "Стол",
+    "colName": "Имя",
+    "colEmail": "Эл. почта",
+    "colPhone": "Телефон",
+    "colDateTime": "Дата / время",
+    "colGuests": "Гости",
+    "colStatusShort": "Стат.",
+    "colProfitTitle": "Доход по бронированию (драм)",
+    "colProfit": "Доход",
+    "colCreated": "Создано",
+    "seatsShort": "{n} чел.",
+    "selectAllAria": "Выбрать все",
+    "selectRowAria": "Выбрать {name}",
+    "selectedCount": "{count} выбрано",
+    "bulkDelete": "Удалить выбранные",
+    "bulkDeleting": "Удаление...",
+    "bulkDeleteConfirm": "Удалить {count} бронирований?",
+    "alertUpdateFailed": "Не удалось обновить статус",
+    "alertDeleteFailed": "Не удалось удалить"
   },
   "common": {
     "loading": "Загрузка...",

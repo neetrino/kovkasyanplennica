@@ -168,7 +168,7 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
   },
   {
     id: 'desktops',
-    label: 'Ամրագրումներ',
+    label: t('admin.menu.desktops'),
     path: '/admin/desktops',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
