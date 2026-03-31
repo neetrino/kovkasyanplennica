@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;1,300&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,8 +57,10 @@
     caret-color: transparent !important;
   }
   
-  /* Allow selection in input and textarea fields; keep text normal */
-  input, textarea {
+  /* Allow selection in form controls; keep text normal */
+  input,
+  textarea,
+  select {
     user-select: text !important;
     -webkit-user-select: text !important;
     -moz-user-select: text !important;
@@ -67,7 +71,9 @@
   }
   
   /* Ensure caret is visible and blinking in focused inputs */
-  input:focus, textarea:focus {
+  input:focus,
+  textarea:focus,
+  select:focus {
     caret-color: currentColor !important;
   }
   

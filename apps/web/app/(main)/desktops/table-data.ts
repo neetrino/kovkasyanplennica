@@ -33,4 +33,5 @@ export const TABLES: TableConfig[] = [
   { id: 't17', labelKey: 't17', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't18', labelKey: 't18', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't19', labelKey: 't19', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't20', labelKey: 't20', seats: 4, shape: 'rect', zone: 'bottom' },
 ];

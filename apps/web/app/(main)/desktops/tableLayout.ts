@@ -36,6 +36,7 @@ export const TABLE_LAYOUT: Record<string, TableLayoutConfig> = {
   t17: { positionClass: 'left-[360px] top-[882px]', variant: 'booth' },
   t18: { positionClass: 'left-[582px] top-[882px]', variant: 'booth' },
   t19: { positionClass: 'left-[804px] top-[882px]', variant: 'booth' },
+  t20: { positionClass: 'left-[1026px] top-[882px]', variant: 'booth' },
 };
 
 export function getTableLayout(tableId: TableConfig['id']): TableLayoutConfig {
