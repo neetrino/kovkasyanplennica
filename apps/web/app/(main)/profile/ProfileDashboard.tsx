@@ -1,14 +1,19 @@
 import Link from 'next/link';
 import type { MouseEvent } from 'react';
 import { Button, Card } from '@shop/ui';
-import { formatPriceInCurrency, convertPrice, type CurrencyCode } from '@/lib/currency';
+import {
+  formatPriceInCurrency,
+  amountUsdToRub,
+  amountAmdToRub,
+  convertPrice,
+  SHOP_DISPLAY_CURRENCY,
+} from '@/lib/currency';
 import { getStatusColor, getPaymentStatusColor } from './utils';
 import type { DashboardData, ProfileTab } from './types';
 
 interface ProfileDashboardProps {
   dashboardData: DashboardData | null;
   dashboardLoading: boolean;
-  currency: CurrencyCode;
   onTabChange: (tab: ProfileTab) => void;
   onOrderClick: (orderNumber: string, e: MouseEvent<HTMLAnchorElement>) => void;
   t: (key: string) => string;
@@ -17,7 +22,6 @@ interface ProfileDashboardProps {
 export function ProfileDashboard({
   dashboardData,
   dashboardLoading,
-  currency,
   onTabChange,
   onOrderClick,
   t,
@@ -64,7 +68,7 @@ export function ProfileDashboard({
             <div className="min-w-0 flex-1 overflow-hidden">
               <p className="text-sm font-medium text-gray-600">{t('profile.dashboard.totalSpent')}</p>
               <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1 break-words overflow-wrap-anywhere">
-                {formatPriceInCurrency(dashboardData.stats.totalSpent, currency)}
+                {formatPriceInCurrency(amountUsdToRub(dashboardData.stats.totalSpent), SHOP_DISPLAY_CURRENCY)}
               </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -162,19 +166,15 @@ export function ProfileDashboard({
                     <p className="text-lg font-bold text-gray-900">
                       {(() => {
                         if (order.subtotal !== undefined && order.discountAmount !== undefined && order.taxAmount !== undefined) {
-                          const subtotalAMD = convertPrice(order.subtotal, 'USD', 'AMD');
-                          const discountAMD = convertPrice(order.discountAmount, 'USD', 'AMD');
-                          const taxAMD = convertPrice(order.taxAmount, 'USD', 'AMD');
-                          const totalWithoutShippingAMD = subtotalAMD - discountAMD + taxAMD;
-                          const totalDisplay = currency === 'AMD' ? totalWithoutShippingAMD : convertPrice(totalWithoutShippingAMD, 'AMD', currency);
-                          return formatPriceInCurrency(totalDisplay, currency);
-                        } else {
-                          const totalAMD = convertPrice(order.total, 'USD', 'AMD');
-                          const shippingAMD = order.shippingAmount || 0;
-                          const totalWithoutShippingAMD = totalAMD - shippingAMD;
-                          const totalDisplay = currency === 'AMD' ? totalWithoutShippingAMD : convertPrice(totalWithoutShippingAMD, 'AMD', currency);
-                          return formatPriceInCurrency(totalDisplay, currency);
+                          const rub =
+                            amountUsdToRub(order.subtotal) -
+                            amountUsdToRub(order.discountAmount) +
+                            amountUsdToRub(order.taxAmount);
+                          return formatPriceInCurrency(rub, SHOP_DISPLAY_CURRENCY);
                         }
+                        const totalAmd =
+                          convertPrice(order.total, 'USD', 'AMD') - (order.shippingAmount || 0);
+                        return formatPriceInCurrency(amountAmdToRub(totalAmd), SHOP_DISPLAY_CURRENCY);
                       })()}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">{t('profile.dashboard.viewDetails')}</p>

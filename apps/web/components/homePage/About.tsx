@@ -14,7 +14,10 @@ import { useTranslation } from '../../lib/i18n-client';
 export function About() {
   const { t } = useTranslation();
   return (
-    <section className="relative bg-[#ffe5c2] overflow-hidden py-16 md:py-24 lg:py-32 rounded-t-[47px] -mt-[45px] z-10">
+    <section
+      className="relative bg-[#ffe5c2] overflow-hidden py-16 md:py-24 lg:py-32 rounded-t-[47px] -mt-[45px] z-10"
+      data-home-header-surface="cream"
+    >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Первая секция: Заголовок сверху, изображение слева, текст справа */}
         <div className="mb-16 md:mb-24">

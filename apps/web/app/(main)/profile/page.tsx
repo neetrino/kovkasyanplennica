@@ -59,7 +59,6 @@ function ProfilePageContent() {
     isReordering,
     handleOrderClick,
     handleReOrder,
-    currency,
   } = useProfilePage();
 
   if (authLoading || loading) {
@@ -156,7 +155,6 @@ function ProfilePageContent() {
             <ProfileDashboard
               dashboardData={dashboardData}
               dashboardLoading={dashboardLoading}
-              currency={currency}
               onTabChange={handleTabChange}
               onOrderClick={handleOrderClick}
               t={t}
@@ -226,7 +224,6 @@ function ProfilePageContent() {
               orderDetailsLoading={orderDetailsLoading}
               orderDetailsError={orderDetailsError}
               isReordering={isReordering}
-              currency={currency}
               onClose={() => setSelectedOrder(null)}
               onReOrder={handleReOrder}
               t={t}

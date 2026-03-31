@@ -6,9 +6,9 @@ import { ProductWithRelations } from "./products-find-query.service";
 /**
  * Get "Out of Stock" translation for a given language
  */
-const getOutOfStockLabel = (lang: string = "en"): string => {
+const getOutOfStockLabel = (lang: string = "ru"): string => {
   const langKey = lang as keyof typeof translations;
-  const translation = translations[langKey] || translations.en;
+  const translation = translations[langKey] || translations.ru;
   return translation.stock.outOfStock;
 };
 
@@ -18,7 +18,7 @@ class ProductsFindTransformService {
    */
   async transformProducts(
     products: ProductWithRelations[],
-    lang: string = "en"
+    lang: string = "ru"
   ): Promise<any[]> {
     // Get discount settings
     const discountSettings = await db.settings.findMany({

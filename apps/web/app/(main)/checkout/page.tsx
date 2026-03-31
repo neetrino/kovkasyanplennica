@@ -60,7 +60,6 @@ export default function CheckoutPage() {
     loading,
     error,
     setError,
-    currency,
     logoErrors,
     setLogoErrors,
     showShippingModal,
@@ -209,7 +208,6 @@ export default function CheckoutPage() {
           shippingCity={shippingCity}
           cart={cart}
           orderSummary={orderSummary}
-          currency={currency}
           loadingDeliveryPrice={loadingDeliveryPrice}
           deliveryPrice={deliveryPrice}
           logoErrors={logoErrors}

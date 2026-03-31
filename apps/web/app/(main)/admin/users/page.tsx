@@ -30,6 +30,16 @@ interface UsersResponse {
   };
 }
 
+function getRoleBadgeClassName(role: string): string {
+  if (role === 'admin') {
+    return 'bg-violet-100 text-violet-800 ring-1 ring-violet-200/60';
+  }
+  if (role === 'customer') {
+    return 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200/60';
+  }
+  return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200/60';
+}
+
 export default function UsersPage() {
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
@@ -188,7 +198,7 @@ export default function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         <div className="mb-8">
           <button
             onClick={() => router.push('/admin')}
@@ -350,7 +360,7 @@ export default function UsersPage() {
                             {user.roles?.map((role) => (
                               <span
                                 key={role}
-                                className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full"
+                                className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getRoleBadgeClassName(role)}`}
                               >
                                 {role}
                               </span>

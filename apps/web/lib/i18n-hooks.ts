@@ -10,14 +10,9 @@ import { type LanguageCode } from './language';
 import { getStoredLanguage } from './language';
 import { t, getProductText, getAttributeLabel, clearTranslationCache, type ProductField } from './i18n';
 
-// Import translations to check if language is available
-import enCommon from '../locales/en/common.json';
-import hyCommon from '../locales/hy/common.json';
 import ruCommon from '../locales/ru/common.json';
 
-const translations: Partial<Record<LanguageCode, any>> = {
-  en: { common: enCommon },
-  hy: { common: hyCommon },
+const translations: Partial<Record<LanguageCode, { common: typeof ruCommon }>> = {
   ru: { common: ruCommon },
 };
 

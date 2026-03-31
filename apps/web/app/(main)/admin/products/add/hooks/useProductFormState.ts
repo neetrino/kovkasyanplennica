@@ -42,7 +42,7 @@ export function useProductFormState() {
   const [addingSize, setAddingSize] = useState(false);
   const [colorMessage, setColorMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [sizeMessage, setSizeMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [defaultCurrency, setDefaultCurrency] = useState<CurrencyCode>('AMD');
+  const [defaultCurrency, setDefaultCurrency] = useState<CurrencyCode>('RUB');
   const [productType, setProductType] = useState<'simple' | 'variable'>('variable');
   const [simpleProductData, setSimpleProductData] = useState({
     price: '',

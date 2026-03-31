@@ -197,7 +197,7 @@ class ProductsFiltersService {
     // Collect colors and sizes from variants
     // Use Map with lowercase key to merge colors with different cases
     // Store both count, canonical label, imageUrl and colors hex
-    const lang = filters.lang || 'en';
+    const lang = filters.lang || 'ru';
     const colorMap = new Map<string, { 
       count: number; 
       label: string; 

@@ -6,10 +6,9 @@ import type { OrderItem as OrderItemType } from '../types';
 
 interface OrderItemsProps {
   items: OrderItemType[];
-  currency: 'USD' | 'AMD' | 'EUR' | 'RUB' | 'GEL';
 }
 
-export function OrderItems({ items, currency }: OrderItemsProps) {
+export function OrderItems({ items }: OrderItemsProps) {
   const { t } = useTranslation();
 
   return (
@@ -26,7 +25,7 @@ export function OrderItems({ items, currency }: OrderItemsProps) {
 
       <div className="p-6 space-y-5">
         {items.map((item, index) => (
-          <OrderItem key={index} item={item} currency={currency} />
+          <OrderItem key={index} item={item} />
         ))}
       </div>
     </div>

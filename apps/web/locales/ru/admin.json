@@ -13,7 +13,8 @@
     "analytics": "Аналитика",
     "filterByPrice": "Фильтр по цене",
     "delivery": "Доставка",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "desktops": "Бронирования столов"
   },
   "dashboard": {
     "title": "Админ страница",
@@ -441,6 +442,7 @@
     "amd": "AMD - Армянский драм",
     "usd": "USD - Доллар США",
     "eur": "EUR - Евро",
+    "rub": "RUB — Российский рубль",
     "enableOnlinePayments": "Включить онлайн-платежи",
     "saveSettings": "Сохранить настройки",
     "saving": "Сохранение...",
@@ -450,6 +452,9 @@
     "siteNamePlaceholder": "Мой магазин",
     "siteDescriptionPlaceholder": "Описание вашего магазина",
     "currencyRates": "Курсы валют",
+    "currencyRatesRubTitle": "Курс RUB",
+    "currencyRatesRubSectionDescription": "Укажите, сколько рублей за 1 USD. Это значение используется для конвертации цен в рубли в магазине.",
+    "currencyRatesRubFieldLabel": "RUB (российский рубль)",
     "currencyRatesDescription": "Установите курсы валют относительно USD. Эти курсы используются для конвертации цен товаров.",
     "baseCurrency": "Базовая валюта (всегда 1)",
     "rateToUSD": "Курс к USD (1 USD = указанное значение)"
@@ -699,6 +704,38 @@
     "previous": "Предыдущая",
     "next": "Следующая"
   },
+  "desktopsReservations": {
+    "back": "Назад",
+    "title": "Бронирования столов",
+    "totalSubtitle": "Всего {count} бронирований",
+    "statusFilter": "Статус",
+    "filterAll": "Все",
+    "statusPending": "Ожидание",
+    "statusConfirmed": "Подтверждён",
+    "statusCancelled": "Отменён",
+    "loading": "Загрузка...",
+    "empty": "Нет бронирований",
+    "colTable": "Стол",
+    "colName": "Имя",
+    "colEmail": "Эл. почта",
+    "colPhone": "Телефон",
+    "colContact": "Эл. почта и телефон",
+    "colDateTime": "Дата / время",
+    "colGuests": "Гости",
+    "colStatusShort": "Стат.",
+    "colProfitTitle": "Выигрыш по бронированию (драм)",
+    "colProfit": "Выигрыш",
+    "colCreated": "Создано",
+    "seatsShort": "{n} чел.",
+    "selectAllAria": "Выбрать все",
+    "selectRowAria": "Выбрать {name}",
+    "selectedCount": "{count} выбрано",
+    "bulkDelete": "Удалить выбранные",
+    "bulkDeleting": "Удаление...",
+    "bulkDeleteConfirm": "Удалить {count} бронирований?",
+    "alertUpdateFailed": "Не удалось обновить статус",
+    "alertDeleteFailed": "Не удалось удалить"
+  },
   "common": {
     "loading": "Загрузка...",
     "error": "Ошибка",
@@ -713,6 +750,7 @@
     "saving": "Сохранение...",
     "back": "Назад",
     "backToAdmin": "Вернуться в панель администратора",
-    "remove": "Удалить"
+    "remove": "Удалить",
+    "darkNavMenu": "Тёмное меню"
   }
 }

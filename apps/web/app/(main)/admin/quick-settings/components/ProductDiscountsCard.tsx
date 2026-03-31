@@ -3,6 +3,7 @@
 import type { ChangeEvent } from 'react';
 import { Card, Button, Input } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
+import { formatPrice } from '@/lib/currency';
 
 interface Product {
   id: string;
@@ -30,14 +31,6 @@ export function ProductDiscountsCard({
   savingProductId,
 }: ProductDiscountsCardProps) {
   const { t } = useTranslation();
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
 
   return (
     <Card className="p-6 bg-white border-gray-200">

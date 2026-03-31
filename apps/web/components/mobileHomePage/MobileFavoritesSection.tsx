@@ -22,7 +22,7 @@ interface Product {
 
 async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
   try {
-    const lang = getStoredLanguage() || 'en';
+    const lang = getStoredLanguage() || 'ru';
     const result = await productsService.findAll({ page: 1, limit, lang });
     if (!result.data || !Array.isArray(result.data)) return [];
     const categoryFallback = t(lang, 'home.menu.categoryFallback');

@@ -59,7 +59,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
 
       setLoading(true);
       try {
-        const language = 'en';
+        const language = 'ru';
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: '4',
@@ -127,11 +127,11 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
       <div className="relative z-10 max-w-7xl mx-auto px-4">
         {/* Заголовок секции */}
         <div className="relative text-center mb-4 md:mb-6 -mt-4">
-          <h2 className="text-[#fff4de] text-6xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px] mb-2">
+          <h2 className="text-[#fff4de] text-6xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px] mb-2 -translate-y-2 md:-translate-y-3">
             {t('home.menu.title')}
           </h2>
           {/* Vector7 декоративный паттерн под заголовком — строго по центру (в т.ч. на планшете) */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[calc(100%+1rem)] w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] flex justify-center">
+          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-3 top-full w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] flex justify-center">
             <div className="relative w-full h-full">
               <Image
                 src="/assets/hero/Vector7.svg"
@@ -143,7 +143,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
               />
             </div>
           </div>
-          <div className="mt-4 mb-8 h-[8px] md:h-[10px] lg:h-[12px]" aria-hidden />
+          <div className="mt-3 mb-8 h-[8px] md:h-[10px] lg:h-[12px]" aria-hidden />
         </div>
 
         {/* Карточки продуктов */}
@@ -170,20 +170,30 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
           </div>
         )}
 
-        {/* Пагинация */}
+        {/* Пагинация — как у HomePageImageCarousel (active: белое ядро + ореол) */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-1.5 mb-8">
+          <div className="mb-8 flex items-center justify-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
+                type="button"
                 onClick={() => handlePageChange(page)}
-                className={`w-4 h-4 rounded-full transition-all ${
-                  currentPage === page
-                    ? 'bg-white opacity-37'
-                    : 'bg-[#fadaac] hover:opacity-80'
-                }`}
+                className="flex h-11 w-11 shrink-0 items-center justify-center"
                 aria-label={`Go to page ${page}`}
-              />
+                aria-current={currentPage === page ? 'page' : undefined}
+              >
+                {currentPage === page ? (
+                  <span className="relative flex h-9 w-9 items-center justify-center">
+                    <span
+                      className="absolute size-[22px] rounded-full bg-white/35"
+                      aria-hidden
+                    />
+                    <span className="relative size-3 rounded-full bg-white shadow-[0_0_0_4px_rgba(255,255,255,0.28)]" />
+                  </span>
+                ) : (
+                  <span className="size-4 rounded-full bg-[#fadaac] opacity-90 transition-opacity duration-300 hover:opacity-100" />
+                )}
+              </button>
             ))}
           </div>
         )}

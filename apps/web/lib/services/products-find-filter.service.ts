@@ -83,7 +83,7 @@ class ProductsFindFilterService {
           }
           
           // Helper function to get color value from option (support all formats)
-          const getColorValue = (opt: any, lang: string = 'en'): string | null => {
+          const getColorValue = (opt: any, lang: string = 'ru'): string | null => {
             // New format: Use AttributeValue if available
             if (opt.attributeValue && opt.attributeValue.attribute?.key === "color") {
               const translation = opt.attributeValue.translations?.find((t: { locale: string }) => t.locale === lang) || opt.attributeValue.translations?.[0];
@@ -97,7 +97,7 @@ class ProductsFindFilterService {
           };
           
           // Helper function to get size value from option (support all formats)
-          const getSizeValue = (opt: any, lang: string = 'en'): string | null => {
+          const getSizeValue = (opt: any, lang: string = 'ru'): string | null => {
             // New format: Use AttributeValue if available
             if (opt.attributeValue && opt.attributeValue.attribute?.key === "size") {
               const translation = opt.attributeValue.translations?.find((t: { locale: string }) => t.locale === lang) || opt.attributeValue.translations?.[0];
@@ -114,7 +114,7 @@ class ProductsFindFilterService {
           if (colorList.length > 0) {
             let colorMatched = false;
             for (const opt of options) {
-              const variantColorValue = getColorValue(opt, filters.lang || 'en');
+              const variantColorValue = getColorValue(opt, filters.lang || 'ru');
               if (variantColorValue && colorList.includes(variantColorValue)) {
                 colorMatched = true;
                 break;
@@ -129,7 +129,7 @@ class ProductsFindFilterService {
           if (sizeList.length > 0) {
             let sizeMatched = false;
             for (const opt of options) {
-              const variantSizeValue = getSizeValue(opt, filters.lang || 'en');
+              const variantSizeValue = getSizeValue(opt, filters.lang || 'ru');
               if (variantSizeValue && sizeList.includes(variantSizeValue)) {
                 sizeMatched = true;
                 break;

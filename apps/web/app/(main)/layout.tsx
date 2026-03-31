@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from 'react';
+import { APP_SCROLL_REGION_DOM_ID } from '@/lib/appScrollRegion';
 import { ClientProviders } from '@/components/ClientProviders';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -16,20 +17,25 @@ export default function MainLayout({
   return (
     <Suspense fallback={null}>
       <ClientProviders>
-        <div className="flex min-h-screen h-auto flex-col pb-24 lg:pb-0 bg-[#2f3f3d] lg:bg-transparent overflow-visible [transform:translateZ(0)] [backface-visibility:hidden]">
-          <div className="hidden lg:block">
+        <div
+          id={APP_SCROLL_REGION_DOM_ID}
+          data-app-scroll-region
+          className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#2f3f3d] lg:bg-transparent pb-24 lg:pb-0"
+        >
+          <div className="relative z-app-header hidden min-h-[106px] shrink-0 lg:block">
             <Header />
           </div>
-          <div className="block lg:hidden">
+          <div className="relative z-app-header block shrink-0 lg:hidden">
             <MobileHeader />
           </div>
-          <main className="w-full flex-1 min-h-0 overflow-visible">
-            {children}
-          </main>
-          <div className="hidden lg:block">
-            <Footer />
+          {/* No z-index here: fixed popups inside `main` must stack above `.z-app-header` (see globals.css). */}
+          <div className="relative flex w-full flex-1 flex-col">
+            <main className="w-full flex-1">{children}</main>
+            <div className="mt-auto hidden shrink-0 lg:block">
+              <Footer />
+            </div>
           </div>
-          <div className="block lg:hidden">
+          <div className="relative z-40 block shrink-0 lg:hidden">
             <MobileBottomNav />
           </div>
         </div>

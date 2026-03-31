@@ -3,17 +3,33 @@
 @tailwind utilities;
 
 @layer base {
+  /**
+   * App-wide stacking:
+   * - `.z-app-header` — fixed/sticky site header (below popups).
+   * - `.z-app-overlay` / `.z-app-modal` — dialogs, drawers, search (above header; same numeric layer).
+   */
+  :root {
+    --z-app-header: 100;
+    --z-app-overlay: 110;
+    --z-app-modal: 110;
+    --z-app-toast: 120;
+  }
+
   html {
     height: 100%;
     overflow: hidden;
     overflow-x: hidden;
   }
   body {
-    @apply bg-white text-gray-900;
+    @apply relative z-[1] bg-white text-gray-900;
     min-height: 100%;
     height: 100%;
+    overflow: hidden;
     overflow-x: hidden;
-    overflow-y: auto;
+  }
+
+  /* Main app scroll: outer wrapper `[data-app-scroll-region]` (full viewport height, scrollbar from top). */
+  [data-app-scroll-region] {
     -webkit-overflow-scrolling: touch;
   }
 
@@ -65,6 +81,22 @@
 }
 
 @layer utilities {
+  .z-app-header {
+    z-index: var(--z-app-header);
+  }
+
+  .z-app-overlay {
+    z-index: var(--z-app-overlay);
+  }
+
+  .z-app-modal {
+    z-index: var(--z-app-modal);
+  }
+
+  .z-app-toast {
+    z-index: var(--z-app-toast);
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;

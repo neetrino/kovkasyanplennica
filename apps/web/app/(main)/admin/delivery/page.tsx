@@ -6,6 +6,13 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Card, Button } from '@shop/ui';
 import { apiClient } from '@/lib/api-client';
 import { AdminMenuDrawer } from '@/components/AdminMenuDrawer';
+import {
+  getAdminNavContainerClass,
+  getAdminNavIconClass,
+  getAdminNavLinkButtonClasses,
+} from '@/components/admin/adminNavClasses';
+import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
+import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { getAdminMenuTABS } from '../admin-menu.config';
 
@@ -44,6 +51,9 @@ export default function DeliveryPage() {
       fetchDeliverySettings();
     }
   }, [isLoggedIn, isAdmin]);
+
+  const { isDark } = useAdminNavTheme();
+  const mode: AdminNavThemeMode = isDark ? 'dark' : 'light';
 
   const fetchDeliverySettings = async () => {
     try {
@@ -116,14 +126,14 @@ export default function DeliveryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:hidden mb-6">
             <AdminMenuDrawer tabs={adminTabs} currentPath="/admin/delivery" />
           </div>
           {/* Sidebar Navigation */}
           <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-            <nav className="bg-white border border-gray-200 rounded-lg p-2 space-y-1">
+            <nav className={getAdminNavContainerClass(mode)}>
               {adminTabs.map((tab) => {
                 const isActive = pathname === tab.path || 
                   (tab.path === '/admin' && pathname === '/admin') ||
@@ -134,15 +144,9 @@ export default function DeliveryPage() {
                     onClick={() => {
                       router.push(tab.path);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all ${
-                      tab.isSubCategory ? 'pl-12' : ''
-                    } ${
-                      isActive
-                        ? 'bg-gray-900 text-white'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
+                    className={getAdminNavLinkButtonClasses(mode, isActive, Boolean(tab.isSubCategory))}
                   >
-                    <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                    <span className={getAdminNavIconClass(mode, isActive)}>
                       {tab.icon}
                     </span>
                     <span className="text-left">{tab.label}</span>

@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Card, Button } from '@shop/ui';
 import { apiClient } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
-import { clearCurrencyRatesCache } from '@/lib/currency';
+import { CURRENCIES, clearCurrencyRatesCache } from '@/lib/currency';
 
 interface Settings {
   defaultCurrency?: string;
@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<Settings>({
-    defaultCurrency: 'AMD',
+    defaultCurrency: 'RUB',
     currencyRates: {
       USD: 1,
       AMD: 400,
@@ -54,7 +54,7 @@ export default function SettingsPage() {
       console.log('⚙️ [ADMIN] Fetching settings...');
       const data = await apiClient.get<Settings>('/api/v1/admin/settings');
       setSettings({
-        defaultCurrency: data.defaultCurrency || 'AMD',
+        defaultCurrency: data.defaultCurrency || 'RUB',
         globalDiscount: data.globalDiscount,
         categoryDiscounts: data.categoryDiscounts,
         brandDiscounts: data.brandDiscounts,
@@ -71,7 +71,7 @@ export default function SettingsPage() {
       console.error('❌ [ADMIN] Error fetching settings:', err);
       // Use defaults if error
       setSettings({
-        defaultCurrency: 'AMD',
+        defaultCurrency: 'RUB',
         currencyRates: {
           USD: 1,
           AMD: 400,
@@ -93,10 +93,10 @@ export default function SettingsPage() {
       // Ensure all currency rates have valid values before saving
       const currencyRatesToSave = {
         USD: 1,
-        AMD: settings.currencyRates?.AMD ?? 400,
-        EUR: settings.currencyRates?.EUR ?? 0.92,
-        RUB: settings.currencyRates?.RUB ?? 90,
-        GEL: settings.currencyRates?.GEL ?? 2.7,
+        AMD: settings.currencyRates?.AMD ?? CURRENCIES.AMD.rate,
+        EUR: settings.currencyRates?.EUR ?? CURRENCIES.EUR.rate,
+        RUB: settings.currencyRates?.RUB ?? CURRENCIES.RUB.rate,
+        GEL: settings.currencyRates?.GEL ?? CURRENCIES.GEL.rate,
       };
 
       await apiClient.put('/api/v1/admin/settings', {
@@ -144,7 +144,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         <div className="mb-8">
           <button
             onClick={() => router.push('/admin')}
@@ -194,13 +194,11 @@ export default function SettingsPage() {
                 {t('admin.settings.defaultCurrency')}
               </label>
               <select 
-                value={settings.defaultCurrency || 'AMD'}
+                value={settings.defaultCurrency || 'RUB'}
                 onChange={(e) => setSettings({ ...settings, defaultCurrency: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="AMD">{t('admin.settings.amd')}</option>
-                <option value="USD">{t('admin.settings.usd')}</option>
-                <option value="EUR">{t('admin.settings.eur')}</option>
+                <option value="RUB">{t('admin.settings.rub')}</option>
               </select>
             </div>
             <div>
@@ -216,221 +214,61 @@ export default function SettingsPage() {
           </div>
         </Card>
 
-        {/* Currency Exchange Rates */}
+        {/* Currency: RUB rate only (backend still stores full rate map) */}
         <Card className="p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('admin.settings.currencyRates')}</h2>
-          <p className="text-sm text-gray-600 mb-4">{t('admin.settings.currencyRatesDescription')}</p>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  USD (US Dollar)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={settings.currencyRates?.USD || 1}
-                  onChange={(e) => setSettings({
-                    ...settings,
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            {t('admin.settings.currencyRatesRubTitle')}
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            {t('admin.settings.currencyRatesRubSectionDescription')}
+          </p>
+          <div className="max-w-md">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t('admin.settings.currencyRatesRubFieldLabel')}
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              value={settings.currencyRates?.RUB ?? ''}
+              onChange={(e) => {
+                const inputValue = e.target.value;
+                if (inputValue === '') {
+                  setSettings((prev) => {
+                    const next = { ...prev.currencyRates };
+                    delete next.RUB;
+                    return { ...prev, currencyRates: next };
+                  });
+                  return;
+                }
+                const numValue = parseFloat(inputValue);
+                if (!Number.isNaN(numValue) && numValue > 0) {
+                  setSettings((prev) => ({
+                    ...prev,
                     currencyRates: {
-                      ...settings.currencyRates,
-                      USD: parseFloat(e.target.value) || 1,
+                      ...prev.currencyRates,
+                      RUB: numValue,
                     },
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled
-                />
-                <p className="text-xs text-gray-500 mt-1">{t('admin.settings.baseCurrency')}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  AMD (Armenian Dram)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={settings.currencyRates?.AMD ?? ''}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    if (inputValue === '') {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          AMD: undefined as any,
-                        },
-                      });
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue) && numValue > 0) {
-                        setSettings({
-                          ...settings,
-                          currencyRates: {
-                            ...settings.currencyRates,
-                            AMD: numValue,
-                          },
-                        });
-                      }
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === '' && settings.currencyRates?.AMD === undefined) {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          AMD: 400,
-                        },
-                      });
-                    }
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="400"
-                />
-                <p className="text-xs text-gray-500 mt-1">{t('admin.settings.rateToUSD')}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  EUR (Euro)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={settings.currencyRates?.EUR ?? ''}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    if (inputValue === '') {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          EUR: undefined as any,
-                        },
-                      });
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue) && numValue > 0) {
-                        setSettings({
-                          ...settings,
-                          currencyRates: {
-                            ...settings.currencyRates,
-                            EUR: numValue,
-                          },
-                        });
-                      }
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === '' && settings.currencyRates?.EUR === undefined) {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          EUR: 0.92,
-                        },
-                      });
-                    }
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="0.92"
-                />
-                <p className="text-xs text-gray-500 mt-1">{t('admin.settings.rateToUSD')}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  RUB (Russian Ruble)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={settings.currencyRates?.RUB ?? ''}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    if (inputValue === '') {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          RUB: undefined as any,
-                        },
-                      });
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue) && numValue > 0) {
-                        setSettings({
-                          ...settings,
-                          currencyRates: {
-                            ...settings.currencyRates,
-                            RUB: numValue,
-                          },
-                        });
-                      }
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === '' && settings.currencyRates?.RUB === undefined) {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          RUB: 90,
-                        },
-                      });
-                    }
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="90"
-                />
-                <p className="text-xs text-gray-500 mt-1">{t('admin.settings.rateToUSD')}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  GEL (Georgian Lari)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={settings.currencyRates?.GEL ?? ''}
-                  onChange={(e) => {
-                    const inputValue = e.target.value;
-                    if (inputValue === '') {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          GEL: undefined as any,
-                        },
-                      });
-                    } else {
-                      const numValue = parseFloat(inputValue);
-                      if (!isNaN(numValue) && numValue > 0) {
-                        setSettings({
-                          ...settings,
-                          currencyRates: {
-                            ...settings.currencyRates,
-                            GEL: numValue,
-                          },
-                        });
-                      }
-                    }
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === '' && settings.currencyRates?.GEL === undefined) {
-                      setSettings({
-                        ...settings,
-                        currencyRates: {
-                          ...settings.currencyRates,
-                          GEL: 2.7,
-                        },
-                      });
-                    }
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="2.7"
-                />
-                <p className="text-xs text-gray-500 mt-1">{t('admin.settings.rateToUSD')}</p>
-              </div>
-            </div>
+                  }));
+                }
+              }}
+              onBlur={(e) => {
+                if (
+                  e.target.value === '' &&
+                  settings.currencyRates?.RUB === undefined
+                ) {
+                  setSettings((prev) => ({
+                    ...prev,
+                    currencyRates: {
+                      ...prev.currencyRates,
+                      RUB: CURRENCIES.RUB.rate,
+                    },
+                  }));
+                }
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="90"
+            />
+            <p className="text-xs text-gray-500 mt-1">{t('admin.settings.rateToUSD')}</p>
           </div>
         </Card>
 

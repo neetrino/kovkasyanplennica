@@ -24,27 +24,10 @@ export function useProductFetch({
     try {
       setLoading(true);
       const currentLang = getStoredLanguage();
-      let data: Product;
-      
-      try {
-        data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
-          params: { lang: currentLang }
-        });
-      } catch (error: unknown) {
-        const errorStatus = error && typeof error === 'object' && 'status' in error ? Number(error.status) : undefined;
-        if (errorStatus === 404 && currentLang !== 'en') {
-          try {
-            data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
-              params: { lang: 'en' }
-            });
-          } catch {
-            throw error;
-          }
-        } else {
-          throw error;
-        }
-      }
-      
+      const data = await apiClient.get<Product>(`/api/v1/products/${slug}`, {
+        params: { lang: currentLang },
+      });
+
       setProduct(data);
     } catch (error: unknown) {
       const err = error as { status?: number };

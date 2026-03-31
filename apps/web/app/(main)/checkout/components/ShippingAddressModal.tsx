@@ -25,7 +25,6 @@ interface ShippingAddressModalProps {
     shippingDisplay: number;
     totalDisplay: number;
   };
-  currency: 'USD' | 'AMD' | 'EUR' | 'RUB' | 'GEL';
   shippingCity?: string;
   loadingDeliveryPrice: boolean;
   deliveryPrice: number | null;
@@ -44,7 +43,6 @@ export function ShippingAddressModal({
   paymentMethod,
   cart,
   orderSummary,
-  currency,
   shippingCity,
   loadingDeliveryPrice,
   deliveryPrice,
@@ -68,7 +66,7 @@ export function ShippingAddressModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-app-overlay flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
@@ -202,7 +200,6 @@ export function ShippingAddressModal({
             <OrderSummaryModal
               cart={cart}
               orderSummary={orderSummary}
-              currency={currency}
               shippingMethod={shippingMethod}
               shippingCity={shippingCity}
               loadingDeliveryPrice={loadingDeliveryPrice}

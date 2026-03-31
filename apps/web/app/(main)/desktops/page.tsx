@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n-client';
 import { TABLES, type TableConfig } from './table-data';
 import { ReservationModal } from './ReservationModal';
 
@@ -32,6 +33,9 @@ function TableCard({
   table: TableConfig;
   onClick: (t: TableConfig) => void;
 }) {
+  const { t } = useTranslation();
+  const label = t(`desktops.tables.${table.labelKey}`);
+  const seatsText = t('desktops.tableCard.seats').replace('{n}', String(table.seats));
   const sideSeats = table.shape === 'oval' ? 3 : Math.floor(table.seats / 2);
   const isOval = table.shape === 'oval';
 
@@ -40,7 +44,7 @@ function TableCard({
       type="button"
       onClick={() => onClick(table)}
       className="group flex flex-col items-center gap-1 focus:outline-none"
-      title={table.label}
+      title={label}
     >
       {/* Top chairs */}
       <ChairRow count={sideSeats} side="top" />
@@ -67,13 +71,13 @@ function TableCard({
         >
           <div className="text-center px-1">
             <p className="text-[#2F3F3D] font-semibold text-[9px] leading-tight line-clamp-2">
-              {table.label}
+              {label}
             </p>
-            <p className="text-[#7CB342] text-[8px] font-bold mt-0.5">
-              {table.seats} {table.seats === 1 ? 'հոգի' : 'հոգի'}
-            </p>
+            <p className="text-[#7CB342] text-[8px] font-bold mt-0.5">{seatsText}</p>
             {table.byWindow && (
-              <p className="text-[#c8a96e] text-[7px] mt-0.5">Պատուհան</p>
+              <p className="text-[#c8a96e] text-[7px] mt-0.5">
+                {t('desktops.tableCard.byWindow')}
+              </p>
             )}
           </div>
           {/* Hover indicator */}
@@ -92,6 +96,7 @@ function TableCard({
 
 // ---- Floor plan zones ----
 export default function DesktopsPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [selectedTable, setSelectedTable] = useState<TableConfig | null>(null);
 
@@ -136,14 +141,14 @@ export default function DesktopsPage() {
         {/* Page header */}
         <div className="mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-2">
-            Ռեստորան
+            {t('desktops.page.eyebrow')}
           </p>
           <h1 className="text-[#fff4de] text-4xl md:text-5xl lg:text-6xl font-light italic">
-            Սեղանների ամրագրում
+            {t('desktops.page.title')}
           </h1>
           <div className="w-16 h-[2px] bg-[#7CB342] mt-4" />
           <p className="text-[#fff4de]/60 text-sm mt-4">
-            Ընտրի՛ր ցանկալի սեղանը՝ ամրագրելու համար
+            {t('desktops.page.subtitle')}
           </p>
         </div>
 
@@ -151,15 +156,15 @@ export default function DesktopsPage() {
         <div className="flex items-center gap-6 mb-8 flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-[#fff4de] border border-[#c8a96e]/60" />
-            <span className="text-[#fff4de]/70 text-xs">Հասանելի</span>
+            <span className="text-[#fff4de]/70 text-xs">{t('desktops.legend.available')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-[#f5f0d8] border-2 border-[#7CB342] shadow-[0_0_10px_rgba(124,179,66,0.5)]" />
-            <span className="text-[#fff4de]/70 text-xs">Ընտրված</span>
+            <span className="text-[#fff4de]/70 text-xs">{t('desktops.legend.selected')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#7CB342]" />
-            <span className="text-[#fff4de]/70 text-xs">Ամրագրել</span>
+            <span className="text-[#fff4de]/70 text-xs">{t('desktops.legend.book')}</span>
           </div>
         </div>
 
@@ -222,9 +227,8 @@ export default function DesktopsPage() {
 
         </div>
 
-        {/* Info note */}
         <p className="text-[#fff4de]/40 text-xs text-center mt-6">
-          Ամրագրումը հաստատվում է մինչ 24 ժամվա ընթացքում։ Կապ՝ admin@restaurant.am
+          {t('desktops.page.footerNote')}
         </p>
 
       </div>

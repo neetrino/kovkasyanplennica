@@ -109,7 +109,7 @@ export function useAttributes() {
         key: autoKey,
         type: 'select',
         filterable: true,
-        locale: 'en',
+        locale: 'ru',
       });
       
       console.log('✅ [ADMIN] Attribute created successfully');
@@ -155,7 +155,7 @@ export function useAttributes() {
       console.log(`✏️ [ADMIN] Updating attribute name: ${attributeId} -> ${trimmedName}`);
       await apiClient.patch(`/api/v1/admin/attributes/${attributeId}/translations`, {
         name: trimmedName,
-        locale: 'en',
+        locale: 'ru',
       });
       console.log('✅ [ADMIN] Attribute name updated successfully');
       setEditingAttribute(null);
@@ -221,7 +221,7 @@ export function useAttributes() {
       console.log('➕ [ADMIN] Adding value to attribute:', attributeId, trimmedValue);
       await apiClient.post(`/api/v1/admin/attributes/${attributeId}/values`, {
         label: trimmedValue,
-        locale: 'en',
+        locale: 'ru',
       });
       
       console.log('✅ [ADMIN] Value added successfully');
@@ -286,7 +286,7 @@ export function useAttributes() {
       });
       await apiClient.patch(`/api/v1/admin/attributes/${editingValue.attributeId}/values/${editingValue.value.id}`, {
         ...data,
-        locale: 'en',
+        locale: 'ru',
       });
       console.log('✅ [ADMIN] Value updated successfully');
       fetchAttributes();

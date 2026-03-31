@@ -44,7 +44,7 @@ export function useBrandAndCategoryCreation({
         console.log('🏷️ [ADMIN] Creating new brand:', newBrandName);
         const brandResponse = await apiClient.post<{ data: Brand }>('/api/v1/admin/brands', {
           name: newBrandName.trim(),
-          locale: 'en',
+          locale: 'ru',
         });
         if (brandResponse.data) {
           if (!finalBrandIds.includes(brandResponse.data.id)) {
@@ -67,7 +67,7 @@ export function useBrandAndCategoryCreation({
         console.log('📁 [ADMIN] Creating new category:', newCategoryName);
         const categoryResponse = await apiClient.post<{ data: Category }>('/api/v1/admin/categories', {
           title: newCategoryName.trim(),
-          locale: 'en',
+          locale: 'ru',
           requiresSizes: false,
         });
         if (categoryResponse.data) {

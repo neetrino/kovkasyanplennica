@@ -124,7 +124,7 @@ export function MobileImageCarousel() {
             />
           </div>
           <Link
-            href="/coming-soon"
+            href="/desktops"
             className="relative z-10 bg-[#FFF4DE] text-[#2f3f3d] h-14 min-w-[246px] max-w-full rounded-[70px] font-bold text-base flex items-center justify-center hover:opacity-95 transition-opacity"
           >
             {t('home.footer.booking.selectTableButton')}

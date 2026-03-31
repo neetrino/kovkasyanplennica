@@ -48,8 +48,13 @@
       "search": "ПОИСК"
     },
     "search": {
-      "placeholder": "Поиск",
-      "ariaLabel": "Поиск"
+      "placeholder": "Поиск товаров…",
+      "ariaLabel": "Поиск",
+      "overlayAriaLabel": "Поиск по каталогу",
+      "close": "Закрыть",
+      "hint": "Введите название товара",
+      "loading": "Поиск…",
+      "noResults": "Ничего не найдено"
     },
     "login": "ВОЙТИ",
     "cart": {
@@ -66,7 +71,9 @@
       "selectTableButton": "Выбрать стол"
     },
     "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
-    "description": "Возрождая традиции высокого кулинарного искусства Грузии и Армении в центре города.",
+    "descriptionLine1": "Возрождая традиции высоко",
+    "descriptionLine2": "кулинарного искусства Грузии и",
+    "descriptionLine3": "Армении в центре города.",
     "socialMedia": {
       "telegram": "Telegram",
       "instagram": "Instagram",
@@ -74,15 +81,18 @@
     },
     "navigation": {
       "title": "НАВИГАЦИЯ",
-      "home": "Главная",
-      "restaurantMenu": "Меню ресторана",
-      "wineCard": "Винная карта",
-      "foodDelivery": "Доставка еды"
+      "menu": "Меню",
+      "about": "О нас",
+      "vacancies": "Вакансии",
+      "team": "Команда",
+      "contacts": "Контакты",
+      "delivery": "Доставка"
     },
     "contacts": {
       "title": "КОНТАКТЫ",
       "address": "ул. Пушкина, д. 10",
-      "phone": "+7 (999) 999-00-00",
+      "phone": "+7 (3452) 73-33-00",
+      "deliveryPhone": "Доставка +7 (3452) 28-82-44",
       "email": "info@vkavkazan.ru"
     },
     "workingHours": {
@@ -94,8 +104,11 @@
       "deliveryInfo": "Бесплатная доставка при заказе от 3000 Р по всему городу."
     },
     "bottomLinks": {
+      "copyright": "© 2017 - 2026 Neetrino IT Company. All Rights Reserved.",
       "privacy": "Политика конфиденциальности",
-      "terms": "Публичная оферта"
+      "deliveryPolicy": "Политика доставки",
+      "terms": "Условия использования",
+      "publicOffer": "Публичная оферта"
     }
   }
 }

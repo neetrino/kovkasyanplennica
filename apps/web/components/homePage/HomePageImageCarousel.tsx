@@ -116,18 +116,21 @@ export function HomePageImageCarousel() {
   const currentImages = getCurrentSlideImages();
 
   return (
-    <section className="relative w-full bg-[#2f3f3d] py-16 md:py-24 overflow-hidden -mt-1 -mb-1 [contain:paint]">
+    <section
+      className="relative -mt-px w-full overflow-hidden bg-[#2f3f3d] pt-0 pb-16 md:pb-24"
+      data-home-header-surface="dark"
+    >
       <div className="max-w-7xl mx-auto px-4">
-        {/* Carousel Container */}
+        {/* Grid + arrows: arrows anchored to image grid only (not dots) — stable vertical center */}
         <div className="relative">
-          {/* Images Grid */}
-          <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-[350px]">
+          <div className="relative grid min-h-[350px] grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start">
             {/* Left Large Image */}
-            <div className="relative w-full h-[300px] md:h-[350px] lg:h-[400px] rounded-[10px] overflow-hidden">
+            <div className="relative h-[300px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[350px] lg:h-[400px]">
               <Image
                 src={currentImages[0].src}
                 alt={currentImages[0].alt}
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover rounded-[10px]"
                 priority
                 unoptimized
@@ -135,23 +138,25 @@ export function HomePageImageCarousel() {
             </div>
 
             {/* Right Side - Two Images Stacked */}
-            <div className="flex flex-col gap-4">
+            <div className="flex min-h-0 w-full shrink-0 flex-col gap-4">
               {/* Top Right - Two Small Images */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative w-full h-[150px] md:h-[170px] lg:h-[200px] rounded-[10px] overflow-hidden">
+                <div className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[170px] lg:h-[200px]">
                   <Image
                     src={currentImages[1].src}
                     alt={currentImages[1].alt}
                     fill
+                    sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
                     unoptimized
                   />
                 </div>
-                <div className="relative w-full h-[150px] md:h-[170px] lg:h-[200px] rounded-[10px] overflow-hidden">
+                <div className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[170px] lg:h-[200px]">
                   <Image
                     src={currentImages[2].src}
                     alt={currentImages[2].alt}
                     fill
+                    sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
                     unoptimized
                   />
@@ -159,11 +164,12 @@ export function HomePageImageCarousel() {
               </div>
 
               {/* Bottom Right - Large Image */}
-              <div className="relative w-full h-[150px] md:h-[170px] lg:h-[200px] rounded-[10px] overflow-hidden">
+              <div className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[170px] lg:h-[200px]">
                 <Image
                   src={currentImages[3].src}
                   alt={currentImages[3].alt}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover rounded-[10px]"
                   unoptimized
                 />
@@ -171,11 +177,12 @@ export function HomePageImageCarousel() {
             </div>
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="absolute left-0 right-0 top-[45%] -translate-y-1/2 flex items-center justify-between px-6 md:px-8 lg:px-12 pointer-events-none">
+          {/* Navigation Arrows — positioned vs grid wrapper only */}
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] flex -translate-y-1/2 items-center justify-between px-6 md:px-8 lg:px-12">
             <button
+              type="button"
               onClick={goToPrevious}
-              className="relative w-10 h-10 md:w-12 md:h-12 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors pointer-events-auto shadow-lg"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-colors hover:bg-white pointer-events-auto md:h-12 md:w-12"
               aria-label="Previous slide"
             >
               <svg
@@ -196,8 +203,9 @@ export function HomePageImageCarousel() {
               </svg>
             </button>
             <button
+              type="button"
               onClick={goToNext}
-              className="relative w-10 h-10 md:w-12 md:h-12 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors pointer-events-auto shadow-lg"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-colors hover:bg-white pointer-events-auto md:h-12 md:w-12"
               aria-label="Next slide"
             >
               <svg
@@ -217,23 +225,32 @@ export function HomePageImageCarousel() {
               </svg>
             </button>
           </div>
+        </div>
 
-          {/* Dots Indicator */}
-          <div className="flex items-center justify-center gap-2 mt-8">
+          {/* Dots: active = white core + halo; inactive = cream (larger, tighter gap) */}
+          <div className="mt-8 flex items-center justify-center gap-1">
             {carouselImages.map((_, index) => (
               <button
                 key={index}
+                type="button"
                 onClick={() => goToSlide(index)}
-                className={`transition-all duration-300 rounded-[6px] ${
-                  index === currentIndex
-                    ? 'bg-white/37 w-[17px] h-[8px]'
-                    : 'bg-[#fadaac] w-[8px] h-[8px]'
-                }`}
+                className="flex h-11 w-11 shrink-0 items-center justify-center"
                 aria-label={`Go to slide ${index + 1}`}
-              />
+              >
+                {index === currentIndex ? (
+                  <span className="relative flex h-9 w-9 items-center justify-center">
+                    <span
+                      className="absolute size-[22px] rounded-full bg-white/35"
+                      aria-hidden
+                    />
+                    <span className="relative size-3 rounded-full bg-white shadow-[0_0_0_4px_rgba(255,255,255,0.28)]" />
+                  </span>
+                ) : (
+                  <span className="size-4 rounded-full bg-[#fadaac] opacity-90 transition-opacity duration-300 hover:opacity-100" />
+                )}
+              </button>
             ))}
           </div>
-        </div>
       </div>
     </section>
   );

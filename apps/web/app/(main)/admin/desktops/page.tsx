@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
+import { useTranslation } from '@/lib/i18n-client';
 
 interface Reservation {
   id: string;
@@ -36,19 +37,36 @@ interface ReservationsResponse {
   };
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: 'Սպասում',
-  confirmed: 'Հաստատված',
-  cancelled: 'Չեղարկված',
+const STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-amber-100 text-amber-900 border-amber-400',
+  confirmed: 'bg-emerald-100 text-emerald-900 border-emerald-500',
+  cancelled: 'bg-red-100 text-red-800 border-red-400',
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-  confirmed: 'bg-green-500/20 text-green-300 border-green-500/30',
-  cancelled: 'bg-red-500/20 text-red-300 border-red-500/30',
-};
+const DISPLAY_DATE_LOCALE = 'ru-RU';
+
+/** Stored reservation date is usually YYYY-MM-DD from <input type="date"> — show as DD.MM.YYYY */
+function formatStoredReservationDate(dateStr: string): string {
+  const trimmed = dateStr.trim();
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+  if (iso) {
+    return `${iso[3]}.${iso[2]}.${iso[1]}`;
+  }
+  return trimmed;
+}
+
+function formatCreatedAtDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(DISPLAY_DATE_LOCALE, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
 
 export default function AdminDesktopsPage() {
+  const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
   const router = useRouter();
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -126,7 +144,7 @@ export default function AdminDesktopsPage() {
       if (!res.ok) throw new Error('Failed to update');
       await fetchReservations();
     } catch {
-      alert('Չհաջողվեց թարմացնել կարգավիճակը');
+      alert(t('admin.desktopsReservations.alertUpdateFailed'));
     } finally {
       setUpdatingId(null);
     }
@@ -134,7 +152,11 @@ export default function AdminDesktopsPage() {
 
   const handleBulkDelete = async () => {
     if (selectedIds.size === 0) return;
-    if (!confirm(`Ջնջե՞լ ${selectedIds.size} ամրագրում(ներ)ը`)) return;
+    const confirmMsg = t('admin.desktopsReservations.bulkDeleteConfirm').replace(
+      '{count}',
+      String(selectedIds.size)
+    );
+    if (!confirm(confirmMsg)) return;
     setBulkDeleting(true);
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
@@ -150,7 +172,7 @@ export default function AdminDesktopsPage() {
       setSelectedIds(new Set());
       await fetchReservations();
     } catch {
-      alert('Ջնջումը ձախողվեց');
+      alert(t('admin.desktopsReservations.alertDeleteFailed'));
     } finally {
       setBulkDeleting(false);
     }
@@ -168,38 +190,44 @@ export default function AdminDesktopsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
 
         {/* Header */}
         <div className="mb-8">
           <button
+            type="button"
             onClick={() => router.push('/admin')}
             className="text-gray-600 hover:text-gray-900 mb-4 flex items-center gap-2 text-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Վերադառնալ
+            {t('admin.desktopsReservations.back')}
           </button>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Սեղանների ամրագրումներ</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('admin.desktopsReservations.title')}</h1>
               {meta && (
-                <p className="text-gray-500 text-sm mt-1">Ընդամենը {meta.total} ամրագրում</p>
+                <p className="text-gray-500 text-sm mt-1">
+                  {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
+                </p>
               )}
             </div>
             {/* Filter */}
             <div className="flex items-center gap-3">
-              <label className="text-sm font-medium text-gray-700">Կարգավիճակ</label>
+              <label htmlFor="desktop-reservation-status" className="text-sm font-medium text-gray-700">
+                {t('admin.desktopsReservations.statusFilter')}
+              </label>
               <select
+                id="desktop-reservation-status"
                 value={filterStatus}
                 onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">Բոլորը</option>
-                <option value="pending">Սպասում</option>
-                <option value="confirmed">Հաստատված</option>
-                <option value="cancelled">Չեղարկված</option>
+                <option value="">{t('admin.desktopsReservations.filterAll')}</option>
+                <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+                <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+                <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
               </select>
             </div>
           </div>
@@ -210,14 +238,14 @@ export default function AdminDesktopsPage() {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">Բեռնվում է...</p>
+              <p className="text-gray-500 text-sm">{t('admin.desktopsReservations.loading')}</p>
             </div>
           ) : reservations.length === 0 ? (
             <div className="text-center py-16">
               <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p className="text-gray-500">Ամրագրումներ չկան</p>
+              <p className="text-gray-500">{t('admin.desktopsReservations.empty')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -227,28 +255,44 @@ export default function AdminDesktopsPage() {
                     <th className="px-4 py-3 text-left">
                       <input
                         type="checkbox"
-                        aria-label="Ընտրել բոլորը"
+                        aria-label={t('admin.desktopsReservations.selectAllAria')}
                         checked={reservations.length > 0 && reservations.every(r => selectedIds.has(r.id))}
                         onChange={toggleSelectAll}
                         className="rounded border-gray-300"
                       />
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Սեղան</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Անուն</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Հեռախոս</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ամսաթիվ / Ժամ</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Հյուրեր</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Կարգ.</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" title="Շահույթ ամրագրման համար (դրամ)">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colTable')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colName')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colContact')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colDateTime')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colGuests')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colStatusShort')}
+                    </th>
+                    <th
+                      className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                      title={t('admin.desktopsReservations.colProfitTitle')}
+                    >
                       <span className="inline-flex items-center gap-1.5">
                         <svg className="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Շահույթ
+                        {t('admin.desktopsReservations.colProfit')}
                       </span>
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Գրանցում</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colCreated')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
@@ -257,7 +301,10 @@ export default function AdminDesktopsPage() {
                       <td className="px-4 py-4">
                         <input
                           type="checkbox"
-                          aria-label={`Ընտրել ${r.firstName} ${r.lastName}`}
+                          aria-label={t('admin.desktopsReservations.selectRowAria').replace(
+                            '{name}',
+                            `${r.firstName} ${r.lastName}`
+                          )}
                           checked={selectedIds.has(r.id)}
                           onChange={() => toggleSelect(r.id)}
                           className="rounded border-gray-300"
@@ -265,7 +312,9 @@ export default function AdminDesktopsPage() {
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-sm font-semibold text-gray-900">{r.tableLabel}</div>
-                        <div className="text-xs text-gray-400">{r.tableSeats} հոգի</div>
+                        <div className="text-xs text-gray-400">
+                          {t('admin.desktopsReservations.seatsShort').replace('{n}', String(r.tableSeats))}
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <div className="text-sm font-medium text-gray-900">{r.firstName} {r.lastName}</div>
@@ -275,10 +324,16 @@ export default function AdminDesktopsPage() {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-700">{r.email}</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">{r.phone}</td>
+                      <td className="px-4 py-4 text-sm text-gray-700 max-w-[220px]">
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <span className="break-all">{r.email}</span>
+                          <span className="text-gray-600">{r.phone}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">{r.date}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatStoredReservationDate(r.date)}
+                        </div>
                         <div className="text-xs text-gray-500">{r.time}</div>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700 text-center">{r.guestCount}</td>
@@ -289,9 +344,9 @@ export default function AdminDesktopsPage() {
                           onChange={e => handleStatusChange(r.id, e.target.value)}
                           className={`text-xs font-semibold px-2 py-1 rounded-full border cursor-pointer focus:outline-none ${STATUS_COLORS[r.status] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}
                         >
-                          <option value="pending">Սպասում</option>
-                          <option value="confirmed">Հաստատված</option>
-                          <option value="cancelled">Չեղարկված</option>
+                          <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+                          <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+                          <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
                         </select>
                       </td>
                       <td className="px-4 py-4">
@@ -318,7 +373,7 @@ export default function AdminDesktopsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-xs text-gray-400 whitespace-nowrap">
-                        {new Date(r.createdAt).toLocaleDateString('hy-AM')}
+                        {formatCreatedAtDate(r.createdAt)}
                       </td>
                     </tr>
                   ))}
@@ -332,15 +387,18 @@ export default function AdminDesktopsPage() {
             <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500">
-                  {selectedIds.size} ընտրված
+                  {t('admin.desktopsReservations.selectedCount').replace('{count}', String(selectedIds.size))}
                 </span>
                 {selectedIds.size > 0 && (
                   <button
+                    type="button"
                     onClick={handleBulkDelete}
                     disabled={bulkDeleting}
                     className="px-4 py-1.5 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
                   >
-                    {bulkDeleting ? 'Ջնջվում...' : 'Ջնջել ընտրվածները'}
+                    {bulkDeleting
+                      ? t('admin.desktopsReservations.bulkDeleting')
+                      : t('admin.desktopsReservations.bulkDelete')}
                   </button>
                 )}
               </div>
@@ -351,6 +409,7 @@ export default function AdminDesktopsPage() {
                     {meta.page} / {meta.totalPages}
                   </span>
                   <button
+                    type="button"
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
                     className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
@@ -358,6 +417,7 @@ export default function AdminDesktopsPage() {
                     ←
                   </button>
                   <button
+                    type="button"
                     onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
                     disabled={page === meta.totalPages}
                     className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"

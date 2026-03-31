@@ -26,7 +26,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   roles: string[];
-  login: (_emailOrPhone: string, _password: string) => Promise<void>;
+  login: (_email: string, _password: string) => Promise<void>;
   register: (_data: RegisterData) => Promise<void>;
   logout: () => void;
 }
@@ -113,15 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * Login user
    */
-  const login = async (emailOrPhone: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
 
-      // Determine if it's email or phone
-      const isEmail = emailOrPhone.includes('@');
-      const requestData = isEmail
-        ? { email: emailOrPhone, password }
-        : { phone: emailOrPhone, password };
+      const requestData = { email: email.trim(), password };
 
       console.log('📤 [AUTH] Sending login request to API...');
       const response = await apiClient.post<AuthResponse>('/api/v1/auth/login', requestData, {
@@ -154,20 +150,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Check if it's an ApiError
       if (error instanceof ApiError) {
         if (error.status === 401) {
-          errorMessage = error.message || 'Invalid email/phone or password';
+          errorMessage = error.message || 'Invalid email or password';
         } else if (error.status === 403) {
           errorMessage = error.message || 'Your account has been blocked';
         } else if (error.status === 400) {
-          errorMessage = error.message || 'Please provide email/phone and password';
+          errorMessage = error.message || 'Please provide email and password';
         } else {
           errorMessage = error.message || errorMessage;
         }
       } else if (error.status === 401) {
-        errorMessage = error.message || 'Invalid email/phone or password';
+        errorMessage = error.message || 'Invalid email or password';
       } else if (error.status === 403) {
         errorMessage = error.message || 'Your account has been blocked';
       } else if (error.status === 400) {
-        errorMessage = error.message || 'Please provide email/phone and password';
+        errorMessage = error.message || 'Please provide email and password';
       } else if (error.message) {
         // Use the error message directly if available
         errorMessage = error.message;

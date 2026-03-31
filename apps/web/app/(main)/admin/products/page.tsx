@@ -32,7 +32,7 @@ export default function ProductsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [togglingAllFeatured, setTogglingAllFeatured] = useState(false);
-  const [currency, setCurrency] = useState<CurrencyCode>('USD');
+  const [currency, setCurrency] = useState<CurrencyCode>('RUB');
 
   useEffect(() => {
     if (!isLoading) {
@@ -312,7 +312,7 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         <div className="mb-6">
           <button
             onClick={() => router.push('/admin')}

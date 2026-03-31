@@ -1,63 +1,9 @@
 /**
- * i18n helper functions 
+ * i18n helper functions
  * Server-side translation functions (Safe for build/prerendering)
  */
 
 import { type LanguageCode } from './language';
-
-// Մենք այլևս չենք անում սովորական import getStoredLanguage-ի համար
-// import { getStoredLanguage } from './language'; ❌ - Սա հանում ենք
-
-// Pre-load translations (Imports remain the same)
-import enCommon from '../locales/en/common.json';
-import enHome from '../locales/en/home.json';
-import enProduct from '../locales/en/product.json';
-import enProducts from '../locales/en/products.json';
-import enAttributes from '../locales/en/attributes.json';
-import enDelivery from '../locales/en/delivery.json';
-import enAbout from '../locales/en/about.json';
-import enContact from '../locales/en/contact.json';
-import enFaq from '../locales/en/faq.json';
-import enLogin from '../locales/en/login.json';
-import enCookies from '../locales/en/cookies.json';
-import enDeliveryTerms from '../locales/en/delivery-terms.json';
-import enTerms from '../locales/en/terms.json';
-import enPrivacy from '../locales/en/privacy.json';
-import enSupport from '../locales/en/support.json';
-import enStores from '../locales/en/stores.json';
-import enReturns from '../locales/en/returns.json';
-import enRefundPolicy from '../locales/en/refund-policy.json';
-import enProfile from '../locales/en/profile.json';
-import enCheckout from '../locales/en/checkout.json';
-import enRegister from '../locales/en/register.json';
-import enCategories from '../locales/en/categories.json';
-import enOrders from '../locales/en/orders.json';
-import enAdmin from '../locales/en/admin.json';
-
-import hyCommon from '../locales/hy/common.json';
-import hyHome from '../locales/hy/home.json';
-import hyProduct from '../locales/hy/product.json';
-import hyProducts from '../locales/hy/products.json';
-import hyAttributes from '../locales/hy/attributes.json';
-import hyDelivery from '../locales/hy/delivery.json';
-import hyAbout from '../locales/hy/about.json';
-import hyContact from '../locales/hy/contact.json';
-import hyFaq from '../locales/hy/faq.json';
-import hyLogin from '../locales/hy/login.json';
-import hyCookies from '../locales/hy/cookies.json';
-import hyDeliveryTerms from '../locales/hy/delivery-terms.json';
-import hyTerms from '../locales/hy/terms.json';
-import hyPrivacy from '../locales/hy/privacy.json';
-import hySupport from '../locales/hy/support.json';
-import hyStores from '../locales/hy/stores.json';
-import hyReturns from '../locales/hy/returns.json';
-import hyRefundPolicy from '../locales/hy/refund-policy.json';
-import hyProfile from '../locales/hy/profile.json';
-import hyCheckout from '../locales/hy/checkout.json';
-import hyRegister from '../locales/hy/register.json';
-import hyCategories from '../locales/hy/categories.json';
-import hyOrders from '../locales/hy/orders.json';
-import hyAdmin from '../locales/hy/admin.json';
 
 import ruCommon from '../locales/ru/common.json';
 import ruHome from '../locales/ru/home.json';
@@ -83,42 +29,63 @@ import ruRegister from '../locales/ru/register.json';
 import ruCategories from '../locales/ru/categories.json';
 import ruOrders from '../locales/ru/orders.json';
 import ruAdmin from '../locales/ru/admin.json';
+import ruDesktops from '../locales/ru/desktops.json';
 
-export type Namespace = 'common' | 'home' | 'product' | 'products' | 'attributes' | 'delivery' | 'about' | 'contact' | 'faq' | 'login' | 'cookies' | 'delivery-terms' | 'terms' | 'privacy' | 'support' | 'stores' | 'returns' | 'refund-policy' | 'profile' | 'checkout' | 'register' | 'categories' | 'orders' | 'admin';
+export type Namespace = 'common' | 'home' | 'product' | 'products' | 'attributes' | 'delivery' | 'about' | 'contact' | 'faq' | 'login' | 'cookies' | 'delivery-terms' | 'terms' | 'privacy' | 'support' | 'stores' | 'returns' | 'refund-policy' | 'profile' | 'checkout' | 'register' | 'categories' | 'orders' | 'admin' | 'desktops';
 export type ProductField = 'title' | 'shortDescription' | 'longDescription';
 
-const translations: Partial<Record<LanguageCode, Record<Namespace, any>>> = {
-  en: { common: enCommon, home: enHome, product: enProduct, products: enProducts, attributes: enAttributes, delivery: enDelivery, about: enAbout, contact: enContact, faq: enFaq, login: enLogin, cookies: enCookies, 'delivery-terms': enDeliveryTerms, terms: enTerms, privacy: enPrivacy, support: enSupport, stores: enStores, returns: enReturns, 'refund-policy': enRefundPolicy, profile: enProfile, checkout: enCheckout, register: enRegister, categories: enCategories, orders: enOrders, admin: enAdmin },
-  hy: { common: hyCommon, home: hyHome, product: hyProduct, products: hyProducts, attributes: hyAttributes, delivery: hyDelivery, about: hyAbout, contact: hyContact, faq: hyFaq, login: hyLogin, cookies: hyCookies, 'delivery-terms': hyDeliveryTerms, terms: hyTerms, privacy: hyPrivacy, support: hySupport, stores: hyStores, returns: hyReturns, 'refund-policy': hyRefundPolicy, profile: hyProfile, checkout: hyCheckout, register: hyRegister, categories: hyCategories, orders: hyOrders, admin: hyAdmin },
-  ru: { common: ruCommon, home: ruHome, product: ruProduct, products: ruProducts, attributes: ruAttributes, delivery: ruDelivery, about: ruAbout, contact: ruContact, faq: ruFaq, login: ruLogin, cookies: ruCookies, 'delivery-terms': ruDeliveryTerms, terms: ruTerms, privacy: ruPrivacy, support: ruSupport, stores: ruStores, returns: ruReturns, 'refund-policy': ruRefundPolicy, profile: ruProfile, checkout: ruCheckout, register: ruRegister, categories: ruCategories, orders: ruOrders, admin: ruAdmin },
+type TranslationNamespaces = Record<Namespace, Record<string, unknown>>;
+
+const translations: Partial<Record<LanguageCode, TranslationNamespaces>> = {
+  ru: {
+    common: ruCommon as Record<string, unknown>,
+    home: ruHome as Record<string, unknown>,
+    product: ruProduct as Record<string, unknown>,
+    products: ruProducts as Record<string, unknown>,
+    attributes: ruAttributes as Record<string, unknown>,
+    delivery: ruDelivery as Record<string, unknown>,
+    about: ruAbout as Record<string, unknown>,
+    contact: ruContact as Record<string, unknown>,
+    faq: ruFaq as Record<string, unknown>,
+    login: ruLogin as Record<string, unknown>,
+    cookies: ruCookies as Record<string, unknown>,
+    'delivery-terms': ruDeliveryTerms as Record<string, unknown>,
+    terms: ruTerms as Record<string, unknown>,
+    privacy: ruPrivacy as Record<string, unknown>,
+    support: ruSupport as Record<string, unknown>,
+    stores: ruStores as Record<string, unknown>,
+    returns: ruReturns as Record<string, unknown>,
+    'refund-policy': ruRefundPolicy as Record<string, unknown>,
+    profile: ruProfile as Record<string, unknown>,
+    checkout: ruCheckout as Record<string, unknown>,
+    register: ruRegister as Record<string, unknown>,
+    categories: ruCategories as Record<string, unknown>,
+    orders: ruOrders as Record<string, unknown>,
+    admin: ruAdmin as Record<string, unknown>,
+    desktops: ruDesktops as Record<string, unknown>,
+  },
 };
 
 const translationCache = new Map<string, string>();
 
-/**
- * ՎԵՐՋՆԱԿԱՆ ԱՆՎՏԱՆԳ ՖՈՒՆԿՑԻԱ
- */
 function getSafeLang(lang: LanguageCode | undefined): LanguageCode {
   if (lang) return lang;
-  
-  // Եթե մենք build-ի մեջ ենք, երբեք մի փորձիր լեզու ստանալ
+
   if (typeof window === 'undefined') return 'ru';
-  
+
   try {
-    // Միայն runtime-ի ժամանակ ենք փորձում կանչել getStoredLanguage
-    // Սա թույլ չի տա build worker-ին տեսնել useContext-ը
     const { getStoredLanguage } = require('./language');
     return getStoredLanguage() || 'ru';
-  } catch (e) {
+  } catch {
     return 'ru';
   }
 }
 
-function getNestedValue(obj: any, keys: string[]): any {
-  let current = obj;
+function getNestedValue(obj: unknown, keys: string[]): unknown {
+  let current: unknown = obj;
   for (const key of keys) {
     if (current && typeof current === 'object' && key in current) {
-      current = current[key];
+      current = (current as Record<string, unknown>)[key];
     } else {
       return null;
     }
@@ -126,14 +93,15 @@ function getNestedValue(obj: any, keys: string[]): any {
   return current;
 }
 
-export function loadTranslation(lang: LanguageCode, namespace: Namespace): any {
-  return translations[lang]?.[namespace] || translations['ru']?.[namespace] || null;
+export function loadTranslation(lang: LanguageCode, namespace: Namespace): Record<string, unknown> | null {
+  const loaded = translations[lang]?.[namespace] ?? translations.ru?.[namespace];
+  return loaded ?? null;
 }
 
 export function t(lang: LanguageCode | undefined, path: string): string {
   if (!path) return '';
   const currentLang = getSafeLang(lang);
-  
+
   const parts = path.split('.');
   if (parts.length < 2) return path;
 
@@ -152,7 +120,7 @@ export function t(lang: LanguageCode | undefined, path: string): string {
 
   const result = typeof value === 'string' ? value : path;
   if (translationCache.size < 1000) translationCache.set(cacheKey, result);
-  
+
   return result;
 }
 
@@ -160,10 +128,13 @@ export function getProductText(lang: LanguageCode | undefined, productId: string
   const currentLang = getSafeLang(lang);
   try {
     const products = loadTranslation(currentLang, 'products');
-    const product = products?.[productId];
+    const product = products?.[productId] as Record<string, string> | undefined;
     if (product?.[field]) return product[field];
-    return loadTranslation('ru', 'products')?.[productId]?.[field] || '';
-  } catch { return ''; }
+    const ruProducts = loadTranslation('ru', 'products');
+    return (ruProducts?.[productId] as Record<string, string> | undefined)?.[field] || '';
+  } catch {
+    return '';
+  }
 }
 
 export function getAttributeLabel(lang: LanguageCode | undefined, type: string, value: string): string {
@@ -171,11 +142,21 @@ export function getAttributeLabel(lang: LanguageCode | undefined, type: string, 
   if (!value) return '';
   try {
     const attrs = loadTranslation(currentLang, 'attributes');
-    const label = attrs?.[type]?.[value.toLowerCase().trim()];
+    const typeMap = attrs?.[type] as Record<string, string> | undefined;
+    const label = typeMap?.[value.toLowerCase().trim()];
     if (label) return label;
-    return loadTranslation('ru', 'attributes')?.[type]?.[value.toLowerCase().trim()] || value;
-  } catch { return value; }
+    const ruAttrs = loadTranslation('ru', 'attributes');
+    const ruTypeMap = ruAttrs?.[type] as Record<string, string> | undefined;
+    return ruTypeMap?.[value.toLowerCase().trim()] || value;
+  } catch {
+    return value;
+  }
 }
 
-export function clearTranslationCache(): void { translationCache.clear(); }
-export function getAvailableLanguages(): LanguageCode[] { return ['en', 'hy', 'ru']; }
+export function clearTranslationCache(): void {
+  translationCache.clear();
+}
+
+export function getAvailableLanguages(): LanguageCode[] {
+  return ['ru'];
+}

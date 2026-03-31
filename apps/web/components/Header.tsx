@@ -8,15 +8,78 @@ import { useTranslation } from '../lib/i18n-client';
 import { useAuth } from '../lib/auth/AuthContext';
 import { fetchCart } from '../app/(main)/cart/cart-fetcher';
 import { formatPrice, getStoredCurrency } from '../lib/currency';
+import { formatNavLabel } from '../lib/formatNavLabel';
+import {
+  APP_SCROLL_REGION_DOM_ID,
+  getAppScrollRegion,
+} from '../lib/appScrollRegion';
+import { HeaderSearchOverlay } from './HeaderSearchOverlay';
 import type { Cart } from '../app/(main)/cart/types';
 
 const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
 
+/**
+ * Desktop bar height — spacer matches fixed bar.
+ * `min-h` prevents flex/scroll parents from shrinking the row below 106px.
+ */
+const HEADER_DESKTOP_HEIGHT_CLASS = 'h-[106px] min-h-[106px] shrink-0';
+
+/** Same numeric value as `HEADER_DESKTOP_HEIGHT_CLASS` — used to find which home section sits under the bar. */
+const HEADER_BAR_HEIGHT_PX = 106;
+
+/** Fixed header geometry matches scroll region `clientWidth` (scrollbar excluded), not full viewport. */
+const HEADER_SCROLL_SYNC_LEFT_VAR = '--app-header-scroll-sync-left';
+const HEADER_SCROLL_SYNC_WIDTH_VAR = '--app-header-scroll-sync-width';
+
+type HomeHeaderSurface = 'cream' | 'dark';
+
+function parseHomeHeaderSurface(
+  value: string | undefined,
+): HomeHeaderSurface | null {
+  if (value === 'cream' || value === 'dark') return value;
+  return null;
+}
+
+/**
+ * Picks the home section whose vertical range contains the strip behind the fixed header.
+ */
+function pickHomeSectionSurface(sections: HTMLElement[]): HomeHeaderSurface | null {
+  if (sections.length === 0) return null;
+  const headerH = HEADER_BAR_HEIGHT_PX;
+  for (const el of sections) {
+    const r = el.getBoundingClientRect();
+    if (r.top < headerH && r.bottom > headerH) {
+      const s = parseHomeHeaderSurface(el.dataset.homeHeaderSurface);
+      if (s) return s;
+    }
+  }
+  let best = sections[0];
+  let bestScore = Infinity;
+  for (const el of sections) {
+    const r = el.getBoundingClientRect();
+    const mid = (r.top + r.bottom) / 2;
+    const score = Math.abs(mid - headerH / 2);
+    if (score < bestScore) {
+      bestScore = score;
+      best = el;
+    }
+  }
+  return parseHomeHeaderSurface(best.dataset.homeHeaderSurface);
+}
+
 export function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === '/';
-  const headerBg = isHomePage ? HEADER_BG_HOME : HEADER_BG_OTHER;
+  const [homeHeaderSurface, setHomeHeaderSurface] =
+    useState<HomeHeaderSurface>('cream');
+
+  const isHomeCream = isHomePage && homeHeaderSurface === 'cream';
+  const headerBg = isHomePage
+    ? homeHeaderSurface === 'cream'
+      ? HEADER_BG_HOME
+      : HEADER_BG_OTHER
+    : HEADER_BG_OTHER;
 
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, logout } = useAuth();
@@ -24,23 +87,17 @@ export function Header() {
   const [cartTotal, setCartTotal] = useState<number>(0);
   const [currency, setCurrency] = useState(getStoredCurrency());
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const navigationLinks = [
     { href: '/', label: t('home.header.navigation.home') },
     { href: '/products', label: t('home.header.navigation.menu') },
     { href: '/about', label: t('home.header.navigation.about') },
-    { href: '/desktops', label: t('home.header.navigation.vacancies') },
+    { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
     { href: '/coming-soon', label: t('home.header.navigation.team') },
     { href: '/contact', label: t('home.header.navigation.contact') },
     { href: '/coming-soon', label: t('home.header.navigation.delivery') },
   ];
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
 
   // Load cart total
   useEffect(() => {
@@ -83,17 +140,117 @@ export function Header() {
     };
   }, [isLoggedIn, t]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const clearSyncVars = () => {
+      root.style.removeProperty(HEADER_SCROLL_SYNC_LEFT_VAR);
+      root.style.removeProperty(HEADER_SCROLL_SYNC_WIDTH_VAR);
+    };
+
+    const scrollRoot = getAppScrollRegion();
+    if (
+      !scrollRoot ||
+      scrollRoot === document.documentElement
+    ) {
+      clearSyncVars();
+      return;
+    }
+
+    const applySync = () => {
+      const r = scrollRoot.getBoundingClientRect();
+      root.style.setProperty(HEADER_SCROLL_SYNC_LEFT_VAR, `${r.left}px`);
+      root.style.setProperty(
+        HEADER_SCROLL_SYNC_WIDTH_VAR,
+        `${scrollRoot.clientWidth}px`,
+      );
+    };
+
+    applySync();
+    const ro = new ResizeObserver(() => {
+      window.requestAnimationFrame(applySync);
+    });
+    ro.observe(scrollRoot);
+    const onLayout = () => window.requestAnimationFrame(applySync);
+    window.addEventListener('resize', onLayout);
+    scrollRoot.addEventListener('scroll', onLayout, { passive: true });
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', onLayout);
+      scrollRoot.removeEventListener('scroll', onLayout);
+      clearSyncVars();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isHomePage) {
+      setHomeHeaderSurface('cream');
+      return;
+    }
+
+    const getSections = () =>
+      Array.from(
+        document.querySelectorAll<HTMLElement>('[data-home-header-surface]'),
+      );
+
+    const apply = () => {
+      const next = pickHomeSectionSurface(getSections());
+      if (next) setHomeHeaderSurface(next);
+    };
+
+    const scrollOpts = { passive: true } as const;
+    const scrollCaptureOpts = { ...scrollOpts, capture: true } as const;
+    const onScrollOrResize = () => {
+      window.requestAnimationFrame(apply);
+    };
+
+    apply();
+    const scrollRoot =
+      document.getElementById(APP_SCROLL_REGION_DOM_ID) ?? document.body;
+    scrollRoot.addEventListener('scroll', onScrollOrResize, scrollOpts);
+    window.addEventListener('scroll', onScrollOrResize, scrollCaptureOpts);
+    document.documentElement.addEventListener(
+      'scroll',
+      onScrollOrResize,
+      scrollOpts,
+    );
+    window.addEventListener('resize', onScrollOrResize);
+
+    const t = window.setTimeout(apply, 0);
+
+    return () => {
+      window.clearTimeout(t);
+      scrollRoot.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('scroll', onScrollOrResize, scrollCaptureOpts);
+      document.documentElement.removeEventListener(
+        'scroll',
+        onScrollOrResize,
+      );
+      window.removeEventListener('resize', onScrollOrResize);
+    };
+  }, [isHomePage]);
+
+  /** Same box on home for cream + dark so right-side icons align with the dark bar. */
+  const logoBoxOther = 'w-32 h-24 md:w-36 md:h-28 lg:w-40 lg:h-32';
+
   return (
-    <header className={`relative w-full ${headerBg} h-[106px] flex items-center justify-between px-4 sm:px-6 lg:px-8`}>
+    <>
+      {/* Reserve space: scroll is on `body`; `sticky` inside flex was unreliable */}
+      <div className={`w-full ${HEADER_DESKTOP_HEIGHT_CLASS}`} aria-hidden />
+      <header
+        className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 lg:px-8 ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
+      >
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4 lg:gap-6">
         <Link href="/" className="flex items-center gap-2">
-          <div className={`relative ${isHomePage ? 'w-32 h-32 md:w-36 md:h-36 lg:w-40 lg:h-40' : 'w-32 h-24 md:w-36 md:h-28 lg:w-40 lg:h-32'}`}>
+          <div
+            className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${logoBoxOther}`}
+          >
             <Image
-              src={isHomePage ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
+              src={isHomeCream ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
               alt={t('home.header.logoAlt')}
-              width={isHomePage ? 160 : 160}
-              height={isHomePage ? 160 : 120}
+              width={160}
+              height={120}
               className="object-contain"
               priority
               unoptimized
@@ -103,42 +260,41 @@ export function Header() {
       </div>
 
       {/* Navigation Menu - Center */}
-      <nav className="hidden lg:flex items-center gap-10">
+      <nav className="hidden items-center gap-10 transition-[gap] duration-300 ease-out lg:flex">
         {navigationLinks.map((link) => (
           <Link
             key={link.label}
             href={link.href}
-            className={`text-base font-normal leading-6 hover:opacity-80 transition-opacity ${isHomePage ? 'text-[#2f3f3d]' : 'text-[#ffe5c2]'}`}
+            className={`font-normal text-base leading-6 hover:opacity-80 transition-[font-size] duration-300 ease-out ${
+              isHomeCream ? 'text-[#2f3f3d]' : 'text-[#ffe5c2]'
+            }`}
           >
-            {link.label}
+            {formatNavLabel(link.label)}
           </Link>
         ))}
       </nav>
 
       {/* Search and Login - Right */}
-      <div className="flex items-center gap-5">
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="relative">
-          <div className={`relative rounded-full h-10 w-[240px] flex items-center px-3 ${isHomePage ? 'bg-[#ffe5c2] border border-black' : 'bg-white/15 border border-white/30'}`}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('home.header.search.placeholder')}
-              className={`flex-1 bg-transparent text-sm font-medium outline-none pr-6 ${isHomePage ? 'text-[#2f3f3d] placeholder:text-[rgba(47,63,61,0.65)]' : 'text-white placeholder:text-white/70'}`}
-            />
-            <button
-              type="submit"
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-              aria-label={t('home.header.search.ariaLabel')}
-            >
+      <div className="flex items-center gap-5 transition-[gap] duration-300 ease-out">
+        {/* Search — opens glass overlay with live results */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className={`relative flex h-10 w-[160px] items-center gap-2 rounded-full pl-2.5 pr-3 text-left transition-[height,width,padding] duration-300 ease-out hover:opacity-90 ${
+              isHomeCream ? 'border border-black bg-[#ffe5c2]' : 'border border-white/30 bg-white/15'
+            }`}
+            aria-label={t('home.header.search.ariaLabel')}
+            aria-expanded={isSearchOpen}
+          >
+            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
               <svg
-                width="14"
-                height="14"
+                width="20"
+                height="20"
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className={isHomePage ? 'text-[#2f3f3d]' : 'text-white'}
+                className={isHomeCream ? 'text-[#2f3f3d]' : 'text-white'}
               >
                 <path
                   d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z"
@@ -155,14 +311,25 @@ export function Header() {
                   strokeLinejoin="round"
                 />
               </svg>
-            </button>
-          </div>
-        </form>
+            </span>
+            <span
+              className={`min-w-0 flex-1 truncate text-sm font-medium ${isHomeCream ? 'text-[#2f3f3d]' : 'text-white'} ${!searchQuery.trim() ? (isHomeCream ? 'text-[rgba(47,63,61,0.65)]' : 'text-white/70') : ''}`}
+            >
+              {searchQuery.trim() ? searchQuery : t('home.header.search.placeholder')}
+            </span>
+          </button>
+          <HeaderSearchOverlay
+            open={isSearchOpen}
+            onClose={() => setIsSearchOpen(false)}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+          />
+        </div>
 
         {/* Cart Button */}
         <Link
           href="/cart"
-          className={`rounded-[45px] flex items-center gap-1.5 bg-[#2F3F3D] hover:opacity-90 transition-opacity ${isLoggedIn ? 'h-10 px-2.5' : 'h-8 px-2'}`}
+          className={`rounded-[45px] flex items-center gap-1.5 bg-[#2F3F3D] hover:opacity-90 transition-opacity ${isLoggedIn ? 'h-10 min-w-[92px] px-3.5' : 'h-8 min-w-[80px] px-3'}`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
           <div className={`flex items-center justify-center ${isLoggedIn ? 'w-4 h-4' : 'w-3 h-3'}`}>
@@ -240,12 +407,13 @@ export function Header() {
         ) : (
           <Link
             href="/login"
-            className={`border px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] transition-colors ${isHomePage ? 'bg-[#2f3f3d] border-[#2f3f3d] text-white hover:bg-[#1f2f2d]' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
+            className={`border px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] transition-colors ${isHomeCream ? 'bg-[#2f3f3d] border-[#2f3f3d] text-white hover:bg-[#1f2f2d]' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
           >
             {t('home.header.login')}
           </Link>
         )}
       </div>
     </header>
+    </>
   );
 }

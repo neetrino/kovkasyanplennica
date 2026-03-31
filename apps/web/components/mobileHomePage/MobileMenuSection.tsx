@@ -31,7 +31,7 @@ async function getMenuProducts(
   limit: number = 4
 ): Promise<{ products: Product[]; totalPages: number }> {
   try {
-    const lang = getStoredLanguage() || 'en';
+    const lang = getStoredLanguage() || 'ru';
     const result = await productsService.findAll({ page, limit, lang });
     if (!result.data || !Array.isArray(result.data)) return { products: [], totalPages: 0 };
     const categoryFallback = t(lang, 'home.menu.categoryFallback');

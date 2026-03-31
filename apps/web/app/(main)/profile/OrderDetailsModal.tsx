@@ -1,5 +1,11 @@
-    import { Button, Card } from '@shop/ui';
-import { formatPriceInCurrency, convertPrice, type CurrencyCode } from '@/lib/currency';
+import { Button, Card } from '@shop/ui';
+import {
+  formatPriceInCurrency,
+  amountUsdToRub,
+  amountAmdToRub,
+  convertPrice,
+  SHOP_DISPLAY_CURRENCY,
+} from '@/lib/currency';
 import { getStatusColor, getPaymentStatusColor, getColorValue } from './utils';
 import type { OrderDetails } from './types';
 
@@ -8,7 +14,6 @@ interface OrderDetailsModalProps {
   orderDetailsLoading: boolean;
   orderDetailsError: string | null;
   isReordering: boolean;
-  currency: CurrencyCode;
   onClose: () => void;
   onReOrder: () => void;
   t: (key: string) => string;
@@ -19,7 +24,6 @@ export function OrderDetailsModal({
   orderDetailsLoading,
   orderDetailsError,
   isReordering,
-  currency,
   onClose,
   onReOrder,
   t,
@@ -45,7 +49,7 @@ export function OrderDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-app-overlay overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
@@ -181,15 +185,9 @@ export function OrderDetailsModal({
                               
                               <p className="text-sm text-gray-600">{t('profile.orderDetails.sku')}: {item.sku}</p>
                               <p className="text-sm text-gray-600 mt-2">
-                                {t('profile.orderDetails.quantity')}: {item.quantity} × {(() => {
-                                  const priceAMD = convertPrice(item.price, 'USD', 'AMD');
-                                  const priceDisplay = currency === 'AMD' ? priceAMD : convertPrice(priceAMD, 'AMD', currency);
-                                  return formatPriceInCurrency(priceDisplay, currency);
-                                })()} = {(() => {
-                                  const totalAMD = convertPrice(item.total, 'USD', 'AMD');
-                                  const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency);
-                                  return formatPriceInCurrency(totalDisplay, currency);
-                                })()}
+                                {t('profile.orderDetails.quantity')}: {item.quantity} ×{' '}
+                                {formatPriceInCurrency(amountUsdToRub(item.price), SHOP_DISPLAY_CURRENCY)} ={' '}
+                                {formatPriceInCurrency(amountUsdToRub(item.total), SHOP_DISPLAY_CURRENCY)}
                               </p>
                             </div>
                           </div>
@@ -209,22 +207,21 @@ export function OrderDetailsModal({
                           <div className="flex justify-between text-gray-600">
                             <span>{t('profile.orderDetails.subtotal')}</span>
                             <span>
-                              {(() => {
-                                const subtotalAMD = convertPrice(selectedOrder.totals.subtotal, 'USD', 'AMD');
-                                const subtotalDisplay = currency === 'AMD' ? subtotalAMD : convertPrice(subtotalAMD, 'AMD', currency);
-                                return formatPriceInCurrency(subtotalDisplay, currency);
-                              })()}
+                              {formatPriceInCurrency(
+                                amountUsdToRub(selectedOrder.totals.subtotal),
+                                SHOP_DISPLAY_CURRENCY
+                              )}
                             </span>
                           </div>
                           {selectedOrder.totals.discount > 0 && (
                             <div className="flex justify-between text-gray-600">
                               <span>{t('profile.orderDetails.discount')}</span>
                               <span>
-                                -{(() => {
-                                  const discountAMD = convertPrice(selectedOrder.totals.discount, 'USD', 'AMD');
-                                  const discountDisplay = currency === 'AMD' ? discountAMD : convertPrice(discountAMD, 'AMD', currency);
-                                  return formatPriceInCurrency(discountDisplay, currency);
-                                })()}
+                                -
+                                {formatPriceInCurrency(
+                                  amountUsdToRub(selectedOrder.totals.discount),
+                                  SHOP_DISPLAY_CURRENCY
+                                )}
                               </span>
                             </div>
                           )}
@@ -233,36 +230,34 @@ export function OrderDetailsModal({
                             <span>
                               {selectedOrder.shippingMethod === 'pickup' 
                                 ? t('checkout.shipping.freePickup')
-                                : (() => {
-                                    const shippingAMD = selectedOrder.totals.shipping;
-                                    const shippingDisplay = currency === 'AMD' ? shippingAMD : convertPrice(shippingAMD, 'AMD', currency);
-                                    return formatPriceInCurrency(shippingDisplay, currency) + (selectedOrder.shippingAddress?.city ? ` (${selectedOrder.shippingAddress.city})` : '');
-                                  })()}
+                                : formatPriceInCurrency(
+                                    amountAmdToRub(selectedOrder.totals.shipping),
+                                    SHOP_DISPLAY_CURRENCY
+                                  ) + (selectedOrder.shippingAddress?.city ? ` (${selectedOrder.shippingAddress.city})` : '')}
                             </span>
                           </div>
                           <div className="flex justify-between text-gray-600">
                             <span>{t('profile.orderDetails.tax')}</span>
                             <span>
-                              {(() => {
-                                const taxAMD = convertPrice(selectedOrder.totals.tax, 'USD', 'AMD');
-                                const taxDisplay = currency === 'AMD' ? taxAMD : convertPrice(taxAMD, 'AMD', currency);
-                                return formatPriceInCurrency(taxDisplay, currency);
-                              })()}
+                              {formatPriceInCurrency(
+                                amountUsdToRub(selectedOrder.totals.tax),
+                                SHOP_DISPLAY_CURRENCY
+                              )}
                             </span>
                           </div>
                           <div className="border-t border-gray-200 pt-4">
                             <div className="flex justify-between text-lg font-bold text-gray-900">
                               <span>{t('profile.orderDetails.total')}</span>
                               <span>
-                                {(() => {
-                                  const subtotalAMD = convertPrice(selectedOrder.totals.subtotal, 'USD', 'AMD');
-                                  const discountAMD = convertPrice(selectedOrder.totals.discount, 'USD', 'AMD');
-                                  const shippingAMD = selectedOrder.totals.shipping;
-                                  const taxAMD = convertPrice(selectedOrder.totals.tax, 'USD', 'AMD');
-                                  const totalAMD = subtotalAMD - discountAMD + shippingAMD + taxAMD;
-                                  const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency);
-                                  return formatPriceInCurrency(totalDisplay, currency);
-                                })()}
+                                {formatPriceInCurrency(
+                                  amountAmdToRub(
+                                    convertPrice(selectedOrder.totals.subtotal, 'USD', 'AMD') -
+                                      convertPrice(selectedOrder.totals.discount, 'USD', 'AMD') +
+                                      selectedOrder.totals.shipping +
+                                      convertPrice(selectedOrder.totals.tax, 'USD', 'AMD')
+                                  ),
+                                  SHOP_DISPLAY_CURRENCY
+                                )}
                               </span>
                             </div>
                           </div>

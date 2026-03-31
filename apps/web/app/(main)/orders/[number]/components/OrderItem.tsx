@@ -1,16 +1,15 @@
 'use client';
 
 import { useTranslation } from '@/lib/i18n-client';
-import { formatPriceInCurrency, convertPrice } from '@/lib/currency';
+import { formatPriceInCurrency, amountUsdToRub, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
 import { getColorValue } from '../utils/color-helpers';
 import type { OrderItem as OrderItemType } from '../types';
 
 interface OrderItemProps {
   item: OrderItemType;
-  currency: 'USD' | 'AMD' | 'EUR' | 'RUB' | 'GEL';
 }
 
-export function OrderItem({ item, currency }: OrderItemProps) {
+export function OrderItem({ item }: OrderItemProps) {
   const { t } = useTranslation();
 
   const allOptions = item.variantOptions ?? [];
@@ -30,13 +29,8 @@ export function OrderItem({ item, currency }: OrderItemProps) {
     return [];
   };
 
-  const priceAMD = convertPrice(item.price, 'USD', 'AMD');
-  const priceDisplay = currency === 'AMD' ? priceAMD : convertPrice(priceAMD, 'AMD', currency);
-  const itemPriceDisplay = formatPriceInCurrency(priceDisplay, currency);
-
-  const totalAMD = convertPrice(item.total, 'USD', 'AMD');
-  const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency);
-  const itemTotalDisplay = formatPriceInCurrency(totalDisplay, currency);
+  const itemPriceDisplay = formatPriceInCurrency(amountUsdToRub(item.price), SHOP_DISPLAY_CURRENCY);
+  const itemTotalDisplay = formatPriceInCurrency(amountUsdToRub(item.total), SHOP_DISPLAY_CURRENCY);
 
   return (
     <div className="flex gap-4 pb-5 border-b border-[#3d504e] last:border-0 last:pb-0">
