@@ -157,12 +157,22 @@ class AuthService {
   async login(data: LoginData): Promise<AuthResponse> {
     logger.info("Auth login attempt", { hasEmail: !!data.email, hasPhone: !!data.phone });
 
-    if (!data.email && !data.phone) {
+    if (data.phone) {
       throw {
         status: 400,
         type: "https://api.shop.am/problems/validation-error",
         title: "Validation failed",
-        detail: "Either email or phone is required",
+        detail: "Login with phone number is not supported. Use your email address.",
+      };
+    }
+
+    const email = data.email?.trim();
+    if (!email) {
+      throw {
+        status: 400,
+        type: "https://api.shop.am/problems/validation-error",
+        title: "Validation failed",
+        detail: "Email is required",
       };
     }
 
@@ -177,10 +187,7 @@ class AuthService {
 
     const user = await db.user.findFirst({
       where: {
-        OR: [
-          ...(data.email ? [{ email: data.email }] : []),
-          ...(data.phone ? [{ phone: data.phone }] : []),
-        ],
+        email: { equals: email, mode: "insensitive" },
         deletedAt: null,
       },
       select: {
@@ -201,7 +208,7 @@ class AuthService {
         status: 401,
         type: "https://api.shop.am/problems/unauthorized",
         title: "Invalid credentials",
-        detail: "Invalid email/phone or password",
+        detail: "Invalid email or password",
       };
     }
 
@@ -216,7 +223,7 @@ class AuthService {
         status: 401,
         type: "https://api.shop.am/problems/unauthorized",
         title: "Invalid credentials",
-        detail: "Invalid email/phone or password",
+        detail: "Invalid email or password",
       };
     }
 
