@@ -43,7 +43,7 @@ export function Footer() {
             {t('home.footer.booking.description')}
           </p>
           <Link
-            href="/booking"
+            href="/desktops"
             className={`inline-block ${isMenuPage ? 'bg-[#2f3f3d] text-[#ffe5c2] hover:bg-[#1f2f2d]' : 'bg-[#ffe5c2] text-[#2f3f3d] hover:bg-[#fadaac]'} px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg transition-colors`}
           >
             {t('home.footer.booking.selectTableButton')}

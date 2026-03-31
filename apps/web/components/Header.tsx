@@ -93,7 +93,7 @@ export function Header() {
     { href: '/', label: t('home.header.navigation.home') },
     { href: '/products', label: t('home.header.navigation.menu') },
     { href: '/about', label: t('home.header.navigation.about') },
-    { href: '/desktops', label: t('home.header.navigation.vacancies') },
+    { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
     { href: '/coming-soon', label: t('home.header.navigation.team') },
     { href: '/contact', label: t('home.header.navigation.contact') },
     { href: '/coming-soon', label: t('home.header.navigation.delivery') },

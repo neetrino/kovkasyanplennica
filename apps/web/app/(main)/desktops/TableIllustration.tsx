@@ -1,13 +1,12 @@
 'use client';
 
-import type { TableConfig } from './table-data';
+import { useTranslation } from '@/lib/i18n-client';
 import type { TableVisualVariant } from './tableLayout';
 
 const TABLE_FILL = '#f7ddaf';
 const TABLE_TEXT = '#4b564f';
 
 interface TableIllustrationProps {
-  table: TableConfig;
   variant: TableVisualVariant;
 }
 
@@ -44,16 +43,24 @@ function CapacityText({ lines, x, y, noteSize = 11 }: CapacityTextProps) {
   );
 }
 
-function getCapacityLines(table: TableConfig, variant: TableVisualVariant): string[] {
-  if (variant === 'vipOval') return ['7-8', 'հոգի'];
-  if (variant === 'windowFour') return ['3-4', 'հոգի', '( պատուհանի մոտ )'];
-  if (variant === 'topTwo' || variant === 'sideTwo') return ['2', 'հոգի'];
-  return ['3-4', 'հոգի'];
+function getCapacityLines(
+  variant: TableVisualVariant,
+  tr: (key: string) => string,
+): string[] {
+  const p = tr('desktops.illustration.personSuffix');
+  if (variant === 'vipOval') return ['7-8', p];
+  if (variant === 'windowFour') {
+    return ['3-4', p, tr('desktops.illustration.windowNote')];
+  }
+  if (variant === 'topTwo' || variant === 'sideTwo') return ['2', p];
+  if (variant === 'topThree') return ['3', p];
+  return ['3-4', p];
 }
 
 /** Pixel-aligned SVG illustrations adapted from the Figma table silhouettes. */
-export function TableIllustration({ table, variant }: TableIllustrationProps) {
-  const lines = getCapacityLines(table, variant);
+export function TableIllustration({ variant }: TableIllustrationProps) {
+  const { t } = useTranslation();
+  const lines = getCapacityLines(variant, t);
 
   if (variant === 'topTwo') {
     return (
@@ -67,13 +74,14 @@ export function TableIllustration({ table, variant }: TableIllustrationProps) {
   }
 
   if (variant === 'topThree') {
+    const threeLines = getCapacityLines('topThree', t);
     return (
       <svg aria-hidden className="h-[132px] w-[180px]" viewBox="0 0 180 132">
         <rect x="29" y="0" width="122" height="61" rx="3" fill={TABLE_FILL} />
         <circle cx="52" cy="111" r="17" fill={TABLE_FILL} />
         <circle cx="90" cy="111" r="17" fill={TABLE_FILL} />
         <circle cx="128" cy="111" r="17" fill={TABLE_FILL} />
-        <CapacityText lines={['3', 'հոգի']} x={90} y={28} />
+        <CapacityText lines={threeLines} x={90} y={28} />
       </svg>
     );
   }

@@ -79,9 +79,9 @@ export function Hero() {
             {t('home.hero.bookButton')}
           </Link>
 
-          {/* Кнопка "Заказать" */}
+          {/* Кнопка "Заказать" — /desktops */}
           <Link
-            href="/coming-soon"
+            href="/desktops"
             className="w-full sm:w-auto bg-[#2f3f3d] border-2 border-[#2f3f3d] text-white px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-sm md:text-base tracking-[0.32px] hover:bg-[#1f2f2d] transition-all duration-300 min-w-[190px] text-center"
           >
             {t('home.hero.orderButton')}

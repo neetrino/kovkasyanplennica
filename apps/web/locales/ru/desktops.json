@@ -1,0 +1,80 @@
+{
+  "page": {
+    "eyebrow": "Ресторан",
+    "title": "Бронирование столов",
+    "subtitle": "Выберите стол для бронирования",
+    "footerNote": "Бронирование подтверждается в течение 24 часов. Связь: admin@restaurant.am"
+  },
+  "legend": {
+    "available": "Свободно",
+    "selected": "Выбрано",
+    "book": "Забронировать"
+  },
+  "tableCard": {
+    "seats": "{n} чел.",
+    "byWindow": "У окна"
+  },
+  "tables": {
+    "t1": "Стол 1",
+    "t2": "Стол 2",
+    "t3": "Стол 3",
+    "t4": "Стол 4",
+    "t5": "Стол 5",
+    "t6": "Стол 6",
+    "t7": "Стол 7",
+    "t8": "Стол 8",
+    "t9": "VIP-стол",
+    "t10": "Стол 10",
+    "t11": "Стол 11",
+    "t12": "Стол 12",
+    "t13": "Стол 13",
+    "t14": "Стол 14",
+    "t15": "Стол 15",
+    "t16": "Стол 16",
+    "t17": "Стол 17",
+    "t18": "Стол 18",
+    "t19": "Стол 19"
+  },
+  "illustration": {
+    "personSuffix": "чел.",
+    "windowNote": "( у окна )"
+  },
+  "modal": {
+    "eyebrow": "Бронирование",
+    "closeAria": "Закрыть",
+    "close": "Закрыть",
+    "byWindowSuffix": " · У окна",
+    "successTitle": "Забронировано!",
+    "successConfirm": "Подтверждение будет отправлено на адрес {email}",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "email": "Эл. почта",
+    "phone": "Телефон",
+    "date": "Дата",
+    "time": "Время",
+    "guestCount": "Количество гостей",
+    "note": "Комментарий (необязательно)",
+    "placeholders": {
+      "firstName": "Иван",
+      "lastName": "Иванов",
+      "email": "ivan@example.com",
+      "phone": "+7 XXX XXX-XX-XX",
+      "note": "День рождения, аллергии, пожелания…"
+    },
+    "timePlaceholder": "Выберите",
+    "submit": "Забронировать стол",
+    "submitting": "Отправка…",
+    "guestsOption": "{n} чел.",
+    "validation": {
+      "firstNameRequired": "Укажите имя",
+      "lastNameRequired": "Укажите фамилию",
+      "emailRequired": "Укажите эл. почту",
+      "emailInvalid": "Некорректный адрес эл. почты",
+      "phoneRequired": "Укажите телефон",
+      "dateRequired": "Укажите дату",
+      "timeRequired": "Укажите время",
+      "submitFailed": "Не удалось оформить бронирование",
+      "unknownError": "Неизвестная ошибка"
+    }
+  }
+}

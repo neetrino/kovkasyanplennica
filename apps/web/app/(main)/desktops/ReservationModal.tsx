@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { useTranslation } from '@/lib/i18n-client';
 import type { TableConfig } from './table-data';
 
 interface ReservationForm {
@@ -36,13 +37,14 @@ const TIME_SLOTS = [
 interface ReservationModalProps {
   table: TableConfig;
   onClose: () => void;
-  /** Ապրանքի տվյալներ spin wheel-ից (query params) */
+  /** Spin wheel query params */
   productTitle?: string | null;
   productImageUrl?: string | null;
   profitCents?: number | null;
 }
 
 export function ReservationModal({ table, onClose, productTitle, productImageUrl, profitCents }: ReservationModalProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [form, setForm] = useState<ReservationForm>(INITIAL_FORM);
   const [errors, setErrors] = useState<Partial<ReservationForm>>({});
@@ -75,24 +77,27 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
 
   const today = new Date().toISOString().split('T')[0];
 
-  function validate(): boolean {
+  const tableTitle = t(`desktops.tables.${table.labelKey}`);
+
+  const validate = useCallback((): boolean => {
     const next: Partial<ReservationForm> = {};
-    if (!form.firstName.trim()) next.firstName = 'Անունը պարտադիր է';
-    if (!form.lastName.trim()) next.lastName = 'Ազգանունը պարտադիր է';
+    const v = 'desktops.modal.validation';
+    if (!form.firstName.trim()) next.firstName = t(`${v}.firstNameRequired`);
+    if (!form.lastName.trim()) next.lastName = t(`${v}.lastNameRequired`);
     if (!form.email.trim()) {
-      next.email = 'Էլ. հասցեն պարտադիր է';
+      next.email = t(`${v}.emailRequired`);
     } else if (
       form.email.indexOf('@') < 1 ||
       !form.email.slice(form.email.indexOf('@') + 1).includes('.')
     ) {
-      next.email = 'Անվավեր էլ. հասցե';
+      next.email = t(`${v}.emailInvalid`);
     }
-    if (!form.phone.trim()) next.phone = 'Հեռախոսը պարտադիր է';
-    if (!form.date) next.date = 'Ամսաթիվը պարտադիր է';
-    if (!form.time) next.time = 'Ժամը պարտադիր է';
+    if (!form.phone.trim()) next.phone = t(`${v}.phoneRequired`);
+    if (!form.date) next.date = t(`${v}.dateRequired`);
+    if (!form.time) next.time = t(`${v}.timeRequired`);
     setErrors(next);
     return Object.keys(next).length === 0;
-  }
+  }, [form, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -104,7 +109,7 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tableId: table.id,
-          tableLabel: table.label,
+          tableLabel: tableTitle,
           tableSeats: table.seats,
           firstName: form.firstName.trim(),
           lastName: form.lastName.trim(),
@@ -122,12 +127,15 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.detail || 'Ամրագրումը ձախողվեց');
+        throw new Error(
+          typeof data.detail === 'string' ? data.detail : t('desktops.modal.validation.submitFailed'),
+        );
       }
 
       setSuccess(true);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Անհայտ սխալ';
+      const msg =
+        err instanceof Error ? err.message : t('desktops.modal.validation.unknownError');
       setErrors({ note: msg });
     } finally {
       setSubmitting(false);
@@ -161,20 +169,21 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
         <div className="sticky top-0 bg-[#2F3F3D] border-b border-[#3d504e] px-6 py-5 flex items-start justify-between z-10">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-1">
-              Ամրագրում
+              {t('desktops.modal.eyebrow')}
             </p>
             <h2 className="text-[#fff4de] text-xl font-light italic">
-              {table.label}
+              {tableTitle}
             </h2>
             <p className="text-[#fff4de]/50 text-xs mt-0.5">
-              {table.seats} հոգի{table.byWindow ? ' · Պատուհանի կողքին' : ''}
+              {t('desktops.tableCard.seats').replace('{n}', String(table.seats))}
+              {table.byWindow ? t('desktops.modal.byWindowSuffix') : ''}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="text-[#fff4de]/40 hover:text-[#fff4de] transition-colors mt-1 flex-shrink-0"
-            aria-label="Փակել"
+            aria-label={t('desktops.modal.closeAria')}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -190,19 +199,21 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-[#fff4de] text-xl font-light italic mb-2">Ամրագրված է!</h3>
+            <h3 className="text-[#fff4de] text-xl font-light italic mb-2">
+              {t('desktops.modal.successTitle')}
+            </h3>
             <p className="text-[#fff4de]/60 text-sm mb-2">
-              {table.label} · {form.date} · {form.time}
+              {tableTitle} · {form.date} · {form.time}
             </p>
             <p className="text-[#fff4de]/40 text-xs mb-8">
-              Հաստատումը կուղարկվի {form.email} հասցեին
+              {t('desktops.modal.successConfirm').replace('{email}', form.email)}
             </p>
             <button
               type="button"
               onClick={onClose}
               className="px-8 py-3 bg-[#7CB342] hover:bg-[#6aa535] text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 text-sm uppercase tracking-widest"
             >
-              Փակել
+              {t('desktops.modal.close')}
             </button>
           </div>
         ) : (
@@ -212,67 +223,64 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  Անուն <span className="text-[#7CB342]">*</span>
+                  {t('desktops.modal.firstName')} <span className="text-[#7CB342]">*</span>
                 </label>
                 <input
                   type="text"
                   value={form.firstName}
                   onChange={set('firstName')}
-                  placeholder="Անի"
+                  placeholder={t('desktops.modal.placeholders.firstName')}
                   className={errors.firstName ? inputError : inputNormal}
                 />
                 {errors.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  Ազգանուն <span className="text-[#7CB342]">*</span>
+                  {t('desktops.modal.lastName')} <span className="text-[#7CB342]">*</span>
                 </label>
                 <input
                   type="text"
                   value={form.lastName}
                   onChange={set('lastName')}
-                  placeholder="Հakobyan"
+                  placeholder={t('desktops.modal.placeholders.lastName')}
                   className={errors.lastName ? inputError : inputNormal}
                 />
                 {errors.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>}
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                Էլ. հասցե <span className="text-[#7CB342]">*</span>
+                {t('desktops.modal.email')} <span className="text-[#7CB342]">*</span>
               </label>
               <input
                 type="email"
                 value={form.email}
                 onChange={set('email')}
-                placeholder="ani@example.com"
+                placeholder={t('desktops.modal.placeholders.email')}
                 className={errors.email ? inputError : inputNormal}
               />
               {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                Հեռախոս <span className="text-[#7CB342]">*</span>
+                {t('desktops.modal.phone')} <span className="text-[#7CB342]">*</span>
               </label>
               <input
                 type="tel"
                 value={form.phone}
                 onChange={set('phone')}
-                placeholder="+374 XX XXX XXX"
+                placeholder={t('desktops.modal.placeholders.phone')}
                 className={errors.phone ? inputError : inputNormal}
               />
               {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
             </div>
 
-            {/* Date & Time */}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  Ամսաթիվ <span className="text-[#7CB342]">*</span>
+                  {t('desktops.modal.date')} <span className="text-[#7CB342]">*</span>
                 </label>
                 <input
                   type="date"
@@ -285,14 +293,14 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  Ժամ <span className="text-[#7CB342]">*</span>
+                  {t('desktops.modal.time')} <span className="text-[#7CB342]">*</span>
                 </label>
                 <select
                   value={form.time}
                   onChange={set('time')}
                   className={`${errors.time ? inputError : inputNormal} appearance-none`}
                 >
-                  <option value="">Ընտրել</option>
+                  <option value="">{t('desktops.modal.timePlaceholder')}</option>
                   {TIME_SLOTS.map(slot => (
                     <option key={slot} value={slot}>{slot}</option>
                   ))}
@@ -301,10 +309,9 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
               </div>
             </div>
 
-            {/* Guest count */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                Հյուրերի քանակ
+                {t('desktops.modal.guestCount')}
               </label>
               <select
                 value={form.guestCount}
@@ -312,27 +319,27 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
                 className={`${inputNormal} appearance-none`}
               >
                 {Array.from({ length: table.seats }, (_, i) => i + 1).map(n => (
-                  <option key={n} value={n}>{n} հոգի</option>
+                  <option key={n} value={n}>
+                    {t('desktops.modal.guestsOption').replace('{n}', String(n))}
+                  </option>
                 ))}
               </select>
             </div>
 
-            {/* Note */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                Նշում (ոչ պարտադիր)
+                {t('desktops.modal.note')}
               </label>
               <textarea
                 value={form.note}
                 onChange={set('note')}
-                placeholder="Ծննդյան տոն, ալերգիա, հատուկ ցանկություն..."
+                placeholder={t('desktops.modal.placeholders.note')}
                 rows={3}
                 className={`${inputNormal} resize-none`}
               />
               {errors.note && <p className="text-red-400 text-xs mt-1">{errors.note}</p>}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={submitting}
@@ -344,10 +351,10 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Ուղարկվում է...
+                  {t('desktops.modal.submitting')}
                 </>
               ) : (
-                'Ամրագրել սեղանը'
+                t('desktops.modal.submit')
               )}
             </button>
 
