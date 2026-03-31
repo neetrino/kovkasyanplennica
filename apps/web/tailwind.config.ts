@@ -20,6 +20,8 @@ const config: Config = {
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'sans-serif'],
         heading: ['system-ui', '-apple-system', 'sans-serif'],
+        /** Sansation Light (300) + italic — Google Fonts, имя семейства «Sansation» */
+        sansation: ['Sansation', 'system-ui', 'sans-serif'],
       },
     },
   },
