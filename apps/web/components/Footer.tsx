@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
 
+const NEETRINO_COMPANY_URL = 'https://neetrino.com/';
+
 export function Footer() {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -199,7 +201,7 @@ export function Footer() {
                   <span className={isMenuPage ? 'text-[#2f3f3d]' : 'text-white'}>{t('home.footer.workingHours.weekendTime')}</span>
                 </div>
               </div>
-              <p className={`${isMenuPage ? 'text-[#2f3f3d]/60' : 'text-white/60'} text-xs mt-4`}>
+              <p className="text-[#FADAAC] text-xs mt-4">
                 {t('home.footer.workingHours.deliveryInfo')}
               </p>
             </div>
@@ -207,12 +209,38 @@ export function Footer() {
 
           {/* Bottom Line */}
           <div className={`border-t ${isMenuPage ? 'border-[#2f3f3d]/10' : 'border-white/10'} pt-6 mt-8`}>
-            <div className="flex flex-col md:flex-row justify-center md:justify-start items-center gap-4 md:gap-6 text-sm">
-              <Link href="/privacy" className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}>
+            <div className="flex flex-col md:flex-row flex-wrap justify-center md:justify-start items-center gap-3 md:gap-6 text-sm">
+              <a
+                href={NEETRINO_COMPANY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-xs md:text-sm text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
+              >
+                {t('home.footer.bottomLinks.copyright')}
+              </a>
+              <Link
+                href="/delivery"
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+              >
+                {t('home.footer.bottomLinks.deliveryPolicy')}
+              </Link>
+              <Link
+                href="/terms"
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+              >
+                {t('home.footer.bottomLinks.terms')}
+              </Link>
+              <Link
+                href="/privacy"
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+              >
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
-              <Link href="/terms" className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}>
-                {t('home.footer.bottomLinks.terms')}
+              <Link
+                href="/terms#public-offer"
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+              >
+                {t('home.footer.bottomLinks.publicOffer')}
               </Link>
             </div>
           </div>

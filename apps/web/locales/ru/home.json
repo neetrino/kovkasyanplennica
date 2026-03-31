@@ -104,8 +104,11 @@
       "deliveryInfo": "Бесплатная доставка при заказе от 3000 Р по всему городу."
     },
     "bottomLinks": {
+      "copyright": "© 2017 - 2026 Neetrino IT Company. All Rights Reserved.",
       "privacy": "Политика конфиденциальности",
-      "terms": "Публичная оферта"
+      "deliveryPolicy": "Политика доставки",
+      "terms": "Условия использования",
+      "publicOffer": "Публичная оферта"
     }
   }
 }

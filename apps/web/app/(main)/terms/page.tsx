@@ -18,7 +18,7 @@ export default function TermsPage() {
         </p>
       
         <div className="mt-8 space-y-6">
-        <Card className="p-6">
+        <Card id="public-offer" className="p-6 scroll-mt-24">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">{t('terms.agreementToTerms.title')}</h2>
           <p className="text-gray-600 mb-4">
             {t('terms.agreementToTerms.description1')}
