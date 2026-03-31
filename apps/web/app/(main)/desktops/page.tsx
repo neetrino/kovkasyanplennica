@@ -6,6 +6,7 @@ import { useTranslation } from '@/lib/i18n-client';
 import { TABLES, type TableConfig } from './table-data';
 import { DesktopsBookingQuickBar, type QuickBookingValues } from './DesktopsBookingQuickBar';
 import { ReservationModal } from './ReservationModal';
+import { formatLocalISODate } from '@/lib/formatLocalISODate';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
 
 const TABLES_SECTION_DIVIDER_SRC = '/assets/hero/Vector7.svg';
@@ -20,7 +21,7 @@ export default function DesktopsPage() {
     guestCount: '2',
   });
 
-  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const today = useMemo(() => formatLocalISODate(new Date()), []);
 
   const scrollToFloorPlan = useCallback(() => {
     document.getElementById('desktops-floor-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

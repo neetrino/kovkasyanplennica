@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { getAppScrollRegion } from '@/lib/appScrollRegion';
+import { formatLocalISODate } from '@/lib/formatLocalISODate';
 import type { TableConfig } from './table-data';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 
@@ -107,7 +108,7 @@ export function ReservationModal({
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = formatLocalISODate(new Date());
 
   const tableTitle = t(`desktops.tables.${table.labelKey}`);
 
