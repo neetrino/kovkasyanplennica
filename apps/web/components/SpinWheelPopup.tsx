@@ -292,7 +292,7 @@ export function SpinWheelPopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] pointer-events-none flex items-start justify-center bg-[#081311]/75 p-4 py-6 backdrop-blur-md">
+    <div className="fixed inset-0 z-app-overlay pointer-events-none flex items-start justify-center bg-[#081311]/75 p-4 py-6 backdrop-blur-md">
       <div className="relative w-full max-w-2xl pointer-events-auto overflow-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,244,222,0.14),_transparent_34%),linear-gradient(145deg,_rgba(34,51,49,0.96),_rgba(15,27,25,0.98))] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:p-5">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_36%,transparent_64%,rgba(255,255,255,0.04))]" />
         <div className="pointer-events-none absolute -top-24 -left-16 h-56 w-56 rounded-full bg-[#fff4de]/10 blur-3xl" />

@@ -43,6 +43,28 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-800 border-red-400',
 };
 
+const DISPLAY_DATE_LOCALE = 'ru-RU';
+
+/** Stored reservation date is usually YYYY-MM-DD from <input type="date"> — show as DD.MM.YYYY */
+function formatStoredReservationDate(dateStr: string): string {
+  const trimmed = dateStr.trim();
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmed);
+  if (iso) {
+    return `${iso[3]}.${iso[2]}.${iso[1]}`;
+  }
+  return trimmed;
+}
+
+function formatCreatedAtDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(DISPLAY_DATE_LOCALE, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
 export default function AdminDesktopsPage() {
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
@@ -246,10 +268,7 @@ export default function AdminDesktopsPage() {
                       {t('admin.desktopsReservations.colName')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colEmail')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colPhone')}
+                      {t('admin.desktopsReservations.colContact')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       {t('admin.desktopsReservations.colDateTime')}
@@ -305,10 +324,16 @@ export default function AdminDesktopsPage() {
                           </div>
                         )}
                       </td>
-                      <td className="px-4 py-4 text-sm text-gray-700">{r.email}</td>
-                      <td className="px-4 py-4 text-sm text-gray-700">{r.phone}</td>
+                      <td className="px-4 py-4 text-sm text-gray-700 max-w-[220px]">
+                        <div className="flex flex-col gap-0.5 min-w-0">
+                          <span className="break-all">{r.email}</span>
+                          <span className="text-gray-600">{r.phone}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">{r.date}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatStoredReservationDate(r.date)}
+                        </div>
                         <div className="text-xs text-gray-500">{r.time}</div>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700 text-center">{r.guestCount}</td>
@@ -348,7 +373,7 @@ export default function AdminDesktopsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4 text-xs text-gray-400 whitespace-nowrap">
-                        {new Date(r.createdAt).toLocaleDateString('ru-RU')}
+                        {formatCreatedAtDate(r.createdAt)}
                       </td>
                     </tr>
                   ))}

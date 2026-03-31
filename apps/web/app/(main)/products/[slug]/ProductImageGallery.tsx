@@ -189,7 +189,7 @@ export function ProductImageGallery({
 
       {/* Zoom Modal */}
       {showZoom && images.length > 0 && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={() => setShowZoom(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-app-overlay flex items-center justify-center p-4" onClick={() => setShowZoom(false)}>
           <img src={images[currentImageIndex]} alt="" className="max-w-full max-h-full object-contain" />
           <button 
             className="absolute top-4 right-4 text-white text-2xl"

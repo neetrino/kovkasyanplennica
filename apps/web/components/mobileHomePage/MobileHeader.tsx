@@ -110,7 +110,7 @@ export function MobileHeader() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
+        className={`sticky top-0 z-app-header w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
           headerVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
@@ -169,7 +169,7 @@ export function MobileHeader() {
       {/* Search popup overlay */}
       {isSearchOpen && (
         <div
-          className="fixed inset-0 z-[100] lg:hidden"
+          className="fixed inset-0 z-app-overlay lg:hidden"
           role="dialog"
           aria-modal="true"
           aria-label={t('home.header.search.ariaLabel')}
@@ -226,7 +226,7 @@ export function MobileHeader() {
       {/* Menu popup: Logout, Menu, About us — centered square, transparent style */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-[100] lg:hidden flex items-center justify-center p-4"
+          className="fixed inset-0 z-app-overlay lg:hidden flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
           aria-label={t('home.header.mobileMenu.ariaLabel')}

@@ -53,7 +53,7 @@ export function AdminMenuDrawer({ tabs, currentPath }: AdminMenuDrawerProps) {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-app-modal flex bg-black/40 backdrop-blur-sm"
           onClick={() => {
             console.info('[AdminMenuDrawer] Closing drawer from backdrop');
             setOpen(false);

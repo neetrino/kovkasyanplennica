@@ -63,12 +63,12 @@ export function LanguageSwitcher() {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-app-overlay"
             onClick={() => setShowMenu(false)}
           />
           
           {/* Dropdown Menu */}
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
+          <div className="absolute right-0 z-app-overlay mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
             {Object.entries(LANGUAGES).map(([code, lang]) => {
               const isActive = code === currentLang;
               const flag = '🇷🇺';

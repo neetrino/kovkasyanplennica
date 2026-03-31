@@ -47,7 +47,7 @@ export function PrizeFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 pb-8 px-4 bg-black/50 overflow-y-auto"
+      className="fixed inset-0 z-app-modal flex items-start justify-center pt-16 pb-8 px-4 bg-black/50 overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="prize-modal-title"

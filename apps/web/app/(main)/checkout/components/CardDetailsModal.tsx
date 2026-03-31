@@ -78,13 +78,12 @@ export function CardDetailsModal({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-app-overlay flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div 
         className="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
-        style={{ zIndex: 10000 }}
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-900">

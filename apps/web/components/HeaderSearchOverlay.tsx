@@ -9,6 +9,7 @@ import { apiClient } from '../lib/api-client';
 import { formatPrice, getStoredCurrency } from '../lib/currency';
 import type { CurrencyCode } from '../lib/currency';
 import { useTranslation } from '../lib/i18n-client';
+import { APP_SCROLL_REGION_DOM_ID } from '../lib/appScrollRegion';
 const SEARCH_DEBOUNCE_MS = 300;
 const SEARCH_RESULT_LIMIT = 10;
 
@@ -157,9 +158,12 @@ export function HeaderSearchOverlay({
   const noResults = t('home.header.search.noResults');
   const loadingLabel = t('home.header.search.loading');
 
+  const portalParent =
+    document.getElementById(APP_SCROLL_REGION_DOM_ID) ?? document.body;
+
   return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex justify-center px-4 pt-16 sm:pt-24"
+      className="fixed inset-0 z-app-overlay flex justify-center px-4 pt-16 sm:pt-24"
       role="dialog"
       aria-modal="true"
       aria-label={t('home.header.search.overlayAriaLabel')}
@@ -269,6 +273,6 @@ export function HeaderSearchOverlay({
         </form>
       </div>
     </div>,
-    document.body
+    portalParent
   );
 }

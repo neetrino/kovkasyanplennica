@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
+import { getAppScrollRegion } from '@/lib/appScrollRegion';
 import type { TableConfig } from './table-data';
 
 interface ReservationForm {
@@ -26,6 +28,9 @@ const INITIAL_FORM: ReservationForm = {
   guestCount: '1',
   note: '',
 };
+
+/** Max height of the card; inner scroll keeps the shell centered in the viewport. */
+const MODAL_PANEL_MAX_HEIGHT_CLASS = 'max-h-[min(85dvh,52rem)]';
 
 const TIME_SLOTS = [
   '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
@@ -52,6 +57,17 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
   const [success, setSuccess] = useState(false);
   const didPrefillFromUser = useRef(false);
 
+  /** Lock app scroll root so `fixed` centering is stable while the dialog is open. */
+  useEffect(() => {
+    const root = getAppScrollRegion();
+    if (!root) return;
+    const prev = root.style.overflow;
+    root.style.overflow = 'hidden';
+    return () => {
+      root.style.overflow = prev;
+    };
+  }, []);
+
   // Prefill from logged-in user once when modal opens
   useEffect(() => {
     if (user && !didPrefillFromUser.current) {
@@ -72,8 +88,6 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
-
-  // Scroll is allowed when modal is open (no body overflow lock).
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -154,16 +168,24 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
   const inputNormal = `${inputBase} border-[#3d504e] focus:border-[#7CB342] focus:ring-[#7CB342]/20`;
   const inputError  = `${inputBase} border-red-500/60 focus:border-red-400 focus:ring-red-400/20`;
 
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reservation-modal-title"
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" aria-hidden />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-xl bg-[#2F3F3D] border border-[#3d504e] rounded-3xl shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto -mt-[516px]">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        aria-label={t('desktops.modal.closeAria')}
+        onClick={onClose}
+      />
+      <div
+        className={`relative z-10 flex w-full max-w-xl flex-col ${MODAL_PANEL_MAX_HEIGHT_CLASS} overflow-hidden rounded-3xl border border-[#3d504e] bg-[#2F3F3D] shadow-2xl`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="min-h-0 flex flex-col overflow-y-auto overscroll-contain">
 
         {/* Header */}
         <div className="sticky top-0 bg-[#2F3F3D] border-b border-[#3d504e] px-6 py-5 flex items-start justify-between z-10">
@@ -171,7 +193,7 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-1">
               {t('desktops.modal.eyebrow')}
             </p>
-            <h2 className="text-[#fff4de] text-xl font-light italic">
+            <h2 id="reservation-modal-title" className="text-[#fff4de] text-xl font-light italic">
               {tableTitle}
             </h2>
             <p className="text-[#fff4de]/50 text-xs mt-0.5">
@@ -360,7 +382,14 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
 
           </form>
         )}
+        </div>
       </div>
     </div>
   );
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(modal, document.body);
 }

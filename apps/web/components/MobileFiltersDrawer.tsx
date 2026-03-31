@@ -45,7 +45,7 @@ export function MobileFiltersDrawer({
     <div className="lg:hidden">
       {open && (
         <div
-          className="fixed inset-0 z-50 flex bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-app-overlay flex bg-black/40 backdrop-blur-sm"
           onClick={() => setOpen(false)}
         >
           <div

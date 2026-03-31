@@ -47,7 +47,7 @@ export function ProfileMenuDrawer({ tabs, activeTab, onSelect }: ProfileMenuDraw
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-app-overlay flex bg-black/40 backdrop-blur-sm"
           onClick={() => {
             console.info('[ProfileMenuDrawer] Closing drawer from backdrop');
             setOpen(false);
