@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { TABLES, type TableConfig } from './table-data';
+import { DesktopsBookingQuickBar, type QuickBookingValues } from './DesktopsBookingQuickBar';
 import { ReservationModal } from './ReservationModal';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
 
@@ -11,6 +12,17 @@ export default function DesktopsPage() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [selectedTable, setSelectedTable] = useState<TableConfig | null>(null);
+  const [quickBooking, setQuickBooking] = useState<QuickBookingValues>({
+    date: '',
+    time: '',
+    guestCount: '2',
+  });
+
+  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
+
+  const scrollToFloorPlan = useCallback(() => {
+    document.getElementById('desktops-floor-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   const productFromUrl = useMemo(() => {
     const title = searchParams.get('productTitle');
@@ -57,14 +69,23 @@ export default function DesktopsPage() {
           <div className="mt-4 h-0.5 w-16 bg-[#7CB342]" />
         </div>
 
-        <ScaledFigmaFloorPlan
-          topTables={topTables}
-          leftTables={leftTables}
-          centerTable={centerTable}
-          crTables={crTables}
-          winTables={winTables}
-          botTables={botTables}
-          onSelectTable={setSelectedTable}
+        <div id="desktops-floor-plan">
+          <ScaledFigmaFloorPlan
+            topTables={topTables}
+            leftTables={leftTables}
+            centerTable={centerTable}
+            crTables={crTables}
+            winTables={winTables}
+            botTables={botTables}
+            onSelectTable={setSelectedTable}
+          />
+        </div>
+
+        <DesktopsBookingQuickBar
+          value={quickBooking}
+          onChange={setQuickBooking}
+          minDate={today}
+          onReserveClick={scrollToFloorPlan}
         />
 
         <p className="mt-6 text-center text-xs text-[#FCE6C9]/40">{t('desktops.page.footerNote')}</p>
@@ -77,6 +98,7 @@ export default function DesktopsPage() {
           productTitle={productFromUrl.productTitle}
           productImageUrl={productFromUrl.productImageUrl}
           profitCents={productFromUrl.profitCents}
+          quickBarPrefill={quickBooking}
         />
       )}
     </div>

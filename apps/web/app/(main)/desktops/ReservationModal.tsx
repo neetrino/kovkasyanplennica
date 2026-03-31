@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { getAppScrollRegion } from '@/lib/appScrollRegion';
 import type { TableConfig } from './table-data';
+import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 
 interface ReservationForm {
   firstName: string;
@@ -32,13 +33,6 @@ const INITIAL_FORM: ReservationForm = {
 /** Max height of the card; inner scroll keeps the shell centered in the viewport. */
 const MODAL_PANEL_MAX_HEIGHT_CLASS = 'max-h-[min(85dvh,52rem)]';
 
-const TIME_SLOTS = [
-  '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-  '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-  '17:00', '17:30', '18:00', '18:30', '19:00', '19:30',
-  '20:00', '20:30', '21:00', '21:30', '22:00',
-];
-
 interface ReservationModalProps {
   table: TableConfig;
   onClose: () => void;
@@ -46,9 +40,18 @@ interface ReservationModalProps {
   productTitle?: string | null;
   productImageUrl?: string | null;
   profitCents?: number | null;
+  /** Վերևի quick-bar-ից ամսաթիվ / ժամ / հյուրեր */
+  quickBarPrefill?: { date: string; time: string; guestCount: string } | null;
 }
 
-export function ReservationModal({ table, onClose, productTitle, productImageUrl, profitCents }: ReservationModalProps) {
+export function ReservationModal({
+  table,
+  onClose,
+  productTitle,
+  productImageUrl,
+  profitCents,
+  quickBarPrefill,
+}: ReservationModalProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const [form, setForm] = useState<ReservationForm>(INITIAL_FORM);
@@ -81,6 +84,21 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
       }));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!quickBarPrefill) return;
+    const raw = parseInt(quickBarPrefill.guestCount, 10);
+    const guests = Math.min(
+      table.seats,
+      Math.max(1, Number.isFinite(raw) ? raw : 1),
+    );
+    setForm((prev) => ({
+      ...prev,
+      date: quickBarPrefill.date || prev.date,
+      time: quickBarPrefill.time || prev.time,
+      guestCount: String(guests),
+    }));
+  }, [table.id, table.seats, quickBarPrefill?.date, quickBarPrefill?.time, quickBarPrefill?.guestCount]);
 
   // Close on Escape
   useEffect(() => {
@@ -323,7 +341,7 @@ export function ReservationModal({ table, onClose, productTitle, productImageUrl
                   className={`${errors.time ? inputError : inputNormal} appearance-none`}
                 >
                   <option value="">{t('desktops.modal.timePlaceholder')}</option>
-                  {TIME_SLOTS.map(slot => (
+                  {RESERVATION_TIME_SLOTS.map((slot) => (
                     <option key={slot} value={slot}>{slot}</option>
                   ))}
                 </select>
