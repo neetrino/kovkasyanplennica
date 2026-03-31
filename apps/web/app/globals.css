@@ -9,11 +9,15 @@
     overflow-x: hidden;
   }
   body {
-    @apply bg-white text-gray-900;
+    @apply relative z-[1] bg-white text-gray-900;
     min-height: 100%;
     height: 100%;
+    overflow: hidden;
     overflow-x: hidden;
-    overflow-y: auto;
+  }
+
+  /* Main app scroll: outer wrapper `[data-app-scroll-region]` (full viewport height, scrollbar from top). */
+  [data-app-scroll-region] {
     -webkit-overflow-scrolling: touch;
   }
 

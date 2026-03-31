@@ -5,8 +5,8 @@
 /**
  * Formats currency amount
  */
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatCurrency(amount: number, currency: string = 'RUB'): string {
+  return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 0,

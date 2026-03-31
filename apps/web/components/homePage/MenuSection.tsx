@@ -73,7 +73,10 @@ export async function MenuSection() {
   const { products, totalPages } = await getMenuProducts(1, 4);
 
   return (
-    <section className="relative bg-[#2f3f3d] overflow-hidden min-h-[1000px] py-16 md:py-24 rounded-t-[37px] -mt-[26px] z-10">
+    <section
+      className="relative bg-[#2f3f3d] overflow-hidden min-h-[1000px] py-16 md:py-24 rounded-t-[37px] -mt-[26px] z-10"
+      data-home-header-surface="dark"
+    >
       <MenuClient initialItems={products} totalPages={totalPages} />
     </section>
   );

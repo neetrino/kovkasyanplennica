@@ -49,7 +49,10 @@ export function Favorites({ items = [] }: FavoritesProps) {
   const displayItems = items.slice(0, 8);
 
   return (
-    <section className="relative bg-[#2f3f3d] overflow-hidden py-16 md:py-20 lg:py-24 rounded-t-[37px] -mt-[35px] z-10">
+    <section
+      className="relative bg-[#2f3f3d] overflow-hidden py-16 md:py-20 lg:py-24 rounded-t-[37px] -mt-[35px] z-10"
+      data-home-header-surface="dark"
+    >
       {/* Background Decorative Pattern */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[800px] max-h-[800px] ">

@@ -441,6 +441,7 @@
     "amd": "AMD - Армянский драм",
     "usd": "USD - Доллар США",
     "eur": "EUR - Евро",
+    "rub": "RUB — Российский рубль",
     "enableOnlinePayments": "Включить онлайн-платежи",
     "saveSettings": "Сохранить настройки",
     "saving": "Сохранение...",
@@ -450,6 +451,9 @@
     "siteNamePlaceholder": "Мой магазин",
     "siteDescriptionPlaceholder": "Описание вашего магазина",
     "currencyRates": "Курсы валют",
+    "currencyRatesRubTitle": "Курс RUB",
+    "currencyRatesRubSectionDescription": "Укажите, сколько рублей за 1 USD. Это значение используется для конвертации цен в рубли в магазине.",
+    "currencyRatesRubFieldLabel": "RUB (российский рубль)",
     "currencyRatesDescription": "Установите курсы валют относительно USD. Эти курсы используются для конвертации цен товаров.",
     "baseCurrency": "Базовая валюта (всегда 1)",
     "rateToUSD": "Курс к USD (1 USD = указанное значение)"

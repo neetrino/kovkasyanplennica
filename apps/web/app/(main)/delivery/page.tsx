@@ -4,6 +4,7 @@ import { Card } from '@shop/ui';
 import shippingData from '../../../../../json/shipping.json';
 import { useTranslation } from '@/lib/i18n-client';
 import { getStoredLanguage } from '@/lib/language';
+import { amountAmdToRub, formatPriceInCurrency, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
 import { loadTranslation } from '@/lib/i18n';
 import ruDelivery from '@/locales/ru/delivery.json';
 
@@ -24,11 +25,9 @@ export default function DeliveryPage() {
             {shippingData.methods.map((method) => {
               if (!method.enabled) return null;
               const methodName = method.name[UI_LANG] ?? method.name.en;
-              const freeAbove = method.freeAbove ? new Intl.NumberFormat('hy-AM', {
-                style: 'currency',
-                currency: 'AMD',
-                minimumFractionDigits: 0,
-              }).format(method.freeAbove) : null;
+              const freeAbove = method.freeAbove
+                ? formatPriceInCurrency(amountAmdToRub(method.freeAbove), SHOP_DISPLAY_CURRENCY)
+                : null;
               
               return (
                 <div key={method.id}>
@@ -38,11 +37,10 @@ export default function DeliveryPage() {
                       t('delivery.deliveryInformation.freeDelivery')
                     ) : (
                       <>
-                        {t('delivery.deliveryInformation.deliveryCost').replace('{price}', new Intl.NumberFormat('hy-AM', {
-                          style: 'currency',
-                          currency: 'AMD',
-                          minimumFractionDigits: 0,
-                        }).format(method.price))}
+                        {t('delivery.deliveryInformation.deliveryCost').replace(
+                          '{price}',
+                          formatPriceInCurrency(amountAmdToRub(method.price), SHOP_DISPLAY_CURRENCY)
+                        )}
                         {freeAbove && ` (${t('delivery.deliveryInformation.freeForOrdersAbove').replace('{amount}', freeAbove)})`}
                       </>
                     )}

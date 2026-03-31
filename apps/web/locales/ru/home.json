@@ -48,8 +48,13 @@
       "search": "ПОИСК"
     },
     "search": {
-      "placeholder": "Поиск",
-      "ariaLabel": "Поиск"
+      "placeholder": "Поиск товаров…",
+      "ariaLabel": "Поиск",
+      "overlayAriaLabel": "Поиск по каталогу",
+      "close": "Закрыть",
+      "hint": "Введите название товара",
+      "loading": "Поиск…",
+      "noResults": "Ничего не найдено"
     },
     "login": "ВОЙТИ",
     "cart": {

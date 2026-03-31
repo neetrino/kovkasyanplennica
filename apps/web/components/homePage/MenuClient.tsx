@@ -170,20 +170,30 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
           </div>
         )}
 
-        {/* Пагинация */}
+        {/* Пагинация — как у HomePageImageCarousel (active: белое ядро + ореол) */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-1.5 mb-8">
+          <div className="mb-8 flex items-center justify-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
+                type="button"
                 onClick={() => handlePageChange(page)}
-                className={`w-4 h-4 rounded-full transition-all ${
-                  currentPage === page
-                    ? 'bg-white opacity-37'
-                    : 'bg-[#fadaac] hover:opacity-80'
-                }`}
+                className="flex h-11 w-11 shrink-0 items-center justify-center"
                 aria-label={`Go to page ${page}`}
-              />
+                aria-current={currentPage === page ? 'page' : undefined}
+              >
+                {currentPage === page ? (
+                  <span className="relative flex h-9 w-9 items-center justify-center">
+                    <span
+                      className="absolute size-[22px] rounded-full bg-white/35"
+                      aria-hidden
+                    />
+                    <span className="relative size-3 rounded-full bg-white shadow-[0_0_0_4px_rgba(255,255,255,0.28)]" />
+                  </span>
+                ) : (
+                  <span className="size-4 rounded-full bg-[#fadaac] opacity-90 transition-opacity duration-300 hover:opacity-100" />
+                )}
+              </button>
             ))}
           </div>
         )}

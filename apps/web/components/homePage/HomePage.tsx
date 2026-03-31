@@ -10,8 +10,10 @@ export function HomePage() {
       <Hero />
       <MenuSection />
       <About />
-      <FavoritesSection />
-      <HomePageImageCarousel />
+      <div className="flex flex-col bg-[#2f3f3d]">
+        <FavoritesSection />
+        <HomePageImageCarousel />
+      </div>
     </div>
   );
 }

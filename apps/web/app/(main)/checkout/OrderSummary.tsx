@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslation } from '@/lib/i18n-client';
-import { formatPriceInCurrency } from '@/lib/currency';
+import { formatPriceInCurrency, amountUsdToRub, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
 
 interface Cart {
   id: string;
@@ -36,7 +36,6 @@ interface OrderSummaryProps {
     shippingDisplay: number;
     totalDisplay: number;
   };
-  currency: 'USD' | 'AMD' | 'EUR' | 'RUB' | 'GEL';
   shippingMethod: 'pickup' | 'delivery';
   shippingCity: string | undefined;
   loadingDeliveryPrice: boolean;
@@ -49,7 +48,6 @@ interface OrderSummaryProps {
 export function OrderSummary({
   cart,
   orderSummary,
-  currency,
   shippingMethod,
   shippingCity,
   loadingDeliveryPrice,
@@ -65,12 +63,12 @@ export function OrderSummary({
     : loadingDeliveryPrice
       ? t('checkout.shipping.loading')
       : deliveryPrice !== null
-        ? `${formatPriceInCurrency(orderSummary.shippingDisplay, currency)}${shippingCity ? ` (${shippingCity})` : ''}`
+        ? `${formatPriceInCurrency(orderSummary.shippingDisplay, SHOP_DISPLAY_CURRENCY)}${shippingCity ? ` (${shippingCity})` : ''}`
         : t('checkout.shipping.enterCity');
 
   return (
     <div className="lg:col-span-1">
-      <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl overflow-hidden lg:sticky lg:top-24">
+      <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl overflow-hidden">
 
         {/* Header */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-[#3d504e] bg-[#3d504e]/60">
@@ -110,7 +108,7 @@ export function OrderSummary({
                     <p className="text-[#fff4de]/40 text-xs">×{item.quantity}</p>
                   </div>
                   <span className="text-[#7CB342] text-xs font-semibold flex-shrink-0">
-                    {formatPriceInCurrency(item.total, currency)}
+                    {formatPriceInCurrency(amountUsdToRub(item.total), SHOP_DISPLAY_CURRENCY)}
                   </span>
                 </div>
               ))}
@@ -122,7 +120,7 @@ export function OrderSummary({
             <div className="flex justify-between items-center">
               <span className="text-[#fff4de]/55 text-sm">{t('checkout.summary.subtotal')}</span>
               <span className="text-[#fff4de] text-sm">
-                {formatPriceInCurrency(orderSummary.subtotalDisplay, currency)}
+                {formatPriceInCurrency(orderSummary.subtotalDisplay, SHOP_DISPLAY_CURRENCY)}
               </span>
             </div>
 
@@ -137,7 +135,7 @@ export function OrderSummary({
               <div className="flex justify-between items-center">
                 <span className="text-[#fff4de]/55 text-sm">{t('checkout.summary.tax')}</span>
                 <span className="text-[#fff4de] text-sm">
-                  {formatPriceInCurrency(orderSummary.taxDisplay, currency)}
+                  {formatPriceInCurrency(orderSummary.taxDisplay, SHOP_DISPLAY_CURRENCY)}
                 </span>
               </div>
             )}
@@ -146,7 +144,7 @@ export function OrderSummary({
               <div className="flex justify-between items-center">
                 <span className="text-[#fff4de] font-semibold">{t('checkout.summary.total')}</span>
                 <span className="text-[#7CB342] text-xl font-semibold">
-                  {formatPriceInCurrency(orderSummary.totalDisplay, currency)}
+                  {formatPriceInCurrency(orderSummary.totalDisplay, SHOP_DISPLAY_CURRENCY)}
                 </span>
               </div>
             </div>

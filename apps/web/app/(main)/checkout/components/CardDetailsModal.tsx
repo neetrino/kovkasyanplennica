@@ -26,7 +26,6 @@ interface CardDetailsModalProps {
     shippingDisplay: number;
     totalDisplay: number;
   };
-  currency: 'USD' | 'AMD' | 'EUR' | 'RUB' | 'GEL';
   loadingDeliveryPrice: boolean;
   deliveryPrice: number | null;
   logoErrors: Record<string, boolean>;
@@ -49,7 +48,6 @@ export function CardDetailsModal({
   shippingCity,
   cart,
   orderSummary,
-  currency,
   loadingDeliveryPrice,
   deliveryPrice,
   logoErrors,
@@ -146,7 +144,6 @@ export function CardDetailsModal({
           <OrderSummaryModal
             cart={cart}
             orderSummary={orderSummary}
-            currency={currency}
             shippingMethod={shippingMethod}
             shippingCity={shippingCity}
             loadingDeliveryPrice={loadingDeliveryPrice}

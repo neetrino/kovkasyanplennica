@@ -19,7 +19,10 @@ const ruslanDisplay = Ruslan_Display({
 export function Hero() {
   const { t } = useTranslation();
   return (
-    <section className="relative bg-[#ffe5c2] overflow-hidden min-h-[809px] flex items-center justify-center">
+    <section
+      className="relative bg-[#ffe5c2] overflow-hidden min-h-[809px] flex items-center justify-center"
+      data-home-header-surface="cream"
+    >
       {/* Декоративные паттерны на фоне */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
      

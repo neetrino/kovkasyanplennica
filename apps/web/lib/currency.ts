@@ -9,6 +9,13 @@ export const CURRENCIES = {
 
 export type CurrencyCode = keyof typeof CURRENCIES;
 
+/** Storefront display currency only (no user switching). */
+export const SHOP_DISPLAY_CURRENCY: CurrencyCode = 'RUB';
+
+function intlLocaleForCurrency(currency: CurrencyCode): string {
+  return currency === 'RUB' ? 'ru-RU' : 'en-US';
+}
+
 // Cache for currency rates from API
 let currencyRatesCache: Record<string, number> | null = null;
 let currencyRatesCacheTime: number = 0;
@@ -65,22 +72,13 @@ export function clearCurrencyRatesCache(): void {
 const CURRENCY_STORAGE_KEY = 'shop_currency';
 
 export function getStoredCurrency(): CurrencyCode {
-  if (typeof window === 'undefined') return 'AMD';
-  try {
-    const stored = localStorage.getItem(CURRENCY_STORAGE_KEY);
-    if (stored && stored in CURRENCIES) {
-      return stored as CurrencyCode;
-    }
-  } catch {
-    // Ignore errors
-  }
-  return 'AMD';
+  return SHOP_DISPLAY_CURRENCY;
 }
 
-export function setStoredCurrency(currency: CurrencyCode): void {
+export function setStoredCurrency(_currency: CurrencyCode): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(CURRENCY_STORAGE_KEY, currency);
+    localStorage.setItem(CURRENCY_STORAGE_KEY, SHOP_DISPLAY_CURRENCY);
     window.dispatchEvent(new Event('currency-updated'));
   } catch (error) {
     console.error('Failed to save currency:', error);
@@ -92,7 +90,7 @@ export function setStoredCurrency(currency: CurrencyCode): void {
  * Uses cached rates from API if available, otherwise falls back to default rates
  * Works both on client and server side
  */
-export function formatPrice(price: number, currency: CurrencyCode = 'USD'): string {
+export function formatPrice(price: number, currency: CurrencyCode = SHOP_DISPLAY_CURRENCY): string {
   const currencyInfo = CURRENCIES[currency];
   
   // Use cached rates if available (client-side only), otherwise use default rates
@@ -110,7 +108,7 @@ export function formatPrice(price: number, currency: CurrencyCode = 'USD'): stri
   const minimumFractionDigits = 0;
   const maximumFractionDigits = 0;
   
-  const formatted = new Intl.NumberFormat('en-US', {
+  const formatted = new Intl.NumberFormat(intlLocaleForCurrency(currency), {
     style: 'currency',
     currency: currencyInfo.code,
     minimumFractionDigits,
@@ -153,18 +151,27 @@ export function convertPrice(price: number, fromCurrency: CurrencyCode, toCurren
   return usdPrice * toRate;
 }
 
+/** USD (catalog base) → RUB amount for display. */
+export function amountUsdToRub(usd: number): number {
+  return convertPrice(usd, 'USD', 'RUB');
+}
+
+/** AMD → RUB amount for display (e.g. shipping from Armenia). */
+export function amountAmdToRub(amd: number): number {
+  return convertPrice(amd, 'AMD', 'RUB');
+}
+
 /**
  * Format price that is already in the target currency (no conversion)
- * Use this for prices that are already in AMD (like shipping costs)
  */
-export function formatPriceInCurrency(price: number, currency: CurrencyCode = 'AMD'): string {
+export function formatPriceInCurrency(price: number, currency: CurrencyCode = SHOP_DISPLAY_CURRENCY): string {
   const currencyInfo = CURRENCIES[currency];
   
   // Show all currencies without decimals (remove .00)
   const minimumFractionDigits = 0;
   const maximumFractionDigits = 0;
   
-  const formatted = new Intl.NumberFormat('en-US', {
+  const formatted = new Intl.NumberFormat(intlLocaleForCurrency(currency), {
     style: 'currency',
     currency: currencyInfo.code,
     minimumFractionDigits,

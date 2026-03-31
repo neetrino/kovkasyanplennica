@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../../lib/i18n-client';
@@ -15,6 +15,11 @@ import { formatNavLabel } from '../../lib/formatNavLabel';
  * Search icon opens a popup overlay with search input.
  */
 export function MobileHeader() {
+  const MOBILE_HEADER_TOP_THRESHOLD_PX = 10;
+  const MOBILE_HEADER_HIDE_THRESHOLD_PX = 24;
+  const MOBILE_SCROLL_DOWN_EPSILON_PX = 4;
+  const MOBILE_SCROLL_UP_EPSILON_PX = 6;
+
   const pathname = usePathname();
   const isHomePage = pathname === '/';
   const headerBg = isHomePage ? 'bg-[#ffe5c2]' : 'bg-[#2F3F3D]';
@@ -26,6 +31,8 @@ export function MobileHeader() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
 
   const closeSearch = useCallback(() => {
     setIsSearchOpen(false);
@@ -74,9 +81,39 @@ export function MobileHeader() {
     return () => document.removeEventListener('keydown', onEscape);
   }, [isMenuOpen, closeMenu]);
 
+  useEffect(() => {
+    const readScrollY = () =>
+      window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+    const onScroll = () => {
+      const y = readScrollY();
+      const delta = y - lastScrollYRef.current;
+      lastScrollYRef.current = y;
+
+      if (y <= MOBILE_HEADER_TOP_THRESHOLD_PX) {
+        setHeaderVisible(true);
+        return;
+      }
+
+      if (delta > MOBILE_SCROLL_DOWN_EPSILON_PX && y > MOBILE_HEADER_HIDE_THRESHOLD_PX) {
+        setHeaderVisible(false);
+      } else if (delta < -MOBILE_SCROLL_UP_EPSILON_PX) {
+        setHeaderVisible(true);
+      }
+    };
+
+    lastScrollYRef.current = readScrollY();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
-      <header className={`w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 lg:hidden`}>
+      <header
+        className={`sticky top-0 z-50 w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
+          headerVisible ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
         <div className="flex items-center gap-2">
           <button
             type="button"

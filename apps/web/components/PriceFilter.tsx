@@ -35,7 +35,7 @@ export function PriceFilter({ currentMinPrice, currentMaxPrice, category }: Pric
   const [minPrice, setMinPrice] = useState(currentMinPrice ? parseFloat(currentMinPrice) : 0);
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice ? parseFloat(currentMaxPrice) : 100000);
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null);
-  const [currency, setCurrency] = useState<CurrencyCode>('USD'); // Default для SSR
+  const [currency, setCurrency] = useState<CurrencyCode>(getStoredCurrency());
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // Helper function to round value to step size
