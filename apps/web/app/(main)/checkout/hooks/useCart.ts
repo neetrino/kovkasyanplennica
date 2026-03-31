@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiClient } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
-import { fetchCartForGuest } from '../checkoutUtils';
+import { fetchCart as fetchUnifiedCart } from '@/app/(main)/cart/cart-fetcher';
 import type { Cart } from '../types';
 
 export function useCart(isLoggedIn: boolean) {
@@ -13,15 +12,8 @@ export function useCart(isLoggedIn: boolean) {
   const fetchCart = useCallback(async () => {
     try {
       setLoading(true);
-      
-      if (isLoggedIn) {
-        const response = await apiClient.get<{ cart: Cart }>('/api/v1/cart');
-        setCart(response.cart);
-        return;
-      }
-
-      const guestCart = await fetchCartForGuest();
-      setCart(guestCart);
+      const data = await fetchUnifiedCart(isLoggedIn, t);
+      setCart(data);
     } catch {
       setError(t('checkout.errors.failedToLoadCart'));
     } finally {

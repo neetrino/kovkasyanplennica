@@ -9,7 +9,7 @@ import { apiClient } from '@/lib/api-client';
 import { formatPrice, getStoredCurrency } from '@/lib/currency';
 import { getStoredLanguage } from '@/lib/language';
 import { useTranslation } from '@/lib/i18n-client';
-import { useAuth } from '@/lib/auth/AuthContext';
+import { mergeGuestCartLine } from '@/lib/guest-cart/mergeGuestCartLine';
 
 interface Product {
   id: string;
@@ -44,7 +44,6 @@ function getWishlist(): string[] {
  */
 export default function WishlistPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
   const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -155,23 +154,19 @@ export default function WishlistPage() {
       return;
     }
 
-    if (!isLoggedIn) {
-      router.push(`/login?redirect=/wishlist`);
-      return;
-    }
-
     setAddingToCart(prev => new Set(prev).add(product.id));
 
     try {
-      // Get product details to get variant ID
       interface ProductDetails {
         id: string;
+        slug: string;
         variants?: Array<{
           id: string;
           sku: string;
           price: number;
           stock: number;
           available: boolean;
+          compareAtPrice?: number | null;
         }>;
       }
 
@@ -182,22 +177,24 @@ export default function WishlistPage() {
         return;
       }
 
-      const variantId = productDetails.variants[0].id;
-      
-      await apiClient.post(
-        '/api/v1/cart/items',
-        {
-          productId: product.id,
-          variantId: variantId,
-          quantity: 1,
-        }
-      );
+      const variant = productDetails.variants[0];
+      mergeGuestCartLine({
+        productId: product.id,
+        variantId: variant.id,
+        productSlug: productDetails.slug || product.slug,
+        addQuantity: 1,
+        title: product.title,
+        image: product.image,
+        price: variant.price,
+        originalPrice: variant.compareAtPrice ?? product.originalPrice ?? product.compareAtPrice ?? null,
+        sku: variant.sku,
+        stock: variant.stock,
+      });
 
-      // Trigger cart update event
       window.dispatchEvent(new Event('cart-updated'));
-    } catch (error: any) {
-      console.error('Error adding to cart:', error);
-      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      if (err.message?.includes('401') || err.message?.includes('Unauthorized')) {
         router.push(`/login?redirect=/wishlist`);
       }
     } finally {

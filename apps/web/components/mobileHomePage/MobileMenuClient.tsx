@@ -13,6 +13,8 @@ interface MenuItem {
   price: number;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: { id: string; name: string } | null;
   calories?: number;
   category?: string;
@@ -63,6 +65,8 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
                 price: Number(p.price ?? 0),
                 image: (p.image as string) ?? null,
                 inStock: Boolean(p.inStock ?? true),
+                defaultVariantId: (p.defaultVariantId as string | null) ?? null,
+                stock: typeof p.stock === 'number' ? p.stock : undefined,
                 brand: (p.brand as { id: string; name: string } | null) ?? null,
                 calories: Number(p.calories ?? 150),
                 category: (p.brand as { name?: string })?.name ?? String(p.category ?? t('home.menu.categoryFallback')),

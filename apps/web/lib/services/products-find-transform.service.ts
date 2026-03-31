@@ -251,6 +251,8 @@ class ProductsFindTransformService {
         id: product.id,
         slug: translation?.slug || "",
         title: translation?.title || "",
+        defaultVariantId: variant?.id ?? null,
+        stock: variant?.stock ?? 0,
         brand: product.brand
           ? {
               id: product.brand.id,

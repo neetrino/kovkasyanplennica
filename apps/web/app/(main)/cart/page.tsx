@@ -61,12 +61,12 @@ export default function CartPage() {
   async function onRemoveItem(itemId: string) {
     if (!cart) return;
     isLocalUpdateRef.current = true;
-    await handleRemoveItem(itemId, cart, isLoggedIn, setCart, loadCart);
+    await handleRemoveItem(itemId, cart, setCart, loadCart);
   }
 
   async function onUpdateQuantity(itemId: string, quantity: number) {
     isLocalUpdateRef.current = true;
-    await handleUpdateQuantity(itemId, quantity, cart, isLoggedIn, setCart, setUpdatingItems, loadCart, t);
+    await handleUpdateQuantity(itemId, quantity, cart, setCart, setUpdatingItems, loadCart, t);
   }
 
   if (loading) return <LoadingState />;

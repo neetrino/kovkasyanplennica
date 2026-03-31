@@ -59,7 +59,6 @@ export function useCheckout() {
 
   const { submitOrder } = useOrderSubmission({
     cart,
-    isLoggedIn,
     deliveryPrice,
     setError,
   });

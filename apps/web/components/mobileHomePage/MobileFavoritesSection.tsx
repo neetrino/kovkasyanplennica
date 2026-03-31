@@ -10,6 +10,8 @@ interface Product {
   price: number;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: { id: string; name: string } | null;
   calories?: number;
   category?: string;
@@ -33,6 +35,8 @@ async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
       price: Number(p.price ?? 0),
       image: p.image ?? null,
       inStock: Boolean(p.inStock ?? true),
+      defaultVariantId: p.defaultVariantId ?? null,
+      stock: typeof p.stock === 'number' ? p.stock : undefined,
       brand: p.brand ?? null,
       calories: Number(p.calories ?? 150),
       category: (p.brand?.name ?? p.category ?? categoryFallback) as string,

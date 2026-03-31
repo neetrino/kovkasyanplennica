@@ -6,7 +6,7 @@ import { apiClient } from '../lib/api-client';
 import { getStoredCurrency } from '../lib/currency';
 import { getStoredLanguage, type LanguageCode } from '../lib/language';
 import { t } from '../lib/i18n';
-import { useAuth } from '../lib/auth/AuthContext';
+import { mergeGuestCartLine } from '@/lib/guest-cart/mergeGuestCartLine';
 import { useRelatedProducts } from './hooks/useRelatedProducts';
 import { useCarousel } from './hooks/useCarousel';
 import { useVisibleCards } from './hooks/useVisibleCards';
@@ -25,7 +25,6 @@ interface RelatedProductsProps {
  */
 export function RelatedProducts({ categorySlug, currentProductId }: RelatedProductsProps) {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
   const [language, setLanguage] = useState<LanguageCode>('ru');
   const [addingToCart, setAddingToCart] = useState<Set<string>>(new Set());
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
@@ -75,15 +74,9 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
       return;
     }
 
-    if (!isLoggedIn) {
-      router.push(`/login?redirect=/products/${product.slug}`);
-      return;
-    }
-
     setAddingToCart(prev => new Set(prev).add(product.id));
 
     try {
-      // Get product details to get variant ID
       interface ProductDetails {
         id: string;
         slug: string;
@@ -93,6 +86,7 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
           price: number;
           stock: number;
           available: boolean;
+          compareAtPrice?: number | null;
         }>;
       }
 
@@ -104,21 +98,22 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
         return;
       }
 
-      const variantId = productDetails.variants[0].id;
-      
-      await apiClient.post(
-        '/api/v1/cart/items',
-        {
-          productId: product.id,
-          variantId: variantId,
-          quantity: 1,
-        }
-      );
+      const variant = productDetails.variants[0];
+      mergeGuestCartLine({
+        productId: product.id,
+        variantId: variant.id,
+        productSlug: productDetails.slug || product.slug.trim(),
+        addQuantity: 1,
+        title: product.title,
+        image: product.image,
+        price: variant.price,
+        originalPrice: variant.compareAtPrice ?? product.originalPrice ?? product.compareAtPrice ?? null,
+        sku: variant.sku,
+        stock: variant.stock,
+      });
 
-      // Trigger cart update event
       window.dispatchEvent(new Event('cart-updated'));
     } catch (error: unknown) {
-      console.error('[RelatedProducts] Error adding to cart:', error);
       const err = error as { message?: string };
       if (err.message?.includes('401') || err.message?.includes('Unauthorized')) {
         router.push(`/login?redirect=/products/${product.slug}`);

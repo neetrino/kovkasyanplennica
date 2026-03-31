@@ -1,13 +1,31 @@
 import Link from 'next/link';
+import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { getStoredLanguage } from '@/lib/language';
 import { t } from '@/lib/i18n';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
 import { CategoryNavigation } from '@/components/CategoryNavigation';
 import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
-import { productsService } from '@/lib/services/products.service';
 
-export const dynamic = 'force-dynamic';
+const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
+
+export const revalidate = PRODUCTS_LIST_REVALIDATE_SECONDS;
+
+/**
+ * Absolute origin for server-side fetch (relative `/api/...` fails in Node).
+ */
+async function getProductsListRequestOrigin(): Promise<string> {
+  const h = await headers();
+  const host = h.get('x-forwarded-host') ?? h.get('host');
+  if (host) {
+    const proto = h.get('x-forwarded-proto') ?? 'http';
+    return `${proto}://${host}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+}
 
 interface ProductCategory {
   id: string;
@@ -23,6 +41,8 @@ interface Product {
   compareAtPrice: number | null;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: {
     id: string;
     name: string;
@@ -48,8 +68,7 @@ interface ProductsResponse {
 }
 
 /**
- * Fetch products directly via service (no self-referencing HTTP call).
- * HTTP-based fetch breaks on Vercel when NEXT_PUBLIC_APP_URL is not set.
+ * Fetch products via internal API with Next.js Data Cache (revalidate + tag).
  */
 async function getProducts(
   page: number = 1,
@@ -64,24 +83,44 @@ async function getProducts(
 ): Promise<ProductsResponse> {
   try {
     const language = getStoredLanguage();
-    const result = await productsService.findAll({
-      page,
-      limit,
-      lang: language,
-      search: search?.trim() || undefined,
-      category: category?.trim() || undefined,
-      minPrice: minPrice?.trim() ? parseFloat(minPrice.trim()) : undefined,
-      maxPrice: maxPrice?.trim() ? parseFloat(maxPrice.trim()) : undefined,
-      colors: colors?.trim() || undefined,
-      sizes: sizes?.trim() || undefined,
-      brand: brand?.trim() || undefined,
+    const q = new URLSearchParams();
+    q.set('page', String(page));
+    q.set('limit', String(limit));
+    q.set('lang', language);
+    const s = search?.trim();
+    if (s) q.set('search', s);
+    const c = category?.trim();
+    if (c) q.set('category', c);
+    const minP = minPrice?.trim();
+    if (minP) q.set('minPrice', minP);
+    const maxP = maxPrice?.trim();
+    if (maxP) q.set('maxPrice', maxP);
+    const col = colors?.trim();
+    if (col) q.set('colors', col);
+    const sz = sizes?.trim();
+    if (sz) q.set('sizes', sz);
+    const br = brand?.trim();
+    if (br) q.set('brand', br);
+
+    const origin = await getProductsListRequestOrigin();
+    const res = await fetch(`${origin}/api/v1/products?${q.toString()}`, {
+      next: {
+        revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS,
+        tags: ['products-list'],
+      },
     });
+
+    if (!res.ok) {
+      return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
+    }
+
+    const result = (await res.json()) as ProductsResponse;
 
     if (!result.data || !Array.isArray(result.data)) {
       return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
     }
 
-    return result as ProductsResponse;
+    return result;
   } catch (e) {
     console.error("❌ PRODUCT ERROR", e);
     return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
@@ -128,6 +167,8 @@ export default async function ProductsPage({ searchParams }: any) {
     compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
     image: p.image ?? null,
     inStock: p.inStock ?? true,
+    defaultVariantId: p.defaultVariantId ?? null,
+    stock: typeof p.stock === 'number' ? p.stock : undefined,
     brand: p.brand ?? null,
     categories: p.categories ?? [],
     category: p.categories?.[0]?.title ?? '',

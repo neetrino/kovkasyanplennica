@@ -6,14 +6,12 @@ import type { CheckoutFormData, Cart, CartItem } from '../types';
 
 interface UseOrderSubmissionProps {
   cart: Cart | null;
-  isLoggedIn: boolean;
   deliveryPrice: number | null;
   setError: (error: string | null) => void;
 }
 
 export function useOrderSubmission({
   cart,
-  isLoggedIn,
   deliveryPrice,
   setError,
 }: UseOrderSubmissionProps) {
@@ -31,7 +29,7 @@ export function useOrderSubmission({
       let cartId = cart.id;
       let items = undefined;
 
-      if (!isLoggedIn && cart.id === 'guest-cart') {
+      if (cart.id === 'guest-cart') {
         items = cart.items.map((item: CartItem) => ({
           productId: item.variant.product.id,
           variantId: item.variant.id,
@@ -79,7 +77,7 @@ export function useOrderSubmission({
         paymentMethod: data.paymentMethod,
       });
 
-      if (!isLoggedIn) {
+      if (cart.id === 'guest-cart') {
         clearGuestCart();
       }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@white-shop/db";
+import { logger } from "@/lib/utils/logger";
 
 export async function GET(
   req: NextRequest,
@@ -7,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    
+
     const variant = await db.productVariant.findUnique({
       where: { id },
       select: {
@@ -15,6 +16,12 @@ export async function GET(
         productId: true,
         stock: true,
         published: true,
+        sku: true,
+        price: true,
+        compareAtPrice: true,
+        product: {
+          select: { slug: true },
+        },
       },
     });
 
@@ -31,27 +38,30 @@ export async function GET(
       );
     }
 
-    // Calculate available based on stock > 0 and published === true
     const available = variant.stock > 0 && variant.published === true;
 
     return NextResponse.json({
       id: variant.id,
       productId: variant.productId,
+      productSlug: variant.product.slug,
+      sku: variant.sku ?? "",
+      price: variant.price,
+      compareAtPrice: variant.compareAtPrice ?? null,
       stock: variant.stock,
-      available: available,
+      available,
     });
-  } catch (error: any) {
-    console.error("❌ [PRODUCTS] Get variant error:", error);
+  } catch (error: unknown) {
+    const err = error as { type?: string; title?: string; status?: number; detail?: string; message?: string };
+    logger.error("Get variant error", { error });
     return NextResponse.json(
       {
-        type: error.type || "https://api.shop.am/problems/internal-error",
-        title: error.title || "Internal Server Error",
-        status: error.status || 500,
-        detail: error.detail || error.message || "An error occurred",
+        type: err.type || "https://api.shop.am/problems/internal-error",
+        title: err.title || "Internal Server Error",
+        status: err.status || 500,
+        detail: err.detail || err.message || "An error occurred",
         instance: req.url,
       },
-      { status: error.status || 500 }
+      { status: err.status || 500 }
     );
   }
 }
-

@@ -10,6 +10,8 @@ interface Product {
   price: number;
   image: string | null;
   inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: {
     id: string;
     name: string;
@@ -49,6 +51,8 @@ async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
       compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
       image: p.image ?? null,
       inStock: p.inStock ?? true,
+      defaultVariantId: p.defaultVariantId ?? null,
+      stock: typeof p.stock === 'number' ? p.stock : undefined,
       brand: p.brand ?? null,
       colors: p.colors ?? [],
       labels: p.labels ?? [],

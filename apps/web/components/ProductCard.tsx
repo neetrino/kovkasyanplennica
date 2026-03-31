@@ -14,6 +14,9 @@ interface Product {
   price: number;
   image: string | null;
   inStock: boolean;
+  /** Cheapest variant id from list API — instant add-to-cart without extra product fetch */
+  defaultVariantId?: string | null;
+  stock?: number;
   brand: {
     id: string;
     name: string;
@@ -52,6 +55,12 @@ export function ProductCard({ product, viewMode = 'grid-3', compactHeight = fals
     productId: product.id,
     productSlug: product.slug,
     inStock: product.inStock,
+    defaultVariantId: product.defaultVariantId ?? null,
+    listingPrice: product.price,
+    title: product.title,
+    image: product.image,
+    stock: product.stock,
+    originalPrice: product.originalPrice ?? product.compareAtPrice ?? null,
   });
   const [imageError, setImageError] = useState(false);
 

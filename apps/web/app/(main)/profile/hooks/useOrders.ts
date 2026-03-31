@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, type MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
+import { mergeGuestCartLine } from '@/lib/guest-cart/mergeGuestCartLine';
 import { useTranslation } from '@/lib/i18n-client';
 import type { OrderDetails, OrderListItem, ProfileTab } from '../types';
 
@@ -103,8 +104,6 @@ export function useOrders({
 
     setIsReordering(true);
     try {
-      console.log('[Profile][ReOrder] Starting re-order for order:', selectedOrder.number);
-      
       let addedCount = 0;
       let skippedCount = 0;
 
@@ -113,27 +112,37 @@ export function useOrders({
           interface VariantDetails {
             id: string;
             productId: string;
+            productSlug: string;
+            sku: string;
+            price: number;
+            compareAtPrice: number | null;
             stock: number;
             available: boolean;
           }
 
-          const variantDetails = await apiClient.get<VariantDetails>(`/api/v1/products/variants/${item.variantId}`);
-          
+          const variantDetails = await apiClient.get<VariantDetails>(
+            `/api/v1/products/variants/${item.variantId}`,
+          );
+
           if (!variantDetails.available || variantDetails.stock < item.quantity) {
-            console.warn(`[Profile][ReOrder] Item ${item.productTitle} is not available or insufficient stock`);
             skippedCount++;
             continue;
           }
 
-          await apiClient.post('/api/v1/cart/items', {
+          mergeGuestCartLine({
             productId: variantDetails.productId,
             variantId: item.variantId,
-            quantity: item.quantity,
+            productSlug: variantDetails.productSlug,
+            addQuantity: item.quantity,
+            title: item.productTitle,
+            image: item.imageUrl ?? null,
+            price: variantDetails.price,
+            originalPrice: variantDetails.compareAtPrice ?? null,
+            sku: variantDetails.sku,
+            stock: variantDetails.stock,
           });
           addedCount++;
-          console.log('[Profile][ReOrder] Added item to cart:', item.productTitle);
         } catch (error: unknown) {
-          console.error('[Profile][ReOrder] Error adding item to cart:', error);
           skippedCount++;
         }
       }
