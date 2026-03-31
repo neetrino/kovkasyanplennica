@@ -71,7 +71,9 @@
       "selectTableButton": "Выбрать стол"
     },
     "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
-    "description": "Возрождая традиции высокого кулинарного искусства Грузии и Армении в центре города.",
+    "descriptionLine1": "Возрождая традиции высоко",
+    "descriptionLine2": "кулинарного искусства Грузии и",
+    "descriptionLine3": "Армении в центре города.",
     "socialMedia": {
       "telegram": "Telegram",
       "instagram": "Instagram",
@@ -79,10 +81,12 @@
     },
     "navigation": {
       "title": "НАВИГАЦИЯ",
-      "home": "Главная",
-      "restaurantMenu": "Меню ресторана",
-      "wineCard": "Винная карта",
-      "foodDelivery": "Доставка еды"
+      "menu": "Меню",
+      "about": "О нас",
+      "vacancies": "Вакансии",
+      "team": "Команда",
+      "contacts": "Контакты",
+      "delivery": "Доставка"
     },
     "contacts": {
       "title": "КОНТАКТЫ",

@@ -56,25 +56,29 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
             {/* Left Column - Restaurant Info */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative w-24 h-24 md:w-32 md:h-32">
+            <div className="-mt-10 space-y-0 md:-mt-14">
+              <div className="flex items-center gap-3">
+                <div className="relative h-36 w-36 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-48 lg:w-48">
                   <Image
                     src="/hero-logo.png"
                     alt={t('home.footer.logoAlt')}
-                    width={128}
-                    height={128}
-                    className="object-contain"
+                    width={162}
+                    height={162}
+                    className="h-full w-full object-contain"
                     unoptimized
                   />
                 </div>
-              
               </div>
-              <p className={`${isMenuPage ? 'text-[#2f3f3d]/70' : 'text-white/70'} text-sm leading-relaxed max-w-[200px]`}>
-                {t('home.footer.description')}
+              <div className="flex max-w-[300px] flex-col gap-4">
+              <p
+                className={`-mt-11 sm:-mt-12 md:-mt-8 ${isMenuPage ? 'text-[#2f3f3d]/70' : 'text-white/70'} text-sm leading-snug`}
+              >
+                <span className="block">{t('home.footer.descriptionLine1')}</span>
+                <span className="block">{t('home.footer.descriptionLine2')}</span>
+                <span className="block">{t('home.footer.descriptionLine3')}</span>
               </p>
               {/* Social Media Icons */}
-              <div className="flex items-center gap-4 mt-6">
+              <div className="flex items-center gap-4">
                 <a
                   href="#"
                   target="_blank"
@@ -111,6 +115,7 @@ export function Footer() {
                   </svg>
                 </a>
               </div>
+              </div>
             </div>
 
             {/* Middle Column - Navigation */}
@@ -120,23 +125,33 @@ export function Footer() {
               </h3>
               <ul className="space-y-4">
                 <li>
-                  <Link href="/" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.home')}
+                  <Link href="/products" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                    {t('home.footer.navigation.menu')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                    {t('home.footer.navigation.about')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.restaurantMenu')}
+                    {t('home.footer.navigation.vacancies')}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/wine" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.wineCard')}
+                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                    {t('home.footer.navigation.team')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                    {t('home.footer.navigation.contacts')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/delivery" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.foodDelivery')}
+                    {t('home.footer.navigation.delivery')}
                   </Link>
                 </li>
               </ul>
