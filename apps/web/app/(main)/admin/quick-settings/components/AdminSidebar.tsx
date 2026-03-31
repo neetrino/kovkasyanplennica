@@ -2,6 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { AdminMenuDrawer } from '@/components/AdminMenuDrawer';
+import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
+import {
+  getAdminNavContainerClass,
+  getAdminNavIconClass,
+  getAdminNavLinkButtonClasses,
+} from '@/components/admin/adminNavClasses';
+import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
 import { getAdminMenuTABS } from '../../admin-menu.config';
 
 interface AdminSidebarProps {
@@ -12,6 +19,8 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ currentPath, router, t }: AdminSidebarProps) {
   const adminTabs = getAdminMenuTABS(t);
+  const { isDark } = useAdminNavTheme();
+  const mode: AdminNavThemeMode = isDark ? 'dark' : 'light';
 
   return (
     <>
@@ -19,7 +28,7 @@ export function AdminSidebar({ currentPath, router, t }: AdminSidebarProps) {
         <AdminMenuDrawer tabs={adminTabs} currentPath={currentPath} />
       </div>
       <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-        <nav className="bg-white border border-gray-200 rounded-lg p-2 space-y-1">
+        <nav className={getAdminNavContainerClass(mode)}>
           {adminTabs.map((tab) => {
             const isActive = currentPath === tab.path || 
               (tab.path === '/admin' && currentPath === '/admin') ||
@@ -30,15 +39,9 @@ export function AdminSidebar({ currentPath, router, t }: AdminSidebarProps) {
                 onClick={() => {
                   router.push(tab.path);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all ${
-                  tab.isSubCategory ? 'pl-12' : ''
-                } ${
-                  isActive
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                }`}
+                className={getAdminNavLinkButtonClasses(mode, isActive, Boolean(tab.isSubCategory))}
               >
-                <span className={`flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                <span className={getAdminNavIconClass(mode, isActive)}>
                   {tab.icon}
                 </span>
                 <span className="text-left">{tab.label}</span>

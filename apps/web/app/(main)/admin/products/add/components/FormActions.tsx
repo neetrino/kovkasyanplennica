@@ -14,7 +14,7 @@ export function FormActions({ loading, isEditMode }: FormActionsProps) {
   const router = useRouter();
 
   return (
-    <div className="sticky bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg -mx-6 -mb-6 px-6 py-4 mt-8 backdrop-blur-sm bg-white/95">
+    <div className="sticky bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg px-4 py-4 mt-8 backdrop-blur-sm bg-white/95 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-full">
         <Button
           type="submit"
