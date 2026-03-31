@@ -55,22 +55,6 @@ export default function DesktopsPage() {
             {t('desktops.page.title')}
           </h1>
           <div className="mt-4 h-0.5 w-16 bg-[#7CB342]" />
-          <p className="mt-4 text-sm text-[#FCE6C9]/60">{t('desktops.page.subtitle')}</p>
-        </div>
-
-        <div className="mb-8 flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-4 rounded border border-[#c8a96e]/60 bg-[#FCE6C9]" />
-            <span className="text-xs text-[#FCE6C9]/70">{t('desktops.legend.available')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-4 rounded border-2 border-[#7CB342] bg-[#f5f0d8] shadow-[0_0_10px_rgba(124,179,66,0.5)]" />
-            <span className="text-xs text-[#FCE6C9]/70">{t('desktops.legend.selected')}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-full bg-[#7CB342]" />
-            <span className="text-xs text-[#FCE6C9]/70">{t('desktops.legend.book')}</span>
-          </div>
         </div>
 
         <ScaledFigmaFloorPlan

@@ -14,6 +14,7 @@ import {
   GraphicTop3Seats,
   GraphicWindow34,
 } from './figmaFloorPlan.graphics';
+import { TableSeatLabel } from './TableSeatLabel';
 
 const HIT =
   'absolute cursor-pointer border-0 bg-transparent p-0 transition-[filter] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7CB342]';
@@ -24,9 +25,17 @@ type HitProps = {
   className: string;
   children: ReactNode;
   onSelect: (t: TableConfig) => void;
+  seatLabelLayout?: 'default' | 'topRow';
 };
 
-function TableHit({ table, label, className, children, onSelect }: HitProps) {
+function TableHit({
+  table,
+  label,
+  className,
+  children,
+  onSelect,
+  seatLabelLayout = 'default',
+}: HitProps) {
   return (
     <button
       type="button"
@@ -35,6 +44,11 @@ function TableHit({ table, label, className, children, onSelect }: HitProps) {
       className={`${HIT} ${className}`}
     >
       {children}
+      <TableSeatLabel
+        seats={table.seats}
+        byWindow={table.byWindow}
+        layout={seatLabelLayout}
+      />
     </button>
   );
 }
@@ -68,8 +82,6 @@ export function FigmaFloorPlan({
   const [t14, t15, t16] = winTables;
   const [t17, t18, t19, t20] = botTables;
 
-  const windowNote = `(${t('desktops.tableCard.byWindow')})`;
-
   return (
     <div className="relative h-[1124px] w-[1308px] shrink-0">
       <TableHit
@@ -87,6 +99,7 @@ export function FigmaFloorPlan({
           label={label(t1)}
           onSelect={onSelectTable}
           className="relative h-[132.283px] w-[120.955px] shrink-0"
+          seatLabelLayout="topRow"
         >
           <GraphicTop2Seats className="pointer-events-none h-full w-full" />
         </TableHit>
@@ -95,6 +108,7 @@ export function FigmaFloorPlan({
           label={label(t2)}
           onSelect={onSelectTable}
           className="relative h-[132.336px] w-[179.359px] shrink-0"
+          seatLabelLayout="topRow"
         >
           <GraphicTop3Seats className="pointer-events-none h-full w-full" />
         </TableHit>
@@ -103,6 +117,7 @@ export function FigmaFloorPlan({
           label={label(t3)}
           onSelect={onSelectTable}
           className="relative h-[132.336px] w-[179.359px] shrink-0"
+          seatLabelLayout="topRow"
         >
           <GraphicTop3Seats className="pointer-events-none h-full w-full" />
         </TableHit>
@@ -111,6 +126,7 @@ export function FigmaFloorPlan({
           label={label(t4)}
           onSelect={onSelectTable}
           className="relative h-[132.283px] w-[120.955px] shrink-0"
+          seatLabelLayout="topRow"
         >
           <GraphicTop2Seats className="pointer-events-none h-full w-full" />
         </TableHit>
@@ -188,7 +204,7 @@ export function FigmaFloorPlan({
         onSelect={onSelectTable}
         className="left-[1162px] top-[221px] h-[182.083px] w-[120.174px]"
       >
-        <GraphicWindow34 windowNote={windowNote} className="pointer-events-none h-full w-full" />
+        <GraphicWindow34 className="pointer-events-none h-full w-full" />
       </TableHit>
       <TableHit
         table={t15}
@@ -196,7 +212,7 @@ export function FigmaFloorPlan({
         onSelect={onSelectTable}
         className="left-[1162px] top-[436px] h-[182.083px] w-[120.174px]"
       >
-        <GraphicWindow34 windowNote={windowNote} className="pointer-events-none h-full w-full" />
+        <GraphicWindow34 className="pointer-events-none h-full w-full" />
       </TableHit>
       <TableHit
         table={t16}
@@ -204,7 +220,7 @@ export function FigmaFloorPlan({
         onSelect={onSelectTable}
         className="left-[1162px] top-[651px] h-[182.083px] w-[120.174px]"
       >
-        <GraphicWindow34 windowNote={windowNote} className="pointer-events-none h-full w-full" />
+        <GraphicWindow34 className="pointer-events-none h-full w-full" />
       </TableHit>
 
       <TableHit

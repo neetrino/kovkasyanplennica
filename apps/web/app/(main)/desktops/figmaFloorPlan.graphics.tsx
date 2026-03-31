@@ -89,17 +89,14 @@ export function GraphicRect34({ className }: { className?: string }) {
   );
 }
 
-type GraphicWindow34Props = { className?: string; windowNote: string };
+type GraphicWindow34Props = { className?: string };
 
-export function GraphicWindow34({ className, windowNote }: GraphicWindow34Props) {
+export function GraphicWindow34({ className }: GraphicWindow34Props) {
   return (
     <div className={className ?? 'relative h-[182.083px] w-[120.174px]'}>
       <div className="absolute inset-[27.89%_0_28.14%_0]">
         <img alt="" className="absolute block size-full max-w-none" src={figmaFloorAssets.v13} />
       </div>
-      <p className="absolute inset-[54.92%_23.44%_38.49%_23.3%] whitespace-nowrap text-center text-[14px] font-bold leading-[12px] text-[rgba(75,86,79,0.58)]">
-        {windowNote}
-      </p>
       <div className="absolute inset-[74.18%_55.39%_0_8.04%]">
         <img alt="" className="absolute block size-full max-w-none" src={figmaFloorAssets.v14} />
       </div>
