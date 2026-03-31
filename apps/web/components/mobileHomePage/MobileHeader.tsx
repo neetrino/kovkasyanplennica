@@ -7,6 +7,7 @@ import { useTranslation } from '../../lib/i18n-client';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { LANGUAGES, getStoredLanguage, setStoredLanguage } from '../../lib/language';
 import type { LanguageCode } from '../../lib/language';
+import { formatNavLabel } from '../../lib/formatNavLabel';
 
 /**
  * Mobile Header — Figma Frame1000002326 (node-id=75-2062).
@@ -229,14 +230,14 @@ export function MobileHeader() {
                 onClick={closeMenu}
                 className="py-3 w-full rounded-full bg-[#2f3f3d]/15 text-[#2f3f3d] font-semibold text-sm hover:bg-[#2f3f3d]/25 transition-colors text-center"
               >
-                {t('home.header.navigation.menu')}
+                {formatNavLabel(t('home.header.navigation.menu'))}
               </Link>
               <Link
                 href="/about"
                 onClick={closeMenu}
                 className="py-3 w-full rounded-full bg-[#2f3f3d]/15 text-[#2f3f3d] font-semibold text-sm hover:bg-[#2f3f3d]/25 transition-colors text-center"
               >
-                {t('home.header.navigation.about')}
+                {formatNavLabel(t('home.header.navigation.about'))}
               </Link>
             </div>
             {/* Language selector */}

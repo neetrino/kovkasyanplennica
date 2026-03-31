@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
+import { formatNavLabel } from '../../lib/formatNavLabel';
 import styles from './MobileBottomNav.module.css';
 
 /**
@@ -61,12 +62,12 @@ export function MobileBottomNav() {
               alt=""
               unoptimized
             />
-            <span className={styles.navLabel}>{t('home.header.navigation.search')}</span>
+            <span className={styles.navLabel}>{formatNavLabel(t('home.header.navigation.search'))}</span>
           </Link>
         </div>
 
         {/* Центр: подпись ГЛАВНАЯ под круглой кнопкой */}
-        <span className={styles.centerLabel}>{t('home.header.navigation.home')}</span>
+        <span className={styles.centerLabel}>{formatNavLabel(t('home.header.navigation.home'))}</span>
 
         {/* Справа: КОРЗИНА, ПРОФИЛЬ */}
         <div className={styles.navigationmenuRight}>
@@ -85,7 +86,7 @@ export function MobileBottomNav() {
                 unoptimized
               />
             </div>
-            <span className={styles.navLabel}>{t('common.navigation.cart')}</span>
+            <span className={styles.navLabel}>{formatNavLabel(t('common.navigation.cart'))}</span>
           </Link>
           <Link
             href="/profile"
@@ -102,7 +103,7 @@ export function MobileBottomNav() {
                 unoptimized
               />
             </div>
-            <span className={styles.navLabel}>{t('common.navigation.profile')}</span>
+            <span className={styles.navLabel}>{formatNavLabel(t('common.navigation.profile'))}</span>
           </Link>
         </div>
 

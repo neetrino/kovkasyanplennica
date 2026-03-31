@@ -103,7 +103,6 @@
   flex-shrink: 0;
   font-weight: 700;
   font-size: 10px;
-  text-transform: uppercase;
 }
 
 .navigationmenuHome2 {
@@ -141,7 +140,6 @@
   flex-shrink: 0;
   font-weight: 700;
   font-size: 11px;
-  text-transform: uppercase;
   color: #2f3f3d;
   text-align: center;
   pointer-events: none;
