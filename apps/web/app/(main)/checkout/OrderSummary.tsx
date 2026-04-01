@@ -68,7 +68,7 @@ export function OrderSummary({
 
   return (
     <div className="lg:col-span-1">
-      <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl overflow-hidden">
+      <div className="bg-[#3d504e]/40 border border-[#3d504e] rounded-2xl overflow-hidden lg:sticky lg:top-24">
 
         {/* Header */}
         <div className="flex items-center gap-3 px-6 py-4 border-b border-[#3d504e] bg-[#3d504e]/60">
