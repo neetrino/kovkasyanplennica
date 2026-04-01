@@ -3,13 +3,26 @@ import { authenticateToken, requireAdmin } from "@/lib/middleware/auth";
 import { uploadToR2 } from "@/lib/r2";
 import { randomUUID } from "crypto";
 
+/** R2 object key prefix (folder). Only these values are allowed — prevents path injection. */
+const R2_UPLOAD_PREFIXES = ["products", "vacancies"] as const;
+type R2UploadPrefix = (typeof R2_UPLOAD_PREFIXES)[number];
+
+function resolveR2Prefix(body: { namespace?: unknown }): R2UploadPrefix {
+  const ns = body.namespace;
+  if (typeof ns === "string" && (R2_UPLOAD_PREFIXES as readonly string[]).includes(ns)) {
+    return ns as R2UploadPrefix;
+  }
+  return "products";
+}
+
 /**
  * POST /api/v1/admin/products/upload-images
  * Upload images and return URLs
- * 
+ *
  * Request body should contain:
  * - images: string[] (array of base64 image strings)
- * 
+ * - namespace?: "products" | "vacancies" — R2 key prefix (default "products")
+ *
  * Response:
  * - urls: string[] (array of image URLs)
  */
@@ -100,8 +113,11 @@ export async function POST(req: NextRequest) {
       validImages.push(image);
     }
 
+    const r2Prefix = resolveR2Prefix(body);
+
     console.log("📤 [ADMIN UPLOAD IMAGES API] Uploading to R2:", {
       count: validImages.length,
+      prefix: r2Prefix,
     });
 
     const DATA_URL_REGEX = /^data:(image\/[^;]+);base64,(.+)$/;
@@ -133,7 +149,7 @@ export async function POST(req: NextRequest) {
       const base64Data = match[2];
       const ext = EXT_MAP[contentType] ?? "jpg";
       const buffer = Buffer.from(base64Data, "base64");
-      const key = `products/${randomUUID()}.${ext}`;
+      const key = `${r2Prefix}/${randomUUID()}.${ext}`;
       try {
         const publicUrl = await uploadToR2(key, buffer, contentType);
         urls.push(publicUrl);

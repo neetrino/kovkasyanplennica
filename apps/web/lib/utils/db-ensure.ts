@@ -13,6 +13,10 @@ let reviewsTableExists = false;
 let attributesColumnChecked = false;
 let attributesColumnExists = false;
 
+// Cache for vacancies table
+let vacanciesTableChecked = false;
+let vacanciesTableExists = false;
+
 /**
  * Ensures the product_attributes table exists in the database
  * This is a fallback mechanism for Vercel deployments where migrations might not run automatically
@@ -376,6 +380,86 @@ export async function ensureProductVariantAttributesColumn(): Promise<boolean> {
     attributesColumnChecked = true;
     attributesColumnExists = false;
     return false;
+  }
+}
+
+/** Adds `contactPhone` on older DBs (idempotent). */
+async function ensureVacanciesContactPhoneColumn(): Promise<void> {
+  try {
+    await db.$executeRawUnsafe(
+      'ALTER TABLE "vacancies" ADD COLUMN IF NOT EXISTS "contactPhone" TEXT'
+    );
+  } catch (e: unknown) {
+    logger.warn("vacancies contactPhone column ensure failed", {
+      message: e instanceof Error ? e.message : String(e),
+    });
+  }
+}
+
+/**
+ * Ensures the `vacancies` table exists (job postings admin / public API).
+ * Fallback when `prisma migrate deploy` was not run on this environment.
+ */
+export async function ensureVacanciesTable(): Promise<boolean> {
+  if (vacanciesTableChecked && vacanciesTableExists) {
+    return true;
+  }
+  try {
+    await db.$queryRaw`SELECT 1 FROM "vacancies" LIMIT 1`;
+    await ensureVacanciesContactPhoneColumn();
+    vacanciesTableChecked = true;
+    vacanciesTableExists = true;
+    return true;
+  } catch (error: unknown) {
+    const prismaError = error as { code?: string; message?: string };
+    if (prismaError?.code === "P2021") {
+      logger.info("vacancies table not found, creating (fallback)...");
+      try {
+        await db.$executeRaw`
+          CREATE TABLE IF NOT EXISTS "vacancies" (
+            "id" TEXT NOT NULL,
+            "title" TEXT NOT NULL,
+            "description" TEXT NOT NULL,
+            "imageUrl" TEXT,
+            "salary" TEXT,
+            "location" TEXT,
+            "contactPhone" TEXT,
+            "published" BOOLEAN NOT NULL DEFAULT true,
+            "position" INTEGER NOT NULL DEFAULT 0,
+            "deletedAt" TIMESTAMP(3),
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            CONSTRAINT "vacancies_pkey" PRIMARY KEY ("id")
+          )
+        `;
+        await db.$executeRaw`
+          CREATE INDEX IF NOT EXISTS "vacancies_published_deletedAt_idx"
+          ON "vacancies"("published", "deletedAt")
+        `;
+        await db.$executeRaw`
+          CREATE INDEX IF NOT EXISTS "vacancies_position_idx"
+          ON "vacancies"("position")
+        `;
+        vacanciesTableChecked = true;
+        vacanciesTableExists = true;
+        logger.info("vacancies table ready");
+        return true;
+      } catch (createError: unknown) {
+        const ce = createError as { message?: string; code?: string };
+        logger.error("Failed to create vacancies table", {
+          message: ce?.message,
+          code: ce?.code,
+        });
+        vacanciesTableChecked = true;
+        vacanciesTableExists = false;
+        return false;
+      }
+    }
+    logger.error("Unexpected error checking vacancies table", {
+      message: prismaError?.message,
+      code: prismaError?.code,
+    });
+    throw error;
   }
 }
 

@@ -30,8 +30,10 @@ import ruCategories from '../locales/ru/categories.json';
 import ruOrders from '../locales/ru/orders.json';
 import ruAdmin from '../locales/ru/admin.json';
 import ruDesktops from '../locales/ru/desktops.json';
+import ruVacancies from '../locales/ru/vacancies.json';
+import ruTeam from '../locales/ru/team.json';
 
-export type Namespace = 'common' | 'home' | 'product' | 'products' | 'attributes' | 'delivery' | 'about' | 'contact' | 'faq' | 'login' | 'cookies' | 'delivery-terms' | 'terms' | 'privacy' | 'support' | 'stores' | 'returns' | 'refund-policy' | 'profile' | 'checkout' | 'register' | 'categories' | 'orders' | 'admin' | 'desktops';
+export type Namespace = 'common' | 'home' | 'product' | 'products' | 'attributes' | 'delivery' | 'about' | 'contact' | 'faq' | 'login' | 'cookies' | 'delivery-terms' | 'terms' | 'privacy' | 'support' | 'stores' | 'returns' | 'refund-policy' | 'profile' | 'checkout' | 'register' | 'categories' | 'orders' | 'admin' | 'desktops' | 'vacancies' | 'team';
 export type ProductField = 'title' | 'shortDescription' | 'longDescription';
 
 type TranslationNamespaces = Record<Namespace, Record<string, unknown>>;
@@ -63,6 +65,8 @@ const translations: Partial<Record<LanguageCode, TranslationNamespaces>> = {
     orders: ruOrders as Record<string, unknown>,
     admin: ruAdmin as Record<string, unknown>,
     desktops: ruDesktops as Record<string, unknown>,
+    vacancies: ruVacancies as Record<string, unknown>,
+    team: ruTeam as Record<string, unknown>,
   },
 };
 

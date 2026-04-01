@@ -506,6 +506,28 @@ model Settings {
 }
 
 // ============================================
+// VACANCY (JOB POSTING) MODEL
+// ============================================
+model Vacancy {
+  id           String    @id @default(cuid())
+  title        String
+  description  String    @db.Text
+  imageUrl     String?
+  salary       String?
+  location     String?
+  contactPhone String?
+  published    Boolean   @default(true)
+  position     Int       @default(0)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([published, deletedAt])
+  @@index([position])
+  @@map("vacancies")
+}
+
+// ============================================
 // CONTACT MESSAGE MODEL
 // ============================================
 model ContactMessage {

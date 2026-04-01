@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { TeamCarousel } from '@/components/TeamCarousel';
 import { useTranslation } from '@/lib/i18n-client';
 
 export const dynamic = 'force-dynamic';
@@ -143,34 +142,6 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════
-          TEAM
-          ══════════════════════════════════ */}
-      <section className="relative z-10 py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Section header */}
-          <div className="text-center mb-16">
-            <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-4">
-              {t('about.team.subtitle')}
-            </p>
-            <h2 className="text-[#fff4de] text-4xl md:text-5xl lg:text-6xl font-light italic mb-6">
-              {t('about.team.title')}
-            </h2>
-            <div className="w-24 h-[2px] bg-[#7CB342] mx-auto mb-8" />
-            <p className="text-[#fff4de]/60 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              {t('about.team.description')}
-            </p>
-          </div>
-
-          {/* Carousel */}
-          <div className="max-w-6xl mx-auto">
-            <TeamCarousel />
-          </div>
-
         </div>
       </section>
 

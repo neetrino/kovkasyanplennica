@@ -12,6 +12,7 @@ import { adminBrandsService } from "./admin/admin-brands.service";
 import { adminCategoriesService } from "./admin/admin-categories.service";
 import { adminProductsService } from "./admin/admin-products.service";
 import { adminAttributesService } from "./admin/admin-attributes.service";
+import { adminVacanciesService } from "./admin/admin-vacancies.service";
 
 class AdminService {
   // Delegate to specialized services
@@ -76,6 +77,13 @@ class AdminService {
   updateAttributeValue = adminAttributesService.updateAttributeValue.bind(adminAttributesService);
   deleteAttribute = adminAttributesService.deleteAttribute.bind(adminAttributesService);
   deleteAttributeValue = adminAttributesService.deleteAttributeValue.bind(adminAttributesService);
+
+  // Vacancies
+  getVacancies = adminVacanciesService.listVacancies.bind(adminVacanciesService);
+  getPublishedVacancies = adminVacanciesService.listPublishedVacancies.bind(adminVacanciesService);
+  createVacancy = adminVacanciesService.createVacancy.bind(adminVacanciesService);
+  updateVacancy = adminVacanciesService.updateVacancy.bind(adminVacanciesService);
+  deleteVacancy = adminVacanciesService.deleteVacancy.bind(adminVacanciesService);
 }
 
 export const adminService = new AdminService();
