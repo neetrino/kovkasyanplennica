@@ -137,12 +137,12 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                  <Link href="/vacancies" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.vacancies')}
                   </Link>
                 </li>
                 <li>
-                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
+                  <Link href="/team" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.team')}
                   </Link>
                 </li>

@@ -94,7 +94,7 @@ export function Header() {
     { href: '/products', label: t('home.header.navigation.menu') },
     { href: '/about', label: t('home.header.navigation.about') },
     { href: '/vacancies', label: t('home.header.navigation.vacancies') },
-    { href: '/coming-soon', label: t('home.header.navigation.team') },
+    { href: '/team', label: t('home.header.navigation.team') },
     { href: '/contact', label: t('home.header.navigation.contact') },
     { href: '/coming-soon', label: t('home.header.navigation.delivery') },
   ];
