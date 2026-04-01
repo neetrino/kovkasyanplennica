@@ -105,7 +105,7 @@ export function DesktopsBookingQuickBar({
               <span className="pointer-events-none relative z-[2] min-w-0 flex-1 truncate text-left text-xs text-[#fdfdfd] md:text-sm">
                 {value.date
                   ? new Date(`${value.date}T12:00:00`).toLocaleDateString('ru-RU', {
-                      day: 'numeric',
+                      day: 'numerisc',
                       month: 'short',
                       year: 'numeric',
                     })
