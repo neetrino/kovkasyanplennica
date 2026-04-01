@@ -16,6 +16,9 @@ dist/
 build/
 coverage/
 
+# Turborepo local cache (do not commit; can exceed GitHub 100MB limit)
+.turbo/
+
 # Logs and temp
 *.log
 npm-debug.log*

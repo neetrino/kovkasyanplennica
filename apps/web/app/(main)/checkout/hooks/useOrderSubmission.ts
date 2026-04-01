@@ -86,7 +86,9 @@ export function useOrderSubmission({
         return;
       }
 
-      router.push(`/orders/${response.order.number}`);
+      router.push(
+        `/checkout/thank-you?order=${encodeURIComponent(response.order.number)}`,
+      );
     } catch (err: unknown) {
       const error = err as { message?: string };
       setError(error.message || t('checkout.errors.failedToCreateOrder'));
