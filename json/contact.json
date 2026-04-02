@@ -1,15 +1,16 @@
 {
-  "phone": "+374 XX XXX XXX",
-  "email": "info@shop.am",
+  "phone": "+7 (3452) 73-33-00",
+  "deliveryPhone": "+7 (3452) 28-82-44",
+  "email": "info@vkavkazan.ru",
   "address": {
-    "en": "Yerevan, Abovyan 10",
-    "ru": "г. Ереван, ул. Абовяна 10",
-    "am": "Երևան, Աբովյան 10"
+    "en": "Tyumen, Nikolaya Fyodorova St., 19k4",
+    "ru": "ул. Николая Фёдорова 19к4",
+    "am": "Տյումեն, Նիկոլայ Ֆյոդորովի փ., 19к4"
   },
   "workingHours": {
     "en": "Mon-Fri 10:00-19:00",
     "ru": "Пн-Пт 10:00-19:00",
     "am": "Երկ-Ուրբ 10:00-19:00"
-  }
+  },
+  "mapEmbedUrl": "https://maps.google.com/maps?q=ulitsa+Nikolaya+Fyodorova+19k4%2C+Tyumen%2C+Russia&hl=ru&z=17&output=embed"
 }
-

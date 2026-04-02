@@ -25,14 +25,9 @@ export default function AboutPage() {
 
       {/* ── Decorative overlays (same pattern as products page) ── */}
      
+   
       <div
-        className="absolute top-[52%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-50"
-        aria-hidden
-      >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-      </div>
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-50"
+        className="absolute bottom-0  left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-50"
         aria-hidden
       >
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
@@ -112,9 +107,9 @@ export default function AboutPage() {
               </h2>
               <div className="w-24 h-[2px] bg-[#7CB342]" />
               <div className="space-y-4 text-[#fff4de]/70 text-base md:text-lg leading-relaxed">
-                <p>{t('about.description.paragraph1')}</p>
-                <p>{t('about.description.paragraph2')}</p>
-                <p>{t('about.description.paragraph3')}</p>
+                {['paragraph1', 'paragraph2', 'paragraph3', 'paragraph4', 'paragraph5'].map((paragraphKey) => (
+                  <p key={paragraphKey}>{t(`about.description.${paragraphKey}`)}</p>
+                ))}
               </div>
             </div>
 
