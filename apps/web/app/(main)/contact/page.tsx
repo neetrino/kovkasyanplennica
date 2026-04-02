@@ -8,6 +8,13 @@ import contactData from '../../../../../json/contact.json';
 
 const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
 
+/** Builds a tel: link from a human-readable phone string (e.g. +7 (3452) 73-33-00). */
+function buildTelHref(displayPhone: string): string {
+  const digits = displayPhone.replace(/\D/g, '');
+  if (digits.length === 0) return '#';
+  return `tel:+${digits}`;
+}
+
 export default function ContactPage() {
   const { t } = useTranslation();
   const language = 'ru' as const;
@@ -47,10 +54,26 @@ export default function ContactPage() {
       title: t('contact.callToUs.title'),
       desc: t('contact.callToUs.description'),
       value: contactData.phone,
-      href: `tel:${contactData.phone}`,
+      href: buildTelHref(contactData.phone),
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+        </svg>
+      ),
+    },
+    {
+      key: 'delivery',
+      title: t('contact.deliveryCall.title'),
+      desc: t('contact.deliveryCall.description'),
+      value: contactData.deliveryPhone,
+      href: buildTelHref(contactData.deliveryPhone),
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
+          />
         </svg>
       ),
     },
@@ -115,7 +138,7 @@ export default function ContactPage() {
         </div>
 
         {/* ── Info cards ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-16">
           {INFO_CARDS.map((card) => (
             <div
               key={card.key}
@@ -366,7 +389,7 @@ export default function ContactPage() {
       {/* ── Map ── */}
       <div className="relative w-full h-[420px] md:h-[500px] border-t border-[#3d504e]">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.1234567890123!2d44.5150!3d40.1812!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x406aa2dab8fc8b5b%3A0x3d1479ab4e9b8c5e!2sAbovyan%20St%2C%20Yerevan%2C%20Armenia!5e0!3m2!1sen!2sam!4v1234567890123!5m2!1sen!2sam"
+          src={contactData.mapEmbedUrl}
           width="100%"
           height="100%"
           style={{ border: 0, filter: 'grayscale(30%) invert(5%) sepia(5%) saturate(200%) hue-rotate(140deg)' }}
