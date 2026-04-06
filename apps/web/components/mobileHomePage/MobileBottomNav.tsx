@@ -8,6 +8,7 @@ import { fetchCart } from '@/app/(main)/cart/cart-fetcher';
 import type { Cart } from '@/app/(main)/cart/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '../../lib/i18n-client';
+import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
 
 /**
  * Mobile bottom navigation — Figma (nav-surface, chef FAB, icons).
@@ -19,6 +20,8 @@ export function MobileBottomNav() {
   const pathname = usePathname() ?? '';
   const homeHref = pathname === '/mobile' ? '/mobile' : '/';
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadCount = async () => {
@@ -43,11 +46,14 @@ export function MobileBottomNav() {
   }, [isLoggedIn, t]);
 
   const isHomeActive = pathname === '/' || pathname === '/mobile';
-  const isSearchActive = pathname === '/search' || pathname.startsWith('/search/');
+  const isSearchActive =
+    isSearchOpen || pathname === '/search' || pathname.startsWith('/search/');
+  const isProductsActive = pathname === '/products' || pathname.startsWith('/products/');
   const isCartActive = pathname === '/cart' || pathname.startsWith('/cart/');
   const isProfileActive = pathname === '/profile' || pathname.startsWith('/profile/');
 
   return (
+    <>
     <div className="fixed inset-x-0 bottom-0 z-50 mx-auto block w-full max-w-[375px] lg:hidden">
       <div className="relative h-[162px]">
         <div className="absolute inset-x-0 bottom-0 h-[128px] overflow-hidden ">
@@ -60,9 +66,16 @@ export function MobileBottomNav() {
             className="object-fill bg-transparent"
           />
         </div>
-        <div className="absolute left-1/2 top-5 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)]">
+        <Link
+          href="/products"
+          aria-label={t('home.header.navigation.delivery')}
+          aria-current={isProductsActive ? 'page' : undefined}
+          className={`absolute left-1/2 top-5 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)] transition-opacity hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#75bf5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f3f3d] ${
+            isProductsActive ? 'ring-2 ring-[#75bf5e] ring-offset-2 ring-offset-[#2f3f3d]' : ''
+          }`}
+        >
           <Image src="/assets/mobile-home/nav-chef.svg" alt="" width={24} height={24} aria-hidden />
-        </div>
+        </Link>
         <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
           <Link href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
             <Image
@@ -72,14 +85,20 @@ export function MobileBottomNav() {
               height={24}
             />
           </Link>
-          <Link href="/search" aria-label={t('common.buttons.search')} className="flex h-12 w-12 items-center justify-center">
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            aria-label={t('common.buttons.search')}
+            aria-expanded={isSearchOpen}
+            className="flex h-12 w-12 items-center justify-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F3F3D]/40"
+          >
             <Image
               src={isSearchActive ? '/assets/mobile-home/nav-search-active.svg' : '/assets/mobile-home/nav-search.svg'}
               alt=""
               width={24}
               height={24}
             />
-          </Link>
+          </button>
           <span className="h-12 w-12" aria-hidden />
           <Link
             href="/cart"
@@ -113,5 +132,12 @@ export function MobileBottomNav() {
         </div>
       </div>
     </div>
+    <HeaderSearchOverlay
+      open={isSearchOpen}
+      onClose={() => setIsSearchOpen(false)}
+      searchQuery={searchQuery}
+      onSearchQueryChange={setSearchQuery}
+    />
+    </>
   );
 }
