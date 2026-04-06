@@ -1,10 +1,3 @@
-export interface MobileBannerItem {
-  id: string;
-  title: string;
-  duration: string;
-  imageSrc: string;
-}
-
 export interface MobileCategoryItem {
   id: string;
   label: string;
@@ -18,21 +11,6 @@ export interface MobileRecipeItem {
   duration: string;
   imageSrc: string;
 }
-
-export const MOBILE_HOME_BANNERS: MobileBannerItem[] = [
-  {
-    id: 'steak-mushrooms-1',
-    title: 'Куриный стейк с Грибами',
-    duration: '20 Мин',
-    imageSrc: '/assets/mobile-home/banner-dish.png',
-  },
-  {
-    id: 'steak-mushrooms-2',
-    title: 'Куриный стейк с Грибами',
-    duration: '20 Мин',
-    imageSrc: '/assets/mobile-home/banner-dish.png',
-  },
-];
 
 export const MOBILE_HOME_CATEGORIES: MobileCategoryItem[] = [
   { id: 'meat', label: 'Мясо', active: true },

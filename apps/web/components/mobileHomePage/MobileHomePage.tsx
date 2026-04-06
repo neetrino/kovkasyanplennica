@@ -1,34 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  MOBILE_HOME_BANNERS,
-  MOBILE_HOME_CATEGORIES,
-  MOBILE_HOME_RECIPES,
-} from './mobileHomeConfig';
-
-function MobileBannerCard({
-  title,
-  duration,
-  imageSrc,
-}: {
-  title: string;
-  duration: string;
-  imageSrc: string;
-}) {
-  return (
-    <article className="relative h-[168px] w-[286px] shrink-0 overflow-hidden rounded-2xl bg-white">
-      <Image src={imageSrc} alt={title} fill className="object-cover" priority />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(47,63,61,0)_32%,rgba(47,63,61,0.38)_100%)]" />
-      <div className="absolute bottom-0 left-0 flex w-[152px] flex-col gap-2 rounded-tr-[24px] bg-[#75bf5e] px-3 py-3 text-white">
-        <div className="flex items-center gap-1.5 text-[14px] leading-[1.45]">
-          <Image src="/assets/mobile-home/time-light.svg" alt="" width={16} height={16} aria-hidden />
-          <span>{duration}</span>
-        </div>
-        <p className="text-[16px] leading-[1.35]">{title}</p>
-      </div>
-    </article>
-  );
-}
+import { MOBILE_HOME_CATEGORIES, MOBILE_HOME_RECIPES } from './mobileHomeConfig';
+import { MobileTopSection } from './MobileTopSection';
 
 function MobileRecipeCard({
   title,
@@ -89,18 +62,11 @@ function MobileReservationField({
   );
 }
 
-export function MobileHomePage() {
+export async function MobileHomePage() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#2f3f3d] pb-[216px] text-white lg:hidden">
       <div className="mx-auto flex w-full max-w-[375px] flex-col px-4 pt-6">
-        <section className="mb-8">
-          <p className="mb-[14px] text-[16px] leading-[1.35]">Топ</p>
-          <div className="-mr-4 flex gap-[10px] overflow-x-auto pr-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {MOBILE_HOME_BANNERS.map((banner) => (
-              <MobileBannerCard key={banner.id} {...banner} />
-            ))}
-          </div>
-        </section>
+        <MobileTopSection />
 
         <section className="mb-9">
           <p className="mb-4 text-[16px] leading-[1.35]">Категории</p>
