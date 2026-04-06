@@ -201,6 +201,9 @@ export default async function ProductsPage({ searchParams }: any) {
     };
   });
 
+  /** ≤2 category rows (e.g. filtered): one union decorative at bottom only — avoid stacked overlays when content is short */
+  const showFullDecorativeBackground = categoryRows.length > 2;
+
   // PAGINATION: build URL for page N, keep limit and other filters
   const buildPaginationUrl = (num: number) => {
     const q = new URLSearchParams();
@@ -232,15 +235,19 @@ export default async function ProductsPage({ searchParams }: any) {
       <Suspense fallback={null}>
         <ProductsResponsiveLimit />
       </Suspense>
-      {/* Decorative: վերևի հատված – կենտրոն */}
-      <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-      </div>
-      {/* Decorative: մեջտեղ – նույն չափսը, ցածր */}
-      <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-      </div>
-      {/* Decorative: ներքևի հատված – մի քիչ footer-ի վրա */}
+      {showFullDecorativeBackground && (
+        <>
+          {/* Decorative: վերևի հատված – կենտրոն */}
+          <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+          </div>
+          {/* Decorative: մեջտեղ – նույն չափսը, ցածր */}
+          <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+          </div>
+        </>
+      )}
+      {/* Decorative: ներքևի հատված – մի քիչ footer-ի վրա (միշտ՝ կամ միայն սա երբ ≤2 category row) */}
       <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
