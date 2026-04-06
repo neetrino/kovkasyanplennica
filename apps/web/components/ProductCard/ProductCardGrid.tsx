@@ -64,7 +64,7 @@ export function ProductCardGrid({
     >
       {/* Product Image - Circular plate at top, half outside card, half inside */}
       <div
-        className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 ${
+        className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-20 ${
           compactHeight
             ? largeHeightOnDesktop
               ? 'w-[45%] lg:w-[52%]'
@@ -83,7 +83,7 @@ export function ProductCardGrid({
               src={product.image}
               alt={product.title}
               fill
-              className="object-cover rounded-full"
+              className="object-cover rounded-full transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
               sizes="223px"
               unoptimized
               onError={onImageError}

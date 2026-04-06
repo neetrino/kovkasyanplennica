@@ -45,19 +45,19 @@ export function ProductCardList({
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:bg-gray-50 transition-colors">
+    <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4">
         {/* Product Image */}
         <Link
           href="/coming-soon"
-          className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center"
+          className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-10"
         >
           {product.image && !imageError ? (
             <Image
               src={product.image}
               alt={product.title}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
               sizes="80px"
               unoptimized
               onError={onImageError}
