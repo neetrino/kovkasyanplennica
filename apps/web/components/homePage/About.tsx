@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
 
 /**
@@ -55,11 +56,16 @@ export function About() {
               </div>
             </div>
 
-            {/* Текст - справа */}
-            <div className="flex flex-col justify-center">
-              <p className="text-[#2f3f3d] text-base md:text-lg lg:text-xl leading-relaxed">
-                {t('home.about.description')}
-              </p>
+            {/* Story copy from about.description (paragraphs 1–2) */}
+            <div className="flex flex-col justify-center space-y-4">
+              {ABOUT_STORY_FIRST_KEYS.map((key) => (
+                <p
+                  key={key}
+                  className="text-[#2f3f3d] text-base md:text-lg lg:text-xl leading-relaxed"
+                >
+                  {t(`about.description.${key}`)}
+                </p>
+              ))}
             </div>
           </div>
         </div>
@@ -72,10 +78,14 @@ export function About() {
               {t('home.about.title')}
             </h2>
             
-            {/* Текст */}
-            <p className="text-[#2f3f3d] text-base md:text-lg lg:text-xl leading-relaxed">
-              {t('home.about.description')}
-            </p>
+            {/* Story copy from about.description (paragraphs 3–5) */}
+            <div className="space-y-4">
+              {ABOUT_STORY_SECOND_KEYS.map((key) => (
+                <p key={key} className="text-[#2f3f3d] text-base md:text-lg lg:text-xl leading-relaxed">
+                  {t(`about.description.${key}`)}
+                </p>
+              ))}
+            </div>
           </div>
 
           {/* Изображение интерьера - справа */}

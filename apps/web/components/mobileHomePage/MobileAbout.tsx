@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
 
-/**y
+/**
  * Mobile About — два блока (картинка + текст), заголовок О НАС, кнопка Узнать больше.
  */
 export function MobileAbout() {
@@ -56,9 +57,13 @@ export function MobileAbout() {
               unoptimized
             />
           </div>
-          <p className="text-[#252525] text-base leading-5">
-            {t('home.about.description')}
-          </p>
+          <div className="space-y-3">
+            {ABOUT_STORY_FIRST_KEYS.map((key) => (
+              <p key={key} className="text-[#252525] text-base leading-5">
+                {t(`about.description.${key}`)}
+              </p>
+            ))}
+          </div>
         </div>
 
         {/* Блок 2: текст слева, картинка справа */}
@@ -73,9 +78,13 @@ export function MobileAbout() {
               unoptimized
             />
           </div>
-          <p className="text-[#252525] text-base leading-5 text-right">
-            {t('home.about.description')}
-          </p>
+          <div className="space-y-3 text-right">
+            {ABOUT_STORY_SECOND_KEYS.map((key) => (
+              <p key={key} className="text-[#252525] text-base leading-5">
+                {t(`about.description.${key}`)}
+              </p>
+            ))}
+          </div>
         </div>
 
         <div className="flex justify-center">
