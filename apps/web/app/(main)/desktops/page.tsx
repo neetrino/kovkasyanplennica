@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { TABLES, type TableConfig } from './table-data';
@@ -8,6 +8,7 @@ import { DesktopsBookingQuickBar, type QuickBookingValues } from './DesktopsBook
 import { ReservationModal } from './ReservationModal';
 import { formatLocalISODate } from '@/lib/formatLocalISODate';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
+import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 
 const TABLES_SECTION_DIVIDER_SRC = '/assets/hero/Vector7.svg';
 
@@ -22,6 +23,25 @@ export default function DesktopsPage() {
   });
 
   const today = useMemo(() => formatLocalISODate(new Date()), []);
+
+  useEffect(() => {
+    const d = searchParams.get('date');
+    const timeParam = searchParams.get('time');
+    const g = searchParams.get('guests');
+    if (d == null && timeParam == null && g == null) return;
+
+    setQuickBooking((prev) => {
+      const nextDate = d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : prev.date;
+      let nextTime = prev.time;
+      if (timeParam !== null) {
+        if (timeParam === '' || RESERVATION_TIME_SLOTS.includes(timeParam)) {
+          nextTime = timeParam;
+        }
+      }
+      const nextGuests = g && /^[1-8]$/.test(g) ? g : prev.guestCount;
+      return { date: nextDate, time: nextTime, guestCount: nextGuests };
+    });
+  }, [searchParams]);
 
   const scrollToFloorPlan = useCallback(() => {
     document.getElementById('desktops-floor-plan')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
