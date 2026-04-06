@@ -1,46 +1,24 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslation } from '../../lib/i18n-client';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../lib/auth/AuthContext';
+import { formatNavLabel } from '../../lib/formatNavLabel';
+import { useTranslation } from '../../lib/i18n-client';
 import { LANGUAGES, getStoredLanguage, setStoredLanguage } from '../../lib/language';
 import type { LanguageCode } from '../../lib/language';
-import { formatNavLabel } from '../../lib/formatNavLabel';
 
-/**
- * Mobile Header — Figma Frame1000002326 (node-id=75-2062).
- * Left: menu (popup with Logout, Menu, About us) + search icons, Right: ВОЙТИ button.
- * Search icon opens a popup overlay with search input.
- */
 export function MobileHeader() {
-  const MOBILE_HEADER_TOP_THRESHOLD_PX = 10;
-  const MOBILE_HEADER_HIDE_THRESHOLD_PX = 24;
-  const MOBILE_SCROLL_DOWN_EPSILON_PX = 4;
-  const MOBILE_SCROLL_UP_EPSILON_PX = 6;
-
   const pathname = usePathname();
-  const isHomePage = pathname === '/';
-  const headerBg = isHomePage ? 'bg-[#ffe5c2]' : 'bg-[#2F3F3D]';
-  const iconButtonBg = isHomePage ? 'bg-[#2f3f3d]/10' : 'bg-white/15';
-  const iconStroke = isHomePage ? '#2f3f3d' : '#ffffff';
-
+  const logoHomeHref = pathname === '/mobile' ? '/mobile' : '/';
   const { t } = useTranslation();
   const { isLoggedIn, logout } = useAuth();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [headerVisible, setHeaderVisible] = useState(true);
-  const lastScrollYRef = useRef(0);
-
-  const closeSearch = useCallback(() => {
-    setIsSearchOpen(false);
-    setSearchQuery('');
-  }, []);
+  const currentLang = getStoredLanguage();
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-  const currentLang = getStoredLanguage();
 
   const handleLanguageSelect = (code: LanguageCode) => {
     if (code === currentLang) return;
@@ -48,216 +26,81 @@ export function MobileHeader() {
     closeMenu();
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
-    if (q) {
-      window.location.href = `/products?search=${encodeURIComponent(q)}`;
-      return;
-    }
-    closeSearch();
-  };
-
-  const handleLogout = () => {
-    logout();
-    closeMenu();
-  };
-
   useEffect(() => {
-    if (!isSearchOpen) return;
-    const onEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeSearch();
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeMenu();
     };
     document.addEventListener('keydown', onEscape);
     return () => document.removeEventListener('keydown', onEscape);
-  }, [isSearchOpen, closeSearch]);
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    const onEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeMenu();
-    };
-    document.addEventListener('keydown', onEscape);
-    return () => document.removeEventListener('keydown', onEscape);
-  }, [isMenuOpen, closeMenu]);
-
-  useEffect(() => {
-    const readScrollY = () =>
-      window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-
-    const onScroll = () => {
-      const y = readScrollY();
-      const delta = y - lastScrollYRef.current;
-      lastScrollYRef.current = y;
-
-      if (y <= MOBILE_HEADER_TOP_THRESHOLD_PX) {
-        setHeaderVisible(true);
-        return;
-      }
-
-      if (delta > MOBILE_SCROLL_DOWN_EPSILON_PX && y > MOBILE_HEADER_HIDE_THRESHOLD_PX) {
-        setHeaderVisible(false);
-      } else if (delta < -MOBILE_SCROLL_UP_EPSILON_PX) {
-        setHeaderVisible(true);
-      }
-    };
-
-    lastScrollYRef.current = readScrollY();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [closeMenu]);
 
   return (
     <>
-      <header
-        className={`sticky top-0 z-app-header w-full ${headerBg} flex items-center justify-between gap-3 px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
-          headerVisible ? 'translate-y-0' : '-translate-y-full'
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen(true)}
-            className={`relative w-10 h-10 flex items-center justify-center rounded-full ${iconButtonBg}`}
-            aria-label={t('home.header.mobileMenu.ariaLabel')}
-            aria-expanded={isMenuOpen}
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={iconStroke}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <header className="sticky top-0 z-app-header bg-[#2f3f3d] lg:hidden">
+        <div className="mx-auto flex w-full max-w-[375px] items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
+          <Link href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
+            <Image
+              src="/assets/mobile-home/logo-kp2.png"
+              alt=""
+              width={150}
+              height={110}
+              className="h-[110px] w-[150px] object-contain object-left"
+              priority
+            />
+          </Link>
+          <div className="flex shrink-0 items-center gap-[11px]">
+            <Link
+              href="/desktops"
+              className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
             >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className={`relative w-10 h-10 flex items-center justify-center rounded-full ${iconButtonBg}`}
-            aria-label={t('home.header.search.ariaLabel')}
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={iconStroke}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              Бронь
+            </Link>
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white"
+              aria-label={t('home.header.mobileMenu.ariaLabel')}
+              aria-expanded={isMenuOpen}
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </button>
-        </div>
-        <Link
-          href="/login"
-          className="h-10 w-[120px] rounded-full bg-[#2f3f3d] border border-[#2f3f3d] text-white font-bold text-sm tracking-[0.02em] flex items-center justify-center flex-shrink-0"
-        >
-          {t('home.header.login')}
-        </Link>
-      </header>
-
-      {/* Search popup overlay */}
-      {isSearchOpen && (
-        <div
-          className="fixed inset-0 z-app-overlay lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t('home.header.search.ariaLabel')}
-        >
-          <div
-            className="absolute inset-0 bg-[#2f3f3d]/25 backdrop-blur-[2px]"
-            onClick={closeSearch}
-            aria-hidden
-          />
-          <div className="absolute inset-x-0 top-0 bg-[#ffe5c2]/85 backdrop-blur-sm shadow-lg p-4 pt-6 safe-area-inset-top">
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
-              <div className="flex-1 max-w-[260px] relative bg-white/60 backdrop-blur-sm border border-[#2f3f3d]/25 rounded-full h-12 flex items-center pl-3 pr-4 gap-2">
-                <button
-                  type="submit"
-                  className="w-9 h-9 flex items-center justify-center rounded-full bg-[#2f3f3d]/10 text-[#2f3f3d] flex-shrink-0"
-                  aria-label={t('home.header.search.ariaLabel')}
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.35-4.35" />
-                  </svg>
-                </button>
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t('home.header.search.placeholder')}
-                  className="flex-1 min-w-0 bg-transparent text-[#2f3f3d] text-base outline-none placeholder:text-[#2f3f3d]/65"
-                  autoFocus
-                  autoComplete="off"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={closeSearch}
-                className="h-12 px-4 rounded-full bg-[#2f3f3d]/10 text-[#2f3f3d] font-semibold text-sm"
-              >
-                {t('common.buttons.cancel')}
-              </button>
-            </form>
+              <span className="flex flex-col gap-1.5" aria-hidden>
+                <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+                <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+                <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+              </span>
+            </button>
           </div>
         </div>
-      )}
+      </header>
 
-      {/* Menu popup: Logout, Menu, About us — centered square, transparent style */}
       {isMenuOpen && (
-        <div
-          className="fixed inset-0 z-app-overlay lg:hidden flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t('home.header.mobileMenu.ariaLabel')}
-        >
+        <div className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 lg:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.mobileMenu.ariaLabel')}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={closeMenu} aria-hidden />
           <div
-            className="absolute inset-0 bg-[#2f3f3d]/25 backdrop-blur-[2px]"
-            onClick={closeMenu}
-            aria-hidden
-          />
-          <div
-            className="relative w-[280px] h-[280px] bg-[#ffe5c2]/85 backdrop-blur-sm shadow-xl rounded-2xl p-5 flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+            className="relative flex h-[280px] w-[280px] flex-col rounded-2xl border border-white/10 bg-[#2f3f3d] p-5 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-end mb-4">
+            <div className="mb-4 flex justify-end">
               <button
                 type="button"
                 onClick={closeMenu}
-                className="w-9 h-9 flex items-center justify-center rounded-full bg-[#2f3f3d]/10 text-[#2f3f3d] flex-shrink-0"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white"
                 aria-label={t('common.buttons.close')}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col gap-3 flex-1">
+            <div className="flex flex-1 flex-col gap-3">
               {isLoggedIn && (
                 <button
                   type="button"
-                  onClick={handleLogout}
-                  className="py-3 w-full rounded-full bg-[#2f3f3d]/15 text-[#2f3f3d] font-semibold text-sm hover:bg-[#2f3f3d]/25 transition-colors"
+                  onClick={() => {
+                    logout();
+                    closeMenu();
+                  }}
+                  className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white"
                 >
                   {t('common.navigation.logout') || 'Logout'}
                 </button>
@@ -265,33 +108,24 @@ export function MobileHeader() {
               <Link
                 href="/coming-soon"
                 onClick={closeMenu}
-                className="py-3 w-full rounded-full bg-[#2f3f3d]/15 text-[#2f3f3d] font-semibold text-sm hover:bg-[#2f3f3d]/25 transition-colors text-center"
+                className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
               >
                 {formatNavLabel(t('home.header.navigation.menu'))}
               </Link>
-              <Link
-                href="/about"
-                onClick={closeMenu}
-                className="py-3 w-full rounded-full bg-[#2f3f3d]/15 text-[#2f3f3d] font-semibold text-sm hover:bg-[#2f3f3d]/25 transition-colors text-center"
-              >
+              <Link href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
                 {formatNavLabel(t('home.header.navigation.about'))}
               </Link>
             </div>
-            {/* Language selector */}
-            <div className="pt-3 mt-3 border-t border-[#2f3f3d]/20">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#2f3f3d]/70 mb-2">
-                {t('common.language.label')}
-              </p>
+            <div className="mt-3 border-t border-white/15 pt-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/60">{t('common.language.label')}</p>
               <div className="flex flex-wrap gap-2">
                 {(Object.keys(LANGUAGES) as LanguageCode[]).map((code) => (
                   <button
                     key={code}
                     type="button"
                     onClick={() => handleLanguageSelect(code)}
-                    className={`py-2 px-3 rounded-full text-xs font-semibold transition-colors ${
-                      currentLang === code
-                        ? 'bg-[#2f3f3d] text-[#ffe5c2]'
-                        : 'bg-[#2f3f3d]/15 text-[#2f3f3d] hover:bg-[#2f3f3d]/25'
+                    className={`rounded-full px-3 py-2 text-xs font-semibold ${
+                      currentLang === code ? 'bg-[#75bf5e] text-white' : 'bg-white/10 text-white'
                     }`}
                   >
                     {LANGUAGES[code].nativeName}
