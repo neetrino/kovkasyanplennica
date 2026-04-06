@@ -29,8 +29,8 @@ export default function MainLayout({
             <MobileHeader />
           </div>
           {/* No z-index here: fixed popups inside `main` must stack above `.z-app-header` (see globals.css). */}
-          <div className="relative flex w-full flex-1 flex-col">
-            <main className="w-full flex-1">{children}</main>
+          <div className="relative flex w-full flex-1 flex-col max-lg:flex-none max-lg:min-h-0">
+            <main className="w-full flex-1 max-lg:flex-none">{children}</main>
             <div className="mt-auto hidden shrink-0 lg:block">
               <Footer />
             </div>

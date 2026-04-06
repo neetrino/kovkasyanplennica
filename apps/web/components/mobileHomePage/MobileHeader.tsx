@@ -74,10 +74,18 @@ export function MobileHeader() {
 
       {isMenuOpen && (
         <div className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 lg:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.mobileMenu.ariaLabel')}>
-          <div className="absolute inset-0 bg-[#2f3f3d]/25 backdrop-blur-[2px]" onClick={closeMenu} aria-hidden />
-          <div className="relative flex h-[280px] w-[280px] flex-col rounded-2xl bg-[#ffe5c2]/90 p-5 shadow-xl backdrop-blur-sm" onClick={(event) => event.stopPropagation()}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={closeMenu} aria-hidden />
+          <div
+            className="relative flex h-[280px] w-[280px] flex-col rounded-2xl border border-white/10 bg-[#2f3f3d] p-5 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="mb-4 flex justify-end">
-              <button type="button" onClick={closeMenu} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#2f3f3d]/10 text-[#2f3f3d]" aria-label={t('common.buttons.close')}>
+              <button
+                type="button"
+                onClick={closeMenu}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white"
+                aria-label={t('common.buttons.close')}
+              >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6 6 18" />
                   <path d="m6 6 12 12" />
@@ -86,19 +94,30 @@ export function MobileHeader() {
             </div>
             <div className="flex flex-1 flex-col gap-3">
               {isLoggedIn && (
-                <button type="button" onClick={() => { logout(); closeMenu(); }} className="w-full rounded-full bg-[#2f3f3d]/15 py-3 text-sm font-semibold text-[#2f3f3d]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    closeMenu();
+                  }}
+                  className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white"
+                >
                   {t('common.navigation.logout') || 'Logout'}
                 </button>
               )}
-              <Link href="/coming-soon" onClick={closeMenu} className="w-full rounded-full bg-[#2f3f3d]/15 py-3 text-center text-sm font-semibold text-[#2f3f3d]">
+              <Link
+                href="/coming-soon"
+                onClick={closeMenu}
+                className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
+              >
                 {formatNavLabel(t('home.header.navigation.menu'))}
               </Link>
-              <Link href="/about" onClick={closeMenu} className="w-full rounded-full bg-[#2f3f3d]/15 py-3 text-center text-sm font-semibold text-[#2f3f3d]">
+              <Link href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
                 {formatNavLabel(t('home.header.navigation.about'))}
               </Link>
             </div>
-            <div className="mt-3 border-t border-[#2f3f3d]/20 pt-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#2f3f3d]/70">{t('common.language.label')}</p>
+            <div className="mt-3 border-t border-white/15 pt-3">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/60">{t('common.language.label')}</p>
               <div className="flex flex-wrap gap-2">
                 {(Object.keys(LANGUAGES) as LanguageCode[]).map((code) => (
                   <button
@@ -106,7 +125,7 @@ export function MobileHeader() {
                     type="button"
                     onClick={() => handleLanguageSelect(code)}
                     className={`rounded-full px-3 py-2 text-xs font-semibold ${
-                      currentLang === code ? 'bg-[#2f3f3d] text-[#ffe5c2]' : 'bg-[#2f3f3d]/15 text-[#2f3f3d]'
+                      currentLang === code ? 'bg-[#75bf5e] text-white' : 'bg-white/10 text-white'
                     }`}
                   >
                     {LANGUAGES[code].nativeName}
