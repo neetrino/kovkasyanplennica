@@ -1,46 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { MOBILE_HOME_CATEGORIES, MOBILE_HOME_RECIPES } from './mobileHomeConfig';
+import { MOBILE_HOME_CATEGORIES } from './mobileHomeConfig';
+import { MobileNewArrivalsSection } from './MobileNewArrivalsSection';
 import { MobileTopSection } from './MobileTopSection';
-
-function MobileRecipeCard({
-  title,
-  calories,
-  duration,
-  imageSrc,
-}: {
-  title: string;
-  calories: string;
-  duration: string;
-  imageSrc: string;
-}) {
-  return (
-    <article className="relative h-[240px] w-[200px] shrink-0 rounded-2xl bg-white p-4 shadow-[0_2px_16px_rgba(6,51,54,0.1)]">
-      <div className="relative mb-4 h-32 overflow-hidden rounded-2xl">
-        <Image src={imageSrc} alt={title} fill className="object-cover" />
-      </div>
-      <button
-        type="button"
-        className="absolute right-4 top-4 flex h-[34px] w-[34px] items-center justify-center rounded-full bg-white shadow-[0_2px_16px_rgba(6,51,54,0.1)]"
-        aria-label={`Добавить ${title} в избранное`}
-      >
-        <Image src="/assets/mobile-home/heart.svg" alt="" width={24} height={24} aria-hidden />
-      </button>
-      <h3 className="mb-2 text-[16px] font-bold leading-[1.35] text-[#0a2533]">{title}</h3>
-      <div className="flex items-center gap-2 text-[14px] leading-[1.45] text-[#97a2b0]">
-        <span className="flex items-center gap-1">
-          <Image src="/assets/mobile-home/calories.svg" alt="" width={16} height={16} aria-hidden />
-          {calories}
-        </span>
-        <Image src="/assets/mobile-home/separator.svg" alt="" width={4} height={4} aria-hidden />
-        <span className="flex items-center gap-1">
-          <Image src="/assets/mobile-home/time-dark.svg" alt="" width={16} height={16} aria-hidden />
-          {duration}
-        </span>
-      </div>
-    </article>
-  );
-}
 
 function MobileReservationField({
   iconSrc,
@@ -85,19 +47,7 @@ export async function MobileHomePage() {
           </div>
         </section>
 
-        <section className="mb-7">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <p className="text-[16px] leading-[1.35]">Новинки</p>
-            <Link href="/products" className="text-[16px] leading-[1.35] text-[#75bf5e]">
-              Смотреть Все
-            </Link>
-          </div>
-          <div className="-mr-4 flex gap-4 overflow-x-auto pr-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {MOBILE_HOME_RECIPES.map((recipe) => (
-              <MobileRecipeCard key={recipe.id} {...recipe} />
-            ))}
-          </div>
-        </section>
+        <MobileNewArrivalsSection />
 
         <section className="rounded-[24px] bg-white px-5 pb-9 pt-[22px] text-[#0a2533]">
           <h2 className="mb-[38px] text-center text-[16px] font-bold leading-[1.35]">

@@ -55,9 +55,16 @@ function MobileTopFeaturedCard({
 }) {
   return (
     <Link href={href} className="block shrink-0">
-      <article className="relative h-[196px] w-[304px] overflow-hidden rounded-2xl bg-white">
+      <article className="relative h-[196px] w-[304px] overflow-hidden rounded-2xl bg-[#f1f5f5]">
         {imageSrc ? (
-          <Image src={imageSrc} alt={title} fill className="object-cover" priority={priority} sizes="304px" />
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            className="object-contain object-center"
+            priority={priority}
+            sizes="304px"
+          />
         ) : (
           <div className="absolute inset-0 bg-[#e8ecec]" aria-hidden />
         )}
