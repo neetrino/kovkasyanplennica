@@ -62,7 +62,7 @@ export function ProductCardGrid({
           ? largeHeightOnDesktop
             ? 'min-h-[180px] lg:min-h-[280px]'
             : largeCompactImage
-              ? 'min-h-[210px]'
+              ? 'min-h-[172px]'
               : 'min-h-[180px]'
           : largeSize
             ? 'min-h-[320px]'
@@ -114,7 +114,7 @@ export function ProductCardGrid({
             ? largeHeightOnDesktop
               ? 'pt-[14%] pb-[4%] lg:pt-[18%] lg:pb-[8%]'
               : largeCompactImage
-                ? 'pt-[17%] pb-[4%]'
+                ? 'pt-[20%] pb-[4%]'
                 : 'pt-[14%] pb-[4%]'
             : largeSize
               ? 'pt-[20%] pb-[10%]'
@@ -137,6 +137,7 @@ export function ProductCardGrid({
           compactHeight={compactHeight}
           largeSize={largeSize}
           largeHeightOnDesktop={largeHeightOnDesktop}
+          largeCompactImage={largeCompactImage}
           inStock={product.inStock}
           isAddingToCart={isAddingToCart}
           onAddToCart={onAddToCart}

@@ -24,6 +24,8 @@ interface ProductCardInfoProps {
   largeSize?: boolean;
   /** 1024+ — price/cart block ավելի ցածր */
   largeHeightOnDesktop?: boolean;
+  /** Products page mobile — ավելի ցածր քարտ */
+  largeCompactImage?: boolean;
   inStock?: boolean;
   isAddingToCart?: boolean;
   onAddToCart?: (e: MouseEvent) => void;
@@ -49,6 +51,7 @@ export function ProductCardInfo({
   compactHeight = false,
   largeSize = false,
   largeHeightOnDesktop = false,
+  largeCompactImage = false,
   inStock = true,
   isAddingToCart = false,
   onAddToCart,
@@ -64,7 +67,11 @@ export function ProductCardInfo({
   };
 
   return (
-    <div className={`w-full ${compactHeight ? 'mt-6' : 'mt-12'}`}>
+    <div
+      className={`w-full ${
+        compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
+      }`}
+    >
       <Link href="/coming-soon" className="block">
         {/* Product Title - Centered, Bold */}
         <h3 className={`text-center font-bold text-black leading-normal ${compactHeight ? 'text-[14px] mb-1' : 'text-[20px] mb-2'}`}>
@@ -91,7 +98,13 @@ export function ProductCardInfo({
 
       {/* Price Section - Figma design: Цена (left) | Cart Button (center) | Price (right) */}
       <div
-        className={`relative flex items-center justify-between ${compactHeight ? 'pt-3 pb-3' : 'pt-8 pb-[25px]'} ${largeHeightOnDesktop ? 'lg:mt-6 lg:pt-8 lg:pb-6' : ''}`}
+        className={`relative flex items-center justify-between ${
+          compactHeight
+            ? largeCompactImage
+              ? 'pt-2 pb-2'
+              : 'pt-3 pb-3'
+            : 'pt-8 pb-[25px]'
+        } ${largeHeightOnDesktop ? 'lg:mt-6 lg:pt-8 lg:pb-6' : ''}`}
       >
         {/* Price Label - Left, Grey, Medium */}
         <span className={`font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
@@ -103,14 +116,23 @@ export function ProductCardInfo({
           <button
             onClick={handleAddToCart}
             disabled={!inStock || isAddingToCart}
-            className={`absolute left-1/2 -translate-x-1/2 bottom-[-8px] translate-y-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
-              compactHeight ? 'w-10 h-10' : 'w-[58px] h-[58px]'
+            className={`absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
+              largeCompactImage
+                ? 'bottom-[-28px] translate-y-1/2 w-[52px] h-[52px]'
+                : compactHeight
+                  ? 'bottom-[-8px] translate-y-1/2 w-10 h-10'
+                  : 'bottom-[-8px] translate-y-1/2 w-[58px] h-[58px]'
             }`}
             title={inStock ? t('common.buttons.addToCart') : t('common.stock.outOfStock')}
             aria-label={inStock ? t('common.ariaLabels.addToCart') : t('common.ariaLabels.outOfStock')}
           >
             {isAddingToCart ? (
-              <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg
+                className={`animate-spin text-white ${largeCompactImage ? 'h-7 w-7' : 'h-6 w-6'}`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
@@ -118,8 +140,8 @@ export function ProductCardInfo({
               <Image
                 src="/assets/product-card/cart-icon-white.svg"
                 alt="Cart"
-                width={24}
-                height={24}
+                width={largeCompactImage ? 28 : 24}
+                height={largeCompactImage ? 28 : 24}
                 className="object-contain"
               />
             )}

@@ -103,7 +103,7 @@ export function ProductsCategoryCarousel({ products: rawProducts, sortBy = 'defa
       {/* Carousel: քարտերի քանակն ու gap — home page menu-ի նման (grid-cols-2 md:3 lg:4, gap-6 md:gap-8) */}
       <div
         ref={carouselRef}
-        className="relative overflow-hidden cursor-grab active:cursor-grabbing select-none pt-24 pb-8 sm:pt-28 sm:pb-16 md:pt-32 md:pb-20 lg:pt-36"
+        className="relative overflow-hidden cursor-grab active:cursor-grabbing select-none pt-24 pb-14 sm:pt-28 sm:pb-16 md:pt-32 md:pb-20 lg:pt-36"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
