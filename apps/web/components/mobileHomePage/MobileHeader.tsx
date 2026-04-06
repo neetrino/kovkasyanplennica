@@ -76,7 +76,7 @@ export function MobileHeader() {
         <div className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 lg:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.mobileMenu.ariaLabel')}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={closeMenu} aria-hidden />
           <div
-            className="relative flex h-[280px] w-[280px] flex-col rounded-2xl border border-white/10 bg-[#2f3f3d] p-5 shadow-xl"
+            className="relative flex max-h-[min(90vh,480px)] w-[280px] flex-col overflow-y-auto rounded-2xl border border-white/10 bg-[#2f3f3d] p-5 shadow-xl"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-4 flex justify-end">
@@ -106,11 +106,18 @@ export function MobileHeader() {
                 </button>
               )}
               <Link
-                href="/coming-soon"
+                href="/products"
                 onClick={closeMenu}
                 className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
               >
                 {formatNavLabel(t('home.header.navigation.menu'))}
+              </Link>
+              <Link
+                href="/coming-soon"
+                onClick={closeMenu}
+                className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
+              >
+                {formatNavLabel(t('home.header.navigation.delivery'))}
               </Link>
               <Link href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
                 {formatNavLabel(t('home.header.navigation.about'))}

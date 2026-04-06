@@ -63,13 +63,13 @@ export function MobileHero() {
         {/* Кнопки: колонкой на мобильном */}
         <div className="w-full max-w-[385px] flex flex-col gap-2">
           <Link
-            href="/desktops"
+            href="/products"
             className="w-full h-14 rounded-full bg-[#2f3f3d] border border-[#2f3f3d] text-white font-bold text-base tracking-[0.02em] flex items-center justify-center"
           >
             {t('home.hero.orderButton')}
           </Link>
           <Link
-            href="/coming-soon"
+            href="/desktops"
             className="w-full h-14 rounded-full border-2 border-[#2f3f3d] text-[#2f3f3d] font-semibold text-base tracking-[0.02em] flex items-center justify-center"
           >
             {t('home.hero.bookButton')}
