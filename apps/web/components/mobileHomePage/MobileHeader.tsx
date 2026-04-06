@@ -12,8 +12,9 @@ import type { LanguageCode } from '../../lib/language';
 
 export function MobileHeader() {
   const pathname = usePathname();
-  const isDesktopHome = pathname === '/';
-  const isFigmaMobileHome = pathname === '/mobile';
+  /** Figma mobile home frame (node 93:286) — logo + Бронь + menu; matches `/` and `/mobile`. */
+  const isFigmaMobileHomeLayout = pathname === '/' || pathname === '/mobile';
+  const figmaHomeLogoHref = pathname === '/mobile' ? '/mobile' : '/';
   const { t } = useTranslation();
   const { isLoggedIn, logout } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -58,7 +59,7 @@ export function MobileHeader() {
   }, [closeMenu, closeSearch]);
 
   useEffect(() => {
-    if (isFigmaMobileHome) {
+    if (isFigmaMobileHomeLayout) {
       setHeaderVisible(true);
       return;
     }
@@ -73,54 +74,61 @@ export function MobileHeader() {
     lastScrollYRef.current = window.scrollY || document.documentElement.scrollTop || 0;
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isFigmaMobileHome]);
+  }, [isFigmaMobileHomeLayout]);
 
   return (
     <>
-      {isFigmaMobileHome ? (
-        <header className="sticky top-0 z-app-header flex items-center justify-between bg-[#2f3f3d] px-4 pb-4 pt-3 lg:hidden">
-          <Link href="/mobile" aria-label="Kovkasyan Plennica home">
-            <Image src="/assets/mobile-home/logo-kp2.png" alt="" width={75} height={55} priority />
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/desktops"
-              className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold text-white"
-            >
-              Бронь
+      {isFigmaMobileHomeLayout ? (
+        <header className="sticky top-0 z-app-header bg-[#2f3f3d] lg:hidden">
+          <div className="mx-auto flex w-full max-w-[375px] items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
+            <Link href={figmaHomeLogoHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
+              <Image
+                src="/assets/mobile-home/logo-kp2.png"
+                alt=""
+                width={150}
+                height={110}
+                className="h-[110px] w-[150px] object-contain object-left"
+                priority
+              />
             </Link>
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(true)}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-white"
-              aria-label={t('home.header.mobileMenu.ariaLabel')}
-              aria-expanded={isMenuOpen}
-            >
-              <span className="flex flex-col gap-1.5" aria-hidden>
-                <span className="block h-[2px] w-5 rounded-full bg-[#75bf5e]" />
-                <span className="block h-[2px] w-5 rounded-full bg-[#75bf5e]" />
-                <span className="block h-[2px] w-5 rounded-full bg-[#75bf5e]" />
-              </span>
-            </button>
+            <div className="flex shrink-0 items-center gap-[11px]">
+              <Link
+                href="/desktops"
+                className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
+              >
+                Бронь
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(true)}
+                className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white"
+                aria-label={t('home.header.mobileMenu.ariaLabel')}
+                aria-expanded={isMenuOpen}
+              >
+                <span className="flex flex-col gap-1.5" aria-hidden>
+                  <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+                  <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+                  <span className="block h-0.5 w-5 rounded-full bg-[#75bf5e]" />
+                </span>
+              </button>
+            </div>
           </div>
         </header>
       ) : (
         <header
-          className={`sticky top-0 z-app-header flex items-center justify-between gap-3 px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
-            isDesktopHome ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'
-          } ${headerVisible ? 'translate-y-0' : '-translate-y-full'}`}
+          className={`sticky top-0 z-app-header flex items-center justify-between gap-3 bg-[#2f3f3d] px-4 py-2.5 transition-transform duration-300 ease-out lg:hidden ${
+            headerVisible ? 'translate-y-0' : '-translate-y-full'
+          }`}
         >
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                isDesktopHome ? 'bg-[#2f3f3d]/10' : 'bg-white/15'
-              }`}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"
               aria-label={t('home.header.mobileMenu.ariaLabel')}
               aria-expanded={isMenuOpen}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDesktopHome ? '#2f3f3d' : '#ffffff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
                 <line x1="3" y1="18" x2="21" y2="18" />
@@ -129,24 +137,25 @@ export function MobileHeader() {
             <button
               type="button"
               onClick={() => setIsSearchOpen(true)}
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                isDesktopHome ? 'bg-[#2f3f3d]/10' : 'bg-white/15'
-              }`}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"
               aria-label={t('home.header.search.ariaLabel')}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDesktopHome ? '#2f3f3d' : '#ffffff'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
           </div>
-          <Link href="/login" className="flex h-10 w-[120px] shrink-0 items-center justify-center rounded-full border border-[#2f3f3d] bg-[#2f3f3d] text-sm font-bold tracking-[0.02em] text-white">
+          <Link
+            href="/login"
+            className="flex h-10 w-[120px] shrink-0 items-center justify-center rounded-full border border-white/35 bg-transparent text-sm font-bold tracking-[0.02em] text-white"
+          >
             {t('home.header.login')}
           </Link>
         </header>
       )}
 
-      {!isFigmaMobileHome && isSearchOpen && (
+      {!isFigmaMobileHomeLayout && isSearchOpen && (
         <div className="fixed inset-0 z-app-overlay lg:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.search.ariaLabel')}>
           <div className="absolute inset-0 bg-[#2f3f3d]/25 backdrop-blur-[2px]" onClick={closeSearch} aria-hidden />
           <div className="absolute inset-x-0 top-0 bg-[#ffe5c2]/85 p-4 pt-6 shadow-lg backdrop-blur-sm">
