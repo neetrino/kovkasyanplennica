@@ -147,7 +147,7 @@ export function MobileHomeReservationBlock() {
             {openMenu === 'time' ? (
               <ul
                 role="listbox"
-                className="absolute left-0 right-0 top-full z-[60] mt-1 max-h-56 overflow-y-auto rounded-2xl border border-black/10 bg-white py-1 shadow-lg"
+                className="absolute left-0 right-0 top-full z-[100] mt-1 max-h-[min(14rem,45vh)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-white py-1 shadow-xl"
               >
                 <li>
                   <button
@@ -196,7 +196,7 @@ export function MobileHomeReservationBlock() {
             {openMenu === 'guests' ? (
               <ul
                 role="listbox"
-                className="absolute left-0 right-0 top-full z-[60] mt-1 max-h-56 overflow-y-auto rounded-2xl border border-black/10 bg-white py-1 shadow-lg"
+                className="absolute bottom-full left-0 right-0 z-[100] mb-1 max-h-[min(22rem,55vh)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-white py-1 shadow-xl"
               >
                 {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                   <li key={n}>
