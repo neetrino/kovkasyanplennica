@@ -1,7 +1,8 @@
 import { HomePage } from '@/components/homePage/HomePage';
 import { MobileHomePage } from '@/components/mobileHomePage/MobileHomePage';
 
-export const dynamic = 'force-dynamic';
+/** ISR — home segment cache (aligned with products list freshness) */
+export const revalidate = 120;
 
 /**
  * Գլխավոր էջ — դեսկտոպում HomePage, մոբայլում (< md) MobileHomePage.

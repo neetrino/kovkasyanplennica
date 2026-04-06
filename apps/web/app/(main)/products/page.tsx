@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
 import { Suspense } from 'react';
+import { unstable_cache } from 'next/cache';
 import { getStoredLanguage } from '@/lib/language';
 import { t } from '@/lib/i18n';
+import type { ProductFilters } from '@/lib/services/products-find-query/types';
+import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
 import { CategoryNavigation } from '@/components/CategoryNavigation';
 import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
@@ -11,21 +13,37 @@ const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
 
 export const revalidate = PRODUCTS_LIST_REVALIDATE_SECONDS;
 
-/**
- * Absolute origin for server-side fetch (relative `/api/...` fails in Node).
- */
-async function getProductsListRequestOrigin(): Promise<string> {
-  const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host');
-  if (host) {
-    const proto = h.get('x-forwarded-proto') ?? 'http';
-    return `${proto}://${host}`;
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+function buildProductFilters(
+  page: number,
+  perPage: number,
+  language: string,
+  params: Record<string, string | undefined>
+): ProductFilters {
+  const minP = params.minPrice?.trim();
+  const maxP = params.maxPrice?.trim();
+  return {
+    page,
+    limit: perPage,
+    lang: language,
+    search: params.search?.trim() || undefined,
+    category: params.category?.trim() || undefined,
+    minPrice: minP ? parseFloat(minP) : undefined,
+    maxPrice: maxP ? parseFloat(maxP) : undefined,
+    colors: params.colors?.trim() || undefined,
+    sizes: params.sizes?.trim() || undefined,
+    brand: params.brand?.trim() || undefined,
+    sort: params.sort?.trim() || 'createdAt',
+  };
 }
+
+const fetchProductsCached = unstable_cache(
+  async (filterKey: string) => {
+    const filters = JSON.parse(filterKey) as ProductFilters;
+    return productsService.findAll(filters);
+  },
+  ['main-products-list'],
+  { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['products-list'] }
+);
 
 interface ProductCategory {
   id: string;
@@ -68,72 +86,65 @@ interface ProductsResponse {
 }
 
 /**
- * Fetch products via internal API with Next.js Data Cache (revalidate + tag).
+ * Load products via service (no HTTP self-fetch) + Data Cache via `unstable_cache`.
  */
 async function getProducts(
   page: number = 1,
-  search?: string,
-  category?: string,
-  minPrice?: string,
-  maxPrice?: string,
-  colors?: string,
-  sizes?: string,
-  brand?: string,
+  search: string | undefined,
+  category: string | undefined,
+  minPrice: string | undefined,
+  maxPrice: string | undefined,
+  colors: string | undefined,
+  sizes: string | undefined,
+  brand: string | undefined,
+  sort: string | undefined,
   limit: number = 24
 ): Promise<ProductsResponse> {
   try {
     const language = getStoredLanguage();
-    const q = new URLSearchParams();
-    q.set('page', String(page));
-    q.set('limit', String(limit));
-    q.set('lang', language);
-    const s = search?.trim();
-    if (s) q.set('search', s);
-    const c = category?.trim();
-    if (c) q.set('category', c);
-    const minP = minPrice?.trim();
-    if (minP) q.set('minPrice', minP);
-    const maxP = maxPrice?.trim();
-    if (maxP) q.set('maxPrice', maxP);
-    const col = colors?.trim();
-    if (col) q.set('colors', col);
-    const sz = sizes?.trim();
-    if (sz) q.set('sizes', sz);
-    const br = brand?.trim();
-    if (br) q.set('brand', br);
-
-    const origin = await getProductsListRequestOrigin();
-    const res = await fetch(`${origin}/api/v1/products?${q.toString()}`, {
-      next: {
-        revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS,
-        tags: ['products-list'],
-      },
-    });
-
-    if (!res.ok) {
-      return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
-    }
-
-    const result = (await res.json()) as ProductsResponse;
+    const params: Record<string, string | undefined> = {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      colors,
+      sizes,
+      brand,
+      sort,
+    };
+    const filters = buildProductFilters(page, limit, language, params);
+    const result = await fetchProductsCached(JSON.stringify(filters));
 
     if (!result.data || !Array.isArray(result.data)) {
       return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
     }
 
-    return result;
+    return result as ProductsResponse;
   } catch (e) {
     console.error("❌ PRODUCT ERROR", e);
     return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
   }
 }
 
+function firstParam(
+  value: string | string[] | undefined
+): string | undefined {
+  if (value === undefined) return undefined;
+  const v = Array.isArray(value) ? value[0] : value;
+  return v;
+}
+
+type ProductsPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
 /**
  * PAGE
  */
-export default async function ProductsPage({ searchParams }: any) {
-  const params = searchParams ? await searchParams : {};
-  const page = parseInt(params?.page || "1", 10);
-  const limitParam = params?.limit?.toString().trim();
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const raw = searchParams ? await searchParams : {};
+  const page = parseInt(firstParam(raw.page) ?? '1', 10);
+  const limitParam = firstParam(raw.limit)?.trim();
   const parsedLimit = limitParam && !Number.isNaN(parseInt(limitParam, 10))
     ? parseInt(limitParam, 10)
     : null;
@@ -145,15 +156,29 @@ export default async function ProductsPage({ searchParams }: any) {
 
   const productsData = await getProducts(
     page,
-    params?.search,
-    params?.category,
-    params?.minPrice,
-    params?.maxPrice,
-    params?.colors,
-    params?.sizes,
-    params?.brand,
+    firstParam(raw.search),
+    firstParam(raw.category),
+    firstParam(raw.minPrice),
+    firstParam(raw.maxPrice),
+    firstParam(raw.colors),
+    firstParam(raw.sizes),
+    firstParam(raw.brand),
+    firstParam(raw.sort),
     perPage
   );
+
+  const params = {
+    page: firstParam(raw.page),
+    search: firstParam(raw.search),
+    category: firstParam(raw.category),
+    minPrice: firstParam(raw.minPrice),
+    maxPrice: firstParam(raw.maxPrice),
+    colors: firstParam(raw.colors),
+    sizes: firstParam(raw.sizes),
+    brand: firstParam(raw.brand),
+    sort: firstParam(raw.sort),
+    limit: firstParam(raw.limit),
+  };
 
   // ------------------------------------
   // 🔧 FIX: normalize products 
@@ -209,8 +234,10 @@ export default async function ProductsPage({ searchParams }: any) {
     const q = new URLSearchParams();
     q.set("page", num.toString());
     if (perPage !== 9999) q.set("limit", perPage.toString());
-    Object.entries(params).forEach(([k, v]) => {
-      if (k !== "page" && k !== "limit" && v && typeof v === "string") q.set(k, v);
+    Object.entries(raw).forEach(([k, v]) => {
+      if (k === "page" || k === "limit") return;
+      const s = Array.isArray(v) ? v[0] : v;
+      if (s && typeof s === "string") q.set(k, s);
     });
     return `/products?${q.toString()}`;
   };
@@ -268,7 +295,7 @@ export default async function ProductsPage({ searchParams }: any) {
                     {t(language, 'products.categoryRowTitle').replace('{number}', String(index + 1))}
                   </h2>
                   {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
-                  <ProductsCategoryCarousel products={row.products} sortBy={params?.sort || "default"} minVisibleCards={2} />
+                  <ProductsCategoryCarousel products={row.products} sortBy={params.sort || "default"} minVisibleCards={2} />
                 </section>
               ))}
 

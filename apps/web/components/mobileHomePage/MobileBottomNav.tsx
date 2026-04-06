@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchCart } from '@/app/(main)/cart/cart-fetcher';
 import type { Cart } from '@/app/(main)/cart/types';
@@ -14,9 +14,12 @@ import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
  * Mobile bottom navigation — Figma (nav-surface, chef FAB, icons).
  * Shown on all routes under the main layout (lg:hidden).
  */
+const PREFETCH_ROUTES = ['/', '/mobile', '/products', '/cart', '/profile'] as const;
+
 export function MobileBottomNav() {
   const { t } = useTranslation();
   const { isLoggedIn } = useAuth();
+  const router = useRouter();
   const pathname = usePathname() ?? '';
   const homeHref = pathname === '/mobile' ? '/mobile' : '/';
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -45,6 +48,12 @@ export function MobileBottomNav() {
     };
   }, [isLoggedIn, t]);
 
+  useEffect(() => {
+    for (const route of PREFETCH_ROUTES) {
+      router.prefetch(route);
+    }
+  }, [router]);
+
   const isHomeActive = pathname === '/' || pathname === '/mobile';
   const isSearchActive =
     isSearchOpen || pathname === '/search' || pathname.startsWith('/search/');
@@ -68,6 +77,7 @@ export function MobileBottomNav() {
         </div>
         <Link
           href="/products"
+          prefetch
           aria-label={t('home.header.navigation.delivery')}
           aria-current={isProductsActive ? 'page' : undefined}
           className={`absolute left-1/2 top-5 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)] transition-opacity hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#75bf5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f3f3d] ${
@@ -77,7 +87,7 @@ export function MobileBottomNav() {
           <Image src="/assets/mobile-home/nav-chef.svg" alt="" width={24} height={24} aria-hidden />
         </Link>
         <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
-          <Link href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
+          <Link prefetch href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
             <Image
               src={isHomeActive ? '/assets/mobile-home/nav-home-active.svg' : '/assets/mobile-home/nav-home.svg'}
               alt=""
@@ -101,6 +111,7 @@ export function MobileBottomNav() {
           </button>
           <span className="h-12 w-12" aria-hidden />
           <Link
+            prefetch
             href="/cart"
             aria-label={
               cartItemCount > 0
@@ -121,7 +132,7 @@ export function MobileBottomNav() {
               </span>
             )}
           </Link>
-          <Link href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
+          <Link prefetch href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
             <Image
               src={isProfileActive ? '/assets/mobile-home/nav-profile-active.svg' : '/assets/mobile-home/nav-profile.svg'}
               alt=""
