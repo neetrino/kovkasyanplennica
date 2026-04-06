@@ -121,6 +121,7 @@ export function ProductsGrid({ products, sortBy = 'default', gridLayout = 'defau
           }} 
           viewMode={effectiveViewMode}
           compactHeight={compactHeight}
+          largeCompactImage={compactHeight}
         />
       ))}
     </div>
