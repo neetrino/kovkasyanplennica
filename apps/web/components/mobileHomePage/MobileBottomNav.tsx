@@ -9,6 +9,7 @@ import type { Cart } from '@/app/(main)/cart/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '../../lib/i18n-client';
 import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
+import { NavCartIcon, NavHomeIcon, NavProfileIcon, NavSearchIcon } from './MobileBottomNavIcons';
 
 /**
  * Mobile bottom navigation — Figma (nav-surface, chef FAB, icons).
@@ -88,12 +89,7 @@ export function MobileBottomNav() {
         </Link>
         <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
           <Link prefetch href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
-            <Image
-              src={isHomeActive ? '/assets/mobile-home/nav-home-active.svg' : '/assets/mobile-home/nav-home.svg'}
-              alt=""
-              width={24}
-              height={24}
-            />
+            <NavHomeIcon active={isHomeActive} />
           </Link>
           <button
             type="button"
@@ -102,12 +98,7 @@ export function MobileBottomNav() {
             aria-expanded={isSearchOpen}
             className="flex h-12 w-12 items-center justify-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F3F3D]/40"
           >
-            <Image
-              src={isSearchActive ? '/assets/mobile-home/nav-search-active.svg' : '/assets/mobile-home/nav-search.svg'}
-              alt=""
-              width={24}
-              height={24}
-            />
+            <NavSearchIcon active={isSearchActive} />
           </button>
           <span className="h-12 w-12" aria-hidden />
           <Link
@@ -120,12 +111,7 @@ export function MobileBottomNav() {
             }
             className="relative flex h-12 w-12 items-center justify-center"
           >
-            <Image
-              src={isCartActive ? '/assets/mobile-home/nav-cart-active.svg' : '/assets/mobile-home/nav-cart.svg'}
-              alt=""
-              width={24}
-              height={24}
-            />
+            <NavCartIcon active={isCartActive} />
             {cartItemCount > 0 && (
               <span className="pointer-events-none absolute -right-0.5 -top-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#C62828] px-1 text-[10px] font-bold leading-none text-white">
                 {cartItemCount > 99 ? '99+' : cartItemCount}
@@ -133,12 +119,7 @@ export function MobileBottomNav() {
             )}
           </Link>
           <Link prefetch href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
-            <Image
-              src={isProfileActive ? '/assets/mobile-home/nav-profile-active.svg' : '/assets/mobile-home/nav-profile.svg'}
-              alt=""
-              width={24}
-              height={24}
-            />
+            <NavProfileIcon active={isProfileActive} />
           </Link>
         </div>
       </div>
