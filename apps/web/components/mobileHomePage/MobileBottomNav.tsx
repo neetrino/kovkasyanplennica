@@ -15,17 +15,28 @@ import styles from './MobileBottomNav.module.css';
 export function MobileBottomNav() {
   const { t } = useTranslation();
   const pathname = usePathname();
+  const useFigmaMobileNav = pathname === '/' || pathname === '/mobile';
+  const homeHref = pathname === '/mobile' ? '/mobile' : '/';
 
-  if (pathname === '/mobile') {
+  if (useFigmaMobileNav) {
     return (
       <div className="fixed inset-x-0 bottom-0 z-50 mx-auto block w-full max-w-[375px] lg:hidden">
-        <div className="relative h-[115px]">
-          <div className="absolute inset-x-0 bottom-0 h-[83px] rounded-t-[28px] bg-white shadow-[0_-10px_40px_rgba(149,168,195,0.15)]" />
-          <div className="absolute left-1/2 top-0 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)]">
+        <div className="relative h-[162px]">
+          <div className="absolute inset-x-0 bottom-0 h-[128px] overflow-hidden ">
+            <Image
+              src="/assets/mobile-home/nav-surface.svg"
+              alt=""
+              fill
+              priority
+              aria-hidden
+              className="object-fill bg-transparent"
+            />
+          </div>
+          <div className="absolute left-1/2 top-5 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)]">
             <Image src="/assets/mobile-home/nav-chef.svg" alt="" width={20} height={20} aria-hidden />
           </div>
           <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
-            <Link href="/mobile" aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
+            <Link href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
               <Image src="/assets/mobile-home/nav-home.svg" alt="" width={24} height={24} />
             </Link>
             <Link href="/search" aria-label={t('common.buttons.search')} className="flex h-12 w-12 items-center justify-center">
@@ -39,7 +50,6 @@ export function MobileBottomNav() {
               <Image src="/assets/mobile-home/nav-profile.svg" alt="" width={24} height={24} />
             </Link>
           </div>
-          <div className="absolute bottom-[8px] left-1/2 h-[5px] w-[134px] -translate-x-1/2 rounded-full bg-[#c6e3e5]" />
         </div>
       </div>
     );

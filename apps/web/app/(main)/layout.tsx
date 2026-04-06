@@ -20,7 +20,7 @@ export default function MainLayout({
         <div
           id={APP_SCROLL_REGION_DOM_ID}
           data-app-scroll-region
-          className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#2f3f3d] lg:bg-transparent pb-24 lg:pb-0"
+          className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#2f3f3d] lg:bg-transparent pb-[172px] lg:pb-0"
         >
           <div className="relative z-app-header hidden min-h-[106px] shrink-0 lg:block">
             <Header />
