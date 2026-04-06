@@ -20,6 +20,19 @@ function buildDesktopsHref(date: string, time: string, guestCount: string): stri
   return s ? `/desktops?${s}` : '/desktops';
 }
 
+function triggerNativeDatePicker(input: HTMLInputElement | null): void {
+  if (!input) return;
+  try {
+    if (typeof input.showPicker === 'function') {
+      input.showPicker();
+      return;
+    }
+  } catch {
+    // fall through to click()
+  }
+  input.click();
+}
+
 export function MobileHomeReservationBlock() {
   const { t } = useTranslation();
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -51,21 +64,6 @@ export function MobileHomeReservationBlock() {
     };
   }, [openMenu]);
 
-  function openDatePicker() {
-    const el = dateInputRef.current;
-    if (!el) return;
-    try {
-      if (typeof el.showPicker === 'function') {
-        void el.showPicker();
-        return;
-      }
-    } catch {
-      // ignore
-    }
-    el.focus();
-    el.click();
-  }
-
   const dateLabel =
     date.length > 0
       ? new Date(`${date}T12:00:00`).toLocaleDateString('ru-RU', {
@@ -85,14 +83,30 @@ export function MobileHomeReservationBlock() {
           {t('desktops.modal.homeCardTitle')}
         </h2>
         <div className="space-y-[19px]">
-          <label
-            htmlFor="mobile-home-reserve-date"
-            className="relative flex h-12 w-full cursor-pointer items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px]"
-            onClick={(e) => {
-              e.preventDefault();
-              openDatePicker();
-            }}
-          >
+          <div className="relative flex h-12 w-full items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px]">
+            <div className="pointer-events-none flex min-w-0 flex-1 items-center">
+              <Image
+                src="/assets/mobile-home/reserve-calendar.svg"
+                alt=""
+                width={16}
+                height={16}
+                className="shrink-0"
+                aria-hidden
+              />
+              <span
+                className={`ml-3 flex-1 truncate ${date ? 'text-[#0a2533]' : 'text-[#909090]'}`}
+              >
+                {dateLabel || '\u00a0'}
+              </span>
+              <Image
+                src="/assets/mobile-home/reserve-chevron.svg"
+                alt=""
+                width={21}
+                height={21}
+                className="shrink-0"
+                aria-hidden
+              />
+            </div>
             <input
               ref={dateInputRef}
               id="mobile-home-reserve-date"
@@ -100,30 +114,19 @@ export function MobileHomeReservationBlock() {
               value={date}
               min={minDate}
               onChange={(e) => setDate(e.target.value)}
-              className="pointer-events-none absolute inset-0 z-[1] h-full w-full cursor-pointer rounded-[40px] border-0 opacity-0 outline-none"
-            />
-            <Image
-              src="/assets/mobile-home/reserve-calendar.svg"
-              alt=""
-              width={16}
-              height={16}
-              className="relative z-[2] shrink-0"
+              tabIndex={-1}
+              className="sr-only"
               aria-hidden
             />
-            <span
-              className={`relative z-[2] ml-3 flex-1 truncate ${date ? 'text-[#0a2533]' : 'text-[#909090]'}`}
-            >
-              {dateLabel || '\u00a0'}
-            </span>
-            <Image
-              src="/assets/mobile-home/reserve-chevron.svg"
-              alt=""
-              width={21}
-              height={21}
-              className="relative z-[2] shrink-0"
-              aria-hidden
+            <button
+              type="button"
+              className="absolute inset-0 z-10 cursor-pointer rounded-[40px] border-0 bg-transparent p-0 [-webkit-tap-highlight-color:transparent]"
+              aria-label={t('desktops.modal.date')}
+              onClick={() => {
+                triggerNativeDatePicker(dateInputRef.current);
+              }}
             />
-          </label>
+          </div>
 
           <div ref={timeRootRef} className="relative">
             <button
@@ -144,7 +147,7 @@ export function MobileHomeReservationBlock() {
             {openMenu === 'time' ? (
               <ul
                 role="listbox"
-                className="absolute left-0 right-0 top-full z-[60] mt-1 max-h-56 overflow-y-auto rounded-2xl border border-black/10 bg-white py-1 shadow-lg"
+                className="absolute left-0 right-0 top-full z-[100] mt-1 max-h-[min(14rem,45vh)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-white py-1 shadow-xl"
               >
                 <li>
                   <button
@@ -193,7 +196,7 @@ export function MobileHomeReservationBlock() {
             {openMenu === 'guests' ? (
               <ul
                 role="listbox"
-                className="absolute left-0 right-0 top-full z-[60] mt-1 max-h-56 overflow-y-auto rounded-2xl border border-black/10 bg-white py-1 shadow-lg"
+                className="absolute bottom-full left-0 right-0 z-[100] mb-1 max-h-[min(22rem,55vh)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-white py-1 shadow-xl"
               >
                 {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                   <li key={n}>

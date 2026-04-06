@@ -219,7 +219,7 @@ export function Footer() {
                 {t('home.footer.bottomLinks.copyright')}
               </a>
               <Link
-                href="/delivery"
+                href="/coming-soon"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
               >
                 {t('home.footer.bottomLinks.deliveryPolicy')}
@@ -237,7 +237,7 @@ export function Footer() {
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
               <Link
-                href="/terms#public-offer"
+                href="/coming-soon"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
               >
                 {t('home.footer.bottomLinks.publicOffer')}

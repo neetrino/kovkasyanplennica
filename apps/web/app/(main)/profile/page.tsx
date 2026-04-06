@@ -200,7 +200,6 @@ function ProfilePageContent() {
               ordersPage={ordersPage}
               setOrdersPage={setOrdersPage}
               ordersMeta={ordersMeta}
-              currency={currency}
               onOrderClick={handleOrderClick}
               t={t}
             />

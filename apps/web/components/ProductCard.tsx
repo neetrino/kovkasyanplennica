@@ -42,13 +42,22 @@ interface ProductCardProps {
   largeSize?: boolean;
   /** 1024+ էկրաններում ավելի մեծ height (products carousel) */
   largeHeightOnDesktop?: boolean;
+  /** Products page mobile — ավելի մեծ կլոր պատկեր compact ռեժիմում */
+  largeCompactImage?: boolean;
 }
 
 /**
  * Product card component with Cart action
  * Displays product image, title, category, price and add to cart button
  */
-export function ProductCard({ product, viewMode = 'grid-3', compactHeight = false, largeSize = false, largeHeightOnDesktop = false }: ProductCardProps) {
+export function ProductCard({
+  product,
+  viewMode = 'grid-3',
+  compactHeight = false,
+  largeSize = false,
+  largeHeightOnDesktop = false,
+  largeCompactImage = false,
+}: ProductCardProps) {
   const isCompact = viewMode === 'grid-3';
   const currency = useCurrency();
   const { isAddingToCart, addToCart } = useAddToCart({
@@ -93,6 +102,7 @@ export function ProductCard({ product, viewMode = 'grid-3', compactHeight = fals
       compactHeight={compactHeight}
       largeSize={largeSize}
       largeHeightOnDesktop={largeHeightOnDesktop}
+      largeCompactImage={largeCompactImage}
       onImageError={() => setImageError(true)}
       onAddToCart={handleAddToCart}
     />

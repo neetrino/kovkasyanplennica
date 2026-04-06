@@ -31,6 +31,8 @@ interface ProductCardGridProps {
   largeSize?: boolean;
   /** 1024+ էկրաններում ավելի մեծ height (products carousel) */
   largeHeightOnDesktop?: boolean;
+  /** Products page mobile — մեծ կլոր պատկեր */
+  largeCompactImage?: boolean;
   onImageError: () => void;
   onAddToCart: (e: MouseEvent) => void;
 }
@@ -47,16 +49,21 @@ export function ProductCardGrid({
   compactHeight = false,
   largeSize = false,
   largeHeightOnDesktop = false,
+  largeCompactImage = false,
   onImageError,
   onAddToCart,
 }: ProductCardGridProps) {
+  const imageSizesAttr = largeCompactImage && compactHeight ? 'min(60vw, 280px)' : '223px';
+
   return (
     <div
       className={`relative bg-white rounded-[35px] shadow-[15px_15px_15px_0px_rgba(0,0,0,0.08)] overflow-visible group flex flex-col h-full w-full ${
         compactHeight
           ? largeHeightOnDesktop
             ? 'min-h-[180px] lg:min-h-[280px]'
-            : 'min-h-[180px]'
+            : largeCompactImage
+              ? 'min-h-[172px]'
+              : 'min-h-[180px]'
           : largeSize
             ? 'min-h-[320px]'
             : 'min-h-[240px]'
@@ -64,11 +71,13 @@ export function ProductCardGrid({
     >
       {/* Product Image - Circular plate at top, half outside card, half inside */}
       <div
-        className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 ${
+        className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[50%] aspect-square z-10 origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-20 ${
           compactHeight
             ? largeHeightOnDesktop
               ? 'w-[45%] lg:w-[52%]'
-              : 'w-[45%]'
+              : largeCompactImage
+                ? 'w-[58%]'
+                : 'w-[45%]'
             : largeSize
               ? 'w-[58%]'
               : 'w-[50%]'
@@ -83,8 +92,8 @@ export function ProductCardGrid({
               src={product.image}
               alt={product.title}
               fill
-              className="object-cover rounded-full"
-              sizes="223px"
+              className="object-cover rounded-full transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
+              sizes={imageSizesAttr}
               unoptimized
               onError={onImageError}
             />
@@ -104,7 +113,9 @@ export function ProductCardGrid({
           compactHeight
             ? largeHeightOnDesktop
               ? 'pt-[14%] pb-[4%] lg:pt-[18%] lg:pb-[8%]'
-              : 'pt-[14%] pb-[4%]'
+              : largeCompactImage
+                ? 'pt-[20%] pb-[4%]'
+                : 'pt-[14%] pb-[4%]'
             : largeSize
               ? 'pt-[20%] pb-[10%]'
               : 'pt-[18%] pb-[8%]'
@@ -126,6 +137,7 @@ export function ProductCardGrid({
           compactHeight={compactHeight}
           largeSize={largeSize}
           largeHeightOnDesktop={largeHeightOnDesktop}
+          largeCompactImage={largeCompactImage}
           inStock={product.inStock}
           isAddingToCart={isAddingToCart}
           onAddToCart={onAddToCart}

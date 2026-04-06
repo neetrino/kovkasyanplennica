@@ -6,9 +6,6 @@ import { Footer } from '@/components/Footer';
 import { MobileBottomNav } from '@/components/mobileHomePage/MobileBottomNav';
 import { MobileHeader } from '@/components/mobileHomePage/MobileHeader';
 
-/** Avoid static prerender so client hooks (useContext) do not run in build workers. */
-export const dynamic = 'force-dynamic';
-
 export default function MainLayout({
   children,
 }: {

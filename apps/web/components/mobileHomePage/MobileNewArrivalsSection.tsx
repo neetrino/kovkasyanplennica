@@ -8,15 +8,18 @@ const NEW_ARRIVALS_LIMIT = 12;
 const CAROUSEL_ROW =
   '-mr-4 flex gap-4 overflow-x-auto pr-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
 
-/** Prefer `filter: new` (last 30 days); if none, show latest products. List API has no kcal/prep — same placeholders as before. */
-const DEFAULT_CALORIES_LABEL = '120 Ккал';
-const DEFAULT_DURATION_LABEL = '20 Мин';
-
+/** Prefer `filter: new` (last 30 days); if none, show latest products. */
 type ListProduct = {
   id: string;
   slug: string;
   title: string;
   image: string | null;
+  price: number;
+  defaultVariantId: string | null;
+  inStock: boolean;
+  stock: number;
+  originalPrice: number | null;
+  compareAtPrice: number | null;
 };
 
 async function getNewArrivalsProducts(limit: number): Promise<ListProduct[]> {
@@ -33,12 +36,31 @@ async function getNewArrivalsProducts(limit: number): Promise<ListProduct[]> {
       const latest = await productsService.findAll({ page: 1, limit, lang });
       rows = latest.data && Array.isArray(latest.data) ? latest.data : [];
     }
-    return rows.map((p: { id: unknown; slug?: unknown; title?: unknown; image?: string | null }) => ({
-      id: String(p.id),
-      slug: String(p.slug ?? ''),
-      title: String(p.title ?? ''),
-      image: p.image ?? null,
-    }));
+    return rows.map(
+      (p: {
+        id: unknown;
+        slug?: unknown;
+        title?: unknown;
+        image?: string | null;
+        price?: unknown;
+        defaultVariantId?: string | null;
+        stock?: unknown;
+        inStock?: unknown;
+        originalPrice?: number | null;
+        compareAtPrice?: number | null;
+      }) => ({
+        id: String(p.id),
+        slug: String(p.slug ?? ''),
+        title: String(p.title ?? ''),
+        image: p.image ?? null,
+        price: typeof p.price === 'number' && !Number.isNaN(p.price) ? p.price : 0,
+        defaultVariantId: p.defaultVariantId ?? null,
+        stock: typeof p.stock === 'number' && !Number.isNaN(p.stock) ? p.stock : 0,
+        inStock: Boolean(p.inStock),
+        originalPrice: p.originalPrice ?? null,
+        compareAtPrice: p.compareAtPrice ?? null,
+      }),
+    );
   } catch {
     return [];
   }
@@ -68,11 +90,16 @@ export async function MobileNewArrivalsSection() {
             {firstRow.map((product) => (
               <MobileRecipeProductCard
                 key={product.id}
+                id={product.id}
                 slug={product.slug}
                 title={product.title}
                 imageSrc={product.image}
-                caloriesLabel={DEFAULT_CALORIES_LABEL}
-                durationLabel={DEFAULT_DURATION_LABEL}
+                price={product.price}
+                defaultVariantId={product.defaultVariantId}
+                inStock={product.inStock}
+                stock={product.stock}
+                originalPrice={product.originalPrice}
+                compareAtPrice={product.compareAtPrice}
               />
             ))}
           </div>
@@ -81,11 +108,16 @@ export async function MobileNewArrivalsSection() {
               {secondRow.map((product) => (
                 <MobileRecipeProductCard
                   key={product.id}
+                  id={product.id}
                   slug={product.slug}
                   title={product.title}
                   imageSrc={product.image}
-                  caloriesLabel={DEFAULT_CALORIES_LABEL}
-                  durationLabel={DEFAULT_DURATION_LABEL}
+                  price={product.price}
+                  defaultVariantId={product.defaultVariantId}
+                  inStock={product.inStock}
+                  stock={product.stock}
+                  originalPrice={product.originalPrice}
+                  compareAtPrice={product.compareAtPrice}
                 />
               ))}
             </div>
