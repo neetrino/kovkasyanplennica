@@ -3,6 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { fetchCart } from '@/app/(main)/cart/cart-fetcher';
+import type { Cart } from '@/app/(main)/cart/types';
+import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '../../lib/i18n-client';
 
 /**
@@ -11,8 +15,32 @@ import { useTranslation } from '../../lib/i18n-client';
  */
 export function MobileBottomNav() {
   const { t } = useTranslation();
+  const { isLoggedIn } = useAuth();
   const pathname = usePathname() ?? '';
   const homeHref = pathname === '/mobile' ? '/mobile' : '/';
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  useEffect(() => {
+    const loadCount = async () => {
+      try {
+        const cart: Cart | null = await fetchCart(isLoggedIn, t);
+        setCartItemCount(cart?.itemsCount ?? 0);
+      } catch {
+        setCartItemCount(0);
+      }
+    };
+
+    loadCount();
+    const onCartOrAuth = () => {
+      void loadCount();
+    };
+    window.addEventListener('cart-updated', onCartOrAuth);
+    window.addEventListener('auth-updated', onCartOrAuth);
+    return () => {
+      window.removeEventListener('cart-updated', onCartOrAuth);
+      window.removeEventListener('auth-updated', onCartOrAuth);
+    };
+  }, [isLoggedIn, t]);
 
   const isHomeActive = pathname === '/' || pathname === '/mobile';
   const isSearchActive = pathname === '/search' || pathname.startsWith('/search/');
@@ -53,13 +81,26 @@ export function MobileBottomNav() {
             />
           </Link>
           <span className="h-12 w-12" aria-hidden />
-          <Link href="/cart" aria-label={t('common.navigation.cart')} className="flex h-12 w-12 items-center justify-center">
+          <Link
+            href="/cart"
+            aria-label={
+              cartItemCount > 0
+                ? `${t('common.navigation.cart')}, ${cartItemCount}`
+                : t('common.navigation.cart')
+            }
+            className="relative flex h-12 w-12 items-center justify-center"
+          >
             <Image
               src={isCartActive ? '/assets/mobile-home/nav-cart-active.svg' : '/assets/mobile-home/nav-cart.svg'}
               alt=""
               width={24}
               height={24}
             />
+            {cartItemCount > 0 && (
+              <span className="pointer-events-none absolute -right-0.5 -top-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#C62828] px-1 text-[10px] font-bold leading-none text-white">
+                {cartItemCount > 99 ? '99+' : cartItemCount}
+              </span>
+            )}
           </Link>
           <Link href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
             <Image
