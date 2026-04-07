@@ -2,77 +2,41 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface CategoryScrollButtonsProps {
-  canScrollLeft: boolean;
-  canScrollRight: boolean;
-  onScrollLeft: () => void;
-  onScrollRight: () => void;
-  t: (path: string) => string;
+interface CategoryEdgeScrollButtonProps {
+  direction: 'left' | 'right';
+  canScroll: boolean;
+  onPress: () => void;
+  label: string;
 }
 
 /**
- * Scroll navigation buttons for category carousel
+ * Chevron for category row — inline (not overlay) so the scroll strip keeps full touch target.
  */
-export function CategoryScrollButtons({
-  canScrollLeft,
-  canScrollRight,
-  onScrollLeft,
-  onScrollRight,
-  t,
-}: CategoryScrollButtonsProps) {
-  return (
-    <>
-      {/* Left arrow */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.info('[CategoryNavigation] Left arrow clicked, canScrollLeft:', canScrollLeft);
-          if (canScrollLeft) {
-            onScrollLeft();
-          }
-        }}
-        disabled={!canScrollLeft}
-        className={`flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-8 md:-translate-x-12 z-10 w-12 h-12 items-center justify-center bg-transparent hover:bg-transparent transition-all ${
-          canScrollLeft 
-            ? 'text-white hover:scale-110 cursor-pointer' 
-            : 'text-gray-500 cursor-not-allowed opacity-50'
-        }`}
-        aria-label={t('products.categoryNavigation.scrollLeft')}
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
+export function CategoryEdgeScrollButton({
+  direction,
+  canScroll,
+  onPress,
+  label,
+}: CategoryEdgeScrollButtonProps) {
+  const Icon = direction === 'left' ? ChevronLeft : ChevronRight;
 
-      {/* Right arrow */}
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.info('[CategoryNavigation] Right arrow clicked, canScrollRight:', canScrollRight);
-          if (canScrollRight) {
-            onScrollRight();
-          }
-        }}
-        disabled={!canScrollRight}
-        className={`flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-8 md:translate-x-12 z-10 w-12 h-12 items-center justify-center bg-transparent hover:bg-transparent transition-all ${
-          canScrollRight 
-            ? 'text-white hover:scale-110 cursor-pointer' 
-            : 'text-gray-500 cursor-not-allowed opacity-50'
-        }`}
-        aria-label={t('products.categoryNavigation.scrollRight')}
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
-    </>
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (canScroll) onPress();
+      }}
+      disabled={!canScroll}
+      className={`shrink-0 flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center rounded-md transition-all ${
+        canScroll
+          ? 'text-white hover:bg-white/10 cursor-pointer'
+          : 'text-gray-500 cursor-not-allowed opacity-40'
+      }`}
+      aria-label={label}
+    >
+      <Icon className="w-6 h-6" aria-hidden />
+    </button>
   );
 }
-
-
-
-
-
-
-
-

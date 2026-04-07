@@ -12,15 +12,12 @@ interface Product {
   image: string | null;
 }
 
-interface ProductsResponse {
-  data: Product[];
-  meta: {
-    total: number;
-  };
+interface NavPreviewsResponse {
+  data: Record<string, Product | null>;
 }
 
 /**
- * Hook for fetching first product with image for each category
+ * Fetches one preview product per visible category chip via a single lightweight API (not N× full `/products` list).
  */
 export function useCategoryProducts(categories: Category[], t: (path: string) => string) {
   const [categoryProducts, setCategoryProducts] = useState<Record<string, Product | null>>({});
@@ -36,44 +33,24 @@ export function useCategoryProducts(categories: Category[], t: (path: string) =>
       try {
         setLoading(true);
         const language = getStoredLanguage();
-        const products: Record<string, Product | null> = {};
-        
+
         const allCategoriesWithAll = [
           { id: 'all', slug: 'all', title: t('products.categoryNavigation.all'), fullPath: 'all', children: [] } as Category,
           ...categories
         ];
 
-        /** Only chips visible in the nav — avoid N parallel `/products` calls for the whole tree */
         const categoriesToPreview = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
+        const slugs = categoriesToPreview.map((c) => c.slug).join(',');
 
-        const categoryPromises = categoriesToPreview.map(async (category) => {
-          try {
-            const params: Record<string, string> = {
-              limit: '3',
-              lang: language,
-            };
-            if (category.slug !== 'all') {
-              params.category = category.slug;
-            }
+        const response = await apiClient.get<NavPreviewsResponse>(
+          '/api/v1/products/category-nav-previews',
+          { params: { lang: language, slugs } }
+        );
 
-            const productsResponse = await apiClient.get<ProductsResponse>('/api/v1/products', {
-              params,
-            });
-
-            const productWithImage = productsResponse.data && productsResponse.data.length > 0
-              ? (productsResponse.data.find(p => p.image) || productsResponse.data[0] || null)
-              : null;
-            products[category.slug] = productWithImage;
-          } catch (err) {
-            console.error(`❌ [CategoryNavigation] Error fetching product for category ${category.slug}:`, err);
-            products[category.slug] = null;
-          }
-        });
-
-        await Promise.all(categoryPromises);
-        setCategoryProducts(products);
+        setCategoryProducts(response.data ?? {});
       } catch (err) {
-        console.error('Error fetching category products:', err);
+        console.error('Error fetching category nav previews:', err);
+        setCategoryProducts({});
       } finally {
         setLoading(false);
       }
@@ -84,11 +61,3 @@ export function useCategoryProducts(categories: Category[], t: (path: string) =>
 
   return { categoryProducts, loading };
 }
-
-
-
-
-
-
-
-
