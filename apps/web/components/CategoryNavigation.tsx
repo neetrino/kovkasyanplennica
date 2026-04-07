@@ -7,7 +7,7 @@ import { useCategories } from './CategoryNavigation/hooks/useCategories';
 import { useCategoryProducts } from './CategoryNavigation/hooks/useCategoryProducts';
 import { useCategoryScroll } from './CategoryNavigation/hooks/useCategoryScroll';
 import { CategoryItem } from './CategoryNavigation/CategoryItem';
-import { CategoryScrollButtons } from './CategoryNavigation/CategoryScrollButtons';
+import { CategoryEdgeScrollButton } from './CategoryNavigation/CategoryScrollButtons';
 import { CategoryNavigationLoading } from './CategoryNavigation/CategoryNavigationLoading';
 import { CATEGORY_NAV_VISIBLE_COUNT, type Category } from './CategoryNavigation/utils';
 
@@ -66,18 +66,17 @@ function CategoryNavigationContent() {
   return (
     <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-3 sm:py-4 md:py-6 w-full">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
-        <div className="relative">
-          <CategoryScrollButtons
-            canScrollLeft={canScrollLeft}
-            canScrollRight={canScrollRight}
-            onScrollLeft={() => scrollByAmount(-220)}
-            onScrollRight={() => scrollByAmount(220)}
-            t={t}
+        <div className="flex min-w-0 items-center gap-1 sm:gap-2">
+          <CategoryEdgeScrollButton
+            direction="left"
+            canScroll={canScrollLeft}
+            onPress={() => scrollByAmount(-220)}
+            label={t('products.categoryNavigation.scrollLeft')}
           />
           <div
             ref={scrollContainerRef}
-            className="flex items-center gap-4 sm:gap-6 md:gap-8 overflow-x-auto scrollbar-hide pb-1 sm:pb-2 pl-2 sm:pl-4 md:pl-6"
-            style={{ scrollBehavior: 'smooth' }}
+            className="flex min-h-[72px] min-w-0 flex-1 touch-pan-x items-center gap-4 overflow-x-auto overscroll-x-contain scrollbar-hide pb-1 pl-1 sm:min-h-[80px] sm:gap-6 sm:pb-2 sm:pl-2 md:gap-8"
+            style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
           >
             {displayCategories.map((category) => {
               const isActive = category.slug === 'all' 
@@ -98,6 +97,12 @@ function CategoryNavigationContent() {
               );
             })}
           </div>
+          <CategoryEdgeScrollButton
+            direction="right"
+            canScroll={canScrollRight}
+            onPress={() => scrollByAmount(220)}
+            label={t('products.categoryNavigation.scrollRight')}
+          />
         </div>
       </div>
     </div>
