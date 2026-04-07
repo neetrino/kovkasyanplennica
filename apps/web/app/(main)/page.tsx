@@ -2,9 +2,13 @@ import { HomePage } from '@/components/homePage/HomePage';
 import { MobileHomePage } from '@/components/mobileHomePage/MobileHomePage';
 import { getHomeMenuAndFavoritesData } from '@/lib/home/home-menu-favorites';
 import { getCachedNewArrivalsProducts } from '@/lib/home/mobile-new-arrivals';
+import { HOME_PAGE_METADATA } from '@/lib/site-metadata';
 
 /** ISR — home segment cache (aligned with products list freshness) */
 export const revalidate = 120;
+
+/** Explicit defaults so shared links use the same Russian blurb as the rest of the site (OG / Telegram / etc.). */
+export const metadata = HOME_PAGE_METADATA;
 
 /**
  * Դեսկտոպ (md+)`HomePage`, մոբայլ՝ `MobileHomePage` — responsive բաժանում։
