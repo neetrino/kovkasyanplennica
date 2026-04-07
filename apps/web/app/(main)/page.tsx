@@ -1,23 +1,34 @@
 import { HomePage } from '@/components/homePage/HomePage';
 import { MobileHomePage } from '@/components/mobileHomePage/MobileHomePage';
+import { getHomeMenuAndFavoritesData } from '@/lib/home/home-menu-favorites';
+import { getCachedNewArrivalsProducts } from '@/lib/home/mobile-new-arrivals';
 
 /** ISR — home segment cache (aligned with products list freshness) */
 export const revalidate = 120;
 
 /**
- * Գլխավոր էջ — դեսկտոպում HomePage, մոբայլում (< md) MobileHomePage.
- * Оба рендерятся; видимость переключается по breakpoint md (768px).
+ * Դեսկտոպ (md+)`HomePage`, մոբայլ՝ `MobileHomePage` — responsive բաժանում։
+ * Տվյալները նախ բեռնվում են զուգահեռ (մեկ անգամ cached), հետո փոխանցվում են ծառերին։
+ * Մոբայլ ծառի ներսում «Топ» + կատեգորիաները նույնպես մեկ `Promise.all`-ով են (տե՛ս `MobileHomePage`)։
  */
 export default async function Page() {
+  const lang = 'ru' as const;
+  const [homeData, newArrivals] = await Promise.all([
+    getHomeMenuAndFavoritesData(),
+    getCachedNewArrivalsProducts(lang),
+  ]);
+
   return (
     <>
-      {/* Desktop: visible from 768px */}
       <div className="hidden md:block">
-        <HomePage />
+        <HomePage
+          menuProducts={homeData.menuProducts}
+          favoritesProducts={homeData.favoritesProducts}
+          menuTotalPages={homeData.menuTotalPages}
+        />
       </div>
-      {/* Mobile: visible below 768px */}
       <div className="block md:hidden">
-        <MobileHomePage />
+        <MobileHomePage newArrivalsProducts={newArrivals} />
       </div>
     </>
   );

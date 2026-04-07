@@ -4,18 +4,34 @@ import { useState, useEffect, use, useCallback } from 'react';
 import { getStoredCurrency } from '@/lib/currency';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { t } from '@/lib/i18n';
+import type { RelatedProduct } from '@/components/hooks/useRelatedProducts';
+import { useReviews } from '@/components/ProductReviews/hooks/useReviews';
+import { calculateAverageRating } from '@/components/ProductReviews/utils';
+import type { Review } from '@/components/ProductReviews/utils';
+import { useRelatedProducts } from '@/components/hooks/useRelatedProducts';
 import { useAttributeGroups } from './useAttributeGroups';
 import { useProductImages } from './hooks/useProductImages';
 import { useProductFetch } from './hooks/useProductFetch';
 import { useWishlistCompare } from './hooks/useWishlistCompare';
-import { useProductReviews } from './hooks/useProductReviews';
 import { useVariantSelection } from './hooks/useVariantSelection';
 import { useProductActions } from './hooks/useProductActions';
 import { useProductQuantity } from './hooks/useProductQuantity';
 import { useProductCalculations } from './hooks/useProductCalculations';
 import type { Product } from './types';
 
-export function useProductPage(params: Promise<{ slug?: string }>) {
+interface UseProductPageArgs {
+  params: Promise<{ slug?: string }>;
+  initialProduct?: Product | null;
+  initialReviews?: Review[];
+  initialRelatedProducts?: RelatedProduct[];
+}
+
+export function useProductPage({
+  params,
+  initialProduct = null,
+  initialReviews,
+  initialRelatedProducts,
+}: UseProductPageArgs) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currency, setCurrency] = useState(getStoredCurrency());
   const [language, setLanguage] = useState<LanguageCode>('ru');
@@ -28,12 +44,22 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
   const slug = slugParts[0];
   const variantIdFromUrl = slugParts.length > 1 ? slugParts[1] : null;
 
-  const {
-    product,
-    loading,
-  } = useProductFetch({
+  const { product, loading } = useProductFetch({
     slug,
     variantIdFromUrl,
+    initialProduct,
+  });
+
+  const { reviews, setReviews, loading: reviewsLoading } = useReviews(
+    undefined,
+    slug,
+    initialReviews,
+  );
+
+  const { products: relatedProducts, loading: relatedLoading } = useRelatedProducts({
+    productSlug: slug,
+    language,
+    initialProducts: initialRelatedProducts,
   });
 
   const images = useProductImages(product);
@@ -92,10 +118,7 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
     productId: product?.id || null,
   });
 
-  const { reviews, averageRating } = useProductReviews({
-    slug,
-    productId: product?.id || null,
-  });
+  const averageRating = calculateAverageRating(reviews);
 
   const { handleAddToWishlist, handleCompareToggle } = useProductActions({
     productId: product?.id || null,
@@ -114,10 +137,10 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
   useEffect(() => {
     const handleCurrencyUpdate = () => setCurrency(getStoredCurrency());
     const handleCurrencyRatesUpdate = () => setCurrency(getStoredCurrency());
-    
+
     window.addEventListener('currency-updated', handleCurrencyUpdate);
     window.addEventListener('currency-rates-updated', handleCurrencyRatesUpdate);
-    
+
     return () => {
       window.removeEventListener('currency-updated', handleCurrencyUpdate);
       window.removeEventListener('currency-rates-updated', handleCurrencyRatesUpdate);
@@ -132,8 +155,10 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
 
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0 && variantIdFromUrl) {
-      const variantById = product.variants.find(v => v.id === variantIdFromUrl || v.id.endsWith(variantIdFromUrl));
-      const variantByIndex = product.variants[parseInt(variantIdFromUrl) - 1];
+      const variantById = product.variants.find(
+        (v) => v.id === variantIdFromUrl || v.id.endsWith(variantIdFromUrl)
+      );
+      const variantByIndex = product.variants[parseInt(variantIdFromUrl, 10) - 1];
       const initialVariant = variantById || variantByIndex || product.variants[0];
       setSelectedVariant(initialVariant);
       setCurrentImageIndex(0);
@@ -149,9 +174,9 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
   }, []);
 
   const getRequiredAttributesMessage = (): string => {
-    const needsColor = colorGroups.length > 0 && colorGroups.some(g => g.stock > 0) && !selectedColor;
-    const needsSize = sizeGroups.length > 0 && sizeGroups.some(g => g.stock > 0) && !selectedSize;
-    
+    const needsColor = colorGroups.length > 0 && colorGroups.some((g) => g.stock > 0) && !selectedColor;
+    const needsSize = sizeGroups.length > 0 && sizeGroups.some((g) => g.stock > 0) && !selectedSize;
+
     if (needsColor && needsSize) return t(language, 'product.selectColorAndSize');
     if (needsColor) return t(language, 'product.selectColor');
     if (needsSize) return t(language, 'product.selectSize');
@@ -161,6 +186,9 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
   return {
     product,
     loading,
+    reviews,
+    reviewsLoading,
+    setReviews,
     images,
     currentImageIndex,
     setCurrentImageIndex,
@@ -177,9 +205,10 @@ export function useProductPage(params: Promise<{ slug?: string }>) {
     isInWishlist,
     isInCompare,
     quantity,
-    reviews,
     averageRating,
     slug,
+    relatedProducts,
+    relatedLoading,
     attributeGroups,
     colorGroups,
     sizeGroups,

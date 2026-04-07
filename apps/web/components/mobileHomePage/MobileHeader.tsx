@@ -38,7 +38,7 @@ export function MobileHeader() {
     <>
       <header className="sticky top-0 z-app-header bg-[#2f3f3d] lg:hidden">
         <div className="mx-auto flex w-full max-w-[375px] items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
-          <Link href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
+          <Link prefetch href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
             <Image
               src="/assets/mobile-home/logo-kp2.png"
               alt=""
@@ -50,6 +50,7 @@ export function MobileHeader() {
           </Link>
           <div className="flex shrink-0 items-center gap-[11px]">
             <Link
+              prefetch
               href="/desktops"
               className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
             >
@@ -106,6 +107,7 @@ export function MobileHeader() {
                 </button>
               )}
               <Link
+                prefetch={false}
                 href="/products"
                 onClick={closeMenu}
                 className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
@@ -113,13 +115,14 @@ export function MobileHeader() {
                 {formatNavLabel(t('home.header.navigation.menu'))}
               </Link>
               <Link
+                prefetch={false}
                 href="/coming-soon"
                 onClick={closeMenu}
                 className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
               >
                 {formatNavLabel(t('home.header.navigation.delivery'))}
               </Link>
-              <Link href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
+              <Link prefetch={false} href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
                 {formatNavLabel(t('home.header.navigation.about'))}
               </Link>
             </div>

@@ -9,7 +9,7 @@ import { useCategoryScroll } from './CategoryNavigation/hooks/useCategoryScroll'
 import { CategoryItem } from './CategoryNavigation/CategoryItem';
 import { CategoryScrollButtons } from './CategoryNavigation/CategoryScrollButtons';
 import { CategoryNavigationLoading } from './CategoryNavigation/CategoryNavigationLoading';
-import type { Category } from './CategoryNavigation/utils';
+import { CATEGORY_NAV_VISIBLE_COUNT, type Category } from './CategoryNavigation/utils';
 
 function CategoryNavigationContent() {
   const router = useRouter();
@@ -61,8 +61,7 @@ function CategoryNavigationContent() {
     ...categories
   ];
 
-  // Limit to first 10 categories for horizontal navigation
-  const displayCategories = allCategoriesWithAll.slice(0, 10);
+  const displayCategories = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
 
   return (
     <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-3 sm:py-4 md:py-6 w-full">

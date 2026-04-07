@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from './ProductCard';
 import { useCarousel } from './hooks/useCarousel';
 import { useVisibleCards } from './hooks/useVisibleCards';
@@ -36,7 +36,6 @@ export function ProductsCategoryCarousel({ products: rawProducts, sortBy = 'defa
   const { t } = useTranslation();
   const visibleFromHook = useVisibleCards();
   const visibleCards = minVisibleCards != null ? Math.max(visibleFromHook, minVisibleCards) : visibleFromHook;
-  const [products, setProducts] = useState<Product[]>(rawProducts);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -46,8 +45,8 @@ export function ProductsCategoryCarousel({ products: rawProducts, sortBy = 'defa
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  useEffect(() => {
-    let sorted = [...rawProducts];
+  const products = useMemo(() => {
+    const sorted = [...rawProducts];
     switch (sortBy) {
       case 'price-asc':
         sorted.sort((a, b) => a.price - b.price);
@@ -64,7 +63,7 @@ export function ProductsCategoryCarousel({ products: rawProducts, sortBy = 'defa
       default:
         break;
     }
-    setProducts(sorted);
+    return sorted;
   }, [rawProducts, sortBy]);
 
   const {

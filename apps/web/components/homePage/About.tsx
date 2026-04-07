@@ -106,6 +106,7 @@ export function About() {
         {/* Кнопка "Узнать больше" - центрированная */}
         <div className="flex justify-center mt-12 md:mt-16 lg:mt-20">
           <Link
+            prefetch
             href="/about"
             className="bg-[#3A4F48] text-white px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-lg tracking-wide hover:bg-[#2f3f3d] transition-all duration-300 min-w-[200px] text-center"
           >

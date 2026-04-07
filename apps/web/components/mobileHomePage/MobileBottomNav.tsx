@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchCart } from '@/app/(main)/cart/cart-fetcher';
 import type { Cart } from '@/app/(main)/cart/types';
@@ -11,16 +11,9 @@ import { useTranslation } from '../../lib/i18n-client';
 import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
 import { NavCartIcon, NavHomeIcon, NavProfileIcon, NavSearchIcon } from './MobileBottomNavIcons';
 
-/**
- * Mobile bottom navigation — Figma (nav-surface, chef FAB, icons).
- * Shown on all routes under the main layout (lg:hidden).
- */
-const PREFETCH_ROUTES = ['/', '/mobile', '/products', '/cart', '/profile'] as const;
-
 export function MobileBottomNav() {
   const { t } = useTranslation();
   const { isLoggedIn } = useAuth();
-  const router = useRouter();
   const pathname = usePathname() ?? '';
   const homeHref = pathname === '/mobile' ? '/mobile' : '/';
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -48,12 +41,6 @@ export function MobileBottomNav() {
       window.removeEventListener('auth-updated', onCartOrAuth);
     };
   }, [isLoggedIn, t]);
-
-  useEffect(() => {
-    for (const route of PREFETCH_ROUTES) {
-      router.prefetch(route);
-    }
-  }, [router]);
 
   const isHomeActive = pathname === '/' || pathname === '/mobile';
   const isSearchActive =

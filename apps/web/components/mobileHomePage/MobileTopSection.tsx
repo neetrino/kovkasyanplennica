@@ -1,44 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice, getStoredCurrency } from '../../lib/currency';
-import { getStoredLanguage } from '../../lib/language';
-import { productsService } from '../../lib/services/products.service';
-
-type TopProduct = {
-  id: string;
-  slug: string;
-  title: string;
-  price: number;
-  image: string | null;
-};
-
-const FEATURED_TOP_CAROUSEL_LIMIT = 12;
+import type { MobileTopProduct } from '@/lib/home/mobile-home-sections';
 
 /** Bottom-left blob for «Топ» card (matches design SVG). */
 const MOBILE_TOP_CARD_GREEN_PATH =
-  'M188.998 105.816C177.926 175.267 104.938 221.362 25.9751 208.773C-52.9879 196.185 -108.024 129.679 -96.9518 60.228C-85.8796 -9.22255 21.0272 -19.0189 74.8779 32.969C128.729 84.9568 206.027 -0.995504 188.998 105.816Z';
-
-async function getFeaturedTopProducts(limit: number): Promise<TopProduct[]> {
-  try {
-    const lang = getStoredLanguage() || 'ru';
-    const result = await productsService.findAll({
-      page: 1,
-      limit,
-      lang,
-      filter: 'featured',
-    });
-    if (!result.data || !Array.isArray(result.data)) return [];
-    return result.data.slice(0, limit).map((p: { id: string; slug?: string; title?: string; price?: number; image?: string | null }) => ({
-      id: String(p.id),
-      slug: String(p.slug ?? ''),
-      title: String(p.title ?? ''),
-      price: Number(p.price ?? 0),
-      image: p.image ?? null,
-    }));
-  } catch {
-    return [];
-  }
-}
+  'M188.998 105.816C177.926 175.267 104.938 221.362 25.9751 208.773C-52.9879 196.185 -108.024 129.679 -96.9518 60.228C-85.8796 -9.22257 21.0272 -19.0189 74.8779 32.969C128.729 84.9568 206.027 -0.995504 188.998 105.816Z';
 
 function MobileTopFeaturedCard({
   title,
@@ -94,8 +61,11 @@ function MobileTopFeaturedCard({
   );
 }
 
-export async function MobileTopSection() {
-  const products = await getFeaturedTopProducts(FEATURED_TOP_CAROUSEL_LIMIT);
+type MobileTopSectionProps = {
+  products: MobileTopProduct[];
+};
+
+export function MobileTopSection({ products }: MobileTopSectionProps) {
   const currency = getStoredCurrency();
 
   return (

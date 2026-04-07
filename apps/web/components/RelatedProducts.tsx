@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, type MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../lib/api-client';
 import { getStoredCurrency } from '../lib/currency';
-import { getStoredLanguage, type LanguageCode } from '../lib/language';
+import type { LanguageCode } from '../lib/language';
 import { t } from '../lib/i18n';
 import { mergeGuestCartLine } from '@/lib/guest-cart/mergeGuestCartLine';
-import { useRelatedProducts } from './hooks/useRelatedProducts';
+import type { RelatedProduct } from './hooks/useRelatedProducts';
 import { useCarousel } from './hooks/useCarousel';
 import { useVisibleCards } from './hooks/useVisibleCards';
 import { RelatedProductCard } from './RelatedProducts/RelatedProductCard';
@@ -15,23 +15,21 @@ import { CarouselNavigation } from './RelatedProducts/CarouselNavigation';
 import { CarouselDots } from './RelatedProducts/CarouselDots';
 
 interface RelatedProductsProps {
-  categorySlug?: string;
-  currentProductId: string;
+  products: RelatedProduct[];
+  loading: boolean;
+  language: LanguageCode;
 }
 
 /**
- * RelatedProducts component - displays products from the same category in a carousel
- * Shown at the bottom of the single product page
+ * Related products carousel — data is fetched in `useProductPage` (parallel with product + reviews).
  */
-export function RelatedProducts({ categorySlug, currentProductId }: RelatedProductsProps) {
+export function RelatedProducts({ products, loading, language }: RelatedProductsProps) {
   const router = useRouter();
-  const [language, setLanguage] = useState<LanguageCode>('ru');
   const [addingToCart, setAddingToCart] = useState<Set<string>>(new Set());
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-  
+
   const visibleCards = useVisibleCards();
-  const { products, loading } = useRelatedProducts({ categorySlug, currentProductId, language });
-  
+
   const {
     currentIndex,
     isDragging,
@@ -49,32 +47,15 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
     handleWheel,
   } = useCarousel({ itemCount: products.length, visibleItems: visibleCards });
 
-  // Initialize language from localStorage after mount to prevent hydration mismatch
-  useEffect(() => {
-    setLanguage(getStoredLanguage());
-    
-    const handleLanguageUpdate = () => {
-      setLanguage(getStoredLanguage());
-    };
-    
-    window.addEventListener('language-updated', handleLanguageUpdate);
-    return () => {
-      window.removeEventListener('language-updated', handleLanguageUpdate);
-    };
-  }, []);
-
-  /**
-   * Handle adding product to cart
-   */
-  const handleAddToCart = async (e: MouseEvent, product: typeof products[0]) => {
+  const handleAddToCart = async (e: MouseEvent, product: RelatedProduct) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!product.inStock) {
       return;
     }
 
-    setAddingToCart(prev => new Set(prev).add(product.id));
+    setAddingToCart((prev) => new Set(prev).add(product.id));
 
     try {
       interface ProductDetails {
@@ -121,7 +102,7 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
         alert('Failed to add product to cart. Please try again.');
       }
     } finally {
-      setAddingToCart(prev => {
+      setAddingToCart((prev) => {
         const next = new Set(prev);
         next.delete(product.id);
         return next;
@@ -131,17 +112,17 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
 
   const currency = getStoredCurrency();
   const handleImageError = (productId: string) => {
-    setImageErrors(prev => new Set(prev).add(productId));
+    setImageErrors((prev) => new Set(prev).add(productId));
   };
 
-  // Always show the section, even if no products (will show loading or empty state)
   return (
     <section className="py-12 mt-20 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-10">{t(language, 'product.related_products_title')}</h2>
-        
+        <h2 className="text-3xl font-bold text-gray-900 mb-10">
+          {t(language, 'product.related_products_title')}
+        </h2>
+
         {loading ? (
-          // Loading state
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <div key={i} className="animate-pulse">
@@ -152,15 +133,12 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
             ))}
           </div>
         ) : products.length === 0 ? (
-          // Empty state
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">{t(language, 'product.noRelatedProducts')}</p>
           </div>
         ) : (
-          // Products Carousel
           <div className="relative">
-            {/* Carousel Container */}
-            <div 
+            <div
               ref={carouselRef}
               className="relative overflow-hidden cursor-grab active:cursor-grabbing select-none"
               onMouseDown={handleMouseDown}
@@ -196,12 +174,10 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
               </div>
             </div>
 
-            {/* Navigation Arrows - Only show if there are more products than visible */}
             {products.length > visibleCards && (
               <CarouselNavigation onPrevious={goToPrevious} onNext={goToNext} />
             )}
 
-            {/* Dots Indicator - Only show if there are more products than visible */}
             {products.length > visibleCards && (
               <CarouselDots
                 totalItems={products.length}
@@ -216,4 +192,3 @@ export function RelatedProducts({ categorySlug, currentProductId }: RelatedProdu
     </section>
   );
 }
-

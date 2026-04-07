@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { AuthProvider } from '../lib/auth/AuthContext';
+import { CoreRoutePrefetch } from './CoreRoutePrefetch';
 import { ToastContainer } from './Toast';
 import { SpinWheelPopup } from './SpinWheelPopup';
 
@@ -12,6 +13,7 @@ import { SpinWheelPopup } from './SpinWheelPopup';
 export function ClientProviders({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
+      <CoreRoutePrefetch />
       {children}
       <ToastContainer />
       <SpinWheelPopup />

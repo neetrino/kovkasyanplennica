@@ -5,6 +5,12 @@ import { getHeaders } from "./headers";
 import { handleUnauthorized } from "./auth-utils";
 import { shouldLogError, shouldLogWarning, parseErrorResponse, createApiError } from "./error-handler";
 
+const IS_DEV = process.env.NODE_ENV === "development";
+
+function debugApi(...args: unknown[]) {
+  if (IS_DEV) console.log(...args);
+}
+
 /**
  * Handle network errors
  */
@@ -102,9 +108,9 @@ export async function getRequest<T>(
   const maxRetries = 3;
   const retryDelay = 1000; // 1 second
   const timeout = 30000; // 30 seconds timeout
-  
-  console.log('🌐 [API CLIENT] GET request:', { url, endpoint, baseUrl });
-  
+
+  debugApi("🌐 [API CLIENT] GET request:", { url, endpoint, baseUrl });
+
   let response: Response;
   try {
     // Create timeout controller
@@ -115,9 +121,11 @@ export async function getRequest<T>(
       response = await fetch(url, {
         method: 'GET',
         headers: getHeaders(options),
-        cache: 'no-store', // Disable caching for server components
         signal: controller.signal,
         ...options,
+        cache:
+          options?.cache ??
+          (typeof window !== "undefined" ? "default" : "no-store"),
       });
       clearTimeout(timeoutId);
     } catch (fetchError: unknown) {
@@ -129,11 +137,10 @@ export async function getRequest<T>(
       throw fetchError;
     }
     
-    // Log response status safely
     try {
-      console.log('🌐 [API CLIENT] GET response status:', response.status, response.statusText || '');
+      debugApi('🌐 [API CLIENT] GET response status:', response.status, response.statusText || '');
     } catch {
-      console.warn('⚠️ [API CLIENT] Failed to log response status');
+      if (IS_DEV) console.warn('⚠️ [API CLIENT] Failed to log response status');
     }
   } catch (networkError: unknown) {
     handleNetworkError(networkError, baseUrl, url);
@@ -157,7 +164,7 @@ export async function getRequest<T>(
     }
 
     const contentType = response.headers?.get('content-type');
-    console.log('🌐 [API CLIENT] Response content-type:', contentType);
+    debugApi('🌐 [API CLIENT] Response content-type:', contentType);
     
     if (!contentType || !contentType.includes('application/json')) {
       const text = await response.text();
@@ -170,7 +177,7 @@ export async function getRequest<T>(
     }
     
     const jsonData = await response.json();
-    console.log('✅ [API CLIENT] GET Response parsed successfully');
+    debugApi('✅ [API CLIENT] GET Response parsed successfully');
     
     if (!jsonData) {
       console.warn('⚠️ [API CLIENT] Response data is null or undefined');
