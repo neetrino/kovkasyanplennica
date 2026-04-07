@@ -1,9 +1,10 @@
 'use client';
 
+import type { Dispatch, SetStateAction } from 'react';
 import { Button } from '@shop/ui';
 import { useAuth } from '../lib/auth/AuthContext';
 import { useTranslation } from '../lib/i18n-client';
-import { useReviews } from './ProductReviews/hooks/useReviews';
+import type { Review } from './ProductReviews/utils';
 import { useReviewForm } from './ProductReviews/hooks/useReviewForm';
 import { ReviewSummary } from './ProductReviews/ReviewSummary';
 import { ReviewForm } from './ProductReviews/ReviewForm';
@@ -11,16 +12,26 @@ import { ReviewList } from './ProductReviews/ReviewList';
 import { ProductReviewsLoading } from './ProductReviews/ProductReviewsLoading';
 
 interface ProductReviewsProps {
-  productId?: string; // For backward compatibility
-  productSlug?: string; // Preferred: use slug for API calls
+  productId?: string;
+  productSlug?: string;
+  reviews: Review[];
+  setReviews: Dispatch<SetStateAction<Review[]>>;
+  loading: boolean;
 }
 
-export function ProductReviews({ productId, productSlug }: ProductReviewsProps) {
+/**
+ * PDP reviews block — fetch state is owned by the parent (`useReviews`) for a single request + header rating.
+ */
+export function ProductReviews({
+  productId,
+  productSlug,
+  reviews,
+  setReviews,
+  loading,
+}: ProductReviewsProps) {
   const { isLoggedIn, user } = useAuth();
   const { t } = useTranslation();
-  
-  const { reviews, loading, setReviews } = useReviews(productId, productSlug);
-  
+
   const {
     showForm,
     setShowForm,
@@ -42,9 +53,6 @@ export function ProductReviews({ productId, productSlug }: ProductReviewsProps) 
     reviews,
     setReviews,
   });
-
-  // Get user's review if exists
-  const userReview = user ? reviews.find(r => r.userId === user.id) : null;
 
   if (loading) {
     return <ProductReviewsLoading />;
@@ -69,21 +77,14 @@ export function ProductReviews({ productId, productSlug }: ProductReviewsProps) 
           {t('common.reviews.title')}
         </h2>
 
-        {/* Rating Summary */}
         <ReviewSummary reviews={reviews} />
 
-        {/* Write Review Button */}
         {!showForm && (
-          <Button
-            variant="primary"
-            onClick={handleShowForm}
-            className="mb-8"
-          >
+          <Button variant="primary" onClick={handleShowForm} className="mb-8">
             {t('common.reviews.writeReview')}
           </Button>
         )}
 
-        {/* Review Form */}
         {showForm && (
           <ReviewForm
             rating={rating}
@@ -95,16 +96,19 @@ export function ProductReviews({ productId, productSlug }: ProductReviewsProps) 
             onHover={setHoveredRating}
             onCommentChange={setComment}
             onSubmit={editingReviewId ? handleUpdateReview : handleSubmit}
-            onCancel={editingReviewId ? handleCancelEdit : () => {
-              setShowForm(false);
-              setRating(0);
-              setComment('');
-            }}
+            onCancel={
+              editingReviewId
+                ? handleCancelEdit
+                : () => {
+                    setShowForm(false);
+                    setRating(0);
+                    setComment('');
+                  }
+            }
           />
         )}
       </div>
 
-      {/* Reviews List */}
       <ReviewList
         reviews={reviews}
         currentUserId={user?.id}
@@ -116,5 +120,3 @@ export function ProductReviews({ productId, productSlug }: ProductReviewsProps) 
     </div>
   );
 }
-
-

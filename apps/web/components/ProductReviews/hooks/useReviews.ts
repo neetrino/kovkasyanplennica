@@ -1,35 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { apiClient } from '../../../lib/api-client';
+import { getStoredLanguage } from '../../../lib/language';
 import type { Review } from '../utils';
 
 /**
- * Hook for fetching and managing reviews
+ * Fetches reviews by slug (preferred) or productId — runs as soon as slug is known (parallel with product).
+ * When `initialReviews` is set (RSC), skips the first client GET for faster hydration.
  */
-export function useReviews(productId?: string, productSlug?: string) {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useReviews(
+  productId?: string,
+  productSlug?: string,
+  initialReviews?: Review[],
+) {
+  const [reviews, setReviews] = useState<Review[]>(() => initialReviews ?? []);
+  const [loading, setLoading] = useState(() => initialReviews === undefined);
+  const skipClientFetchOnceRef = useRef(initialReviews !== undefined);
 
-  const loadReviews = async () => {
+  const identifier = productSlug ?? productId ?? '';
+
+  const loadReviews = useCallback(async () => {
+    const id = productSlug ?? productId;
+    if (!id) {
+      setReviews([]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Use slug if available, otherwise fall back to productId
-      const identifier = productSlug || productId;
-      if (!identifier) {
-        console.warn('⚠️ [PRODUCT REVIEWS] No product identifier provided');
-        setReviews([]);
-        setLoading(false);
-        return;
-      }
-
-      console.log('📝 [PRODUCT REVIEWS] Loading reviews for product:', identifier);
       setLoading(true);
-      const data = await apiClient.get<Review[]>(`/api/v1/products/${identifier}/reviews`);
-      console.log('✅ [PRODUCT REVIEWS] Reviews loaded:', data?.length || 0);
+      const lang = getStoredLanguage();
+      const data = await apiClient.get<Review[]>(`/api/v1/products/${encodeURIComponent(id)}/reviews`, {
+        params: { lang },
+      });
       setReviews(data || []);
     } catch (error: unknown) {
-      console.error('❌ [PRODUCT REVIEWS] Error loading reviews:', error);
-      // If 404, product might not have reviews yet - that's okay
       const err = error as { status?: number };
       if (err.status !== 404) {
         console.error('Failed to load reviews:', error);
@@ -38,11 +44,29 @@ export function useReviews(productId?: string, productSlug?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, productSlug]);
 
   useEffect(() => {
-    loadReviews();
-  }, [productId, productSlug]);
+    if (!identifier) {
+      setReviews([]);
+      setLoading(false);
+      return;
+    }
+    if (skipClientFetchOnceRef.current) {
+      skipClientFetchOnceRef.current = false;
+      setLoading(false);
+      return;
+    }
+    void loadReviews();
+  }, [identifier, loadReviews]);
+
+  useEffect(() => {
+    const onUpdate = () => {
+      void loadReviews();
+    };
+    window.addEventListener('review-updated', onUpdate);
+    return () => window.removeEventListener('review-updated', onUpdate);
+  }, [loadReviews]);
 
   return {
     reviews,
@@ -51,11 +75,3 @@ export function useReviews(productId?: string, productSlug?: string) {
     loadReviews,
   };
 }
-
-
-
-
-
-
-
-

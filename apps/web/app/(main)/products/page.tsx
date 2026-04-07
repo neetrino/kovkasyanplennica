@@ -1,13 +1,11 @@
 import Link from 'next/link';
-import { Suspense } from 'react';
 import { unstable_cache } from 'next/cache';
-import { getStoredLanguage } from '@/lib/language';
+import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
 import { CategoryNavigation } from '@/components/CategoryNavigation';
-import { ProductsResponsiveLimit } from './ProductsResponsiveLimit';
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
 
@@ -75,6 +73,17 @@ interface Product {
   }>;
 }
 
+type ProductRow = Product & {
+  category: string;
+  colors: Array<{ value?: string; imageUrl?: string | null; colors?: string[] | null }>;
+};
+
+type CategoryRow = {
+  categorySlug: string;
+  categoryTitle: string;
+  products: ProductRow[];
+};
+
 interface ProductsResponse {
   data: Product[];
   meta: {
@@ -83,6 +92,61 @@ interface ProductsResponse {
     limit: number;
     totalPages: number;
   };
+}
+
+const EMPTY_PRODUCTS_RESPONSE: ProductsResponse = {
+  data: [],
+  meta: { total: 0, page: 1, limit: 24, totalPages: 0 },
+};
+
+const OTHER_SLUG = '__other__';
+
+function normalizeProduct(product: Product & {
+  originalPrice?: number | null;
+  colors?: ProductRow['colors'];
+}): ProductRow {
+  return {
+    id: product.id,
+    slug: product.slug,
+    title: product.title,
+    price: product.price,
+    compareAtPrice: product.compareAtPrice ?? product.originalPrice ?? null,
+    image: product.image ?? null,
+    inStock: product.inStock ?? true,
+    defaultVariantId: product.defaultVariantId ?? null,
+    stock: typeof product.stock === 'number' ? product.stock : undefined,
+    brand: product.brand ?? null,
+    categories: product.categories ?? [],
+    category: product.categories?.[0]?.title ?? '',
+    colors: product.colors ?? [],
+    labels: product.labels ?? [],
+  };
+}
+
+function buildCategoryRows(products: ProductRow[], language: LanguageCode): CategoryRow[] {
+  const rows = new Map<string, CategoryRow>();
+
+  for (const product of products) {
+    const primary = product.categories?.[0];
+    const categorySlug = primary?.slug ?? OTHER_SLUG;
+    const existing = rows.get(categorySlug);
+
+    if (existing) {
+      existing.products.push(product);
+      continue;
+    }
+
+    rows.set(categorySlug, {
+      categorySlug,
+      categoryTitle:
+        categorySlug === OTHER_SLUG
+          ? t(language, 'products.grid.otherCategory')
+          : (primary?.title ?? categorySlug),
+      products: [product],
+    });
+  }
+
+  return Array.from(rows.values());
 }
 
 /**
@@ -116,13 +180,13 @@ async function getProducts(
     const result = await fetchProductsCached(JSON.stringify(filters));
 
     if (!result.data || !Array.isArray(result.data)) {
-      return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
+      return EMPTY_PRODUCTS_RESPONSE;
     }
 
     return result as ProductsResponse;
   } catch (e) {
     console.error("❌ PRODUCT ERROR", e);
-    return { data: [], meta: { total: 0, page: 1, limit: 24, totalPages: 0 } };
+    return EMPTY_PRODUCTS_RESPONSE;
   }
 }
 
@@ -180,51 +244,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     limit: firstParam(raw.limit),
   };
 
-  // ------------------------------------
-  // 🔧 FIX: normalize products 
-  // add missing inStock, missing image fields 
-  // ------------------------------------
-  const normalizedProducts = productsData.data.map((p: any) => ({
-    id: p.id,
-    slug: p.slug,
-    title: p.title,
-    price: p.price,
-    compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
-    image: p.image ?? null,
-    inStock: p.inStock ?? true,
-    defaultVariantId: p.defaultVariantId ?? null,
-    stock: typeof p.stock === 'number' ? p.stock : undefined,
-    brand: p.brand ?? null,
-    categories: p.categories ?? [],
-    category: p.categories?.[0]?.title ?? '',
-    colors: p.colors ?? [],
-    labels: p.labels ?? []
-  }));
+  const normalizedProducts = productsData.data.map((product) =>
+    normalizeProduct(product as Product & { originalPrice?: number | null; colors?: ProductRow['colors'] }),
+  );
 
   const language = getStoredLanguage();
-
-  /** Group products by primary category (first category) for "one row per category" display */
-  const OTHER_SLUG = '__other__';
-  type CategoryRow = { categorySlug: string; categoryTitle: string; products: typeof normalizedProducts };
-  const categoryOrder: string[] = [];
-  const byCategory = new Map<string, typeof normalizedProducts>();
-  for (const product of normalizedProducts) {
-    const primary = product.categories?.[0];
-    const slug = primary?.slug ?? OTHER_SLUG;
-    if (!byCategory.has(slug)) {
-      categoryOrder.push(slug);
-      byCategory.set(slug, []);
-    }
-    byCategory.get(slug)!.push(product);
-  }
-  const categoryRows: CategoryRow[] = categoryOrder.map((slug) => {
-    const rowProducts = byCategory.get(slug) ?? [];
-    return {
-      categorySlug: slug,
-      categoryTitle: slug === OTHER_SLUG ? t(language, 'products.grid.otherCategory') : (rowProducts[0]?.categories?.[0]?.title ?? slug),
-      products: rowProducts.filter((p) => (p.categories?.[0]?.slug ?? OTHER_SLUG) === slug)
-    };
-  });
+  const categoryRows = buildCategoryRows(normalizedProducts, language);
 
   /** ≤2 category rows (e.g. filtered): one union decorative at bottom only — avoid stacked overlays when content is short */
   const showFullDecorativeBackground = categoryRows.length > 2;
@@ -259,9 +284,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <div className="w-full max-w-full bg-[#2F3F3D] relative">
-      <Suspense fallback={null}>
-        <ProductsResponsiveLimit />
-      </Suspense>
       {showFullDecorativeBackground && (
         <>
           {/* Decorative: վերևի հատված – կենտրոն */}

@@ -1,10 +1,7 @@
-'use client';
-
 import Image from 'next/image';
-import { useTranslation } from '@/lib/i18n-client';
+import { t } from '@/lib/i18n';
 
-export const dynamic = 'force-dynamic';
-export const dynamicParams = true;
+export const revalidate = 3600;
 
 const STATS = [
   { value: '5+', labelKey: 'about.stats.yearsLabel' },
@@ -18,7 +15,7 @@ const STATS = [
  * dark #2F3F3D bg, union-decorative.png overlays, #fff4de headings, #7CB342 accent.
  */
 export default function AboutPage() {
-  const { t } = useTranslation();
+  const lang = 'ru' as const;
 
   return (
     <div className="w-full max-w-full bg-[#2F3F3D] relative">
@@ -51,10 +48,10 @@ export default function AboutPage() {
         {/* Hero text */}
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pb-8">
           <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-4">
-            {t('about.subtitle')}
+            {t(lang, 'about.subtitle')}
           </p>
           <h1 className="text-[#fff4de] text-5xl md:text-7xl lg:text-8xl xl:text-[100px] font-light italic leading-tight mb-6">
-            {t('about.title')}
+            {t(lang, 'about.title')}
           </h1>
           <div className="w-40 md:w-64 opacity-80">
             <Image
@@ -92,7 +89,7 @@ export default function AboutPage() {
               <div className="absolute bottom-6 left-6 bg-[#2F3F3D]/85 backdrop-blur-sm rounded-xl px-5 py-3 border border-[#7CB342]/40">
                 <p className="text-[#7CB342] text-2xl font-light italic">5+</p>
                 <p className="text-[#fff4de]/80 text-xs uppercase tracking-widest mt-0.5">
-                  {t('about.stats.yearsLabel')}
+                  {t(lang, 'about.stats.yearsLabel')}
                 </p>
               </div>
             </div>
@@ -100,15 +97,15 @@ export default function AboutPage() {
             {/* Text — right side */}
             <div className="space-y-6">
               <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.25em] text-[#7CB342]">
-                {t('about.story.subtitle')}
+                {t(lang, 'about.story.subtitle')}
               </p>
               <h2 className="text-[#fff4de] text-4xl md:text-5xl lg:text-6xl font-light italic leading-tight">
-                {t('about.story.title')}
+                {t(lang, 'about.story.title')}
               </h2>
               <div className="w-24 h-[2px] bg-[#7CB342]" />
               <div className="space-y-4 text-[#fff4de]/70 text-base md:text-lg leading-relaxed">
                 {['paragraph1', 'paragraph2', 'paragraph3', 'paragraph4', 'paragraph5'].map((paragraphKey) => (
-                  <p key={paragraphKey}>{t(`about.description.${paragraphKey}`)}</p>
+                  <p key={paragraphKey}>{t(lang, `about.description.${paragraphKey}`)}</p>
                 ))}
               </div>
             </div>
@@ -132,7 +129,7 @@ export default function AboutPage() {
                   {stat.value}
                 </p>
                 <p className="text-[#fff4de]/60 text-xs uppercase tracking-widest">
-                  {t(stat.labelKey)}
+                  {t(lang, stat.labelKey)}
                 </p>
               </div>
             ))}

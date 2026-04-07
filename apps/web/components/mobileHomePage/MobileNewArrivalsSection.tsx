@@ -1,70 +1,9 @@
 import Link from 'next/link';
-import { getStoredLanguage } from '../../lib/language';
-import { productsService } from '../../lib/services/products.service';
+import type { MobileNewArrivalProduct } from '@/lib/home/mobile-new-arrivals';
 import { MobileRecipeProductCard } from './MobileRecipeProductCard';
-
-const NEW_ARRIVALS_LIMIT = 12;
 
 const CAROUSEL_ROW =
   '-mr-4 flex gap-4 overflow-x-auto pr-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
-
-/** Prefer `filter: new` (last 30 days); if none, show latest products. */
-type ListProduct = {
-  id: string;
-  slug: string;
-  title: string;
-  image: string | null;
-  price: number;
-  defaultVariantId: string | null;
-  inStock: boolean;
-  stock: number;
-  originalPrice: number | null;
-  compareAtPrice: number | null;
-};
-
-async function getNewArrivalsProducts(limit: number): Promise<ListProduct[]> {
-  const lang = getStoredLanguage() || 'ru';
-  try {
-    const primary = await productsService.findAll({
-      page: 1,
-      limit,
-      lang,
-      filter: 'new',
-    });
-    let rows = primary.data && Array.isArray(primary.data) ? primary.data : [];
-    if (rows.length === 0) {
-      const latest = await productsService.findAll({ page: 1, limit, lang });
-      rows = latest.data && Array.isArray(latest.data) ? latest.data : [];
-    }
-    return rows.map(
-      (p: {
-        id: unknown;
-        slug?: unknown;
-        title?: unknown;
-        image?: string | null;
-        price?: unknown;
-        defaultVariantId?: string | null;
-        stock?: unknown;
-        inStock?: unknown;
-        originalPrice?: number | null;
-        compareAtPrice?: number | null;
-      }) => ({
-        id: String(p.id),
-        slug: String(p.slug ?? ''),
-        title: String(p.title ?? ''),
-        image: p.image ?? null,
-        price: typeof p.price === 'number' && !Number.isNaN(p.price) ? p.price : 0,
-        defaultVariantId: p.defaultVariantId ?? null,
-        stock: typeof p.stock === 'number' && !Number.isNaN(p.stock) ? p.stock : 0,
-        inStock: Boolean(p.inStock),
-        originalPrice: p.originalPrice ?? null,
-        compareAtPrice: p.compareAtPrice ?? null,
-      }),
-    );
-  } catch {
-    return [];
-  }
-}
 
 function splitIntoTwoCarouselRows<T>(items: T[]): [T[], T[]] {
   if (items.length === 0) return [[], []];
@@ -72,8 +11,11 @@ function splitIntoTwoCarouselRows<T>(items: T[]): [T[], T[]] {
   return [items.slice(0, mid), items.slice(mid)];
 }
 
-export async function MobileNewArrivalsSection() {
-  const products = await getNewArrivalsProducts(NEW_ARRIVALS_LIMIT);
+type MobileNewArrivalsSectionProps = {
+  products: MobileNewArrivalProduct[];
+};
+
+export function MobileNewArrivalsSection({ products }: MobileNewArrivalsSectionProps) {
   const [firstRow, secondRow] = splitIntoTwoCarouselRows(products);
 
   return (

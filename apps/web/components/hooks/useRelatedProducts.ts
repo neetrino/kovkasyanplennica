@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '../../lib/api-client';
-import { getStoredLanguage, type LanguageCode } from '../../lib/language';
+import type { LanguageCode } from '../../lib/language';
 
-interface RelatedProduct {
+export interface RelatedProduct {
   id: string;
   slug: string;
   title: string;
@@ -32,52 +32,49 @@ interface RelatedProduct {
 }
 
 interface UseRelatedProductsProps {
-  categorySlug?: string;
-  currentProductId: string;
+  /** Current PDP slug — loads related list in parallel (no productId / category wait). */
+  productSlug: string;
   language: LanguageCode;
+  /** From RSC — skips first client fetch when present (including `[]`). */
+  initialProducts?: RelatedProduct[];
 }
 
 /**
- * Hook for fetching related products
+ * Related products via `/api/v1/products/[slug]/related` (server resolves category + exclusion).
  */
-export function useRelatedProducts({ categorySlug, currentProductId, language }: UseRelatedProductsProps) {
-  const [products, setProducts] = useState<RelatedProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useRelatedProducts({
+  productSlug,
+  language,
+  initialProducts,
+}: UseRelatedProductsProps) {
+  const [products, setProducts] = useState<RelatedProduct[]>(() => initialProducts ?? []);
+  const [loading, setLoading] = useState(() => initialProducts === undefined);
+  const skipClientFetchOnceRef = useRef(initialProducts !== undefined);
 
   useEffect(() => {
+    if (!productSlug.trim()) {
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+
+    if (skipClientFetchOnceRef.current) {
+      skipClientFetchOnceRef.current = false;
+      setLoading(false);
+      return;
+    }
+
     const fetchRelatedProducts = async () => {
       try {
         setLoading(true);
-        
-        // Build params - if no categorySlug, fetch all products
-        const params: Record<string, string> = {
-          limit: '30', // Fetch more to ensure we have 10 after filtering
-          lang: language,
-        };
-        
-        if (categorySlug) {
-          params.category = categorySlug;
-          console.log('[RelatedProducts] Fetching related products for category:', categorySlug);
-        } else {
-          console.log('[RelatedProducts] No categorySlug, fetching all products');
-        }
-        
         const response = await apiClient.get<{
           data: RelatedProduct[];
-          meta: {
-            total: number;
-          };
-        }>('/api/v1/products', {
-          params,
+        }>(`/api/v1/products/${encodeURIComponent(productSlug)}/related`, {
+          params: { lang: language },
         });
 
-        console.log('[RelatedProducts] Received products:', response.data.length);
-        // Filter out current product and take exactly 10
-        const filtered = response.data.filter(p => p.id !== currentProductId);
-        console.log('[RelatedProducts] After filtering current product:', filtered.length);
-        const finalProducts = filtered.slice(0, 10);
-        console.log('[RelatedProducts] Final products to display:', finalProducts.length);
-        setProducts(finalProducts);
+        const rows = response.data && Array.isArray(response.data) ? response.data : [];
+        setProducts(rows.slice(0, 10));
       } catch (error) {
         console.error('[RelatedProducts] Error fetching related products:', error);
         setProducts([]);
@@ -86,16 +83,8 @@ export function useRelatedProducts({ categorySlug, currentProductId, language }:
       }
     };
 
-    fetchRelatedProducts();
-  }, [categorySlug, currentProductId, language]);
+    void fetchRelatedProducts();
+  }, [productSlug, language]);
 
   return { products, loading };
 }
-
-
-
-
-
-
-
-

@@ -242,7 +242,7 @@ export function Header() {
       >
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
       <div className="flex items-center gap-4 lg:gap-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link prefetch href="/" className="flex items-center gap-2">
           <div
             className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${logoBoxOther}`}
           >
@@ -264,6 +264,7 @@ export function Header() {
         {navigationLinks.map((link) => (
           <Link
             key={link.label}
+            prefetch
             href={link.href}
             className={`font-normal text-base leading-6 hover:opacity-80 transition-[font-size] duration-300 ease-out ${
               isHomeCream ? 'text-[#2f3f3d]' : 'text-[#ffe5c2]'

@@ -20,22 +20,8 @@ function buildDesktopsHref(date: string, time: string, guestCount: string): stri
   return s ? `/desktops?${s}` : '/desktops';
 }
 
-function triggerNativeDatePicker(input: HTMLInputElement | null): void {
-  if (!input) return;
-  try {
-    if (typeof input.showPicker === 'function') {
-      input.showPicker();
-      return;
-    }
-  } catch {
-    // fall through to click()
-  }
-  input.click();
-}
-
 export function MobileHomeReservationBlock() {
   const { t } = useTranslation();
-  const dateInputRef = useRef<HTMLInputElement>(null);
   const timeRootRef = useRef<HTMLDivElement>(null);
   const guestsRootRef = useRef<HTMLDivElement>(null);
 
@@ -107,24 +93,19 @@ export function MobileHomeReservationBlock() {
                 aria-hidden
               />
             </div>
+            {/*
+              Real devices (esp. iOS Safari) often ignore programmatic click()/showPicker()
+              on sr-only/clipped date inputs. A full-area opacity-0 input receives the actual
+              touch and opens the native picker reliably.
+            */}
             <input
-              ref={dateInputRef}
               id="mobile-home-reserve-date"
               type="date"
               value={date}
               min={minDate}
               onChange={(e) => setDate(e.target.value)}
-              tabIndex={-1}
-              className="sr-only"
-              aria-hidden
-            />
-            <button
-              type="button"
-              className="absolute inset-0 z-10 cursor-pointer rounded-[40px] border-0 bg-transparent p-0 [-webkit-tap-highlight-color:transparent]"
               aria-label={t('desktops.modal.date')}
-              onClick={() => {
-                triggerNativeDatePicker(dateInputRef.current);
-              }}
+              className="absolute inset-0 z-10 h-full min-h-0 w-full min-w-0 cursor-pointer rounded-[40px] border-0 p-0 opacity-0 outline-none [-webkit-tap-highlight-color:transparent] [color-scheme:light] text-base"
             />
           </div>
 

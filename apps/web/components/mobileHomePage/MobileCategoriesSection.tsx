@@ -1,28 +1,11 @@
 import Link from 'next/link';
-import { categoriesService } from '../../lib/services/categories.service';
-import { getStoredLanguage } from '../../lib/language';
+import type { MobileCategoryChipNode } from '@/lib/home/mobile-home-sections';
 
-type CategoryTreeNode = {
-  id: string;
-  slug: string;
-  title: string;
-  children: CategoryTreeNode[];
+type MobileCategoriesSectionProps = {
+  categories: MobileCategoryChipNode[];
 };
 
-async function getRootCategories(): Promise<CategoryTreeNode[]> {
-  try {
-    const lang = getStoredLanguage() || 'ru';
-    const result = await categoriesService.getTree(lang);
-    const data = result.data;
-    return Array.isArray(data) ? (data as CategoryTreeNode[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-export async function MobileCategoriesSection() {
-  const categories = await getRootCategories();
-
+export function MobileCategoriesSection({ categories }: MobileCategoriesSectionProps) {
   if (categories.length === 0) {
     return null;
   }
