@@ -64,8 +64,8 @@ function CategoryNavigationContent() {
   const displayCategories = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
 
   return (
-    <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-3 sm:py-4 md:py-6 w-full">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+    <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-4 sm:py-5 md:py-7 w-full">
+      <div className="w-full px-3 sm:px-5 md:px-7 lg:px-10">
         <div className="flex min-w-0 items-center gap-1 sm:gap-2">
           <CategoryEdgeScrollButton
             direction="left"
@@ -75,7 +75,7 @@ function CategoryNavigationContent() {
           />
           <div
             ref={scrollContainerRef}
-            className="flex min-h-[72px] min-w-0 flex-1 touch-pan-x items-center gap-4 overflow-x-auto overscroll-x-contain scrollbar-hide pb-1 pl-1 sm:min-h-[80px] sm:gap-6 sm:pb-2 sm:pl-2 md:gap-8"
+            className="flex min-h-[86px] min-w-0 flex-1 touch-pan-x items-center gap-5 overflow-x-auto overscroll-x-contain scrollbar-hide pb-2 pl-2 sm:min-h-[100px] sm:gap-7 sm:pb-2 sm:pl-2 md:gap-9"
             style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
           >
             {displayCategories.map((category) => {

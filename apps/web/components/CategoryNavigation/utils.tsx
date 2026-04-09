@@ -40,7 +40,7 @@ export function getCategoryIcon(
   // ALL category - grey circle
   if (title === 'all' || slug === 'all') {
     return (
-      <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all ${
+      <div className={`w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full flex items-center justify-center transition-all ${
         isActive ? 'bg-gray-300' : 'bg-gray-200'
       }`}>
         <span className="text-xs sm:text-sm font-bold text-gray-900">{t('products.categoryNavigation.labels.all')}</span>
@@ -51,7 +51,7 @@ export function getCategoryIcon(
   // NEW category - green circle
   if (title.includes('new') || slug.includes('new')) {
     return (
-      <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all ${
+      <div className={`w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full flex items-center justify-center transition-all ${
         isActive ? 'bg-green-200' : 'bg-green-100'
       }`}>
         <span className="text-xs sm:text-sm font-bold text-green-700">{t('products.categoryNavigation.labels.new')}</span>
@@ -62,7 +62,7 @@ export function getCategoryIcon(
   // SALE category - red circle
   if (title.includes('sale') || slug.includes('sale')) {
     return (
-      <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all ${
+      <div className={`w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full flex items-center justify-center transition-all ${
         isActive ? 'bg-red-200' : 'bg-red-100'
       }`}>
         <span className="text-xs sm:text-sm font-bold text-red-700">{t('products.categoryNavigation.labels.sale')}</span>
@@ -72,7 +72,7 @@ export function getCategoryIcon(
 
   // Default - white circle (will be filled with product image if available)
   return (
-    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center overflow-hidden">
+    <div className="w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full bg-transparent border-2 border-gray-200 flex items-center justify-center overflow-hidden">
       {/* Product image will be inserted here if available */}
     </div>
   );

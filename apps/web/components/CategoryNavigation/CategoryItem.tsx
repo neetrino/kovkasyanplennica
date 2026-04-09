@@ -52,7 +52,7 @@ export function CategoryItem({
         e.preventDefault();
         onCategoryClick(category.slug === 'all' ? null : category.slug);
       }}
-      className="flex flex-col items-center gap-1 sm:gap-2 min-w-[80px] sm:min-w-[100px] group cursor-pointer transition-all duration-200 hover:opacity-80"
+      className="flex flex-col items-center gap-1.5 sm:gap-2.5 min-w-[94px] sm:min-w-[120px] group cursor-pointer transition-all duration-200 hover:opacity-80"
     >
       {/* Category Icon/Image */}
       <div className="relative">
@@ -65,7 +65,7 @@ export function CategoryItem({
       </div>
       
       {/* Category Label */}
-      <span className={`text-[10px] sm:text-xs text-center font-medium leading-tight transition-colors ${
+      <span className={`text-[11px] sm:text-sm text-center font-medium leading-tight transition-colors ${
         isActive 
           ? 'text-white underline' 
           : 'text-gray-300'
