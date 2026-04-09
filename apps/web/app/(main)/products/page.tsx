@@ -214,8 +214,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const DEFAULT_PER_PAGE = 9999;
   const perPage = DEFAULT_PER_PAGE;
 
+  // `page` query param is for category-row UI pagination, not API pagination.
+  // Always fetch from the first API page with a large limit so all filtered
+  // products are available for local row slicing across pages.
   const productsData = await getProducts(
-    page,
+    1,
     firstParam(raw.search),
     firstParam(raw.category),
     firstParam(raw.minPrice),
