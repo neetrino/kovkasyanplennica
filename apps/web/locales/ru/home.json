@@ -96,10 +96,10 @@
     },
     "workingHours": {
       "title": "РЕЖИМ РАБОТЫ",
-      "weekdays": "Пн — Пт",
-      "weekdaysTime": "10:00 - 23:00",
-      "weekend": "Сб — Вс",
-      "weekendTime": "11:00 - 01:00",
+      "weekdays": "Доставка",
+      "weekdaysTime": "с 10:00",
+      "weekend": "Ресторан",
+      "weekendTime": "11:00 - 24:00",
       "deliveryInfo": ""
     },
     "bottomLinks": {
