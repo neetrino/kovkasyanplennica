@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
-import { convertPrice, type CurrencyCode } from '@/lib/currency';
+import type { CurrencyCode } from '@/lib/currency';
 import { cleanImageUrls, separateMainAndVariantImages } from '@/lib/utils/image-utils';
 import type { ProductData, ColorData, Variant } from '../types';
 import { useTranslation } from '@/lib/i18n-client';
@@ -116,17 +116,14 @@ export function useProductEditMode({
             }
 
             if (index === 0) {
-              const firstPriceUSD = variant.price !== undefined && variant.price !== null ? variant.price : 0;
-              const firstCompareAtPriceUSD =
+              const firstPriceValue = variant.price !== undefined && variant.price !== null ? Number(variant.price) : 0;
+              const firstCompareAtPriceValue =
                 variant.compareAtPrice !== undefined && variant.compareAtPrice !== null
-                  ? variant.compareAtPrice
+                  ? Number(variant.compareAtPrice)
                   : 0;
-              firstPrice =
-                firstPriceUSD > 0 ? String(convertPrice(firstPriceUSD, 'USD', defaultCurrency)) : '';
+              firstPrice = firstPriceValue > 0 ? String(firstPriceValue) : '';
               firstCompareAtPrice =
-                firstCompareAtPriceUSD > 0
-                  ? String(convertPrice(firstCompareAtPriceUSD, 'USD', defaultCurrency))
-                  : '';
+                firstCompareAtPriceValue > 0 ? String(firstCompareAtPriceValue) : '';
               firstSku = variant.sku || '';
             }
           });
@@ -156,8 +153,11 @@ export function useProductEditMode({
           );
 
           const normalizedMedia = cleanImageUrls(main);
+          const fallbackMedia = cleanImageUrls(Array.isArray(mediaList) ? mediaList : []);
+          const effectiveMedia =
+            normalizedMedia.length > 0 || fallbackMedia.length === 0 ? normalizedMedia : fallbackMedia;
           console.log(
-            `🖼️ [ADMIN] Main media loaded: ${normalizedMedia.length} images (after separation from ${variantImages.size} variant images)`
+            `🖼️ [ADMIN] Main media loaded: ${effectiveMedia.length} images (after separation from ${variantImages.size} variant images)`
           );
 
           const featuredIndexFromApi = Array.isArray(mediaList)
@@ -169,11 +169,11 @@ export function useProductEditMode({
             : -1;
 
           const mainProductImage =
-            (product as any).mainProductImage || (normalizedMedia.length > 0 ? normalizedMedia[0] : '');
+            (product as any).mainProductImage || (effectiveMedia.length > 0 ? effectiveMedia[0] : '');
 
           const formData = buildFormData(
             product,
-            normalizedMedia,
+            effectiveMedia,
             featuredIndexFromApi,
             mainProductImage,
             mergedVariant
@@ -236,24 +236,16 @@ export function useProductEditMode({
               setSimpleProductData({
                 price: firstVariant.price
                   ? String(
-                      convertPrice(
-                        typeof firstVariant.price === 'number'
-                          ? firstVariant.price
-                          : parseFloat(String(firstVariant.price || '0')),
-                        'USD',
-                        defaultCurrency
-                      )
+                      typeof firstVariant.price === 'number'
+                        ? firstVariant.price
+                        : parseFloat(String(firstVariant.price || '0'))
                     )
                   : '',
                 compareAtPrice: firstVariant.compareAtPrice
                   ? String(
-                      convertPrice(
-                        typeof firstVariant.compareAtPrice === 'number'
-                          ? firstVariant.compareAtPrice
-                          : parseFloat(String(firstVariant.compareAtPrice || '0')),
-                        'USD',
-                        defaultCurrency
-                      )
+                      typeof firstVariant.compareAtPrice === 'number'
+                        ? firstVariant.compareAtPrice
+                        : parseFloat(String(firstVariant.compareAtPrice || '0'))
                     )
                   : '',
                 sku: firstVariant.sku || '',

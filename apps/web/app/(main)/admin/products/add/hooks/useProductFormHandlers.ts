@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { convertPrice, type CurrencyCode } from '@/lib/currency';
+import type { CurrencyCode } from '@/lib/currency';
 import type { Attribute, Variant, GeneratedVariant } from '../types';
 import { useBrandAndCategoryCreation } from './useBrandAndCategoryCreation';
 import { useVariantConversionToFormData } from './useVariantConversionToFormData';
@@ -61,7 +61,7 @@ export function useProductFormHandlers({
   selectedAttributesForVariants,
   generatedVariants,
   attributes,
-  defaultCurrency,
+  defaultCurrency: _defaultCurrency,
   useNewBrand,
   newBrandName,
   useNewCategory,
@@ -138,18 +138,18 @@ export function useProductFormHandlers({
 
       if (productType === 'simple') {
         console.log('📦 [ADMIN] Processing Simple Product');
-        const priceUSD = convertPrice(parseFloat(simpleProductData.price), defaultCurrency, 'USD');
-        const compareAtPriceUSD = simpleProductData.compareAtPrice && simpleProductData.compareAtPrice.trim() !== ''
-          ? convertPrice(parseFloat(simpleProductData.compareAtPrice), defaultCurrency, 'USD')
+        const priceValue = parseFloat(simpleProductData.price) || 0;
+        const compareAtPriceValue = simpleProductData.compareAtPrice && simpleProductData.compareAtPrice.trim() !== ''
+          ? parseFloat(simpleProductData.compareAtPrice) || 0
           : undefined;
         const simpleVariant: any = {
-          price: priceUSD,
+          price: priceValue,
           stock: parseInt(simpleProductData.quantity) || 0,
           sku: simpleProductData.sku.trim(),
           published: true,
         };
-        if (compareAtPriceUSD) {
-          simpleVariant.compareAtPrice = compareAtPriceUSD;
+        if (compareAtPriceValue) {
+          simpleVariant.compareAtPrice = compareAtPriceValue;
         }
         variants.push(simpleVariant);
         variantSkuSet.add(simpleProductData.sku.trim());
@@ -163,9 +163,9 @@ export function useProductFormHandlers({
           const sizeAttribute = getSizeAttribute();
           
           generatedVariants.forEach((genVariant, variantIndex) => {
-            const variantPriceUSD = convertPrice(parseFloat(genVariant.price || '0'), defaultCurrency, 'USD');
-            const variantCompareAtPriceUSD = genVariant.compareAtPrice 
-              ? convertPrice(parseFloat(genVariant.compareAtPrice), defaultCurrency, 'USD')
+            const variantPriceValue = parseFloat(genVariant.price || '0') || 0;
+            const variantCompareAtPriceValue = genVariant.compareAtPrice 
+              ? parseFloat(genVariant.compareAtPrice) || 0
               : undefined;
             
             const attributeValueMap: Record<string, Array<{ valueId: string; value: string }>> = {};
@@ -194,8 +194,8 @@ export function useProductFormHandlers({
               }
               variantSkuSet.add(uniqueSku);
               variants.push({
-                price: variantPriceUSD,
-                compareAtPrice: variantCompareAtPriceUSD,
+                price: variantPriceValue,
+                compareAtPrice: variantCompareAtPriceValue,
                 stock: parseInt(genVariant.stock || '0') || 0,
                 sku: uniqueSku,
                 imageUrl: genVariant.image || undefined,
@@ -250,8 +250,8 @@ export function useProductFormHandlers({
                 variantSkuSet.add(uniqueSku);
                 
                 variants.push({
-                  price: variantPriceUSD,
-                  compareAtPrice: variantCompareAtPriceUSD,
+                  price: variantPriceValue,
+                  compareAtPrice: variantCompareAtPriceValue,
                   stock: parseInt(genVariant.stock || '0') || 0,
                   sku: uniqueSku,
                   imageUrl: genVariant.image || undefined,
@@ -265,10 +265,10 @@ export function useProductFormHandlers({
           // Legacy formData.variants processing (simplified)
           console.log('📦 [ADMIN] Using formData.variants format (legacy)');
           currentFormData.variants.forEach((variant, variantIndex) => {
-            const variantPriceUSD = convertPrice(parseFloat(variant.price || '0'), defaultCurrency, 'USD');
-            const baseVariantData: any = { price: variantPriceUSD, published: true };
+            const variantPriceValue = parseFloat(variant.price || '0') || 0;
+            const baseVariantData: any = { price: variantPriceValue, published: true };
             if (variant.compareAtPrice) {
-              baseVariantData.compareAtPrice = convertPrice(parseFloat(variant.compareAtPrice), defaultCurrency, 'USD');
+              baseVariantData.compareAtPrice = parseFloat(variant.compareAtPrice) || 0;
             }
             const colorDataArray = variant.colors || [];
             // Simplified variant processing - full logic would be in separate hook
@@ -297,7 +297,7 @@ export function useProductFormHandlers({
                     const finalPriceRaw = sizePrice && sizePrice.trim() !== ''
                       ? parseFloat(sizePrice)
                       : (colorData.price && colorData.price.trim() !== '' ? parseFloat(colorData.price) : baseVariantData.price);
-                    const finalPrice = convertPrice(finalPriceRaw, defaultCurrency, 'USD');
+                    const finalPrice = finalPriceRaw;
                     const variantOptions: Array<{ attributeKey: string; value: string; valueId?: string }> = [];
                     if (colorData.colorValue && colorData.colorValue.trim() !== '') {
                       const colorAttr = attributes.find(a => a.key === 'color');

@@ -2,7 +2,7 @@
  * Utilities for building color data map from variants
  */
 
-import { convertPrice, type CurrencyCode } from '@/lib/currency';
+import type { CurrencyCode } from '@/lib/currency';
 import { smartSplitUrls } from '@/lib/utils/image-utils';
 import type { ColorData } from '../types';
 
@@ -29,13 +29,12 @@ interface Attribute {
  */
 function convertPriceToDefaultCurrency(
   price: number | string | null | undefined,
-  defaultCurrency: CurrencyCode
+  _defaultCurrency: CurrencyCode
 ): number {
   if (price === undefined || price === null) {
     return 0;
   }
-  const priceNum = typeof price === 'number' ? price : parseFloat(String(price || '0'));
-  return convertPrice(priceNum, 'USD', defaultCurrency);
+  return typeof price === 'number' ? price : parseFloat(String(price || '0'));
 }
 
 /**

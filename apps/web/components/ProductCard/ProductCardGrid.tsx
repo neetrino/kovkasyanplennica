@@ -22,6 +22,7 @@ interface ProductCardGridProps {
     discountPercent?: number | null;
     colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
     category?: string;
+    description?: string | null;
   };
   currency: CurrencyCode;
   isAddingToCart: boolean;
@@ -85,14 +86,14 @@ export function ProductCardGrid({
       >
         <Link
           href="/coming-soon"
-          className="relative w-full h-full rounded-full overflow-hidden bg-transparent shadow-lg block"
+          className="relative w-full h-full bg-transparent block"
         >
           {product.image && !imageError ? (
             <Image
               src={product.image}
               alt={product.title}
               fill
-              className="object-cover rounded-full transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
+              className="object-contain transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
               sizes={imageSizesAttr}
               unoptimized
               onError={onImageError}
@@ -131,7 +132,7 @@ export function ProductCardGrid({
           discountPercent={product.discountPercent}
           currency={currency}
           colors={product.colors}
-          calories={(product as { calories?: number }).calories}
+          description={product.description}
           category={product.category}
           isCompact={isCompact || compactHeight}
           compactHeight={compactHeight}

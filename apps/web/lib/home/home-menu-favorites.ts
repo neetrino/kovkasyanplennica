@@ -5,6 +5,7 @@ import { productsService } from '@/lib/services/products.service';
 
 export const HOME_MENU_LIMIT = 4;
 export const HOME_FAVORITES_LIMIT = 8;
+export const HOME_MENU_MAX_PAGES = 4;
 
 export type HomeSectionProduct = {
   id: string;
@@ -19,7 +20,7 @@ export type HomeSectionProduct = {
     id: string;
     name: string;
   } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
   labels?: Array<{
     id: string;
@@ -51,12 +52,15 @@ function mapRawToHomeProduct(
     stock?: number;
     brand?: HomeSectionProduct['brand'];
     category?: string;
-    calories?: number;
+    categories?: Array<{ title?: string | null }>;
+    description?: string | null;
     colors?: HomeSectionProduct['colors'];
     labels?: HomeSectionProduct['labels'];
   },
   categoryFallback: string
 ): HomeSectionProduct {
+  const primaryCategoryTitle = p.categories?.[0]?.title?.trim();
+
   return {
     id: p.id,
     slug: p.slug,
@@ -70,8 +74,8 @@ function mapRawToHomeProduct(
     brand: p.brand ?? null,
     colors: p.colors ?? [],
     labels: p.labels ?? [],
-    calories: p.calories ?? Math.floor(Math.random() * 200) + 100,
-    category: p.brand?.name || p.category || categoryFallback,
+    description: p.description ?? null,
+    category: primaryCategoryTitle || p.category || categoryFallback,
   };
 }
 
@@ -98,7 +102,7 @@ const fetchHomeProductsPageCached = unstable_cache(
       totalPages: result.meta?.totalPages ?? 0,
     };
   },
-  ['home-menu-favorites-products'],
+  ['home-menu-favorites-products-v2'],
   {
     revalidate: HOME_PRODUCTS_REVALIDATE_SECONDS,
     tags: ['home-menu-favorites'],
@@ -116,6 +120,6 @@ export async function getHomeMenuAndFavoritesData(): Promise<{
   return {
     menuProducts: products.slice(0, HOME_MENU_LIMIT),
     favoritesProducts: products.slice(0, HOME_FAVORITES_LIMIT),
-    menuTotalPages: totalPages,
+    menuTotalPages: Math.min(totalPages, HOME_MENU_MAX_PAGES),
   };
 }

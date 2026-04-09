@@ -86,23 +86,11 @@ export function setStoredCurrency(_currency: CurrencyCode): void {
 }
 
 /**
- * Format price with currency conversion
- * Uses cached rates from API if available, otherwise falls back to default rates
- * Works both on client and server side
+ * Format price in selected currency (no conversion).
+ * Product/catalog prices are already stored in RUB.
  */
 export function formatPrice(price: number, currency: CurrencyCode = SHOP_DISPLAY_CURRENCY): string {
   const currencyInfo = CURRENCIES[currency];
-  
-  // Use cached rates if available (client-side only), otherwise use default rates
-  // On server-side, currencyRatesCache will be null, so it will use default rates
-  let rate: number;
-  if (typeof window !== 'undefined' && currencyRatesCache && currencyRatesCache[currency] !== undefined) {
-    rate = currencyRatesCache[currency];
-  } else {
-    rate = currencyInfo.rate;
-  }
-  
-  const convertedPrice = price * rate;
   
   // Show all currencies without decimals (remove .00)
   const minimumFractionDigits = 0;
@@ -113,12 +101,7 @@ export function formatPrice(price: number, currency: CurrencyCode = SHOP_DISPLAY
     currency: currencyInfo.code,
     minimumFractionDigits,
     maximumFractionDigits,
-  }).format(convertedPrice);
-  
-  // Debug logging (only in development)
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-    console.log(`💱 [formatPrice] ${price} ${currencyInfo.code} × ${rate} = ${formatted}`);
-  }
+  }).format(price);
   
   return formatted;
 }

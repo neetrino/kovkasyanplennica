@@ -16,7 +16,7 @@ interface MenuItem {
   defaultVariantId?: string | null;
   stock?: number;
   brand: { id: string; name: string } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
   labels?: Array<{
     id: string;
@@ -34,6 +34,14 @@ interface MenuItem {
 interface MobileMenuClientProps {
   initialItems?: MenuItem[];
   totalPages?: number;
+}
+
+function getPrimaryCategoryTitle(raw: unknown): string | undefined {
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const first = raw[0];
+  if (!first || typeof first !== 'object') return undefined;
+  const title = (first as { title?: unknown }).title;
+  return typeof title === 'string' && title.trim() ? title : undefined;
 }
 
 /**
@@ -68,8 +76,12 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
                 defaultVariantId: (p.defaultVariantId as string | null) ?? null,
                 stock: typeof p.stock === 'number' ? p.stock : undefined,
                 brand: (p.brand as { id: string; name: string } | null) ?? null,
-                calories: Number(p.calories ?? 150),
-                category: (p.brand as { name?: string })?.name ?? String(p.category ?? t('home.menu.categoryFallback')),
+                description: typeof p.description === 'string' ? p.description : null,
+                category:
+                  getPrimaryCategoryTitle(p.categories) ??
+                  (typeof p.category === 'string' && p.category.trim()
+                    ? p.category
+                    : t('home.menu.categoryFallback')),
                 labels: [],
                 compareAtPrice: (p.compareAtPrice as number | null) ?? null,
                 originalPrice: (p.originalPrice as number | null) ?? null,

@@ -31,7 +31,7 @@ export function CategoryIcon({ category, product, isActive, t }: CategoryIconPro
 
   // Regular categories show product image or placeholder
   return (
-    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white border-2 flex items-center justify-center overflow-hidden transition-all ${
+    <div className={`w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full bg-transparent border-2 flex items-center justify-center overflow-hidden transition-all ${
       isActive ? 'border-gray-400 shadow-md' : 'border-gray-200'
     }`}>
       {product?.image ? (
@@ -40,7 +40,7 @@ export function CategoryIcon({ category, product, isActive, t }: CategoryIconPro
           alt={category.title}
           width={80}
           height={80}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           unoptimized
         />
       ) : (

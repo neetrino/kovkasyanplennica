@@ -11,7 +11,7 @@ interface MenuItem {
     id: string;
     name: string;
   } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
 }
 

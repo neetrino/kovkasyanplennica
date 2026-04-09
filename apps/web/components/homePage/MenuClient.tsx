@@ -19,7 +19,7 @@ interface MenuItem {
     id: string;
     name: string;
   } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
   labels?: Array<{
     id: string;
@@ -40,6 +40,14 @@ interface MenuClientProps {
   totalPages?: number;
 }
 
+function getPrimaryCategoryTitle(raw: unknown): string | undefined {
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const first = raw[0];
+  if (!first || typeof first !== 'object') return undefined;
+  const title = (first as { title?: unknown }).title;
+  return typeof title === 'string' && title.trim() ? title : undefined;
+}
+
 /**
  * Menu Client Component
  * 
@@ -50,6 +58,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState<MenuItem[]>(initialItems);
   const [loading, setLoading] = useState(false);
+  const paginationPages = Math.min(totalPages, 4);
 
   // Fetch products when page changes
   useEffect(() => {
@@ -78,21 +87,29 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
         if (res.ok) {
           const response = await res.json();
           if (response.data && Array.isArray(response.data)) {
-            const products = response.data.map((p: any) => ({
-              id: p.id,
-              slug: p.slug,
-              title: p.title,
-              price: p.price,
-              compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
-              image: p.image ?? null,
-              inStock: p.inStock ?? true,
-              defaultVariantId: p.defaultVariantId ?? null,
+            const products = response.data.map((p: Record<string, unknown>) => ({
+              id: String(p.id ?? ''),
+              slug: String(p.slug ?? ''),
+              title: String(p.title ?? ''),
+              price: Number(p.price ?? 0),
+              compareAtPrice:
+                typeof p.compareAtPrice === 'number'
+                  ? p.compareAtPrice
+                  : typeof p.originalPrice === 'number'
+                    ? p.originalPrice
+                    : null,
+              image: typeof p.image === 'string' ? p.image : null,
+              inStock: Boolean(p.inStock ?? true),
+              defaultVariantId: typeof p.defaultVariantId === 'string' ? p.defaultVariantId : null,
               stock: typeof p.stock === 'number' ? p.stock : undefined,
-              brand: p.brand ?? null,
-              colors: p.colors ?? [],
-              labels: p.labels ?? [],
-              calories: p.calories ?? Math.floor(Math.random() * 200) + 100,
-              category: p.brand?.name || p.category || t('home.menu.categoryFallback'),
+              brand: (p.brand as MenuItem['brand']) ?? null,
+              colors: (p.colors as MenuItem['colors']) ?? [],
+              labels: (p.labels as MenuItem['labels']) ?? [],
+              description: typeof p.description === 'string' ? p.description : null,
+              category:
+                getPrimaryCategoryTitle(p.categories) ||
+                (typeof p.category === 'string' && p.category.trim() ? p.category : undefined) ||
+                t('home.menu.categoryFallback'),
             }));
             setItems(products);
           }
@@ -108,7 +125,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
   }, [currentPage, initialItems]);
 
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages && page !== currentPage) {
+    if (page >= 1 && page <= paginationPages && page !== currentPage) {
       setCurrentPage(page);
     }
   };
@@ -175,9 +192,9 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
         )}
 
         {/* Пагинация — как у HomePageImageCarousel (active: белое ядро + ореол) */}
-        {totalPages > 1 && (
+        {paginationPages > 1 && (
           <div className="mb-8 flex items-center justify-center gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            {Array.from({ length: paginationPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 type="button"

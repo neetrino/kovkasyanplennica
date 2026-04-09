@@ -27,7 +27,7 @@ interface Product {
   globalDiscount?: number | null;
   discountPercent?: number | null;
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
-  calories?: number;
+  description?: string | null;
   category?: string;
 }
 
