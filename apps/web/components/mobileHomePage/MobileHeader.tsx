@@ -36,8 +36,8 @@ export function MobileHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-app-header bg-[#2f3f3d] lg:hidden">
-        <div className="mx-auto flex w-full max-w-[375px] items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
+      <header className="sticky top-0 z-app-header bg-[#2f3f3d] xl:hidden">
+        <div className="mx-auto flex w-full items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
           <Link prefetch href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
             <Image
               src="/assets/mobile-home/logo-kp2.png"
@@ -74,7 +74,7 @@ export function MobileHeader() {
       </header>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 lg:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.mobileMenu.ariaLabel')}>
+        <div className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 xl:hidden" role="dialog" aria-modal="true" aria-label={t('home.header.mobileMenu.ariaLabel')}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" onClick={closeMenu} aria-hidden />
           <div
             className="relative flex max-h-[min(90vh,480px)] w-[280px] flex-col overflow-y-auto rounded-2xl border border-white/10 bg-[#2f3f3d] p-5 shadow-xl"
