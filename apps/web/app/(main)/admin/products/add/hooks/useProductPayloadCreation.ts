@@ -56,7 +56,11 @@ export async function createAndSubmitPayload({
       attributeIds: attributeIds.length > 0 ? attributeIds : undefined,
     };
     
-    if (finalMedia.length > 0) {
+    if (isEditMode) {
+      // In edit mode we must send media even when empty,
+      // otherwise backend keeps previous images.
+      payload.media = finalMedia;
+    } else if (finalMedia.length > 0) {
       payload.media = finalMedia;
     }
     

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
-import { CURRENCIES, type CurrencyCode } from '@/lib/currency';
+import type { CurrencyCode } from '@/lib/currency';
 import type { Brand, Category, Attribute } from '../types';
 
 interface UseProductDataLoadingProps {
@@ -67,24 +67,10 @@ export function useProductDataLoading({
     };
   }, [attributesDropdownOpen, attributesDropdownRef, setAttributesDropdownOpen]);
 
-  // Load default currency from settings
+  // Product add/edit must always use RUB in UI and conversion.
   useEffect(() => {
-    const loadDefaultCurrency = async () => {
-      try {
-        const settingsRes = await apiClient.get<{ defaultCurrency?: string }>('/api/v1/admin/settings');
-        const currency = (settingsRes.defaultCurrency || 'RUB') as CurrencyCode;
-        if (currency in CURRENCIES) {
-          setDefaultCurrency(currency);
-          console.log('✅ [ADMIN] Default currency loaded:', currency);
-        }
-      } catch (err) {
-        console.error('❌ [ADMIN] Error loading default currency:', err);
-        setDefaultCurrency('RUB');
-      }
-    };
-    
     if (isLoggedIn && isAdmin) {
-      loadDefaultCurrency();
+      setDefaultCurrency('RUB' as CurrencyCode);
     }
   }, [isLoggedIn, isAdmin, setDefaultCurrency]);
 
