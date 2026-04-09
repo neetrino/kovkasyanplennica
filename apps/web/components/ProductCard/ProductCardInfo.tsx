@@ -135,7 +135,7 @@ export function ProductCardInfo({
             disabled={!inStock || isAddingToCart}
             className={`absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
               largeCompactImage
-                ? 'bottom-[-28px] translate-y-1/2 w-[52px] h-[52px]'
+                ? 'bottom-0 translate-y-1/2 w-[52px] h-[52px]'
                 : compactHeight
                   ? 'bottom-[-8px] translate-y-1/2 w-10 h-10'
                   : 'bottom-[-8px] translate-y-1/2 w-[58px] h-[58px]'

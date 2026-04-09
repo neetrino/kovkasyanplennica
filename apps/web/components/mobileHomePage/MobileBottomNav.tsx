@@ -51,7 +51,7 @@ export function MobileBottomNav() {
 
   return (
     <>
-    <div className="fixed inset-x-0 bottom-0 z-50 mx-auto block w-full max-w-[375px] lg:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 mx-auto block w-full max-w-[375px] md:max-w-[600px] lg:hidden">
       <div className="relative h-[162px]">
         <div className="absolute inset-x-0 bottom-0 h-[128px] overflow-hidden ">
           <Image
