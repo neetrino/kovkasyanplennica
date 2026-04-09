@@ -95,7 +95,7 @@ export function useCheckout() {
       }
     }
     
-    if (paymentMethod === 'arca' || paymentMethod === 'idram') {
+    if (paymentMethod === 'arca') {
       setShowCardModal(true);
       return;
     }

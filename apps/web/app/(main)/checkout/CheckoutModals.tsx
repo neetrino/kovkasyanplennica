@@ -16,7 +16,7 @@ interface CheckoutModalsProps {
   errors: FieldErrors<CheckoutFormData>;
   isSubmitting: boolean;
   shippingMethod: 'pickup' | 'delivery';
-  paymentMethod: 'idram' | 'arca' | 'cash_on_delivery';
+  paymentMethod: 'arca' | 'cash_on_delivery';
   shippingCity: string | undefined;
   cart: Cart | null;
   orderSummary: {
@@ -75,27 +75,29 @@ export function CheckoutModals({
         onSubmit={onSubmit}
       />
 
-      <CardDetailsModal
-        isOpen={showCardModal}
-        onClose={() => setShowCardModal(false)}
-        register={register}
-        setValue={setValue}
-        handleSubmit={handleSubmit}
-        errors={errors}
-        isSubmitting={isSubmitting}
-        paymentMethod={paymentMethod}
-        shippingMethod={shippingMethod}
-        shippingCity={shippingCity}
-        cart={cart}
-        orderSummary={orderSummary}
-        loadingDeliveryPrice={loadingDeliveryPrice}
-        deliveryPrice={deliveryPrice}
-        logoErrors={logoErrors}
-        setLogoErrors={setLogoErrors}
-        isLoggedIn={isLoggedIn}
-        onShowShippingModal={() => setShowShippingModal(true)}
-        onSubmit={onSubmit}
-      />
+      {paymentMethod === 'arca' && (
+        <CardDetailsModal
+          isOpen={showCardModal}
+          onClose={() => setShowCardModal(false)}
+          register={register}
+          setValue={setValue}
+          handleSubmit={handleSubmit}
+          errors={errors}
+          isSubmitting={isSubmitting}
+          paymentMethod={paymentMethod}
+          shippingMethod={shippingMethod}
+          shippingCity={shippingCity}
+          cart={cart}
+          orderSummary={orderSummary}
+          loadingDeliveryPrice={loadingDeliveryPrice}
+          deliveryPrice={deliveryPrice}
+          logoErrors={logoErrors}
+          setLogoErrors={setLogoErrors}
+          isLoggedIn={isLoggedIn}
+          onShowShippingModal={() => setShowShippingModal(true)}
+          onSubmit={onSubmit}
+        />
+      )}
     </>
   );
 }

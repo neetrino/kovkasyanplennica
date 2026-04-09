@@ -16,7 +16,7 @@ interface CardDetailsModalProps {
   handleSubmit: UseFormHandleSubmit<CheckoutFormData>;
   errors: FieldErrors<CheckoutFormData>;
   isSubmitting: boolean;
-  paymentMethod: 'idram' | 'arca' | 'cash_on_delivery';
+  paymentMethod: 'arca';
   shippingMethod: 'pickup' | 'delivery';
   shippingCity?: string;
   cart: Cart | null;
@@ -89,7 +89,7 @@ export function CardDetailsModal({
           <h2 className="text-2xl font-bold text-gray-900">
             {t('checkout.modals.cardDetails').replace(
               '{method}',
-              paymentMethod === 'arca' ? t('checkout.payment.arca') : t('checkout.payment.idram')
+              t('checkout.payment.arca')
             )}
           </h2>
           <button
@@ -113,7 +113,7 @@ export function CardDetailsModal({
             />
             <div>
               <div className="font-semibold text-gray-900">
-                {paymentMethod === 'arca' ? t('checkout.payment.arca') : t('checkout.payment.idram')} {t('checkout.payment.paymentDetails')}
+                {t('checkout.payment.arca')} {t('checkout.payment.paymentDetails')}
               </div>
               <div className="text-sm text-gray-600">{t('checkout.payment.enterCardDetails')}</div>
             </div>

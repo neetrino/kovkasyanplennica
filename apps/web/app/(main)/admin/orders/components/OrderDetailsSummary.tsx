@@ -2,7 +2,7 @@
 
 import { useTranslation } from '@/lib/i18n-client';
 import { Card } from '@shop/ui';
-import { convertPrice, formatPriceInCurrency, type CurrencyCode } from '@/lib/currency';
+import type { CurrencyCode } from '@/lib/currency';
 import type { OrderDetails } from '../useOrders';
 
 interface OrderDetailsSummaryProps {
@@ -13,7 +13,7 @@ interface OrderDetailsSummaryProps {
 
 export function OrderDetailsSummary({
   orderDetails,
-  currency,
+  currency: _currency,
   formatCurrency,
 }: OrderDetailsSummaryProps) {
   const { t } = useTranslation();
@@ -29,15 +29,17 @@ export function OrderDetailsSummary({
             </div>
             <div>
               <span className="font-medium">{t('admin.orders.orderDetails.total')}</span>{' '}
-              {orderDetails.totals ? (() => {
-                const subtotalAMD = convertPrice(orderDetails.totals.subtotal, 'USD', 'AMD');
-                const discountAMD = convertPrice(orderDetails.totals.discount, 'USD', 'AMD');
-                const shippingAMD = orderDetails.totals.shipping;
-                const taxAMD = convertPrice(orderDetails.totals.tax, 'USD', 'AMD');
-                const totalAMD = subtotalAMD - discountAMD + shippingAMD + taxAMD;
-                const totalDisplay = currency === 'AMD' ? totalAMD : convertPrice(totalAMD, 'AMD', currency as CurrencyCode);
-                return formatPriceInCurrency(totalDisplay, currency as CurrencyCode);
-              })() : formatCurrency(orderDetails.total, (orderDetails.currency || 'AMD') as CurrencyCode, 'USD')}
+              {orderDetails.totals
+                ? formatCurrency(
+                    orderDetails.totals.total,
+                    (orderDetails.totals.currency || orderDetails.currency || 'RUB') as CurrencyCode,
+                    (orderDetails.totals.currency || orderDetails.currency || 'RUB') as CurrencyCode,
+                  )
+                : formatCurrency(
+                    orderDetails.total,
+                    (orderDetails.currency || 'RUB') as CurrencyCode,
+                    (orderDetails.currency || 'RUB') as CurrencyCode,
+                  )}
             </div>
             <div>
               <span className="font-medium">{t('admin.orders.orderDetails.status')}</span> {orderDetails.status}

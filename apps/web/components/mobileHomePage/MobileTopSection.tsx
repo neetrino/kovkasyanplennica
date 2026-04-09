@@ -79,7 +79,7 @@ export function MobileTopSection({ products }: MobileTopSectionProps) {
               title={product.title}
               meta={formatPrice(product.price, currency)}
               imageSrc={product.image}
-              href={product.slug ? `/products/${product.slug}` : '/products'}
+              href="/coming-soon"
               priority={index < 3}
             />
           ))}

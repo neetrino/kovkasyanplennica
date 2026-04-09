@@ -13,7 +13,7 @@ export function useCheckoutSchema() {
     shippingMethod: z.enum(['pickup', 'delivery'], {
       message: t('checkout.errors.selectShippingMethod'),
     }),
-    paymentMethod: z.enum(['idram', 'arca', 'cash_on_delivery'], {
+    paymentMethod: z.enum(['arca', 'cash_on_delivery'], {
       message: t('checkout.errors.selectPaymentMethod'),
     }),
     shippingAddress: z.string().optional(),
@@ -39,7 +39,7 @@ export function useCheckoutSchema() {
     message: t('checkout.errors.cityRequired'),
     path: ['shippingCity'],
   }).refine((data) => {
-    if (data.paymentMethod === 'arca' || data.paymentMethod === 'idram') {
+    if (data.paymentMethod === 'arca') {
       return data.cardNumber && data.cardNumber.replace(/\s/g, '').length >= 13;
     }
     return true;
@@ -47,7 +47,7 @@ export function useCheckoutSchema() {
     message: t('checkout.errors.cardNumberRequired'),
     path: ['cardNumber'],
   }).refine((data) => {
-    if (data.paymentMethod === 'arca' || data.paymentMethod === 'idram') {
+    if (data.paymentMethod === 'arca') {
       return data.cardExpiry && /^\d{2}\/\d{2}$/.test(data.cardExpiry);
     }
     return true;
@@ -55,7 +55,7 @@ export function useCheckoutSchema() {
     message: t('checkout.errors.cardExpiryRequired'),
     path: ['cardExpiry'],
   }).refine((data) => {
-    if (data.paymentMethod === 'arca' || data.paymentMethod === 'idram') {
+    if (data.paymentMethod === 'arca') {
       return data.cardCvv && data.cardCvv.length >= 3;
     }
     return true;
@@ -63,7 +63,7 @@ export function useCheckoutSchema() {
     message: t('checkout.errors.cvvRequired'),
     path: ['cardCvv'],
   }).refine((data) => {
-    if (data.paymentMethod === 'arca' || data.paymentMethod === 'idram') {
+    if (data.paymentMethod === 'arca') {
       return data.cardHolderName && data.cardHolderName.trim().length > 0;
     }
     return true;

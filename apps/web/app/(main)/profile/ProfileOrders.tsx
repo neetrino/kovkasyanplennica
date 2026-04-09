@@ -3,9 +3,8 @@ import type { MouseEvent } from 'react';
 import { Button, Card } from '@shop/ui';
 import {
   formatPriceInCurrency,
-  amountUsdToRub,
-  amountAmdToRub,
   convertPrice,
+  type CurrencyCode,
   SHOP_DISPLAY_CURRENCY,
 } from '@/lib/currency';
 import { getStatusColor, getPaymentStatusColor } from './utils';
@@ -35,6 +34,14 @@ export function ProfileOrders({
   onOrderClick,
   t,
 }: ProfileOrdersProps) {
+  const toDisplayAmount = (amount: number, sourceCurrency?: string): number => {
+    const fromCurrency = (sourceCurrency || 'RUB') as CurrencyCode;
+    if (fromCurrency === SHOP_DISPLAY_CURRENCY) {
+      return amount;
+    }
+    return convertPrice(amount, fromCurrency, SHOP_DISPLAY_CURRENCY);
+  };
+
   if (ordersLoading) {
     return (
       <Card className="p-6">
@@ -98,18 +105,10 @@ export function ProfileOrders({
               </div>
               <div className="text-right ml-4">
                 <p className="text-lg font-bold text-gray-900">
-                  {(() => {
-                    if (order.subtotal !== undefined && order.discountAmount !== undefined && order.taxAmount !== undefined) {
-                      const rub =
-                        amountUsdToRub(order.subtotal) -
-                        amountUsdToRub(order.discountAmount) +
-                        amountUsdToRub(order.taxAmount);
-                      return formatPriceInCurrency(rub, SHOP_DISPLAY_CURRENCY);
-                    }
-                    const totalAmd =
-                      convertPrice(order.total, 'USD', 'AMD') - (order.shippingAmount || 0);
-                    return formatPriceInCurrency(amountAmdToRub(totalAmd), SHOP_DISPLAY_CURRENCY);
-                  })()}
+                  {formatPriceInCurrency(
+                    toDisplayAmount(order.total - (order.shippingAmount || 0), order.currency),
+                    SHOP_DISPLAY_CURRENCY,
+                  )}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">{t('profile.dashboard.viewDetails')}</p>
               </div>

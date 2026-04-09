@@ -3,13 +3,6 @@ import { t } from '@/lib/i18n';
 
 export const revalidate = 3600;
 
-const STATS = [
-  { value: '5+', labelKey: 'about.stats.yearsLabel' },
-  { value: '500+', labelKey: 'about.stats.productsLabel' },
-  { value: '10K+', labelKey: 'about.stats.customersLabel' },
-  { value: '98%', labelKey: 'about.stats.satisfactionLabel' },
-];
-
 /**
  * About Us page — styled to match the products page visual language:
  * dark #2F3F3D bg, union-decorative.png overlays, #fff4de headings, #7CB342 accent.
@@ -110,29 +103,6 @@ export default function AboutPage() {
               </div>
             </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════
-          STATS
-          ══════════════════════════════════ */}
-      <section className="relative z-10 py-16 border-y border-[#3d504e]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
-            {STATS.map((stat) => (
-              <div
-                key={stat.labelKey}
-                className="text-center px-4 py-6 rounded-xl bg-[#3d504e]/40 border border-[#3d504e] hover:border-[#7CB342]/50 transition-colors duration-300"
-              >
-                <p className="text-[#7CB342] text-4xl md:text-5xl font-light italic mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-[#fff4de]/60 text-xs uppercase tracking-widest">
-                  {t(lang, stat.labelKey)}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

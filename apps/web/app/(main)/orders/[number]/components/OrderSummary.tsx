@@ -4,10 +4,7 @@ import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n-client';
 import {
   formatPriceInCurrency,
-  amountUsdToRub,
-  amountAmdToRub,
   SHOP_DISPLAY_CURRENCY,
-  convertPrice,
 } from '@/lib/currency';
 import type { Order } from '../types';
 
@@ -20,12 +17,11 @@ interface OrderSummaryProps {
 export function OrderSummary({ order, calculatedShipping, loadingShipping }: OrderSummaryProps) {
   const { t } = useTranslation();
 
-  const subtotalDisplay = amountUsdToRub(order.totals.subtotal);
-  const discountDisplay = order.totals.discount > 0 ? amountUsdToRub(order.totals.discount) : null;
-  const taxDisplay = amountUsdToRub(order.totals.tax);
+  const subtotalDisplay = order.totals.subtotal;
+  const discountDisplay = order.totals.discount > 0 ? order.totals.discount : null;
+  const taxDisplay = order.totals.tax;
 
-  const shippingAmd = calculatedShipping !== null ? calculatedShipping : order.totals.shipping;
-  const shippingDisplayValue = amountAmdToRub(shippingAmd);
+  const shippingDisplayValue = calculatedShipping !== null ? calculatedShipping : order.totals.shipping;
 
   const shippingLabel =
     order.shippingMethod === 'pickup'
@@ -34,12 +30,8 @@ export function OrderSummary({ order, calculatedShipping, loadingShipping }: Ord
         ? t('checkout.shipping.loading')
         : `${formatPriceInCurrency(shippingDisplayValue, SHOP_DISPLAY_CURRENCY)}${order.shippingAddress?.city ? ` (${order.shippingAddress.city})` : ''}`;
 
-  const totalAmd =
-    convertPrice(order.totals.subtotal, 'USD', 'AMD') -
-    convertPrice(order.totals.discount, 'USD', 'AMD') +
-    shippingAmd +
-    convertPrice(order.totals.tax, 'USD', 'AMD');
-  const totalDisplay = amountAmdToRub(totalAmd);
+  const baseTotalWithoutShipping = order.totals.total - order.totals.shipping;
+  const totalDisplay = baseTotalWithoutShipping + shippingDisplayValue;
 
   return (
     <div className="lg:col-span-1">
