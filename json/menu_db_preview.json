@@ -1,0 +1,1442 @@
+[
+  {
+    "category": "Холодные закуски",
+    "product_name": "Гаурма",
+    "price": 790,
+    "weight": "160г",
+    "image_ids": "53",
+    "image_paths": "dir/53"
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Мясная тарелка",
+    "price": 940,
+    "weight": "320г",
+    "image_ids": "72",
+    "image_paths": "dir/72"
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Овощная нарезка",
+    "price": 450,
+    "weight": "320г",
+    "image_ids": "65",
+    "image_paths": "dir/65"
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Оливки в ассортименте",
+    "price": 480,
+    "weight": "250г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Сало солёное",
+    "price": 430,
+    "weight": "150г",
+    "image_ids": "1",
+    "image_paths": "dir/1"
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Сёмга слабосоленая",
+    "price": 830,
+    "weight": "120г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Соленья в ассортименте",
+    "price": 570,
+    "weight": "400г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Сырная тарелка \"Армянская\"",
+    "price": 750,
+    "weight": "320г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Ассорти зелень",
+    "price": 440,
+    "weight": "300г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Холодные закуски",
+    "product_name": "Сырная тарелка \"Европейская\"",
+    "price": 800,
+    "weight": "280г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Картофельные шарики с куриной начинкой",
+    "price": 280,
+    "weight": "180г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Тигровые креветки в соусе унаги",
+    "price": 1550,
+    "weight": "200г",
+    "image_ids": "71",
+    "image_paths": "dir/71"
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Куриные крылышки в мексиканском соусе",
+    "price": 460,
+    "weight": "200г",
+    "image_ids": "49",
+    "image_paths": "dir/49"
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Куриные крылышки в соусе BBQ",
+    "price": 460,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Куриные наггетсы",
+    "price": 420,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Наггетсы хрустящие",
+    "price": 400,
+    "weight": "200г",
+    "image_ids": "40",
+    "image_paths": "dir/40"
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Cвиные ребра BBQ",
+    "price": 950,
+    "weight": "600г",
+    "image_ids": "61",
+    "image_paths": "dir/61"
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Cырные палочки",
+    "price": 320,
+    "weight": "180г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие закуски",
+    "product_name": "Сырные шарики хрустящие с халапенью",
+    "price": 380,
+    "weight": "180г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Цезарь с курицей",
+    "price": 540,
+    "weight": "200г",
+    "image_ids": "16",
+    "image_paths": "dir/16"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Цезарь с тигровыми креветками",
+    "price": 590,
+    "weight": "220г",
+    "image_ids": "31",
+    "image_paths": "dir/31"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Каирэ",
+    "price": 510,
+    "weight": "200г",
+    "image_ids": "3",
+    "image_paths": "dir/3"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Теплый салат Армения",
+    "price": 530,
+    "weight": "200г",
+    "image_ids": "20",
+    "image_paths": "dir/20"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Хрустящие баклажаны",
+    "price": 650,
+    "weight": "180г",
+    "image_ids": "30",
+    "image_paths": "dir/30"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Терияки",
+    "price": 530,
+    "weight": "180г",
+    "image_ids": "19",
+    "image_paths": "dir/19"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Греческий",
+    "price": 500,
+    "weight": "180г",
+    "image_ids": "18",
+    "image_paths": "dir/18"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Мексика",
+    "price": 650,
+    "weight": "190г",
+    "image_ids": "4",
+    "image_paths": "dir/4"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Буратта",
+    "price": 850,
+    "weight": "220г",
+    "image_ids": "17",
+    "image_paths": "dir/17"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Салат от Шефа",
+    "price": 700,
+    "weight": "210г",
+    "image_ids": "15",
+    "image_paths": "dir/15"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Овощной салат",
+    "price": 490,
+    "weight": "180г",
+    "image_ids": "2",
+    "image_paths": "dir/2"
+  },
+  {
+    "category": "Салаты",
+    "product_name": "Табуле",
+    "price": 380,
+    "weight": "240г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Бефстроганов",
+    "price": 950,
+    "weight": "360г",
+    "image_ids": "79;85",
+    "image_paths": "dir/79;dir/85"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Ишли кюфта",
+    "price": 850,
+    "weight": "200г",
+    "image_ids": "81",
+    "image_paths": "dir/81"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Запеченный картоф. с телятиной под сырной шапочкой",
+    "price": 650,
+    "weight": "230г",
+    "image_ids": "9",
+    "image_paths": "dir/9"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Рамен",
+    "price": 570,
+    "weight": "300г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Тарелка Тимура",
+    "price": 560,
+    "weight": "330г",
+    "image_ids": "73",
+    "image_paths": "dir/73"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Толма",
+    "price": 530,
+    "weight": "200гр",
+    "image_ids": "70",
+    "image_paths": "dir/70"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Форель в печи",
+    "price": 1100,
+    "weight": "400г",
+    "image_ids": "84",
+    "image_paths": "dir/84"
+  },
+  {
+    "category": "Горячие блюда",
+    "product_name": "Хурджин",
+    "price": 950,
+    "weight": "350г",
+    "image_ids": "10",
+    "image_paths": "dir/10"
+  },
+  {
+    "category": "Гарниры",
+    "product_name": "Картофель по-деревенски",
+    "price": 300,
+    "weight": "250г",
+    "image_ids": "47",
+    "image_paths": "dir/47"
+  },
+  {
+    "category": "Гарниры",
+    "product_name": "Картофель фри",
+    "price": 250,
+    "weight": "160г",
+    "image_ids": "82",
+    "image_paths": "dir/82"
+  },
+  {
+    "category": "Гарниры",
+    "product_name": "Картофельное пюре",
+    "price": 260,
+    "weight": "150г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Гарниры",
+    "product_name": "Рис басматти с овощами",
+    "price": 300,
+    "weight": "150г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Гарниры",
+    "product_name": "Брокколи",
+    "price": 370,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Пивные сеты",
+    "product_name": "Пивной сет 1",
+    "price": 2800,
+    "weight": "1.150",
+    "image_ids": "1",
+    "image_paths": "dir/1"
+  },
+  {
+    "category": "Пивные сеты",
+    "product_name": "Пивной сет 2",
+    "price": 2000,
+    "weight": "700г",
+    "image_ids": "60",
+    "image_paths": "dir/60"
+  },
+  {
+    "category": "Пивные сеты",
+    "product_name": "Пивной сет 3",
+    "price": 1900,
+    "weight": "700г",
+    "image_ids": "75",
+    "image_paths": "dir/75"
+  },
+  {
+    "category": "Паста",
+    "product_name": "Аришта",
+    "price": 500,
+    "weight": "180г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Паста",
+    "product_name": "Карбонара",
+    "price": 500,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Паста",
+    "product_name": "Пенне Арабьята",
+    "price": 420,
+    "weight": "160г",
+    "image_ids": "12",
+    "image_paths": "dir/12"
+  },
+  {
+    "category": "Паста",
+    "product_name": "Ризотто",
+    "price": 670,
+    "weight": "220г",
+    "image_ids": "13",
+    "image_paths": "dir/13"
+  },
+  {
+    "category": "Паста",
+    "product_name": "Фетучини Альфредо",
+    "price": 510,
+    "weight": "220г",
+    "image_ids": "11",
+    "image_paths": "dir/11"
+  },
+  {
+    "category": "Супы",
+    "product_name": "Крем-суп с чечевицей",
+    "price": 450,
+    "weight": "300г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Супы",
+    "product_name": "Крем-суп сырный",
+    "price": 520,
+    "weight": "300г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Супы",
+    "product_name": "Крем-суп томатный",
+    "price": 400,
+    "weight": "300г",
+    "image_ids": "66",
+    "image_paths": "dir/66"
+  },
+  {
+    "category": "Супы",
+    "product_name": "Борщ",
+    "price": 450,
+    "weight": "350г",
+    "image_ids": "78",
+    "image_paths": "dir/78"
+  },
+  {
+    "category": "Супы",
+    "product_name": "Суп-лапша",
+    "price": 330,
+    "weight": "350г",
+    "image_ids": "67",
+    "image_paths": "dir/67"
+  },
+  {
+    "category": "Супы",
+    "product_name": "Солянка",
+    "price": 450,
+    "weight": "350г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Супы",
+    "product_name": "Том Ям",
+    "price": 690,
+    "weight": "350г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Супы",
+    "product_name": "Хашлама с гов. хвостом",
+    "price": 550,
+    "weight": "400г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Супы",
+    "product_name": "Хашлама из баранины",
+    "price": 540,
+    "weight": "400г",
+    "image_ids": "57",
+    "image_paths": "dir/57"
+  },
+  {
+    "category": "Бургеры",
+    "product_name": "Бургер куриный",
+    "price": 450,
+    "weight": "280г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Бургеры",
+    "product_name": "Бургер с говяжьим мясом",
+    "price": 550,
+    "weight": "280г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Бургеры",
+    "product_name": "Кесадилья с куриным мясом",
+    "price": 470,
+    "weight": "260г",
+    "image_ids": "56",
+    "image_paths": "dir/56"
+  },
+  {
+    "category": "Авторские сеты",
+    "product_name": "Cет армавир",
+    "price": 2250,
+    "weight": "1.200",
+    "image_ids": "59",
+    "image_paths": "dir/59"
+  },
+  {
+    "category": "Стейки",
+    "product_name": "Оссобуко",
+    "price": 1500,
+    "weight": "550г",
+    "image_ids": "29",
+    "image_paths": "dir/29"
+  },
+  {
+    "category": "Стейки",
+    "product_name": "Стриплойн",
+    "price": 1650,
+    "weight": "350г",
+    "image_ids": "28",
+    "image_paths": "dir/28"
+  },
+  {
+    "category": "Стейки",
+    "product_name": "Рибай",
+    "price": 1850,
+    "weight": "400г",
+    "image_ids": "32",
+    "image_paths": "dir/32"
+  },
+  {
+    "category": "Стейки",
+    "product_name": "Куриный стейк с сырной начинкой",
+    "price": 550,
+    "weight": "400г",
+    "image_ids": "103",
+    "image_paths": "dir/103"
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Картофельное пюре с котлеткой",
+    "price": 480,
+    "weight": "160г",
+    "image_ids": "80",
+    "image_paths": "dir/80"
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Супик лапша",
+    "price": 310,
+    "weight": "250г",
+    "image_ids": "77",
+    "image_paths": "dir/77"
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Суп курочка ряба",
+    "price": 330,
+    "weight": "250г",
+    "image_ids": "88",
+    "image_paths": "dir/88"
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Спагетти с куриной сосиской",
+    "price": 300,
+    "weight": "160г",
+    "image_ids": "46",
+    "image_paths": "dir/46"
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Картофель фри детский",
+    "price": 220,
+    "weight": "120г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Детское меню",
+    "product_name": "Наггетсы хрустящие",
+    "price": 400,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Ламаджо из говядины",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Ламаджо из говядины с сыром",
+    "price": 400,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Хачапури по-имеретински",
+    "price": 640,
+    "weight": "",
+    "image_ids": "48",
+    "image_paths": "dir/48"
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Хачапури по-мегрельски",
+    "price": 650,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Хачаупри по-аджарски",
+    "price": 550,
+    "weight": "",
+    "image_ids": "5",
+    "image_paths": "dir/5"
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Хачапури по-аджарски с помидором",
+    "price": 530,
+    "weight": "",
+    "image_ids": "7",
+    "image_paths": "dir/7"
+  },
+  {
+    "category": "Хачапури/тесто",
+    "product_name": "Хачапури по-аджарски с беконом",
+    "price": 550,
+    "weight": "",
+    "image_ids": "8",
+    "image_paths": "dir/8"
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Маргарита",
+    "price": 540,
+    "weight": "28 см",
+    "image_ids": "96",
+    "image_paths": "dir/96"
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Аппетитный цыпленок",
+    "price": 720,
+    "weight": "28 см",
+    "image_ids": "97",
+    "image_paths": "dir/97"
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Цезарь",
+    "price": 640,
+    "weight": "28 см",
+    "image_ids": "99",
+    "image_paths": "dir/99"
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Чоризо",
+    "price": 620,
+    "weight": "28 см",
+    "image_ids": "95",
+    "image_paths": "dir/95"
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Пицца с охотничьими колбасками",
+    "price": 680,
+    "weight": "28 см",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Пиццы",
+    "product_name": "Пицца с бастурмой",
+    "price": 770,
+    "weight": "28 см",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из говядины",
+    "price": 480,
+    "weight": "150 г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из говядины с сыром",
+    "price": 510,
+    "weight": "160 г",
+    "image_ids": "26",
+    "image_paths": "dir/26"
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из говядины с халапеньо",
+    "price": 520,
+    "weight": "160 г",
+    "image_ids": "33",
+    "image_paths": "dir/33"
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из говядины с зеленью",
+    "price": 500,
+    "weight": "160г",
+    "image_ids": "27",
+    "image_paths": "dir/27"
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из говядины с болг. перцем",
+    "price": 510,
+    "weight": "160г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из курицы",
+    "price": 460,
+    "weight": "150г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из курицы с тигровыми креветками",
+    "price": 525,
+    "weight": "170 г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из курицы с беконом",
+    "price": 490,
+    "weight": "160г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из курицы с грибами",
+    "price": 485,
+    "weight": "165г",
+    "image_ids": "23",
+    "image_paths": "dir/23"
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из курицы с грибами с сыром",
+    "price": 520,
+    "weight": "170г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из баранины",
+    "price": 550,
+    "weight": "150г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из баранины с зеленью",
+    "price": 510,
+    "weight": "155г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из баранины с халапеньо",
+    "price": 515,
+    "weight": "160г",
+    "image_ids": "33",
+    "image_paths": "dir/33"
+  },
+  {
+    "category": "Люля-кебаб",
+    "product_name": "Люля-кебаб из баранины с болг. перцем",
+    "price": 520,
+    "weight": "170г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Купаты из курицы",
+    "price": 450,
+    "weight": "175г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Купаты из свинины/гов",
+    "price": 520,
+    "weight": "250г",
+    "image_ids": "43",
+    "image_paths": "dir/43"
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Овощи на мангале",
+    "price": 380,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Шампиньоны",
+    "price": 500,
+    "weight": "180г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Баранина парная",
+    "price": 720,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Каре ягненка",
+    "price": 1050,
+    "weight": "255г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Печень говяжья",
+    "price": 420,
+    "weight": "200г",
+    "image_ids": "25",
+    "image_paths": "dir/25"
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Крылья",
+    "price": 390,
+    "weight": "200г",
+    "image_ids": "38",
+    "image_paths": "dir/38"
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Куриная грудка",
+    "price": 430,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Грудка индейки",
+    "price": 450,
+    "weight": "200 г",
+    "image_ids": "35",
+    "image_paths": "dir/35"
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Свиные ребра",
+    "price": 500,
+    "weight": "200г",
+    "image_ids": "39",
+    "image_paths": "dir/39"
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Свинина шея",
+    "price": 480,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Антрикот свинина",
+    "price": 470,
+    "weight": "200г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Телятина вырезка",
+    "price": 1200,
+    "weight": "300г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Форель",
+    "price": 720,
+    "weight": "1шт",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Шашлык",
+    "product_name": "Семга",
+    "price": 825,
+    "weight": "220г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет шашлыков 1",
+    "price": 4400,
+    "weight": "",
+    "image_ids": "44",
+    "image_paths": "dir/44"
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет шашлыков  2",
+    "price": 4500,
+    "weight": "",
+    "image_ids": "4",
+    "image_paths": "dir/4"
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет шашлыков  3",
+    "price": 4950,
+    "weight": "",
+    "image_ids": "3",
+    "image_paths": "dir/3"
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет шашлыков  4",
+    "price": 4600,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет шашлыков  5",
+    "price": 4900,
+    "weight": "",
+    "image_ids": "86",
+    "image_paths": "dir/86"
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет куриный",
+    "price": 3900,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Сеты",
+    "product_name": "Сет из морепродуктов",
+    "price": 6700,
+    "weight": "",
+    "image_ids": "63",
+    "image_paths": "dir/63"
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Чизкейк",
+    "price": 420,
+    "weight": "100г",
+    "image_ids": "69",
+    "image_paths": "dir/69"
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Медовик",
+    "price": 330,
+    "weight": "100г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Красный бархат",
+    "price": 350,
+    "weight": "100г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Эклеры",
+    "price": 250,
+    "weight": "100г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Муравейник",
+    "price": 220,
+    "weight": "100г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Жареное морожен. шоколад",
+    "price": 400,
+    "weight": "160г",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Десерты",
+    "product_name": "Брауни",
+    "price": 340,
+    "weight": "100г",
+    "image_ids": "68",
+    "image_paths": "dir/68"
+  },
+  {
+    "category": "Разное",
+    "product_name": "Соус в ассортименте",
+    "price": 100,
+    "weight": "",
+    "image_ids": "87",
+    "image_paths": "dir/87"
+  },
+  {
+    "category": "Разное",
+    "product_name": "Соус ассорти (хумус,мутабал,мухаммара)",
+    "price": 500,
+    "weight": "360г",
+    "image_ids": "62",
+    "image_paths": "dir/62"
+  },
+  {
+    "category": "Разное",
+    "product_name": "Окрошка по-армянски",
+    "price": 600,
+    "weight": "1л",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Разное",
+    "product_name": "Спас",
+    "price": 400,
+    "weight": "350г",
+    "image_ids": "76",
+    "image_paths": "dir/76"
+  },
+  {
+    "category": "Разное",
+    "product_name": "Фруктовое ассорти",
+    "price": 1200,
+    "weight": "850г",
+    "image_ids": "55",
+    "image_paths": "dir/55"
+  },
+  {
+    "category": "Разное",
+    "product_name": "Хлебная корзина",
+    "price": 280,
+    "weight": "1шт",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Напитки",
+    "product_name": "Чай горная мята",
+    "price": 360,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Напитки",
+    "product_name": "Чай горный чабрец",
+    "price": 360,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Напитки",
+    "product_name": "Морс 1л",
+    "price": 420,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Напитки",
+    "product_name": "Морс 300мл",
+    "price": 190,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Напитки",
+    "product_name": "Компот 1л",
+    "price": 420,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Авторский чай \"Облепиха мандарин\"",
+    "price": 410,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Авторский чай \"Ёлки палки\"",
+    "price": 410,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Авторский чай \"Персик на белом чае\"",
+    "price": 450,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Авторский чай \"Глинтвейн\"",
+    "price": 410,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Домашний лимонад \"Премикс еловый\"",
+    "price": 580,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад \"Таежные ягоды\" 330 мл",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад \"Таежные ягоды\" 900 мл",
+    "price": 700,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад \"Облепиха/мандарин\" 330 мл",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад \"Облепиха мандарин\" 900 мл",
+    "price": 700,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад земл/клуб/мята 330мл",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад земл/клуб/мята 900мл",
+    "price": 600,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад малиновая лада-гранда 900мл",
+    "price": 700,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Лимонад малиновая лада-гранда 330мл",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Глинтвейн вишн/миндаль",
+    "price": 360,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Глинтвейн б/а",
+    "price": 350,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Глинтвейн на вине",
+    "price": 400,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Вода (газ/негаз)",
+    "price": 200,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Редбул",
+    "price": 220,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские напитки",
+    "product_name": "Пиво \"Киликия\"",
+    "price": 480,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Spritz от Пленницы\"",
+    "price": 500,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Пить лучше, чем нюхать\"",
+    "price": 530,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Гранатовый фиеро тоник\"",
+    "price": 520,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Мартини фиеро тоник\"",
+    "price": 500,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Фейхоа шприц\"",
+    "price": 550,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "Смородиновый \"Сауэр\"",
+    "price": 480,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "Ром-фрукт \"Сауэр\"",
+    "price": 600,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Авторские алкогольные коктейли",
+    "product_name": "\"Игрони\"",
+    "price": 600,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Кофе американо",
+    "price": 195,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Кофе эспрессо",
+    "price": 145,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Кофе дабл эспрессо",
+    "price": 260,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Кофе капучино",
+    "price": 265,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Кофе латте",
+    "price": 220,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Раф марципан",
+    "price": 400,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Киска-ириска",
+    "price": 380,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Яблочный пудинг",
+    "price": 320,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Орешки из кешки",
+    "price": 300,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  },
+  {
+    "category": "Кофе",
+    "product_name": "Бамбл",
+    "price": 280,
+    "weight": "",
+    "image_ids": "",
+    "image_paths": ""
+  }
+]

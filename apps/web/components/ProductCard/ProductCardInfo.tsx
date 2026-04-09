@@ -17,7 +17,7 @@ interface ProductCardInfoProps {
   discountPercent?: number | null;
   currency: CurrencyCode;
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
-  calories?: number;
+  description?: string | null;
   category?: string;
   isCompact?: boolean;
   compactHeight?: boolean;
@@ -45,7 +45,7 @@ export function ProductCardInfo({
   discountPercent,
   currency,
   colors,
-  calories,
+  description,
   category,
   isCompact = false,
   compactHeight = false,
@@ -57,6 +57,7 @@ export function ProductCardInfo({
   onAddToCart,
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
+  const categoryValue = category || brandName || t('common.defaults.category');
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
@@ -68,37 +69,53 @@ export function ProductCardInfo({
 
   return (
     <div
-      className={`w-full ${
+      className={`w-full h-full flex flex-col ${
         compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
       }`}
     >
       <Link href="/coming-soon" className="block">
         {/* Product Title - Centered, Bold */}
-        <h3 className={`text-center font-bold text-black leading-normal ${compactHeight ? 'text-[14px] mb-1' : 'text-[20px] mb-2'}`}>
+        <h3
+          className={`text-center font-bold text-black ${
+            compactHeight ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]' : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
+          }`}
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
           {title}
         </h3>
       </Link>
 
-      {/* Calories - Centered, Grey, Semibold */}
-      {calories && (
+      {/* Description - Centered, Grey, Semibold */}
+      {description && description.trim() && (
         <p className={`text-center font-semibold text-[#acacac] leading-normal ${compactHeight ? 'text-[12px] mb-1' : 'text-[16px] mb-3'}`}>
-          {calories} {t('common.calories')}
+          {description}
         </p>
       )}
 
       {/* Divider Line */}
       <div className={`w-full mx-auto border-t border-[rgba(172,172,172,0.2)] ${compactHeight ? 'mb-1' : 'mb-3'}`} />
 
-      {/* Category - Left aligned, Grey, Medium */}
-      <div className={compactHeight ? 'mb-1' : 'mb-3'}>
-        <p className={`text-left font-medium text-[#acacac] leading-normal ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
-          {category || brandName || t('common.defaults.category')}
+      {/* Category - fixed row regardless of title length */}
+      <div className={`flex items-center justify-between gap-2 ${compactHeight ? 'mb-1' : 'mb-3'}`}>
+        <span className={`font-medium text-[#5c5c5c] leading-normal ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
+          {t('common.navigation.categories')}
+        </span>
+        <p
+          className={`text-right font-medium text-[#acacac] leading-normal truncate ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}
+          title={categoryValue}
+        >
+          {categoryValue}
         </p>
       </div>
 
       {/* Price Section - Figma design: Цена (left) | Cart Button (center) | Price (right) */}
       <div
-        className={`relative flex items-center justify-between ${
+        className={`relative mt-auto flex items-center justify-between ${
           compactHeight
             ? largeCompactImage
               ? 'pt-2 pb-2'

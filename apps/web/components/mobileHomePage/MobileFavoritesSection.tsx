@@ -13,7 +13,7 @@ interface Product {
   defaultVariantId?: string | null;
   stock?: number;
   brand: { id: string; name: string } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
   labels?: unknown[];
   compareAtPrice?: number | null;
@@ -38,8 +38,8 @@ async function getFavoriteProducts(limit: number = 8): Promise<Product[]> {
       defaultVariantId: p.defaultVariantId ?? null,
       stock: typeof p.stock === 'number' ? p.stock : undefined,
       brand: p.brand ?? null,
-      calories: Number(p.calories ?? 150),
-      category: (p.brand?.name ?? p.category ?? categoryFallback) as string,
+      description: typeof p.description === 'string' ? p.description : null,
+      category: (p.categories?.[0]?.title ?? p.category ?? categoryFallback) as string,
       labels: p.labels ?? [],
       compareAtPrice: p.compareAtPrice ?? null,
       originalPrice: p.originalPrice ?? null,

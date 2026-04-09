@@ -12,6 +12,16 @@ const getOutOfStockLabel = (lang: string = "ru"): string => {
   return translation.stock.outOfStock;
 };
 
+function toPlainTextDescription(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const plain = value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return plain.length > 0 ? plain : null;
+}
+
 class ProductsFindTransformService {
   /**
    * Transform products to response format
@@ -251,6 +261,7 @@ class ProductsFindTransformService {
         id: product.id,
         slug: translation?.slug || "",
         title: translation?.title || "",
+        description: toPlainTextDescription((translation as { descriptionHtml?: string | null } | null)?.descriptionHtml),
         defaultVariantId: variant?.id ?? null,
         stock: variant?.stock ?? 0,
         brand: product.brand

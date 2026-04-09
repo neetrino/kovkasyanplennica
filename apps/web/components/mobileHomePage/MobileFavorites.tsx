@@ -15,7 +15,7 @@ interface MenuItem {
   defaultVariantId?: string | null;
   stock?: number;
   brand: { id: string; name: string } | null;
-  calories?: number;
+  description?: string | null;
   category?: string;
   labels?: unknown[];
   compareAtPrice?: number | null;

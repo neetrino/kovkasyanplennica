@@ -22,6 +22,7 @@ interface ProductCardGridProps {
     discountPercent?: number | null;
     colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
     category?: string;
+    description?: string | null;
   };
   currency: CurrencyCode;
   isAddingToCart: boolean;
@@ -131,7 +132,7 @@ export function ProductCardGrid({
           discountPercent={product.discountPercent}
           currency={currency}
           colors={product.colors}
-          calories={(product as { calories?: number }).calories}
+          description={product.description}
           category={product.category}
           isCompact={isCompact || compactHeight}
           compactHeight={compactHeight}

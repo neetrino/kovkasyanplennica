@@ -39,7 +39,7 @@ const fetchProductsCached = unstable_cache(
     const filters = JSON.parse(filterKey) as ProductFilters;
     return productsService.findAll(filters);
   },
-  ['main-products-list'],
+  ['main-products-list-v2'],
   { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['products-list'] }
 );
 
@@ -53,6 +53,7 @@ interface Product {
   id: string;
   slug: string;
   title: string;
+  description?: string | null;
   price: number;
   compareAtPrice: number | null;
   image: string | null;
@@ -109,6 +110,7 @@ function normalizeProduct(product: Product & {
     id: product.id,
     slug: product.slug,
     title: product.title,
+    description: product.description ?? null,
     price: product.price,
     compareAtPrice: product.compareAtPrice ?? product.originalPrice ?? null,
     image: product.image ?? null,
@@ -208,15 +210,9 @@ type ProductsPageProps = {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const raw = searchParams ? await searchParams : {};
   const page = parseInt(firstParam(raw.page) ?? '1', 10);
-  const limitParam = firstParam(raw.limit)?.trim();
-  const parsedLimit = limitParam && !Number.isNaN(parseInt(limitParam, 10))
-    ? parseInt(limitParam, 10)
-    : null;
-  // Per page: desktop 4x3=12, tablet 3x3=9, mobile 2x3=6 — use 12; pagination when total > 12
-  const DEFAULT_PER_PAGE = 12;
-  const perPage = parsedLimit 
-    ? (parsedLimit >= 1000 ? 9999 : parsedLimit)
-    : DEFAULT_PER_PAGE;
+  // Fetch enough products so category rows can be paginated reliably on the page.
+  const DEFAULT_PER_PAGE = 9999;
+  const perPage = DEFAULT_PER_PAGE;
 
   const productsData = await getProducts(
     page,
@@ -241,7 +237,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     sizes: firstParam(raw.sizes),
     brand: firstParam(raw.brand),
     sort: firstParam(raw.sort),
-    limit: firstParam(raw.limit),
   };
 
   const normalizedProducts = productsData.data.map((product) =>
@@ -254,11 +249,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   /** ≤2 category rows (e.g. filtered): one union decorative at bottom only — avoid stacked overlays when content is short */
   const showFullDecorativeBackground = categoryRows.length > 2;
 
-  // PAGINATION: build URL for page N, keep limit and other filters
+  // PAGINATION: build URL for page N, keep existing filters
   const buildPaginationUrl = (num: number) => {
     const q = new URLSearchParams();
     q.set("page", num.toString());
-    if (perPage !== 9999) q.set("limit", perPage.toString());
     Object.entries(raw).forEach(([k, v]) => {
       if (k === "page" || k === "limit") return;
       const s = Array.isArray(v) ? v[0] : v;
@@ -267,18 +261,30 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     return `/products?${q.toString()}`;
   };
 
-  // Page numbers for < 1 2 ... 10 > (show first, last, current ±1, ellipsis)
-  const totalPages = productsData.meta.totalPages;
+  const ROWS_PER_PAGE = 6;
+  const totalPages = Math.ceil(categoryRows.length / ROWS_PER_PAGE);
   const currentPage = Math.min(Math.max(1, page), totalPages || 1);
+  const startRowIndex = (currentPage - 1) * ROWS_PER_PAGE;
+  const pageRows = categoryRows.slice(startRowIndex, startRowIndex + ROWS_PER_PAGE);
+
+  // Page numbers for < 1 2 ... 10 > (show page numbers in stable chunks of 12)
   const getPageNumbers = (): (number | 'ellipsis')[] => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const CHUNK_SIZE = 12;
+    if (totalPages <= CHUNK_SIZE + 2) return Array.from({ length: totalPages }, (_, i) => i + 1);
+
     const pages: (number | 'ellipsis')[] = [1];
-    if (currentPage > 3) pages.push('ellipsis');
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+
+    const chunkIndex = Math.floor((currentPage - 1) / CHUNK_SIZE);
+    const chunkStart = Math.max(2, chunkIndex * CHUNK_SIZE + 1);
+    const chunkEnd = Math.min(totalPages - 1, chunkStart + CHUNK_SIZE - 1);
+
+    if (chunkStart > 2) pages.push('ellipsis');
+    for (let i = chunkStart; i <= chunkEnd; i++) {
       if (!pages.includes(i)) pages.push(i);
     }
-    if (currentPage < totalPages - 2) pages.push('ellipsis');
+    if (chunkEnd < totalPages - 1) pages.push('ellipsis');
     if (totalPages > 1) pages.push(totalPages);
+
     return pages;
   };
 
@@ -307,15 +313,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
           {normalizedProducts.length > 0 ? (
             <>
-              {categoryRows.map((row, index) => (
+              {pageRows.map((row, index) => (
                 <section key={row.categorySlug} className="mb-12 sm:mb-16 md:mb-20 last:mb-0" aria-labelledby={`category-row-${index}`}>
                   <h2
                     id={`category-row-${index}`}
                     className="mb-12 md:mb-6 lg:mb-10 inline-block text-left min-h-[48px] leading-[48px] text-[43px] font-light text-[#fff4de]"
                     style={{ fontFamily: "'Sansation Light', sans-serif" }}
                   >
-                    {t(language, 'products.categoryRowTitle').replace('{number}', String(index + 1))}
-                  </h2>
+                    {t(language, 'products.categoryRowTitle').replace('{number}', String(startRowIndex + index + 1))}              </h2>
                   {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
                   <ProductsCategoryCarousel products={row.products} sortBy={params.sort || "default"} minVisibleCards={2} />
                 </section>
