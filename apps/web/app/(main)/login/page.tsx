@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Input, Card } from '@shop/ui';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
+import { resolvePostLoginDestination } from '@/lib/auth/postLoginRedirect';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { isValidLoginEmail } from '@/lib/utils/emailValidation';
@@ -19,7 +20,7 @@ function LoginPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login, isLoading, isLoggedIn } = useAuth();
+  const { login, isLoading, isLoggedIn, isAdmin } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams?.get('redirect') || '/';
@@ -52,10 +53,13 @@ function LoginPageContent() {
 
     try {
       console.log('📤 [LOGIN PAGE] Calling login function...');
-      await login(email.trim(), password);
-      console.log('✅ [LOGIN PAGE] Login successful, redirecting to:', redirectTo);
-      // Redirect to the specified page or home
-      router.push(redirectTo);
+      const user = await login(email.trim(), password);
+      const destination = resolvePostLoginDestination(
+        redirectTo,
+        Array.isArray(user.roles) && user.roles.includes('admin'),
+      );
+      console.log('✅ [LOGIN PAGE] Login successful, redirecting to:', destination);
+      router.push(destination);
     } catch (err: any) {
       console.error('❌ [LOGIN PAGE] Login error:', err);
       setError(err.message || t('login.errors.loginFailed'));
@@ -67,9 +71,9 @@ function LoginPageContent() {
   // Redirect if already logged in
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
-      router.push(redirectTo);
+      router.push(resolvePostLoginDestination(redirectTo, isAdmin));
     }
-  }, [isLoggedIn, isLoading, redirectTo, router]);
+  }, [isLoggedIn, isLoading, redirectTo, isAdmin, router]);
 
   return (
     <div className="min-h-screen bg-[#2F3F3D] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">

@@ -10,6 +10,7 @@ import {
   getAdminNavIconClass,
   getAdminNavLinkButtonClasses,
 } from '@/components/admin/adminNavClasses';
+import { isAdminMenuItemActive } from '@/components/admin/isAdminMenuItemActive';
 import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
 import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 import { getAdminMenuTABS } from '../admin-menu.config';
@@ -76,10 +77,7 @@ export default function AdminVacanciesPage() {
           <aside className="hidden lg:block lg:w-64 flex-shrink-0">
             <nav className={getAdminNavContainerClass(mode)}>
               {adminTabs.map((tab) => {
-                const isActive =
-                  currentPath === tab.path ||
-                  (tab.path === '/admin' && currentPath === '/admin') ||
-                  (tab.path !== '/admin' && currentPath.startsWith(tab.path));
+                const isActive = isAdminMenuItemActive(tab.path, currentPath);
                 return (
                   <button
                     key={tab.id}

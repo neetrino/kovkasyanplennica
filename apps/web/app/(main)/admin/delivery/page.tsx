@@ -11,6 +11,7 @@ import {
   getAdminNavIconClass,
   getAdminNavLinkButtonClasses,
 } from '@/components/admin/adminNavClasses';
+import { isAdminMenuItemActive } from '@/components/admin/isAdminMenuItemActive';
 import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
 import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 import { useTranslation } from '@/lib/i18n-client';
@@ -135,9 +136,7 @@ export default function DeliveryPage() {
           <aside className="hidden lg:block lg:w-64 flex-shrink-0">
             <nav className={getAdminNavContainerClass(mode)}>
               {adminTabs.map((tab) => {
-                const isActive = pathname === tab.path || 
-                  (tab.path === '/admin' && pathname === '/admin') ||
-                  (tab.path !== '/admin' && pathname?.startsWith(tab.path));
+                const isActive = isAdminMenuItemActive(tab.path, pathname ?? '');
                 return (
                   <button
                     key={tab.id}

@@ -24,46 +24,9 @@ export default function AboutPage() {
       </div>
 
       {/* ══════════════════════════════════
-          HERO — full-height image + overlay
-          ══════════════════════════════════ */}
-      <section className="relative w-full h-[60vh] min-h-[420px] md:h-[72vh] overflow-hidden">
-        <Image
-          src="https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1"
-          alt="About us"
-          fill
-          className="object-cover object-center"
-          priority
-          unoptimized
-        />
-        {/* gradient overlay — darker at bottom so content is readable */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#2F3F3D]/60 via-[#2F3F3D]/50 to-[#2F3F3D]" />
-
-        {/* Hero text */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 pb-8">
-          <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-4">
-            {t(lang, 'about.subtitle')}
-          </p>
-          <h1 className="text-[#fff4de] text-5xl md:text-7xl lg:text-8xl xl:text-[100px] font-light italic leading-tight mb-6">
-            {t(lang, 'about.title')}
-          </h1>
-          <div className="w-40 md:w-64 opacity-80">
-            <Image
-              src="/assets/hero/Vector7.svg"
-              alt=""
-              width={256}
-              height={12}
-              className="object-contain mx-auto"
-              aria-hidden
-              unoptimized
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════
           STORY — image + description
           ══════════════════════════════════ */}
-      <section className="relative z-10 py-20 md:py-28">
+      <section className="relative z-10 pt-4 sm:pt-6 md:pt-8 pb-16 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -78,13 +41,6 @@ export default function AboutPage() {
               />
               {/* subtle green accent frame */}
               <div className="absolute inset-0 rounded-2xl ring-1 ring-[#7CB342]/30 pointer-events-none" />
-              {/* bottom-left badge */}
-              <div className="absolute bottom-6 left-6 bg-[#2F3F3D]/85 backdrop-blur-sm rounded-xl px-5 py-3 border border-[#7CB342]/40">
-                <p className="text-[#7CB342] text-2xl font-light italic">5+</p>
-                <p className="text-[#fff4de]/80 text-xs uppercase tracking-widest mt-0.5">
-                  {t(lang, 'about.stats.yearsLabel')}
-                </p>
-              </div>
             </div>
 
             {/* Text — right side */}
@@ -92,9 +48,9 @@ export default function AboutPage() {
               <p className="text-xs md:text-sm font-semibold uppercase tracking-[0.25em] text-[#7CB342]">
                 {t(lang, 'about.story.subtitle')}
               </p>
-              <h2 className="text-[#fff4de] text-4xl md:text-5xl lg:text-6xl font-light italic leading-tight">
+              <h1 className="text-[#fff4de] text-4xl md:text-5xl lg:text-6xl font-light italic leading-tight">
                 {t(lang, 'about.story.title')}
-              </h2>
+              </h1>
               <div className="w-24 h-[2px] bg-[#7CB342]" />
               <div className="space-y-4 text-[#fff4de]/70 text-base md:text-lg leading-relaxed">
                 {['paragraph1', 'paragraph2', 'paragraph3', 'paragraph4', 'paragraph5'].map((paragraphKey) => (
