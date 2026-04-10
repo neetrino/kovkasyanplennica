@@ -10,7 +10,7 @@ const NEETRINO_COMPANY_URL = 'https://neetrino.com/';
 export function Footer() {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const isMenuPage = pathname === '/menu' || pathname === '/coming-soon';
+  const isMenuPage = pathname === '/menu';
   
   return (
     <footer className={`${isMenuPage ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'} overflow-hidden relative`}>
