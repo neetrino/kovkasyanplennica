@@ -97,7 +97,7 @@
     "workingHours": {
       "title": "РЕЖИМ РАБОТЫ",
       "weekdays": "Доставка",
-      "weekdaysTime": "с 10:00",
+      "weekdaysTime": "10:00 - 23:00",
       "weekend": "Ресторан",
       "weekendTime": "11:00 - 24:00",
       "deliveryInfo": ""
