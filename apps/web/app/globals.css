@@ -44,20 +44,8 @@
     background-color: #2f3f3d;
     color: #ffe5c2;
   }
-  
-  /* Prevent text selection and caret on all text elements */
-  p, span, div, h1, h2, h3, h4, h5, h6, 
-  li, td, th, label, strong, em, b, i, 
-  small, blockquote, pre, code, 
-  article, section, aside, header, footer, nav, main {
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    caret-color: transparent !important;
-  }
-  
-  /* Allow selection in form controls; keep text normal */
+
+  /* Form controls: explicit selection + caret */
   input,
   textarea,
   select {
@@ -75,14 +63,6 @@
   textarea:focus,
   select:focus {
     caret-color: currentColor !important;
-  }
-  
-  /* Links should be selectable but no caret */
-  a {
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
   }
 }
 
