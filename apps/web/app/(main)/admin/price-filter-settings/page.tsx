@@ -18,7 +18,7 @@ import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 import { getAdminMenuTABS } from '../admin-menu.config';
 import { useTranslation } from '@/lib/i18n-client';
 
-export default function PriceFilterSettingsPage() {
+export default function PriceFilterSettingsPage() { 
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
   const router = useRouter();
