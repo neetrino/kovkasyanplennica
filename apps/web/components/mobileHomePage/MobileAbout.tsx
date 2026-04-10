@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
 
+const ABOUT_HOME_IMAGE_FIRST = encodeURI('/assets/New folder/JW_01347 1.webp');
+const ABOUT_HOME_IMAGE_SECOND = encodeURI('/assets/New folder/JW_01369-редакт 1.webp');
+
 /**
  * Mobile About — два блока (картинка + текст), заголовок О НАС, кнопка Узнать больше.
  */
@@ -49,7 +52,7 @@ export function MobileAbout() {
         <div className="mb-10">
           <div className="relative w-full aspect-[296/243] rounded-tr-[58px] overflow-hidden mb-4">
             <Image
-              src="/about.jpg"
+              src={ABOUT_HOME_IMAGE_FIRST}
               alt={t('home.about.interiorAlt')}
               fill
               className="object-cover"
@@ -68,9 +71,9 @@ export function MobileAbout() {
 
         {/* Блок 2: текст слева, картинка справа */}
         <div className="mb-10">
-          <div className="relative w-full max-w-[254px] aspect-[254/209] rounded-tl-[58px] overflow-hidden ml-auto mb-4">
+          <div className="relative w-full max-w-[254px] aspect-[254/209] rounded-tl-[58px] overflow-hidden ml-auto mb-4 translate-x-2">
             <Image
-              src="/-165 3.png"
+              src={ABOUT_HOME_IMAGE_SECOND}
               alt={t('home.about.interiorAlt')}
               fill
               className="object-cover"

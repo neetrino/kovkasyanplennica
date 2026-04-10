@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
 
+const ABOUT_HOME_IMAGE_FIRST = encodeURI('/assets/New folder/JW_01347 1.webp');
+const ABOUT_HOME_IMAGE_SECOND = encodeURI('/assets/New folder/JW_01369-редакт 1.webp');
+
 /**
  * About Component
  * 
@@ -46,7 +49,7 @@ export function About() {
             <div className="relative w-[713px] h-[762px] md:w-[462px] md:h-[762px] lg:w-[463px] lg:h-[300px] ml-4 md:ml-8 lg:ml-4">
               <div className="relative w-full h-full rounded-tr-[67px] overflow-hidden">
                 <Image
-                  src="/about.jpg"
+                  src={ABOUT_HOME_IMAGE_FIRST}
                   alt={t('home.about.interiorAlt')}
                   fill
                   className="object-cover"
@@ -89,10 +92,10 @@ export function About() {
           </div>
 
           {/* Изображение интерьера - справа */}
-          <div className="relative w-[713px] h-[762px] md:w-[462px] md:h-[762px] lg:w-[463px] lg:h-[300px] mr-4 md:mr-8 lg:mr-16 xl:mr-20">
-          <div className="relative w-full h-full  overflow-hidden">
+          <div className="relative w-[713px] h-[762px] md:w-[462px] md:h-[762px] lg:w-[463px] lg:h-[300px] mr-4 md:mr-8 lg:mr-16 xl:mr-20 translate-x-3 md:translate-x-4 lg:translate-x-6">
+          <div className="relative w-full h-full rounded-tl-[67px] overflow-hidden">
               <Image
-                src="/-165 3.png"
+                src={ABOUT_HOME_IMAGE_SECOND}
                 alt={t('home.about.interiorAlt')}
                 fill
                 className="object-cover"
