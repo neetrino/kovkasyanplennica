@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { amountUsdToRub, amountAmdToRub, convertPrice } from '@/lib/currency';
 import type { Cart } from '../types';
 
 interface UseOrderSummaryProps {
@@ -16,10 +15,6 @@ export function useOrderSummary({
   const orderSummary = useMemo(() => {
     if (!cart || cart.items.length === 0) {
       return {
-        subtotalRub: 0,
-        taxRub: 0,
-        shippingRub: 0,
-        totalRub: 0,
         subtotalDisplay: 0,
         taxDisplay: 0,
         shippingDisplay: 0,
@@ -27,26 +22,16 @@ export function useOrderSummary({
       };
     }
 
-    const subtotalRub = amountUsdToRub(cart.totals.subtotal);
-    const taxRub = amountUsdToRub(cart.totals.tax);
-    const shippingAmd = shippingMethod === 'delivery' && deliveryPrice !== null ? deliveryPrice : 0;
-    const shippingRub = amountAmdToRub(shippingAmd);
-
-    const totalAmd =
-      convertPrice(cart.totals.subtotal, 'USD', 'AMD') +
-      convertPrice(cart.totals.tax, 'USD', 'AMD') +
-      shippingAmd;
-    const totalRub = amountAmdToRub(totalAmd);
+    const subtotalDisplay = cart.totals.subtotal;
+    const taxDisplay = cart.totals.tax;
+    const shippingDisplay = shippingMethod === 'delivery' && deliveryPrice !== null ? deliveryPrice : 0;
+    const totalDisplay = cart.totals.total + shippingDisplay;
 
     return {
-      subtotalRub,
-      taxRub,
-      shippingRub,
-      totalRub,
-      subtotalDisplay: subtotalRub,
-      taxDisplay: taxRub,
-      shippingDisplay: shippingRub,
-      totalDisplay: totalRub,
+      subtotalDisplay,
+      taxDisplay,
+      shippingDisplay,
+      totalDisplay,
     };
   }, [cart, shippingMethod, deliveryPrice]);
 

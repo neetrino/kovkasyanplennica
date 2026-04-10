@@ -19,10 +19,10 @@ export default function MainLayout({
           data-app-scroll-region
           className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-[#2f3f3d] lg:bg-transparent pb-[172px] lg:pb-0"
         >
-          <div className="relative z-app-header hidden min-h-[106px] shrink-0 lg:block">
+          <div className="relative z-app-header hidden min-h-[106px] shrink-0 xl:block">
             <Header />
           </div>
-          <div className="relative z-app-header block shrink-0 lg:hidden">
+          <div className="relative z-app-header block shrink-0 xl:hidden">
             <MobileHeader />
           </div>
           {/* No z-index here: fixed popups inside `main` must stack above `.z-app-header` (see globals.css). */}

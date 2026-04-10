@@ -1,9 +1,8 @@
 import { Button, Card } from '@shop/ui';
 import {
   formatPriceInCurrency,
-  amountUsdToRub,
-  amountAmdToRub,
   convertPrice,
+  type CurrencyCode,
   SHOP_DISPLAY_CURRENCY,
 } from '@/lib/currency';
 import { getStatusColor, getPaymentStatusColor, getColorValue } from './utils';
@@ -28,6 +27,14 @@ export function OrderDetailsModal({
   onReOrder,
   t,
 }: OrderDetailsModalProps) {
+  const toDisplayAmount = (amount: number, sourceCurrency?: string): number => {
+    const fromCurrency = (sourceCurrency || selectedOrder.totals?.currency || 'RUB') as CurrencyCode;
+    if (fromCurrency === SHOP_DISPLAY_CURRENCY) {
+      return amount;
+    }
+    return convertPrice(amount, fromCurrency, SHOP_DISPLAY_CURRENCY);
+  };
+
   const getAttributeLabel = (key: string): string => {
     if (key === 'color' || key === 'colour') return t('profile.orderDetails.color');
     if (key === 'size') return t('profile.orderDetails.size');
@@ -186,8 +193,14 @@ export function OrderDetailsModal({
                               <p className="text-sm text-gray-600">{t('profile.orderDetails.sku')}: {item.sku}</p>
                               <p className="text-sm text-gray-600 mt-2">
                                 {t('profile.orderDetails.quantity')}: {item.quantity} ×{' '}
-                                {formatPriceInCurrency(amountUsdToRub(item.price), SHOP_DISPLAY_CURRENCY)} ={' '}
-                                {formatPriceInCurrency(amountUsdToRub(item.total), SHOP_DISPLAY_CURRENCY)}
+                                {formatPriceInCurrency(
+                                  toDisplayAmount(item.price, selectedOrder.totals?.currency),
+                                  SHOP_DISPLAY_CURRENCY
+                                )} ={' '}
+                                {formatPriceInCurrency(
+                                  toDisplayAmount(item.total, selectedOrder.totals?.currency),
+                                  SHOP_DISPLAY_CURRENCY
+                                )}
                               </p>
                             </div>
                           </div>
@@ -208,7 +221,7 @@ export function OrderDetailsModal({
                             <span>{t('profile.orderDetails.subtotal')}</span>
                             <span>
                               {formatPriceInCurrency(
-                                amountUsdToRub(selectedOrder.totals.subtotal),
+                                toDisplayAmount(selectedOrder.totals.subtotal, selectedOrder.totals.currency),
                                 SHOP_DISPLAY_CURRENCY
                               )}
                             </span>
@@ -219,7 +232,7 @@ export function OrderDetailsModal({
                               <span>
                                 -
                                 {formatPriceInCurrency(
-                                  amountUsdToRub(selectedOrder.totals.discount),
+                                  toDisplayAmount(selectedOrder.totals.discount, selectedOrder.totals.currency),
                                   SHOP_DISPLAY_CURRENCY
                                 )}
                               </span>
@@ -231,7 +244,7 @@ export function OrderDetailsModal({
                               {selectedOrder.shippingMethod === 'pickup' 
                                 ? t('checkout.shipping.freePickup')
                                 : formatPriceInCurrency(
-                                    amountAmdToRub(selectedOrder.totals.shipping),
+                                    toDisplayAmount(selectedOrder.totals.shipping, selectedOrder.totals.currency),
                                     SHOP_DISPLAY_CURRENCY
                                   ) + (selectedOrder.shippingAddress?.city ? ` (${selectedOrder.shippingAddress.city})` : '')}
                             </span>
@@ -240,7 +253,7 @@ export function OrderDetailsModal({
                             <span>{t('profile.orderDetails.tax')}</span>
                             <span>
                               {formatPriceInCurrency(
-                                amountUsdToRub(selectedOrder.totals.tax),
+                                toDisplayAmount(selectedOrder.totals.tax, selectedOrder.totals.currency),
                                 SHOP_DISPLAY_CURRENCY
                               )}
                             </span>
@@ -250,12 +263,7 @@ export function OrderDetailsModal({
                               <span>{t('profile.orderDetails.total')}</span>
                               <span>
                                 {formatPriceInCurrency(
-                                  amountAmdToRub(
-                                    convertPrice(selectedOrder.totals.subtotal, 'USD', 'AMD') -
-                                      convertPrice(selectedOrder.totals.discount, 'USD', 'AMD') +
-                                      selectedOrder.totals.shipping +
-                                      convertPrice(selectedOrder.totals.tax, 'USD', 'AMD')
-                                  ),
+                                  toDisplayAmount(selectedOrder.totals.total, selectedOrder.totals.currency),
                                   SHOP_DISPLAY_CURRENCY
                                 )}
                               </span>

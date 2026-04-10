@@ -323,7 +323,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     className="mb-12 md:mb-6 lg:mb-10 inline-block text-left min-h-[48px] leading-[48px] text-[43px] font-light text-[#fff4de]"
                     style={{ fontFamily: "'Sansation Light', sans-serif" }}
                   >
-                    {t(language, 'products.categoryRowTitle').replace('{number}', String(startRowIndex + index + 1))}              </h2>
+                    {row.categoryTitle}
+                  </h2>
                   {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
                   <ProductsCategoryCarousel products={row.products} sortBy={params.sort || "default"} minVisibleCards={2} />
                 </section>

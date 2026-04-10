@@ -194,34 +194,20 @@ export function useOrders() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, statusFilter, paymentStatusFilter, searchQuery, sortBy, sortOrder]);
 
-  const formatCurrency: (amount: number, orderCurrency?: string, fromCurrency?: CurrencyCode) => string = (amount: number, orderCurrency: string = 'AMD', fromCurrency: CurrencyCode = 'USD') => {
-    // Use the selected display currency instead of order currency
+  const formatCurrency: (amount: number, orderCurrency?: string, fromCurrency?: CurrencyCode) => string = (
+    amount: number,
+    orderCurrency: string = 'RUB',
+    fromCurrency?: CurrencyCode,
+  ) => {
     const displayCurrency = currency;
-    
-    // Order subtotal and tax are stored in USD, but shipping and total are in AMD
-    // We need to handle conversion based on the source currency
-    if (displayCurrency === 'AMD') {
-      if (fromCurrency === 'USD') {
-        // Convert USD to AMD
-        const convertedAmount = convertPrice(amount, 'USD', 'AMD');
-        return formatPriceInCurrency(convertedAmount, 'AMD');
-      } else {
-        // Already in AMD, no conversion needed
-        return formatPriceInCurrency(amount, 'AMD');
-      }
-    } else {
-      // Convert from fromCurrency to display currency
-      if (fromCurrency === 'USD') {
-        // First convert USD to AMD, then to display currency
-        const amdAmount = convertPrice(amount, 'USD', 'AMD');
-        const convertedAmount = convertPrice(amdAmount, 'AMD', displayCurrency);
-        return formatPriceInCurrency(convertedAmount, displayCurrency);
-      } else {
-        // Already in AMD, convert to display currency
-        const convertedAmount = convertPrice(amount, 'AMD', displayCurrency);
-        return formatPriceInCurrency(convertedAmount, displayCurrency);
-      }
+    const sourceCurrency = (fromCurrency || orderCurrency || 'RUB') as CurrencyCode;
+
+    if (sourceCurrency === displayCurrency) {
+      return formatPriceInCurrency(amount, displayCurrency);
     }
+
+    const convertedAmount = convertPrice(amount, sourceCurrency, displayCurrency);
+    return formatPriceInCurrency(convertedAmount, displayCurrency);
   };
 
 

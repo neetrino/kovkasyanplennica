@@ -14,7 +14,7 @@ export async function runCheckout(data: CheckoutData, userId?: string) {
     shippingMethod = "pickup",
     shippingAddress,
     shippingAmount: providedShippingAmount,
-    paymentMethod = "idram",
+    paymentMethod = "arca",
   } = data;
 
   if (!email || !phone) {
@@ -124,7 +124,7 @@ export async function runCheckout(data: CheckoutData, userId?: string) {
         expiresAt: null,
       },
       nextAction:
-        paymentMethod === "idram" || paymentMethod === "arca"
+        paymentMethod === "arca"
           ? "redirect_to_payment"
           : "view_order",
     };

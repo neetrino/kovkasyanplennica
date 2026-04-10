@@ -10,9 +10,9 @@ interface CheckoutFormProps {
   errors: FieldErrors<CheckoutFormData>;
   isSubmitting: boolean;
   shippingMethod: 'pickup' | 'delivery';
-  paymentMethod: 'idram' | 'arca' | 'cash_on_delivery';
+  paymentMethod: 'arca' | 'cash_on_delivery';
   paymentMethods: Array<{
-    id: 'idram' | 'arca' | 'cash_on_delivery';
+    id: 'arca' | 'cash_on_delivery';
     name: string;
     description: string;
     logo: string | null;
@@ -289,7 +289,7 @@ export function CheckoutForm({
                   {...register('paymentMethod')}
                   value={method.id}
                   checked={isActive}
-                  onChange={(e) => setValue('paymentMethod', e.target.value as 'idram' | 'arca' | 'cash_on_delivery')}
+                  onChange={(e) => setValue('paymentMethod', e.target.value as 'arca' | 'cash_on_delivery')}
                   className="sr-only"
                   disabled={isSubmitting}
                 />

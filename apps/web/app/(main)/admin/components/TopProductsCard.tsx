@@ -80,7 +80,7 @@ export function TopProductsCard({ topProducts, topProductsLoading }: TopProducts
               </div>
               <div className="text-right">
                 <p className="text-sm font-semibold text-gray-900">
-                  {formatCurrency(product.totalRevenue, 'USD')}
+                  {formatCurrency(product.totalRevenue, 'RUB')}
                 </p>
               </div>
             </div>

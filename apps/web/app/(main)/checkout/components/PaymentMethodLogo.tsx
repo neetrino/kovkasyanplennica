@@ -1,7 +1,7 @@
 'use client';
 
 interface PaymentMethodLogoProps {
-  paymentMethod: 'idram' | 'arca' | 'cash_on_delivery';
+  paymentMethod: 'arca';
   logoErrors: Record<string, boolean>;
   onError: () => void;
   size?: 'small' | 'medium' | 'large';
@@ -19,11 +19,8 @@ export function PaymentMethodLogo({
   onError,
   size = 'medium',
 }: PaymentMethodLogoProps) {
-  const logoPath = paymentMethod === 'arca' 
-    ? '/assets/payments/arca.svg' 
-    : '/assets/payments/idram.svg';
-  
-  const altText = paymentMethod === 'arca' ? 'ArCa' : 'Idram';
+  const logoPath = '/assets/payments/arca.svg';
+  const altText = 'ArCa';
 
   if (logoErrors[paymentMethod]) {
     return (

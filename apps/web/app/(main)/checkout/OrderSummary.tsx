@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslation } from '@/lib/i18n-client';
-import { formatPriceInCurrency, amountUsdToRub, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
+import { formatPriceInCurrency, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
 
 interface Cart {
   id: string;
@@ -108,7 +108,7 @@ export function OrderSummary({
                     <p className="text-[#fff4de]/40 text-xs">×{item.quantity}</p>
                   </div>
                   <span className="text-[#7CB342] text-xs font-semibold flex-shrink-0">
-                    {formatPriceInCurrency(amountUsdToRub(item.total), SHOP_DISPLAY_CURRENCY)}
+                    {formatPriceInCurrency(item.total, SHOP_DISPLAY_CURRENCY)}
                   </span>
                 </div>
               ))}

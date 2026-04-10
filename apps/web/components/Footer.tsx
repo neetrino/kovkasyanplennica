@@ -125,7 +125,7 @@ export function Footer() {
               <h3 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-sm font-bold uppercase tracking-[0.7px] mb-4`}>
                 {t('home.footer.navigation.title')}
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-2">
                 <li>
                   <Link href="/products" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
                     {t('home.footer.navigation.menu')}
@@ -214,31 +214,31 @@ export function Footer() {
                 href={NEETRINO_COMPANY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-xs md:text-sm text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
               >
-                {t('home.footer.bottomLinks.copyright')}
+                Copyright © 2026 | All Rights Reserved, Created by Neetrino_IT_Company
               </a>
               <Link
                 href="/coming-soon"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.deliveryPolicy')}
               </Link>
               <Link
                 href="/terms"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.terms')}
               </Link>
               <Link
                 href="/privacy"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
               <Link
                 href="/coming-soon"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-xs md:text-sm transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors whitespace-nowrap`}
               >
                 {t('home.footer.bottomLinks.publicOffer')}
               </Link>

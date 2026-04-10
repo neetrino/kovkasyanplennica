@@ -17,7 +17,7 @@ interface ShippingAddressModalProps {
   errors: FieldErrors<CheckoutFormData>;
   isSubmitting: boolean;
   shippingMethod: 'pickup' | 'delivery';
-  paymentMethod: 'idram' | 'arca' | 'cash_on_delivery';
+  paymentMethod: 'arca' | 'cash_on_delivery';
   cart: Cart | null;
   orderSummary: {
     subtotalDisplay: number;
@@ -133,11 +133,11 @@ export function ShippingAddressModal({
               </div>
             )}
 
-            {(paymentMethod === 'arca' || paymentMethod === 'idram') && (
+            {paymentMethod === 'arca' && (
               <div className="space-y-4 mb-6 mt-6">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {t('checkout.payment.paymentDetails')} (
-                  {paymentMethod === 'idram' ? t('checkout.payment.idram') : t('checkout.payment.arca')})
+                  {t('checkout.payment.arca')})
                 </h3>
                 <CardInputFields
                   register={register}
@@ -174,11 +174,11 @@ export function ShippingAddressModal({
               </p>
             </div>
 
-            {(paymentMethod === 'arca' || paymentMethod === 'idram') && (
+            {paymentMethod === 'arca' && (
               <div className="space-y-4 mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {t('checkout.payment.paymentDetails')} (
-                  {paymentMethod === 'idram' ? t('checkout.payment.idram') : t('checkout.payment.arca')})
+                  {t('checkout.payment.arca')})
                 </h3>
                 <CardInputFields
                   register={register}
