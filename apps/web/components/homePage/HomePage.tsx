@@ -29,7 +29,7 @@ export async function HomePage({
       : await getHomeMenuAndFavoritesData();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen isolate">
       <Hero />
       <MenuSection products={menuProducts} totalPages={menuTotalPages} />
       <About />

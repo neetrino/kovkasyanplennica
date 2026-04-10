@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { HOME_CAROUSEL_IMAGE_HREFS } from '@/lib/home/home-carousel-images';
 
 interface CarouselImage {
   id: string;
@@ -12,27 +13,20 @@ interface CarouselImage {
   position: 'left-large' | 'right-top' | 'right-bottom' | 'right-top-small';
 }
 
-const newFolderImageSources = [
-  '/assets/New folder/JW_06812 1.webp',
-  '/assets/New folder/JW_06330 1.webp',
-  '/assets/New folder/JW_01463-редакт 1.webp',
-  '/assets/New folder/JW_01347 1.webp',
-  '/assets/New folder/JW_01522 1.webp',
-  '/assets/New folder/JW_05698 1.webp',
-  '/assets/New folder/JW_01369-редакт 1.webp',
-];
-
 const carouselImages: CarouselImage[] = [
-  { id: '1', src: encodeURI(newFolderImageSources[0]), alt: 'Restaurant gallery image 1', width: 517, height: 690, position: 'left-large' },
-  { id: '2', src: encodeURI(newFolderImageSources[1]), alt: 'Restaurant gallery image 2', width: 375, height: 749, position: 'right-top' },
-  { id: '3', src: encodeURI(newFolderImageSources[2]), alt: 'Restaurant gallery image 3', width: 299, height: 431, position: 'right-top-small' },
-  { id: '4', src: encodeURI(newFolderImageSources[3]), alt: 'Restaurant gallery image 4', width: 749, height: 375, position: 'right-bottom' },
-  { id: '5', src: encodeURI(newFolderImageSources[4]), alt: 'Restaurant gallery image 5', width: 517, height: 690, position: 'left-large' },
-  { id: '6', src: encodeURI(newFolderImageSources[5]), alt: 'Restaurant gallery image 6', width: 517, height: 690, position: 'right-top' },
-  { id: '7', src: encodeURI(newFolderImageSources[6]), alt: 'Restaurant gallery image 7', width: 517, height: 690, position: 'right-bottom' },
+  { id: '1', src: HOME_CAROUSEL_IMAGE_HREFS[0], alt: 'Restaurant gallery image 1', width: 517, height: 690, position: 'left-large' },
+  { id: '2', src: HOME_CAROUSEL_IMAGE_HREFS[1], alt: 'Restaurant gallery image 2', width: 375, height: 749, position: 'right-top' },
+  { id: '3', src: HOME_CAROUSEL_IMAGE_HREFS[2], alt: 'Restaurant gallery image 3', width: 299, height: 431, position: 'right-top-small' },
+  { id: '4', src: HOME_CAROUSEL_IMAGE_HREFS[3], alt: 'Restaurant gallery image 4', width: 749, height: 375, position: 'right-bottom' },
+  { id: '5', src: HOME_CAROUSEL_IMAGE_HREFS[4], alt: 'Restaurant gallery image 5', width: 517, height: 690, position: 'left-large' },
+  { id: '6', src: HOME_CAROUSEL_IMAGE_HREFS[5], alt: 'Restaurant gallery image 6', width: 517, height: 690, position: 'right-top' },
+  { id: '7', src: HOME_CAROUSEL_IMAGE_HREFS[6], alt: 'Restaurant gallery image 7', width: 517, height: 690, position: 'right-bottom' },
 ];
 
 const AUTO_PLAY_INTERVAL_MS = 3000;
+
+const CAROUSEL_ARROW_BUTTON_CLASS =
+  'group relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/25 bg-white/95 shadow-[0_4px_14px_rgba(0,0,0,0.18)] pointer-events-auto transition-[transform,box-shadow,background-color,border-color] duration-200 ease-out hover:scale-105 hover:border-white/50 hover:bg-white hover:shadow-[0_8px_24px_rgba(0,0,0,0.22)] active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 md:h-12 md:w-12';
 
 export function HomePageImageCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -94,7 +88,7 @@ export function HomePageImageCarousel() {
 
   return (
     <section
-      className="relative -mt-px w-full overflow-hidden bg-[#2f3f3d] pt-0 pb-16 md:pb-24"
+      className="relative isolate [contain:layout] -mt-px w-full overflow-hidden bg-[#2f3f3d] pt-0 pb-16 md:pb-24"
       data-home-header-surface="dark"
     >
       <div className="max-w-7xl mx-auto px-4">
@@ -110,6 +104,8 @@ export function HomePageImageCarousel() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover rounded-[10px]"
                 priority
+                fetchPriority="high"
+                decoding="async"
                 unoptimized
               />
             </div>
@@ -125,6 +121,9 @@ export function HomePageImageCarousel() {
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
+                    priority
+                    fetchPriority="high"
+                    decoding="async"
                     unoptimized
                   />
                 </div>
@@ -135,6 +134,9 @@ export function HomePageImageCarousel() {
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
+                    priority
+                    fetchPriority="high"
+                    decoding="async"
                     unoptimized
                   />
                 </div>
@@ -148,6 +150,9 @@ export function HomePageImageCarousel() {
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover rounded-[10px]"
+                  priority
+                  fetchPriority="high"
+                  decoding="async"
                   unoptimized
                 />
               </div>
@@ -159,7 +164,7 @@ export function HomePageImageCarousel() {
             <button
               type="button"
               onClick={goToPrevious}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-colors hover:bg-white pointer-events-auto md:h-12 md:w-12"
+              className={CAROUSEL_ARROW_BUTTON_CLASS}
               aria-label="Previous slide"
             >
               <svg
@@ -168,11 +173,12 @@ export function HomePageImageCarousel() {
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="rotate-180"
+                className="rotate-180 transition-transform duration-200 ease-out group-hover:translate-x-[-1px]"
+                aria-hidden
               >
                 <path
                   d="M9 18L15 12L9 6"
-                  stroke="#2f3f3d"
+                  className="stroke-[#2f3f3d] transition-colors duration-200 group-hover:stroke-[#1f2a28]"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -182,7 +188,7 @@ export function HomePageImageCarousel() {
             <button
               type="button"
               onClick={goToNext}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-colors hover:bg-white pointer-events-auto md:h-12 md:w-12"
+              className={CAROUSEL_ARROW_BUTTON_CLASS}
               aria-label="Next slide"
             >
               <svg
@@ -191,10 +197,12 @@ export function HomePageImageCarousel() {
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="transition-transform duration-200 ease-out group-hover:translate-x-px"
+                aria-hidden
               >
                 <path
                   d="M9 18L15 12L9 6"
-                  stroke="#2f3f3d"
+                  className="stroke-[#2f3f3d] transition-colors duration-200 group-hover:stroke-[#1f2a28]"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
