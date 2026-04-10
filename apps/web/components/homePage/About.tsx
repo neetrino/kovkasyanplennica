@@ -75,12 +75,7 @@ export function About() {
 
         {/* Вторая секция: Текст слева, изображение справа */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Заголовок "О НАС" - слева */}
           <div className="lg:col-span-1 mb-8 lg:mb-0">
-          <h2 className="text-[#2f3f3d] text-4xl md:text-7xl lg:text-8xl xl:text-[103px] font-light italic leading-[128px]">
-              {t('home.about.title')}
-            </h2>
-            
             {/* Story copy from about.description (paragraphs 3–5) */}
             <div className="space-y-4">
               {ABOUT_STORY_SECOND_KEYS.map((key) => (
