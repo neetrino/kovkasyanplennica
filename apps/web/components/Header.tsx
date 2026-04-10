@@ -20,13 +20,13 @@ const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
 
 /**
- * Desktop bar height — spacer matches fixed bar.
- * `min-h` prevents flex/scroll parents from shrinking the row below 106px.
+ * Desktop bar height — spacer matches fixed bar (`layout.tsx` min-h).
+ * `min-h` prevents flex/scroll parents from shrinking the row below this height.
  */
-const HEADER_DESKTOP_HEIGHT_CLASS = 'h-[106px] min-h-[106px] shrink-0';
+const HEADER_DESKTOP_HEIGHT_CLASS = 'h-[104px] min-h-[104px] shrink-0';
 
 /** Same numeric value as `HEADER_DESKTOP_HEIGHT_CLASS` — used to find which home section sits under the bar. */
-const HEADER_BAR_HEIGHT_PX = 106;
+const HEADER_BAR_HEIGHT_PX = 104;
 
 /** Fixed header geometry matches scroll region `clientWidth` (scrollbar excluded), not full viewport. */
 const HEADER_SCROLL_SYNC_LEFT_VAR = '--app-header-scroll-sync-left';
@@ -231,7 +231,8 @@ export function Header() {
   }, [isHomePage]);
 
   /** Same box on home for cream + dark so right-side icons align with the dark bar. */
-  const logoBoxOther = 'w-32 h-24 md:w-36 md:h-28 lg:w-40 lg:h-32';
+  const logoBoxOther =
+    'w-52 h-[96px] md:w-60 md:h-[100px] lg:w-72 lg:h-[100px]';
 
   return (
     <>
@@ -240,18 +241,23 @@ export function Header() {
       >
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
       <div className="flex items-center gap-4 lg:gap-6">
-        <Link prefetch href="/" className="flex items-center gap-2">
+        <Link
+          prefetch
+          href="/"
+          className="flex shrink-0 items-center"
+          aria-label={t('home.header.logoAlt')}
+        >
           <div
             className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${logoBoxOther}`}
           >
             <Image
               src={isHomeCream ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
-              alt={t('home.header.logoAlt')}
-              width={160}
-              height={120}
-              className="object-contain"
+              alt=""
+              fill
+              className="object-contain object-center"
               priority
               unoptimized
+              sizes="(max-width: 768px) 208px, (max-width: 1024px) 240px, 288px"
             />
           </div>
         </Link>

@@ -11,80 +11,94 @@ const ruslanDisplay = Ruslan_Display({
 });
 
 /**
- * Hero Component
- * 
- * Главная секция главной страницы с логотипом, названием ресторана
- * и кнопками действий. Включает декоративные паттерны на фоне.
+ * Desktop home hero — aligned to Figma HOME (node 134:256): JW_06330 photo (134:607),
+ * header scrim (136:608), PATTERN 1 (134:268), vase (134:352), wordmark (134:325), CTAs (136:636).
  */
 export function Hero() {
   const { t } = useTranslation();
+
   return (
     <section
-      className="relative bg-[#ffe5c2] overflow-hidden min-h-[809px] flex items-center justify-center"
-      data-home-header-surface="cream"
+      className="relative flex min-h-[809px] justify-center overflow-hidden"
+      data-home-header-surface="dark"
+      aria-labelledby="hero-heading"
     >
-      {/* Декоративные паттерны на фоне */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-     
-
-       
-
-        {/* Декоративный паттерн (Group 1000002324) - увеличенный и центрированный, сдвинут вверх */}
-        <div className="absolute inset-[-20%] flex items-start justify-center pt-[-10%]">
-          <div className="relative w-[130%] h-[100%] -translate-y-[13%]">
-            <Image
-              src="/assets/hero/decorative-pattern.svg"
-              alt=""
-              fill
-              className="object-contain"
-              aria-hidden="true"
-              unoptimized
-            />
-          </div>
+      {/* JW_06330 — full width; starts below fixed header (no negative margin / no upward crop) */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/hero/hero.png"
+            alt=""
+            className="absolute inset-0 size-full object-cover object-[center_35%]"
+          />
         </div>
       </div>
 
-      {/* Основной контент */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 py-16 md:py-24">
-        {/* Логотип - точно как в Figma */}
-        <div className="mb-8 md:mb-10 w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 relative ">
+      {/* Soft fade under fixed header — tight to top edge, opens like a gradient (no blur band) */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[64px] w-full bg-gradient-to-b from-[#2f3f3d]/48 via-[#2f3f3d]/14 via-40% to-transparent xl:h-[72px]"
+        aria-hidden
+      />
+
+      {/* PATTERN 1 — from top of hero section (below header), clipped by overflow-hidden */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 z-[2] h-[1109px] max-h-full w-[min(2365px,260vw)] max-w-none -translate-x-1/2"
+        aria-hidden
+      >
+        <div className="relative h-full w-full">
           <Image
-            src="/assets/hero/121.png"
-            alt={t('home.hero.logoAlt')}
-            width={392}
-            height={292}
-            className="object-contain w-full h-full"
+            src="/assets/hero/hero-pattern-figma.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+            unoptimized
+            sizes="100vw"
+          />
+        </div>
+      </div>
+
+      <div className="relative z-10 flex w-full max-w-[1440px] flex-col items-center px-4 pb-16 pt-12 md:pt-16 xl:pt-[100px] xl:pb-16">
+        {/* Vase — Figma 134:352 (170×257) */}
+        <div className="relative h-[257px] w-[170px] shrink-0">
+          <Image
+            src="/assets/hero/hero-vase-figma.svg"
+            alt=""
+            width={170}
+            height={257}
+            className="h-full w-full object-contain"
             priority
             unoptimized
           />
         </div>
 
-        {/* Название ресторана - точно как в Figma */}
-        <h1 className="text-center mb-12 md:mb-16">
-          <span className={`${ruslanDisplay.className} block text-[#2f3f3d] text-4xl md:text-2xl lg:text-2xl xl:text-7xl text-3xl mb-2 tracking-tight font-normal`}>
+        {/* Restaurant name — text wordmark (i18n), light on photo */}
+        <h1
+          id="hero-heading"
+          className={`${ruslanDisplay.className} mt-[31px] max-w-[475px] text-center text-[#fadaac] drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)]`}
+        >
+          <span className="block text-4xl font-normal tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
             {t('home.hero.restaurantName')}
           </span>
-          <span className={`${ruslanDisplay.className} block text-[#2f3f3d] text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light italic lowercase`}>
+          <span className="mt-1 block text-2xl font-light lowercase italic sm:text-3xl md:text-4xl lg:text-5xl">
             {t('home.hero.restaurantSubtitle')}
           </span>
         </h1>
 
-        {/* Кнопки действий */}
-        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-center justify-center w-full max-w-md px-4">
-          {/* Кнопка "Забронировать" — столы /desktops */}
+        {/* CTAs — Figma 136:636, gap 10px */}
+        <div className="mt-[31px] flex flex-row flex-wrap items-center justify-center gap-[10px]">
           <Link
             prefetch
             href="/desktops"
-            className="w-full sm:w-auto bg-transparent border-2 border-[#2f3f3d] text-[#2f3f3d] px-6 md:px-8 py-3 md:py-3.5 rounded-full font-semibold text-sm md:text-base tracking-[0.32px] hover:bg-[#2f3f3d] hover:text-white transition-all duration-300 min-w-[190px] text-center"
+            className="flex h-14 w-full min-w-[190px] max-w-[280px] shrink-0 items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[rgba(255,255,255,0.06)] px-6 backdrop-blur-[3.5px] text-base font-semibold tracking-[0.32px] text-[#fadaac] transition-colors hover:bg-[rgba(255,255,255,0.12)] sm:w-auto sm:max-w-none"
           >
             {t('home.hero.bookButton')}
           </Link>
-
-          {/* Кнопка "Заказать" — каталог /products */}
           <Link
             prefetch
             href="/products"
-            className="w-full sm:w-auto bg-[#2f3f3d] border-2 border-[#2f3f3d] text-white px-6 md:px-8 py-3 md:py-3.5 rounded-full font-bold text-sm md:text-base tracking-[0.32px] hover:bg-[#1f2f2d] transition-all duration-300 min-w-[190px] text-center"
+            className="flex h-14 w-full min-w-[190px] max-w-[280px] shrink-0 items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[#fadaac] px-6 text-base font-bold tracking-[0.32px] text-[#2f3f3d] transition-colors hover:bg-[#f5d49a] sm:w-auto sm:max-w-none"
           >
             {t('home.hero.orderButton')}
           </Link>

@@ -2,13 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Ruslan_Display } from 'next/font/google';
 import { useTranslation } from '../../lib/i18n-client';
-
-const ruslanDisplay = Ruslan_Display({
-  subsets: ['latin', 'cyrillic'],
-  weight: '400',
-});
 
 /**
  * Mobile Hero — логотип, название, кнопки Заказать / Забронировать.
@@ -17,21 +11,20 @@ const ruslanDisplay = Ruslan_Display({
 export function MobileHero() {
   const { t } = useTranslation();
   return (
-    <section className="relative bg-[#ffe5c2] overflow-hidden pt-8 pb-12 px-4">
-      {/* Декоративный паттерн фона */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 flex items-start justify-center -translate-y-[13%]">
-          <div className="relative w-[280%] h-[15%] min-h-[200px]">
-            <Image
-              src="/assets/hero/decorative-pattern.svg"
-              alt=""
-              fill
-              className="object-contain"
-              aria-hidden
-              unoptimized
-            />
-          </div>
-        </div>
+    <section
+      className="relative overflow-hidden pt-8 pb-12 px-4"
+      data-home-header-surface="dark"
+    >
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <Image
+          src="/assets/hero/hero.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          priority
+          unoptimized
+          sizes="100vw"
+        />
       </div>
 
       <div className="relative z-10 flex flex-col items-center">
@@ -64,13 +57,13 @@ export function MobileHero() {
         <div className="w-full max-w-[385px] flex flex-col gap-2">
           <Link
             href="/products"
-            className="w-full h-14 rounded-full bg-[#2f3f3d] border border-[#2f3f3d] text-white font-bold text-base tracking-[0.02em] flex items-center justify-center"
+            className="flex h-14 w-full items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[#fadaac] text-base font-bold tracking-[0.32px] text-[#2f3f3d]"
           >
             {t('home.hero.orderButton')}
           </Link>
           <Link
             href="/desktops"
-            className="w-full h-14 rounded-full border-2 border-[#2f3f3d] text-[#2f3f3d] font-semibold text-base tracking-[0.02em] flex items-center justify-center"
+            className="flex h-14 w-full items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[rgba(255,255,255,0.06)] backdrop-blur-[3.5px] text-base font-semibold tracking-[0.32px] text-[#fadaac]"
           >
             {t('home.hero.bookButton')}
           </Link>
