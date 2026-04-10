@@ -219,7 +219,7 @@ export function Footer() {
                 Copyright © 2026 | All Rights Reserved, Created by Neetrino IT Company
               </a>
               <Link
-                href="/coming-soon"
+                href="/delivery-terms"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.deliveryPolicy')}
@@ -237,7 +237,7 @@ export function Footer() {
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
               <Link
-                href="/coming-soon"
+                href="/terms"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors whitespace-nowrap`}
               >
                 {t('home.footer.bottomLinks.publicOffer')}

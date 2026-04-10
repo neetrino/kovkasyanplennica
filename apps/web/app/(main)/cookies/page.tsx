@@ -11,11 +11,8 @@ export default function CookiesPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <Card className="p-6 sm:p-8 space-y-8">
-        <header className="space-y-2">
+        <header>
           <h1 className="text-4xl font-bold text-gray-900">{t('cookies.title')}</h1>
-          <p className="text-gray-600">
-            {t('cookies.lastUpdated')} {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
         </header>
 
         <section className="space-y-3">
