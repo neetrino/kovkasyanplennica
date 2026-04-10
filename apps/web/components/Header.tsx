@@ -168,19 +168,28 @@ export function Header() {
       );
     };
 
+    let syncFrame: number | null = null;
+    const scheduleSync = () => {
+      if (syncFrame !== null) return;
+      syncFrame = window.requestAnimationFrame(() => {
+        syncFrame = null;
+        applySync();
+      });
+    };
+
     applySync();
     const ro = new ResizeObserver(() => {
-      window.requestAnimationFrame(applySync);
+      scheduleSync();
     });
     ro.observe(scrollRoot);
-    const onLayout = () => window.requestAnimationFrame(applySync);
-    window.addEventListener('resize', onLayout);
-    scrollRoot.addEventListener('scroll', onLayout, { passive: true });
+    window.addEventListener('resize', scheduleSync);
+    scrollRoot.addEventListener('scroll', scheduleSync, { passive: true });
 
     return () => {
+      if (syncFrame !== null) window.cancelAnimationFrame(syncFrame);
       ro.disconnect();
-      window.removeEventListener('resize', onLayout);
-      scrollRoot.removeEventListener('scroll', onLayout);
+      window.removeEventListener('resize', scheduleSync);
+      scrollRoot.removeEventListener('scroll', scheduleSync);
       clearSyncVars();
     };
   }, []);
@@ -196,40 +205,35 @@ export function Header() {
         document.querySelectorAll<HTMLElement>('[data-home-header-surface]'),
       );
 
+    let surfaceFrame: number | null = null;
     const apply = () => {
+      surfaceFrame = null;
       const next = pickHomeSectionSurface(getSections());
-      if (next) setHomeHeaderSurface(next);
+      if (next) {
+        setHomeHeaderSurface((prev) => (next !== prev ? next : prev));
+      }
     };
 
+    const scheduleSurface = () => {
+      if (surfaceFrame !== null) return;
+      surfaceFrame = window.requestAnimationFrame(apply);
+    };
+
+    /** Scroll happens on `#APP_SCROLL_REGION_DOM_ID`; avoid duplicate window/document listeners (same scroll was scheduling multiple rAFs per frame). */
     const scrollOpts = { passive: true } as const;
-    const scrollCaptureOpts = { ...scrollOpts, capture: true } as const;
-    const onScrollOrResize = () => {
-      window.requestAnimationFrame(apply);
-    };
-
     apply();
     const scrollRoot =
       document.getElementById(APP_SCROLL_REGION_DOM_ID) ?? document.body;
-    scrollRoot.addEventListener('scroll', onScrollOrResize, scrollOpts);
-    window.addEventListener('scroll', onScrollOrResize, scrollCaptureOpts);
-    document.documentElement.addEventListener(
-      'scroll',
-      onScrollOrResize,
-      scrollOpts,
-    );
-    window.addEventListener('resize', onScrollOrResize);
+    scrollRoot.addEventListener('scroll', scheduleSurface, scrollOpts);
+    window.addEventListener('resize', scheduleSurface);
 
     const t = window.setTimeout(apply, 0);
 
     return () => {
       window.clearTimeout(t);
-      scrollRoot.removeEventListener('scroll', onScrollOrResize);
-      window.removeEventListener('scroll', onScrollOrResize, scrollCaptureOpts);
-      document.documentElement.removeEventListener(
-        'scroll',
-        onScrollOrResize,
-      );
-      window.removeEventListener('resize', onScrollOrResize);
+      if (surfaceFrame !== null) window.cancelAnimationFrame(surfaceFrame);
+      scrollRoot.removeEventListener('scroll', scheduleSurface);
+      window.removeEventListener('resize', scheduleSurface);
     };
   }, [isHomePage]);
 

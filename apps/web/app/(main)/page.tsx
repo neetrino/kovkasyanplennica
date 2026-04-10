@@ -1,4 +1,6 @@
 import { HomePage } from '@/components/homePage/HomePage';
+import { HomeCarouselPreloadLinks } from '@/components/homePage/HomeCarouselPreloadLinks';
+import { HomeHeroPreloadLinks } from '@/components/homePage/HomeHeroPreloadLinks';
 import { MobileHomePage } from '@/components/mobileHomePage/MobileHomePage';
 import { getHomeMenuAndFavoritesData } from '@/lib/home/home-menu-favorites';
 import { getCachedNewArrivalsProducts } from '@/lib/home/mobile-new-arrivals';
@@ -24,6 +26,8 @@ export default async function Page() {
 
   return (
     <>
+      <HomeHeroPreloadLinks />
+      <HomeCarouselPreloadLinks />
       <div className="hidden md:block">
         <HomePage
           menuProducts={homeData.menuProducts}
