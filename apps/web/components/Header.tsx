@@ -18,6 +18,9 @@ import type { Cart } from '../app/(main)/cart/types';
 
 const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
+const HEADER_HOME_FIGMA_GRADIENT =
+  'pointer-events-none absolute inset-x-0 -top-7 z-0 h-[196px] bg-[#030303] blur-[46px]';
+const HEADER_BG_HOME_DARK = 'bg-transparent';
 
 /**
  * Desktop bar height — spacer matches fixed bar (`layout.tsx` min-h).
@@ -78,7 +81,7 @@ export function Header() {
   const headerBg = isHomePage
     ? homeHeaderSurface === 'cream'
       ? HEADER_BG_HOME
-      : HEADER_BG_OTHER
+      : HEADER_BG_HOME_DARK
     : HEADER_BG_OTHER;
 
   const { t } = useTranslation();
@@ -239,8 +242,11 @@ export function Header() {
       <header
         className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 lg:px-8 ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
       >
+      {isHomePage && homeHeaderSurface === 'dark' ? (
+        <div aria-hidden="true" className={HEADER_HOME_FIGMA_GRADIENT} />
+      ) : null}
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
-      <div className="flex items-center gap-4 lg:gap-6">
+      <div className="relative z-10 flex items-center gap-4 lg:gap-6">
         <Link
           prefetch
           href="/"
@@ -264,7 +270,7 @@ export function Header() {
       </div>
 
       {/* Navigation Menu - Center */}
-      <nav className="hidden items-center gap-10 transition-[gap] duration-300 ease-out lg:flex">
+      <nav className="relative z-10 hidden items-center gap-10 transition-[gap] duration-300 ease-out lg:flex">
         {navigationLinks.map((link) => (
           <Link
             key={link.label}
@@ -280,7 +286,7 @@ export function Header() {
       </nav>
 
       {/* Search and Login - Right */}
-      <div className="flex items-center gap-5 transition-[gap] duration-300 ease-out">
+      <div className="relative z-10 flex items-center gap-5 transition-[gap] duration-300 ease-out">
         {/* Search — opens glass overlay with live results */}
         <div className="relative">
           <button

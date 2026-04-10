@@ -35,12 +35,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Soft fade under fixed header — tight to top edge, opens like a gradient (no blur band) */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[64px] w-full bg-gradient-to-b from-[#2f3f3d]/48 via-[#2f3f3d]/14 via-40% to-transparent xl:h-[72px]"
-        aria-hidden
-      />
-
       {/* PATTERN 1 — from top of hero section (below header), clipped by overflow-hidden */}
       <div
         className="pointer-events-none absolute left-1/2 top-0 z-[2] h-[1109px] max-h-full w-[min(2365px,260vw)] max-w-none -translate-x-1/2"
