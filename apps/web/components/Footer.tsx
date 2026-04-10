@@ -216,7 +216,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
               >
-                Copyright © 2026 | All Rights Reserved, Created by Neetrino_IT_Company
+                Copyright © 2026 | All Rights Reserved, Created by Neetrino IT Company
               </a>
               <Link
                 href="/coming-soon"

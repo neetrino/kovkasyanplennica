@@ -236,7 +236,7 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 lg:px-8 relative ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
+        className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 lg:px-8 ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
       >
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
       <div className="flex items-center gap-4 lg:gap-6">
