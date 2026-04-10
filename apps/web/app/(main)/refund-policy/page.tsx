@@ -12,67 +12,69 @@ export default function RefundPolicyPage() {
     <div className="policy-page">
       <div className="policy-page-inner">
         <h1 className="text-4xl font-bold text-gray-900">{t('refund-policy.title')}</h1>
-        <p className="text-gray-600">
-          {t('refund-policy.lastUpdated')}{' '}
-          {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
 
         <div className="mt-8 space-y-6">
-          <Card className="p-6">
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.overview.title')}</h2>
-            <p className="text-gray-600">
-              {t('refund-policy.overview.description')}
-            </p>
+          <Card className="p-6 space-y-6">
+            <p className="text-gray-600">{t('refund-policy.intro')}</p>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.eligibility.title')}</h2>
-            <p className="text-gray-600">{t('refund-policy.eligibility.description')}</p>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('refund-policy.eligibility.items.condition')}</li>
-              <li>{t('refund-policy.eligibility.items.timeline')}</li>
-              <li>{t('refund-policy.eligibility.items.proof')}</li>
-              <li>{t('refund-policy.eligibility.items.excluded')}</li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('refund-policy.orderChange.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('refund-policy.orderChange.b1')}</li>
+                <li>{t('refund-policy.orderChange.b2')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.howToInitiate.title')}</h2>
-            <ol className="list-decimal list-inside text-gray-600 ml-4">
-              <li>{t('refund-policy.howToInitiate.steps.contact')}</li>
-              <li>{t('refund-policy.howToInitiate.steps.authorization')}</li>
-              <li>{t('refund-policy.howToInitiate.steps.ship')}</li>
-            </ol>
-            <p className="text-gray-600">
-              {t('refund-policy.howToInitiate.description')}
-            </p>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('refund-policy.returnsCompensation.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('refund-policy.returnsCompensation.b1')}</li>
+                <li>{t('refund-policy.returnsCompensation.b2')}</li>
+                <li>{t('refund-policy.returnsCompensation.b3')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.refundMethod.title')}</h2>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('refund-policy.refundMethod.items.method')}</li>
-              <li>{t('refund-policy.refundMethod.items.timing')}</li>
-              <li>{t('refund-policy.refundMethod.items.shipping')}</li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('refund-policy.refundProcedure.title')}
+              </h2>
+              <p className="mt-2 text-gray-600">{t('refund-policy.refundProcedure.lead')}</p>
+              <ul className="mt-2 list-none space-y-1 text-gray-600 ml-4">
+                <li>– {t('refund-policy.refundProcedure.sub1')}</li>
+                <li>– {t('refund-policy.refundProcedure.sub2')}</li>
+              </ul>
+              <ul className="mt-4 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('refund-policy.refundProcedure.b1')}</li>
+                <li>{t('refund-policy.refundProcedure.b2')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.nonRefundable.title')}</h2>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('refund-policy.nonRefundable.items.giftCards')}</li>
-              <li>{t('refund-policy.nonRefundable.items.personalized')}</li>
-              <li>{t('refund-policy.nonRefundable.items.unauthorized')}</li>
-              <li>
-                {t('refund-policy.nonRefundable.items.condition')}
-              </li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('refund-policy.deliveryIssues.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('refund-policy.deliveryIssues.b1')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.contact.title')}</h2>
-            <p className="text-gray-600">
-              {t('refund-policy.contact.description')}{' '}
-              <a href="mailto:support@whiteshop.com" className="text-blue-600 hover:underline">
-                support@whiteshop.com
-              </a>
-              .
-            </p>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">{t('refund-policy.contact.title')}</h2>
+              <p className="mt-2 text-gray-600">
+                {t('refund-policy.contact.description')}{' '}
+                <a href="mailto:support@whiteshop.com" className="text-blue-600 hover:underline">
+                  support@whiteshop.com
+                </a>
+                .
+              </p>
+            </section>
           </Card>
         </div>
       </div>
     </div>
   );
 }
-
-

@@ -12,62 +12,39 @@ interface CarouselImage {
   position: 'left-large' | 'right-top' | 'right-bottom' | 'right-top-small';
 }
 
-// Note: Images should be placed in /public/assets/carousel/ directory
-// You can download them from Figma or use placeholder images
-const carouselImages: CarouselImage[] = [
-  {
-    id: '1',
-    src: '/assets/carousel/image-1.png',
-    alt: 'Bar interior',
-    width: 517,
-    height: 690,
-    position: 'left-large',
-  },
-  {
-    id: '2',
-    src: '/assets/carousel/image-2.png',
-    alt: 'Architectural detail',
-    width: 375,
-    height: 749,
-    position: 'right-top',
-  },
-  {
-    id: '3',
-    src: '/assets/carousel/image-3.png',
-    alt: 'Fresh salad',
-    width: 299,
-    height: 431,
-    position: 'right-top-small',
-  },
-  {
-    id: '4',
-    src: '/assets/carousel/image-4.png',
-    alt: 'Martini glass',
-    width: 749,
-    height: 375,
-    position: 'right-bottom',
-  },
-  {
-    id: '5',
-    src: '/assets/carousel/image-1.png',
-    alt: 'Bar interior',
-    width: 517,
-    height: 690,
-    position: 'left-large',
-  },
+const newFolderImageSources = [
+  '/assets/New folder/JW_06812 1.webp',
+  '/assets/New folder/JW_06330 1.webp',
+  '/assets/New folder/JW_01463-редакт 1.webp',
+  '/assets/New folder/JW_01347 1.webp',
+  '/assets/New folder/JW_01522 1.webp',
+  '/assets/New folder/JW_05698 1.webp',
+  '/assets/New folder/JW_01369-редакт 1.webp',
 ];
+
+const carouselImages: CarouselImage[] = [
+  { id: '1', src: encodeURI(newFolderImageSources[0]), alt: 'Restaurant gallery image 1', width: 517, height: 690, position: 'left-large' },
+  { id: '2', src: encodeURI(newFolderImageSources[1]), alt: 'Restaurant gallery image 2', width: 375, height: 749, position: 'right-top' },
+  { id: '3', src: encodeURI(newFolderImageSources[2]), alt: 'Restaurant gallery image 3', width: 299, height: 431, position: 'right-top-small' },
+  { id: '4', src: encodeURI(newFolderImageSources[3]), alt: 'Restaurant gallery image 4', width: 749, height: 375, position: 'right-bottom' },
+  { id: '5', src: encodeURI(newFolderImageSources[4]), alt: 'Restaurant gallery image 5', width: 517, height: 690, position: 'left-large' },
+  { id: '6', src: encodeURI(newFolderImageSources[5]), alt: 'Restaurant gallery image 6', width: 517, height: 690, position: 'right-top' },
+  { id: '7', src: encodeURI(newFolderImageSources[6]), alt: 'Restaurant gallery image 7', width: 517, height: 690, position: 'right-bottom' },
+];
+
+const AUTO_PLAY_INTERVAL_MS = 3000;
 
 export function HomePageImageCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  // Auto-rotate carousel every 5 seconds
+  // Auto-rotate carousel with slower pacing
   useEffect(() => {
     if (!isAutoPlaying) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
-    }, 5000);
+    }, AUTO_PLAY_INTERVAL_MS);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying]);

@@ -10,7 +10,7 @@ const NEETRINO_COMPANY_URL = 'https://neetrino.com/';
 export function Footer() {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const isMenuPage = pathname === '/menu' || pathname === '/coming-soon';
+  const isMenuPage = pathname === '/menu';
   
   return (
     <footer className={`${isMenuPage ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'} overflow-hidden relative`}>
@@ -216,10 +216,10 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
               >
-                Copyright © 2026 | All Rights Reserved, Created by Neetrino_IT_Company
+                Copyright © 2026 | All Rights Reserved, Created by Neetrino IT Company
               </a>
               <Link
-                href="/coming-soon"
+                href="/delivery-terms"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.deliveryPolicy')}
@@ -237,7 +237,7 @@ export function Footer() {
                 {t('home.footer.bottomLinks.privacy')}
               </Link>
               <Link
-                href="/coming-soon"
+                href="/terms"
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors whitespace-nowrap`}
               >
                 {t('home.footer.bottomLinks.publicOffer')}

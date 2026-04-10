@@ -12,70 +12,78 @@ export default function DeliveryTermsPage() {
     <div className="policy-page">
       <div className="policy-page-inner">
         <h1 className="text-4xl font-bold text-gray-900">{t('delivery-terms.title')}</h1>
-        <p className="text-gray-600">
-          {t('delivery-terms.lastUpdated')}{' '}
-          {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
 
         <div className="mt-8 space-y-6">
-          <Card className="p-6">
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.overview.title')}</h2>
-            <p className="text-gray-600">
-              {t('delivery-terms.overview.description')}
-            </p>
+          <Card className="p-6 space-y-6">
+            <p className="text-gray-600">{t('delivery-terms.intro')}</p>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.shippingOptions.title')}</h2>
-            <p className="text-gray-600">{t('delivery-terms.shippingOptions.description')}</p>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('delivery-terms.shippingOptions.options.standard')}</li>
-              <li>{t('delivery-terms.shippingOptions.options.express')}</li>
-              <li>{t('delivery-terms.shippingOptions.options.pickup')}</li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.deliveryTimes.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.deliveryTimes.b1')}</li>
+                <li>{t('delivery-terms.deliveryTimes.b2')}</li>
+                <li>{t('delivery-terms.deliveryTimes.b3')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.processingTimes.title')}</h2>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('delivery-terms.processingTimes.items.typical')}</li>
-              <li>{t('delivery-terms.processingTimes.items.weekends')}</li>
-              <li>{t('delivery-terms.processingTimes.items.preorder')}</li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.receivingOptions.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.receivingOptions.b1')}</li>
+                <li>{t('delivery-terms.receivingOptions.b2')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.deliveryTimeframes.title')}</h2>
-            <p className="text-gray-600">
-              {t('delivery-terms.deliveryTimeframes.description')}
-            </p>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.deliveryCost.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.deliveryCost.b1')}</li>
+                <li>{t('delivery-terms.deliveryCost.b2')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.shippingFees.title')}</h2>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('delivery-terms.shippingFees.items.costs')}</li>
-              <li>
-                {t('delivery-terms.shippingFees.items.duties')}
-              </li>
-              <li>{t('delivery-terms.shippingFees.items.promotional')}</li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.deliveryZones.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.deliveryZones.b1')}</li>
+                <li>{t('delivery-terms.deliveryZones.b2')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.delaysDamageLoss.title')}</h2>
-            <ul className="list-disc list-inside text-gray-600 ml-4">
-              <li>{t('delivery-terms.delaysDamageLoss.items.delays')}</li>
-              <li>
-                {t('delivery-terms.delaysDamageLoss.items.damage')}
-              </li>
-              <li>
-                {t('delivery-terms.delaysDamageLoss.items.loss')}
-              </li>
-            </ul>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.possibleDelays.title')}
+              </h2>
+              <p className="mt-2 text-gray-600">{t('delivery-terms.possibleDelays.lead')}</p>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.possibleDelays.b1')}</li>
+                <li>{t('delivery-terms.possibleDelays.b2')}</li>
+                <li>{t('delivery-terms.possibleDelays.b3')}</li>
+                <li>{t('delivery-terms.possibleDelays.b4')}</li>
+              </ul>
+            </section>
 
-            <h2 className="text-2xl font-semibold text-gray-900">{t('delivery-terms.contact.title')}</h2>
-            <p className="text-gray-600">
-              {t('delivery-terms.contact.description')}{' '}
-              <a href="mailto:shipping@whiteshop.com" className="text-blue-600 hover:underline">
-                shipping@whiteshop.com
-              </a>
-              .
-            </p>
+            <section>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {t('delivery-terms.importantInfo.title')}
+              </h2>
+              <ul className="mt-2 list-disc list-inside text-gray-600 ml-4">
+                <li>{t('delivery-terms.importantInfo.b1')}</li>
+                <li>{t('delivery-terms.importantInfo.b2')}</li>
+                <li>{t('delivery-terms.importantInfo.b3')}</li>
+              </ul>
+            </section>
           </Card>
         </div>
       </div>
     </div>
   );
 }
-
