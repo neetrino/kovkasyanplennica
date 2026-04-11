@@ -7,7 +7,7 @@ import { apiClient, ApiError } from '../api-client';
 /**
  * User interface
  */
-interface User {
+export interface User {
   id: string;
   email?: string;
   phone?: string;
@@ -26,7 +26,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   roles: string[];
-  login: (_email: string, _password: string) => Promise<void>;
+  login: (_email: string, _password: string) => Promise<User>;
   register: (_data: RegisterData) => Promise<void>;
   logout: () => void;
 }
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * Login user
    */
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     try {
       setIsLoading(true);
 
@@ -141,6 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.dispatchEvent(new Event('auth-updated'));
 
       // Don't redirect here - let the login page handle redirect based on query params
+      return response.user;
     } catch (error: any) {
       console.error('❌ [AUTH] Login error:', error);
       

@@ -9,6 +9,7 @@ import {
   getAdminDrawerRowClasses,
   getAdminNavIconClass,
 } from '@/components/admin/adminNavClasses';
+import { isAdminMenuItemActive } from '@/components/admin/isAdminMenuItemActive';
 import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
 import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 
@@ -95,10 +96,7 @@ export function AdminMenuDrawer({ tabs, currentPath }: AdminMenuDrawerProps) {
 
             <div className={chrome.listDivide}>
               {tabs.map((tab) => {
-                const isActive =
-                  currentPath === tab.path ||
-                  (tab.path === '/admin' && currentPath === '/admin') ||
-                  (tab.path !== '/admin' && currentPath.startsWith(tab.path));
+                const isActive = isAdminMenuItemActive(tab.path, currentPath);
 
                 return (
                   <button
