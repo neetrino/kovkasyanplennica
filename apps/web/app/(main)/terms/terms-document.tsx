@@ -9,6 +9,10 @@ type SectionProps = {
   t: Translate;
 };
 
+type TermsDocumentProps = SectionProps & {
+  title: string;
+};
+
 function TermsSection1({ t }: SectionProps) {
   return (
     <section className="space-y-3">
@@ -138,9 +142,10 @@ function TermsSection9({ t }: SectionProps) {
 /**
  * Full terms of use document body (sections 1–9).
  */
-export function TermsDocument({ t }: SectionProps) {
+export function TermsDocument({ t, title }: TermsDocumentProps) {
   return (
-    <Card className="space-y-6 p-6">
+    <Card className="policy-glass-card space-y-6 p-6">
+      <h1 className="text-4xl font-bold text-gray-900">{title}</h1>
       <TermsSection1 t={t} />
       <TermsSection2 t={t} />
       <TermsSection3 t={t} />

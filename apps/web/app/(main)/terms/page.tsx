@@ -11,11 +11,7 @@ export default function TermsPage() {
   return (
     <div className="policy-page">
       <div className="policy-page-inner">
-        <h1 className="text-4xl font-bold text-gray-900">{t('terms.title')}</h1>
-
-        <div className="mt-8 space-y-6">
-          <TermsDocument t={t} />
-        </div>
+        <TermsDocument t={t} title={t('terms.title')} />
       </div>
     </div>
   );

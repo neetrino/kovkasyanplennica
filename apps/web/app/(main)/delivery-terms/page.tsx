@@ -11,10 +11,8 @@ export default function DeliveryTermsPage() {
   return (
     <div className="policy-page">
       <div className="policy-page-inner">
-        <h1 className="text-4xl font-bold text-gray-900">{t('delivery-terms.title')}</h1>
-
-        <div className="mt-8 space-y-6">
-          <Card className="p-6 space-y-6">
+        <Card className="policy-glass-card p-6 space-y-6">
+          <h1 className="text-4xl font-bold text-gray-900">{t('delivery-terms.title')}</h1>
             <p className="text-gray-600">{t('delivery-terms.intro')}</p>
 
             <section>
@@ -81,8 +79,7 @@ export default function DeliveryTermsPage() {
                 <li>{t('delivery-terms.importantInfo.b3')}</li>
               </ul>
             </section>
-          </Card>
-        </div>
+        </Card>
       </div>
     </div>
   );

@@ -156,6 +156,35 @@
   }
 }
 
+/* Frosted glass on #2f3f3d — warm cream tint (brand) so blur doesn’t read as muddy gray */
+.policy-glass-card {
+  border-radius: 1.875rem !important; /* ~30px — a touch rounder than rounded-3xl */
+  overflow: hidden;
+  background:
+    linear-gradient(
+      165deg,
+      rgba(255, 240, 220, 0.58) 0%,
+      rgba(255, 248, 240, 0.42) 48%,
+      rgba(220, 235, 228, 0.32) 100%
+    ) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  /* Overrides Card `shadow-sm` — single layered shadow */
+  box-shadow:
+    0 2px 4px rgba(47, 63, 61, 0.06),
+    0 22px 44px -14px rgba(12, 22, 18, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .policy-glass-card {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 243, 226, 0.96) !important;
+  }
+}
+
 /* Headings: more air above & below, not stuck to header */
 .policy-page-inner h1,
 .policy-page-inner h2,

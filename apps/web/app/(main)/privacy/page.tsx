@@ -2,7 +2,6 @@
 
 import { Card } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
-import Link from 'next/link';
 
 /**
  * Privacy Policy page - displays privacy policy information
@@ -12,10 +11,9 @@ export default function PrivacyPage() {
   return (
     <div className="policy-page">
       <div className="policy-page-inner">
-        <h1 className="text-4xl font-bold text-gray-900">{t('privacy.title')}</h1>
+        <Card className="policy-glass-card space-y-6 p-6">
+          <h1 className="text-4xl font-bold text-gray-900">{t('privacy.title')}</h1>
 
-        <div className="mt-8 space-y-6">
-          <Card className="space-y-6 p-6">
             <div className="space-y-4">
               <p className="text-gray-600">{t('privacy.intro.p1')}</p>
               <p className="text-gray-600">{t('privacy.intro.p2')}</p>
@@ -94,21 +92,13 @@ export default function PrivacyPage() {
                 <li>{t('privacy.cookies.itemAnalytics')}</li>
                 <li>{t('privacy.cookies.itemMarketing')}</li>
               </ul>
-              <p className="text-gray-600">
-                {t('privacy.cookies.moreInfo')}{' '}
-                <Link href="/cookies" className="text-blue-600 hover:underline">
-                  {t('privacy.cookies.linkText')}
-                </Link>
-                .
-              </p>
             </section>
 
             <section className="space-y-3">
               <h2 className="text-2xl font-semibold text-gray-900">{t('privacy.changes.title')}</h2>
               <p className="text-gray-600">{t('privacy.changes.text')}</p>
             </section>
-          </Card>
-        </div>
+        </Card>
       </div>
     </div>
   );
