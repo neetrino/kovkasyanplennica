@@ -9,6 +9,8 @@ interface CategoriesResponse {
   data: Category[];
 }
 
+const categoriesCache = new Map<string, Category[]>();
+
 /**
  * Hook for fetching categories
  */
@@ -17,25 +19,43 @@ export function useCategories() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchCategories = async () => {
+      const language = getStoredLanguage();
+      const cached = categoriesCache.get(language);
+      if (cached) {
+        setCategories(cached);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        const language = getStoredLanguage();
         const response = await apiClient.get<CategoriesResponse>('/api/v1/categories/tree', {
           params: { lang: language },
         });
 
         const categoriesList = response.data || [];
         const allCategories = flattenCategories(categoriesList);
-        setCategories(allCategories);
+        categoriesCache.set(language, allCategories);
+        if (mounted) {
+          setCategories(allCategories);
+        }
       } catch (err) {
         console.error('Error fetching categories:', err);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchCategories();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return { categories, loading };

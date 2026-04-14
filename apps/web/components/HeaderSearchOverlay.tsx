@@ -10,6 +10,7 @@ import { formatPrice, getStoredCurrency } from '../lib/currency';
 import type { CurrencyCode } from '../lib/currency';
 import { useTranslation } from '../lib/i18n-client';
 import { APP_SCROLL_REGION_DOM_ID } from '../lib/appScrollRegion';
+import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 const SEARCH_DEBOUNCE_MS = 300;
 const SEARCH_RESULT_LIMIT = 10;
 
@@ -149,6 +150,12 @@ export function HeaderSearchOverlay({
     },
     [onClose, router, searchQuery]
   );
+  const handleProductIntent = useCallback(
+    (slug: string) => {
+      prefetchProductByIntent(router, slug);
+    },
+    [router]
+  );
 
   if (!mounted || !open) {
     return null;
@@ -244,6 +251,10 @@ export function HeaderSearchOverlay({
                 <Link
                   key={product.id}
                   href={`/products/${product.slug}`}
+                  prefetch
+                  onMouseEnter={() => handleProductIntent(product.slug)}
+                  onTouchStart={() => handleProductIntent(product.slug)}
+                  onFocus={() => handleProductIntent(product.slug)}
                   onClick={onClose}
                   className="flex gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/10"
                 >

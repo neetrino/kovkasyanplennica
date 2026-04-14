@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import type { MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
+import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 
 interface ProductCardListProps {
   product: {
@@ -43,6 +45,10 @@ export function ProductCardList({
   onAddToCart,
 }: ProductCardListProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const handleProductIntent = useCallback(() => {
+    prefetchProductByIntent(router, product.slug);
+  }, [router, product.slug]);
 
   return (
     <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
@@ -50,6 +56,10 @@ export function ProductCardList({
         {/* Product Image */}
         <Link
           href={`/products/${product.slug}`}
+          prefetch
+          onMouseEnter={handleProductIntent}
+          onTouchStart={handleProductIntent}
+          onFocus={handleProductIntent}
           className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-10"
         >
           {product.image && !imageError ? (
@@ -73,7 +83,14 @@ export function ProductCardList({
 
         {/* Product Info */}
         <div className="flex-1 min-w-0 w-full sm:w-auto">
-          <Link href={`/products/${product.slug}`} className="block">
+          <Link
+            href={`/products/${product.slug}`}
+            prefetch
+            onMouseEnter={handleProductIntent}
+            onTouchStart={handleProductIntent}
+            onFocus={handleProductIntent}
+            className="block"
+          >
             <h3 className="text-lg sm:text-xl font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">
               {product.title}
             </h3>

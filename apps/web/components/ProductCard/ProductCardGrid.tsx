@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import type { MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { ProductCardInfo } from './ProductCardInfo';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
+import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 
 interface ProductCardGridProps {
   product: {
@@ -54,7 +56,11 @@ export function ProductCardGrid({
   onImageError,
   onAddToCart,
 }: ProductCardGridProps) {
+  const router = useRouter();
   const imageSizesAttr = largeCompactImage && compactHeight ? 'min(60vw, 280px)' : '223px';
+  const handleProductIntent = useCallback(() => {
+    prefetchProductByIntent(router, product.slug);
+  }, [router, product.slug]);
 
   return (
     <div
@@ -86,6 +92,10 @@ export function ProductCardGrid({
       >
         <Link
           href={`/products/${product.slug}`}
+          prefetch
+          onMouseEnter={handleProductIntent}
+          onTouchStart={handleProductIntent}
+          onFocus={handleProductIntent}
           className="relative w-full h-full bg-transparent block"
         >
           {product.image && !imageError ? (

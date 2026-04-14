@@ -14,8 +14,8 @@ import type { Review } from '@/components/ProductReviews/utils';
 
 interface ProductPageClientProps extends ProductPageProps {
   initialProduct: Product;
-  initialReviews: Review[];
-  initialRelatedProducts: RelatedProduct[];
+  initialReviews?: Review[];
+  initialRelatedProducts?: RelatedProduct[];
 }
 
 export function ProductPageClient({
