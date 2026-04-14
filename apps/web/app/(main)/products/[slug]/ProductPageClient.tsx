@@ -42,9 +42,6 @@ export function ProductPageClient({
     selectedColor,
     selectedSize,
     selectedAttributeValues,
-    showMessage,
-    isInWishlist,
-    isInCompare,
     quantity,
     averageRating,
     slug,
@@ -64,14 +61,11 @@ export function ProductPageClient({
     hasUnavailableAttributes,
     unavailableAttributes,
     canAddToCart,
-    scrollToReviews,
     getOptionValue,
     adjustQuantity,
     handleColorSelect,
     handleSizeSelect,
     handleAttributeValueSelect,
-    handleAddToWishlist,
-    handleCompareToggle,
     getRequiredAttributesMessage,
   } = useProductPage({
     params,
@@ -111,7 +105,6 @@ export function ProductPageClient({
           currency={currency}
           language={language}
           averageRating={averageRating}
-          reviewsCount={reviews.length}
           quantity={quantity}
           maxQuantity={maxQuantity}
           isOutOfStock={isOutOfStock}
@@ -119,9 +112,6 @@ export function ProductPageClient({
           hasUnavailableAttributes={hasUnavailableAttributes}
           unavailableAttributes={unavailableAttributes}
           canAddToCart={canAddToCart}
-          isInWishlist={isInWishlist}
-          isInCompare={isInCompare}
-          showMessage={showMessage}
           isLoggedIn={isLoggedIn}
           currentVariant={currentVariant}
           attributeGroups={attributeGroups}
@@ -131,9 +121,6 @@ export function ProductPageClient({
           colorGroups={colorGroups}
           sizeGroups={sizeGroups}
           onQuantityAdjust={adjustQuantity}
-          onAddToWishlist={handleAddToWishlist}
-          onCompareToggle={handleCompareToggle}
-          onScrollToReviews={scrollToReviews}
           onColorSelect={handleColorSelect}
           onSizeSelect={handleSizeSelect}
           onAttributeValueSelect={handleAttributeValueSelect}

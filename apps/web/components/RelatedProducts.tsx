@@ -1,16 +1,12 @@
 'use client';
 
-import { useState, type MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiClient } from '../lib/api-client';
-import { getStoredCurrency } from '../lib/currency';
+import { useEffect, useState } from 'react';
 import type { LanguageCode } from '../lib/language';
 import { t } from '../lib/i18n';
-import { mergeGuestCartLine } from '@/lib/guest-cart/mergeGuestCartLine';
 import type { RelatedProduct } from './hooks/useRelatedProducts';
 import { useCarousel } from './hooks/useCarousel';
 import { useVisibleCards } from './hooks/useVisibleCards';
-import { RelatedProductCard } from './RelatedProducts/RelatedProductCard';
+import { ProductCard } from './ProductCard';
 import { CarouselNavigation } from './RelatedProducts/CarouselNavigation';
 import { CarouselDots } from './RelatedProducts/CarouselDots';
 
@@ -20,20 +16,25 @@ interface RelatedProductsProps {
   language: LanguageCode;
 }
 
+const MOBILE_BREAKPOINT = 768;
+
 /**
- * Related products carousel — data is fetched in `useProductPage` (parallel with product + reviews).
+ * Related products carousel — same `ProductCard` as products page (`ProductsCategoryCarousel`).
  */
 export function RelatedProducts({ products, loading, language }: RelatedProductsProps) {
-  const router = useRouter();
-  const [addingToCart, setAddingToCart] = useState<Set<string>>(new Set());
-  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-
   const visibleCards = useVisibleCards();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const {
     currentIndex,
     isDragging,
-    hasMoved,
     carouselRef,
     goToPrevious,
     goToNext,
@@ -47,73 +48,7 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
     handleWheel,
   } = useCarousel({ itemCount: products.length, visibleItems: visibleCards });
 
-  const handleAddToCart = async (e: MouseEvent, product: RelatedProduct) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!product.inStock) {
-      return;
-    }
-
-    setAddingToCart((prev) => new Set(prev).add(product.id));
-
-    try {
-      interface ProductDetails {
-        id: string;
-        slug: string;
-        variants?: Array<{
-          id: string;
-          sku: string;
-          price: number;
-          stock: number;
-          available: boolean;
-          compareAtPrice?: number | null;
-        }>;
-      }
-
-      const encodedSlug = encodeURIComponent(product.slug.trim());
-      const productDetails = await apiClient.get<ProductDetails>(`/api/v1/products/${encodedSlug}`);
-
-      if (!productDetails.variants || productDetails.variants.length === 0) {
-        alert('No variants available');
-        return;
-      }
-
-      const variant = productDetails.variants[0];
-      mergeGuestCartLine({
-        productId: product.id,
-        variantId: variant.id,
-        productSlug: productDetails.slug || product.slug.trim(),
-        addQuantity: 1,
-        title: product.title,
-        image: product.image,
-        price: variant.price,
-        originalPrice: variant.compareAtPrice ?? product.originalPrice ?? product.compareAtPrice ?? null,
-        sku: variant.sku,
-        stock: variant.stock,
-      });
-
-      window.dispatchEvent(new Event('cart-updated'));
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      if (err.message?.includes('401') || err.message?.includes('Unauthorized')) {
-        router.push(`/login?redirect=/products/${product.slug}`);
-      } else {
-        alert('Failed to add product to cart. Please try again.');
-      }
-    } finally {
-      setAddingToCart((prev) => {
-        const next = new Set(prev);
-        next.delete(product.id);
-        return next;
-      });
-    }
-  };
-
-  const currency = getStoredCurrency();
-  const handleImageError = (productId: string) => {
-    setImageErrors((prev) => new Set(prev).add(productId));
-  };
+  const widthPercent = visibleCards > 0 ? 100 / visibleCards : 100;
 
   return (
     <section className="py-12 mt-20 border-t border-gray-200">
@@ -138,9 +73,10 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
           </div>
         ) : (
           <div className="relative">
+            {/* pt/pb: same as ProductsCategoryCarousel — overflow-hidden clips; image is -50% up, cart is +50% down */}
             <div
               ref={carouselRef}
-              className="relative overflow-hidden cursor-grab active:cursor-grabbing select-none"
+              className="relative overflow-hidden cursor-grab active:cursor-grabbing select-none pt-24 pb-14 sm:pt-28 sm:pb-16 md:pt-32 md:pb-20 lg:pt-36"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -153,23 +89,38 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
               <div
                 className="flex items-stretch"
                 style={{
-                  transform: `translateX(-${currentIndex * (100 / visibleCards)}%)`,
+                  transform: `translateX(-${currentIndex * widthPercent}%)`,
                   transition: isDragging ? 'none' : 'transform 0.5s ease-in-out',
                 }}
               >
                 {products.map((product) => (
-                  <RelatedProductCard
+                  <div
                     key={product.id}
-                    product={product}
-                    currency={currency}
-                    language={language}
-                    isAddingToCart={addingToCart.has(product.id)}
-                    hasMoved={hasMoved}
-                    onAddToCart={handleAddToCart}
-                    onImageError={handleImageError}
-                    imageError={imageErrors.has(product.id)}
-                    width={`${100 / visibleCards}%`}
-                  />
+                    className="flex-shrink-0 px-3 md:px-4"
+                    style={{ width: `${widthPercent}%` }}
+                  >
+                    <ProductCard
+                      product={{
+                        id: product.id,
+                        slug: product.slug,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image,
+                        inStock: product.inStock,
+                        defaultVariantId: product.defaultVariantId ?? null,
+                        stock: product.stock,
+                        brand: product.brand ?? null,
+                        compareAtPrice: product.compareAtPrice ?? undefined,
+                        originalPrice: product.originalPrice ?? undefined,
+                        discountPercent: product.discountPercent ?? undefined,
+                        category: product.categories?.[0]?.title,
+                        labels: undefined,
+                      }}
+                      viewMode="grid-3"
+                      compactHeight={isMobile}
+                      largeCompactImage={isMobile}
+                    />
+                  </div>
                 ))}
               </div>
             </div>

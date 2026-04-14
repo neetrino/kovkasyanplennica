@@ -73,7 +73,7 @@ export function ProductCardInfo({
         compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
       }`}
     >
-      <Link href="/coming-soon" className="block">
+      <Link href={`/products/${slug}`} className="block">
         {/* Product Title - Centered, Bold */}
         <h3
           className={`text-center font-bold text-black ${

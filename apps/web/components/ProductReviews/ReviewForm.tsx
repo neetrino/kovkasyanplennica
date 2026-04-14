@@ -77,6 +77,7 @@ export function ReviewForm({
           type="submit"
           variant="primary"
           disabled={submitting}
+          className="rounded-xl font-semibold !border !border-[#e8cfa5] !bg-[#FFE5C2] !text-gray-900 shadow-sm transition-colors hover:!bg-[#f5dcb0] hover:!text-gray-900 focus-visible:!ring-2 focus-visible:!ring-[#2F3F3D] focus-visible:!ring-offset-2 disabled:!cursor-not-allowed disabled:!border-gray-300 disabled:!bg-gray-300 disabled:!text-gray-500 disabled:!shadow-none"
         >
           {submitting
             ? t('common.reviews.submitting')

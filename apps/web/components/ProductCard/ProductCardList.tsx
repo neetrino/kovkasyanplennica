@@ -49,7 +49,7 @@ export function ProductCardList({
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4">
         {/* Product Image */}
         <Link
-          href="/coming-soon"
+          href={`/products/${product.slug}`}
           className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-10"
         >
           {product.image && !imageError ? (
@@ -73,7 +73,7 @@ export function ProductCardList({
 
         {/* Product Info */}
         <div className="flex-1 min-w-0 w-full sm:w-auto">
-          <Link href="/coming-soon" className="block">
+          <Link href={`/products/${product.slug}`} className="block">
             <h3 className="text-lg sm:text-xl font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">
               {product.title}
             </h3>

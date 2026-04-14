@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use, useCallback } from 'react';
+import { useState, useEffect, use } from 'react';
 import { getStoredCurrency } from '@/lib/currency';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { t } from '@/lib/i18n';
@@ -12,9 +12,7 @@ import { useRelatedProducts } from '@/components/hooks/useRelatedProducts';
 import { useAttributeGroups } from './useAttributeGroups';
 import { useProductImages } from './hooks/useProductImages';
 import { useProductFetch } from './hooks/useProductFetch';
-import { useWishlistCompare } from './hooks/useWishlistCompare';
 import { useVariantSelection } from './hooks/useVariantSelection';
-import { useProductActions } from './hooks/useProductActions';
 import { useProductQuantity } from './hooks/useProductQuantity';
 import { useProductCalculations } from './hooks/useProductCalculations';
 import type { Product } from './types';
@@ -35,7 +33,6 @@ export function useProductPage({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currency, setCurrency] = useState(getStoredCurrency());
   const [language, setLanguage] = useState<LanguageCode>('ru');
-  const [showMessage, setShowMessage] = useState<string | null>(null);
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
 
   const resolvedParams = use(params);
@@ -114,21 +111,7 @@ export function useProductPage({
     isVariationRequired,
   });
 
-  const { isInWishlist, setIsInWishlist, isInCompare, setIsInCompare } = useWishlistCompare({
-    productId: product?.id || null,
-  });
-
   const averageRating = calculateAverageRating(reviews);
-
-  const { handleAddToWishlist, handleCompareToggle } = useProductActions({
-    productId: product?.id || null,
-    isInWishlist,
-    setIsInWishlist,
-    isInCompare,
-    setIsInCompare,
-    setShowMessage,
-    language,
-  });
 
   useEffect(() => {
     setLanguage(getStoredLanguage());
@@ -166,13 +149,6 @@ export function useProductPage({
     }
   }, [product, variantIdFromUrl, setSelectedVariant]);
 
-  const scrollToReviews = useCallback(() => {
-    const reviewsElement = document.getElementById('product-reviews');
-    if (reviewsElement) {
-      reviewsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, []);
-
   const getRequiredAttributesMessage = (): string => {
     const needsColor = colorGroups.length > 0 && colorGroups.some((g) => g.stock > 0) && !selectedColor;
     const needsSize = sizeGroups.length > 0 && sizeGroups.some((g) => g.stock > 0) && !selectedSize;
@@ -200,10 +176,6 @@ export function useProductPage({
     selectedColor,
     selectedSize,
     selectedAttributeValues,
-    showMessage,
-    setShowMessage,
-    isInWishlist,
-    isInCompare,
     quantity,
     averageRating,
     slug,
@@ -223,14 +195,11 @@ export function useProductPage({
     hasUnavailableAttributes,
     unavailableAttributes,
     canAddToCart,
-    scrollToReviews,
     getOptionValue,
     adjustQuantity,
     handleColorSelect,
     handleSizeSelect,
     handleAttributeValueSelect,
-    handleAddToWishlist,
-    handleCompareToggle,
     getRequiredAttributesMessage,
   };
 }

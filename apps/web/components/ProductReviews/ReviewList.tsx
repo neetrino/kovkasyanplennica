@@ -37,6 +37,7 @@ export function ReviewList({
           <Button
             variant="primary"
             onClick={onShowForm}
+            className="rounded-xl font-semibold !border !border-[#e8cfa5] !bg-[#FFE5C2] !text-gray-900 shadow-sm transition-colors hover:!bg-[#f5dcb0] hover:!text-gray-900 focus-visible:!ring-2 focus-visible:!ring-[#2F3F3D] focus-visible:!ring-offset-2"
           >
             {t('common.reviews.writeReview')}
           </Button>
