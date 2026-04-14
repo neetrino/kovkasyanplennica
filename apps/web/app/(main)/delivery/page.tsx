@@ -1,7 +1,7 @@
 'use client';
 
 import { Card } from '@shop/ui';
-import shippingData from '../../../../../json/shipping.json';
+import shippingData from '../../../../../config/json/shipping.json';
 import { useTranslation } from '@/lib/i18n-client';
 import { getStoredLanguage } from '@/lib/language';
 import { amountAmdToRub, formatPriceInCurrency, SHOP_DISPLAY_CURRENCY } from '@/lib/currency';
