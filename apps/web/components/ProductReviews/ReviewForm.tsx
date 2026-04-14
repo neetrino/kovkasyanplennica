@@ -37,13 +37,13 @@ export function ReviewForm({
 
   return (
     <form onSubmit={onSubmit} className="mb-8 p-6 bg-gray-50 rounded-lg">
-      <h3 className="text-xl font-semibold text-gray-900 mb-4">
+      <h3 className="text-xl font-semibold text-[#FFE5C2] mb-4">
         {editingReviewId ? 'Update Your Review' : t('common.reviews.writeReview')}
       </h3>
 
       {/* Rating Selector */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-[#FFE5C2] mb-2">
           {t('common.reviews.rating')} *
         </label>
         <ReviewRating
@@ -58,7 +58,7 @@ export function ReviewForm({
 
       {/* Comment Textarea */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-[#FFE5C2] mb-2">
           {t('common.reviews.comment')} *
         </label>
         <textarea

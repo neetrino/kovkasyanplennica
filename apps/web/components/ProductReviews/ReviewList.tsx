@@ -30,7 +30,7 @@ export function ReviewList({
   if (reviews.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 mb-4">
+        <p className="text-[#FFE5C2] mb-4">
           {t('common.reviews.noReviews')}
         </p>
         {!showForm && (

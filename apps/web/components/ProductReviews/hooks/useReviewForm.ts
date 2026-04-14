@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../../../lib/auth/AuthContext';
 import { useTranslation } from '../../../lib/i18n-client';
+import { getStoredLanguage } from '../../../lib/language';
 import { apiClient } from '../../../lib/api-client';
 import type { Review } from '../utils';
 
@@ -76,12 +77,17 @@ export function useReviewForm({
         return;
       }
 
-      console.log('📝 [PRODUCT REVIEWS] Submitting review:', { identifier, rating, commentLength: comment.length });
-      
-      const newReview = await apiClient.post<Review>(`/api/v1/products/${identifier}/reviews`, {
-        rating,
-        comment: comment.trim(),
-      });
+      const lang = getStoredLanguage();
+      console.log('📝 [PRODUCT REVIEWS] Submitting review:', { identifier, lang, rating, commentLength: comment.length });
+
+      const newReview = await apiClient.post<Review>(
+        `/api/v1/products/${identifier}/reviews`,
+        {
+          rating,
+          comment: comment.trim(),
+        },
+        { params: { lang } },
+      );
 
       console.log('✅ [PRODUCT REVIEWS] Review submitted successfully:', newReview.id);
 
@@ -113,7 +119,9 @@ export function useReviewForm({
           }
 
           console.log('📝 [PRODUCT REVIEWS] Loading existing review for user');
-          const existingReview = await apiClient.get<Review>(`/api/v1/products/${identifier}/reviews?my=true`);
+          const existingReview = await apiClient.get<Review>(`/api/v1/products/${identifier}/reviews`, {
+            params: { my: 'true', lang: getStoredLanguage() },
+          });
           
           if (existingReview) {
             // Add to reviews list if not already there

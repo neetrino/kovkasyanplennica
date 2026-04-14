@@ -19,7 +19,7 @@ export function ReviewItem({ review, currentUserId, onEdit }: ReviewItemProps) {
     <div className="border-b border-gray-200 pb-6 last:border-b-0">
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
-          <div className="font-semibold text-gray-900 mb-1">
+          <div className="font-semibold text-[#FFE5C2] mb-1">
             {review.userName}
           </div>
           <div className="flex items-center gap-2 mb-2">
@@ -29,8 +29,8 @@ export function ReviewItem({ review, currentUserId, onEdit }: ReviewItemProps) {
                   key={star}
                   className={`w-4 h-4 ${
                     star <= review.rating
-                      ? 'text-yellow-400'
-                      : 'text-gray-300'
+                      ? 'text-[#FFE5C2]'
+                      : 'text-[#FFE5C2]/35'
                   }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -39,7 +39,7 @@ export function ReviewItem({ review, currentUserId, onEdit }: ReviewItemProps) {
                 </svg>
               ))}
             </div>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[#FFE5C2]/80">
               {formatDate(review.createdAt)}
             </span>
           </div>
@@ -56,7 +56,7 @@ export function ReviewItem({ review, currentUserId, onEdit }: ReviewItemProps) {
           </Button>
         )}
       </div>
-      <p className="text-gray-700 whitespace-pre-wrap">{review.comment}</p>
+      <p className="text-[#FFE5C2] whitespace-pre-wrap">{review.comment}</p>
     </div>
   );
 }

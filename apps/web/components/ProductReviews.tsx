@@ -71,9 +71,9 @@ export function ProductReviews({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-200">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-[#FFE5C2]/30">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <h2 className="text-3xl font-bold text-[#FFE5C2] mb-4">
           {t('common.reviews.title')}
         </h2>
 

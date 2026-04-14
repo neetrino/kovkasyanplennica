@@ -61,7 +61,7 @@ export function ProductImageGallery({
                 <button 
                   key={actualIndex}
                   onClick={() => onImageIndexChange(actualIndex)}
-                  className={`relative w-full aspect-[3/4] rounded-lg overflow-hidden border bg-white transition-all duration-300 flex-shrink-0 ${
+                  className={`relative w-full aspect-[3/4] rounded-3xl overflow-hidden border bg-white transition-all duration-300 flex-shrink-0 ${
                     isActive 
                       ? 'border-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.12)] ring-2 ring-gray-300' 
                       : 'border-gray-200 hover:border-gray-300 hover:shadow-[0_2px_6px_rgba(0,0,0,0.08)]'
@@ -70,7 +70,7 @@ export function ProductImageGallery({
                   <img 
                     src={image} 
                     alt="" 
-                    className="w-full h-full object-cover transition-transform duration-300" 
+                    className="w-full h-full object-cover rounded-3xl transition-transform duration-300" 
                   />
                 </button>
               );
@@ -152,15 +152,15 @@ export function ProductImageGallery({
         
         {/* Right Column - Main Image */}
         <div className="flex-1">
-          <div className="relative aspect-square bg-white rounded-lg overflow-hidden group shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+          <div className="relative aspect-square bg-white rounded-3xl overflow-hidden group shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
           {images.length > 0 ? (
             <img 
               src={images[currentImageIndex]} 
               alt={product.title} 
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+              className="w-full h-full object-cover rounded-3xl transition-transform duration-500 group-hover:scale-105" 
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">{t(language, 'common.messages.noImage')}</div>
+            <div className="w-full h-full flex items-center justify-center rounded-3xl text-gray-400">{t(language, 'common.messages.noImage')}</div>
           )}
           
           {/* Discount Badge on Image - Blue circle in top-right */}

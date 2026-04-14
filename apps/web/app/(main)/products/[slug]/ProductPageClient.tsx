@@ -129,7 +129,10 @@ export function ProductPageClient({
         />
       </div>
 
-      <div id="product-reviews" className="mt-24 scroll-mt-24">
+      <div className="mt-24">
+        <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />
+      </div>
+      <div id="product-reviews" className="mt-16 scroll-mt-24">
         <ProductReviews
           productSlug={slug}
           productId={product.id}
@@ -137,9 +140,6 @@ export function ProductPageClient({
           setReviews={setReviews}
           loading={reviewsLoading}
         />
-      </div>
-      <div className="mt-16">
-        <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />
       </div>
     </div>
   );

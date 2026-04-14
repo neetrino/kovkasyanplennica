@@ -22,7 +22,8 @@ const MOBILE_BREAKPOINT = 768;
  * Related products carousel — same `ProductCard` as products page (`ProductsCategoryCarousel`).
  */
 export function RelatedProducts({ products, loading, language }: RelatedProductsProps) {
-  const visibleCards = useVisibleCards();
+  /** Mobile (<640px): show 2 cards side by side (hook returns 1 below sm). */
+  const visibleCards = Math.max(useVisibleCards(), 2);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
   return (
     <section className="py-12 mt-20 border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-10">
+        <h2 className="text-3xl font-bold text-[#FFE5C2] mb-10">
           {t(language, 'product.related_products_title')}
         </h2>
 
@@ -69,7 +70,7 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
           </div>
         ) : products.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">{t(language, 'product.noRelatedProducts')}</p>
+            <p className="text-[#FFE5C2] text-lg">{t(language, 'product.noRelatedProducts')}</p>
           </div>
         ) : (
           <div className="relative">
@@ -125,7 +126,7 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
               </div>
             </div>
 
-            {products.length > visibleCards && (
+            {products.length > visibleCards && !isMobile && (
               <CarouselNavigation onPrevious={goToPrevious} onNext={goToNext} />
             )}
 
