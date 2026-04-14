@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useTranslation } from '@/lib/i18n-client';
 import { apiClient } from '@/lib/api-client';
-import contactData from '../../../../../json/contact.json';
+import contactData from '../../../../../config/json/contact.json';
 
 const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
 

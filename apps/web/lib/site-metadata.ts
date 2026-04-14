@@ -7,11 +7,20 @@ export const SITE_DESCRIPTION =
   'В «Кавказской пленнице» вы окунётесь в атмосферу любимого фильма, насладитесь вкусной кухней и прекрасно проведёте время с семьёй или друзьями.';
 
 /** Default site-wide metadata fragment (requires `metadataBase` from the root layout). */
+const FAVICON_PATH = '/assets/New%20folder/favicon.png';
+
 export function getRootSiteMetadata(metadataBase: URL): Metadata {
   return {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     metadataBase,
+    icons: {
+      icon: [
+        { url: FAVICON_PATH, type: 'image/png', sizes: '48x48' },
+        { url: FAVICON_PATH, type: 'image/png', sizes: '96x96' },
+      ],
+      apple: [{ url: FAVICON_PATH, sizes: '180x180', type: 'image/png' }],
+    },
     openGraph: {
       title: SITE_TITLE,
       description: SITE_DESCRIPTION,
