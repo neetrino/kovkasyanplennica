@@ -7,8 +7,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { formatNavLabel } from '../../lib/formatNavLabel';
 import { useTranslation } from '../../lib/i18n-client';
-import { LANGUAGES, getStoredLanguage, setStoredLanguage } from '../../lib/language';
-import type { LanguageCode } from '../../lib/language';
 
 export function MobileHeader() {
   const pathname = usePathname();
@@ -16,15 +14,8 @@ export function MobileHeader() {
   const { t } = useTranslation();
   const { isLoggedIn, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const currentLang = getStoredLanguage();
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-
-  const handleLanguageSelect = (code: LanguageCode) => {
-    if (code === currentLang) return;
-    setStoredLanguage(code);
-    closeMenu();
-  };
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
@@ -108,7 +99,7 @@ export function MobileHeader() {
               )}
               <Link
                 prefetch={false}
-                href="/products"
+                href="/coming-soon"
                 onClick={closeMenu}
                 className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
               >
@@ -116,7 +107,7 @@ export function MobileHeader() {
               </Link>
               <Link
                 prefetch={false}
-                href="/coming-soon"
+                href="/products"
                 onClick={closeMenu}
                 className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
               >
@@ -125,23 +116,6 @@ export function MobileHeader() {
               <Link prefetch={false} href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
                 {formatNavLabel(t('home.header.navigation.about'))}
               </Link>
-            </div>
-            <div className="mt-3 border-t border-white/15 pt-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/60">{t('common.language.label')}</p>
-              <div className="flex flex-wrap gap-2">
-                {(Object.keys(LANGUAGES) as LanguageCode[]).map((code) => (
-                  <button
-                    key={code}
-                    type="button"
-                    onClick={() => handleLanguageSelect(code)}
-                    className={`rounded-full px-3 py-2 text-xs font-semibold ${
-                      currentLang === code ? 'bg-[#75bf5e] text-white' : 'bg-white/10 text-white'
-                    }`}
-                  >
-                    {LANGUAGES[code].nativeName}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>
