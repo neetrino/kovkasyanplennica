@@ -9,7 +9,7 @@ import { useCategoryScroll } from './CategoryNavigation/hooks/useCategoryScroll'
 import { CategoryItem } from './CategoryNavigation/CategoryItem';
 import { CategoryEdgeScrollButton } from './CategoryNavigation/CategoryScrollButtons';
 import { CategoryNavigationLoading } from './CategoryNavigation/CategoryNavigationLoading';
-import { CATEGORY_NAV_VISIBLE_COUNT, type Category } from './CategoryNavigation/utils';
+import type { Category } from './CategoryNavigation/utils';
 
 function CategoryNavigationContent() {
   const router = useRouter();
@@ -61,7 +61,7 @@ function CategoryNavigationContent() {
     ...categories
   ];
 
-  const displayCategories = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
+  const displayCategories = allCategoriesWithAll;
 
   return (
     <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-4 sm:py-5 md:py-7 w-full">
@@ -70,12 +70,12 @@ function CategoryNavigationContent() {
           <CategoryEdgeScrollButton
             direction="left"
             canScroll={canScrollLeft}
-            onPress={() => scrollByAmount(-220)}
+            onPress={() => scrollByAmount(-270)}
             label={t('products.categoryNavigation.scrollLeft')}
           />
           <div
             ref={scrollContainerRef}
-            className="flex min-h-[86px] min-w-0 flex-1 touch-pan-x items-center gap-5 overflow-x-auto overscroll-x-contain scrollbar-hide pb-2 pl-2 sm:min-h-[100px] sm:gap-7 sm:pb-2 sm:pl-2 md:gap-9"
+            className="flex min-h-[96px] min-w-0 flex-1 touch-pan-x items-center gap-6 overflow-x-auto overscroll-x-contain scrollbar-hide pb-2 pl-2 sm:min-h-[116px] sm:gap-8 sm:pb-2 sm:pl-2 md:gap-10"
             style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
           >
             {displayCategories.map((category) => {
@@ -100,7 +100,7 @@ function CategoryNavigationContent() {
           <CategoryEdgeScrollButton
             direction="right"
             canScroll={canScrollRight}
-            onPress={() => scrollByAmount(220)}
+            onPress={() => scrollByAmount(270)}
             label={t('products.categoryNavigation.scrollRight')}
           />
         </div>

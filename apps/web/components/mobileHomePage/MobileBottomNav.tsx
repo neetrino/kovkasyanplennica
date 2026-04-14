@@ -68,7 +68,7 @@ export function MobileBottomNav() {
           prefetch
           aria-label={t('home.header.navigation.delivery')}
           aria-current={isProductsActive ? 'page' : undefined}
-          className={`absolute left-1/2 top-5 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)] transition-opacity hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#75bf5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f3f3d] ${
+          className={`absolute left-1/2 top-8 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)] transition-opacity hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#75bf5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f3f3d] ${
             isProductsActive ? 'ring-2 ring-[#75bf5e] ring-offset-2 ring-offset-[#2f3f3d]' : ''
           }`}
         >

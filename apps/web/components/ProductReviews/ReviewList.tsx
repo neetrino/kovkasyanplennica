@@ -30,13 +30,14 @@ export function ReviewList({
   if (reviews.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 mb-4">
+        <p className="text-[#FFE5C2] mb-4">
           {t('common.reviews.noReviews')}
         </p>
         {!showForm && (
           <Button
             variant="primary"
             onClick={onShowForm}
+            className="rounded-xl font-semibold !border !border-[#e8cfa5] !bg-[#FFE5C2] !text-gray-900 shadow-sm transition-colors hover:!bg-[#f5dcb0] hover:!text-gray-900 focus-visible:!ring-2 focus-visible:!ring-[#2F3F3D] focus-visible:!ring-offset-2"
           >
             {t('common.reviews.writeReview')}
           </Button>

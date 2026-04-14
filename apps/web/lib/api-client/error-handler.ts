@@ -45,6 +45,45 @@ export async function parseErrorResponse(response: Response): Promise<{
   return { errorText, errorData };
 }
 
+function stringifyDetailPart(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  try {
+    return JSON.stringify(value);
+  } catch {
+    return String(value);
+  }
+}
+
+/**
+ * Build a readable message from Problem+JSON / ad-hoc API bodies (detail can be string | object | array).
+ */
+function messageFromErrorPayload(errorData: unknown, fallbackText: string, response: Response): string {
+  if (errorData && typeof errorData === 'object' && !Array.isArray(errorData)) {
+    const o = errorData as Record<string, unknown>;
+
+    const detail = o.detail;
+    if (typeof detail === 'string' && detail.trim()) return detail.trim();
+    if (Array.isArray(detail)) {
+      const joined = detail.map(stringifyDetailPart).filter(Boolean).join('; ');
+      if (joined) return joined;
+    }
+    if (detail !== null && detail !== undefined && typeof detail === 'object') {
+      const s = stringifyDetailPart(detail);
+      if (s && s !== '{}') return s;
+    }
+
+    if (typeof o.message === 'string' && o.message.trim()) return o.message.trim();
+    if (typeof o.title === 'string' && o.title.trim()) return o.title.trim();
+  }
+
+  const trimmed = fallbackText?.trim() ?? '';
+  if (trimmed) return trimmed;
+
+  return `API Error: ${response.status} ${response.statusText || ''}`.trim();
+}
+
 /**
  * Create API error from response
  */
@@ -53,12 +92,8 @@ export function createApiError(
   errorText: string,
   errorData: unknown
 ): ApiError {
-  const errorMessage = 
-    (errorData && typeof errorData === 'object' && 'detail' in errorData ? String(errorData.detail) : '') ||
-    (errorData && typeof errorData === 'object' && 'message' in errorData ? String(errorData.message) : '') ||
-    (errorText ? String(errorText) : '') ||
-    `API Error: ${response.status} ${response.statusText}`;
-  
+  const errorMessage = messageFromErrorPayload(errorData, errorText, response);
+
   return new ApiError(
     errorMessage,
     response.status,

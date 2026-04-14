@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../../../lib/api-client';
 import { getStoredLanguage } from '../../../lib/language';
-import { CATEGORY_NAV_VISIBLE_COUNT, type Category } from '../utils';
+import { CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST } from '../../../lib/category-nav-preview-limits';
+import type { Category } from '../utils';
 
 interface Product {
   id: string;
@@ -39,15 +40,22 @@ export function useCategoryProducts(categories: Category[], t: (path: string) =>
           ...categories
         ];
 
-        const categoriesToPreview = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
-        const slugs = categoriesToPreview.map((c) => c.slug).join(',');
+        const slugList = allCategoriesWithAll.map((c) => c.slug);
+        const merged: Record<string, Product | null> = {};
 
-        const response = await apiClient.get<NavPreviewsResponse>(
-          '/api/v1/products/category-nav-previews',
-          { params: { lang: language, slugs } }
-        );
+        for (let i = 0; i < slugList.length; i += CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST) {
+          const batch = slugList.slice(i, i + CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST);
+          const slugs = batch.join(',');
 
-        setCategoryProducts(response.data ?? {});
+          const response = await apiClient.get<NavPreviewsResponse>(
+            '/api/v1/products/category-nav-previews',
+            { params: { lang: language, slugs } }
+          );
+
+          Object.assign(merged, response.data ?? {});
+        }
+
+        setCategoryProducts(merged);
       } catch (err) {
         console.error('Error fetching category nav previews:', err);
         setCategoryProducts({});

@@ -18,6 +18,8 @@ function mapRowToRelated(
     discountPercent: (p.discountPercent as number | null | undefined) ?? null,
     image: (p.image as string | null | undefined) ?? null,
     inStock: Boolean(p.inStock),
+    defaultVariantId: (p.defaultVariantId as string | null | undefined) ?? null,
+    stock: typeof p.stock === 'number' ? p.stock : undefined,
     brand: (p.brand as RelatedProduct['brand']) ?? null,
     categories: (p.categories as RelatedProduct['categories']) ?? undefined,
     variants: (p.variants as RelatedProduct['variants']) ?? undefined,

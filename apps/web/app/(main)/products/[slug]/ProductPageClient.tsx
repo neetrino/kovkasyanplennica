@@ -42,9 +42,6 @@ export function ProductPageClient({
     selectedColor,
     selectedSize,
     selectedAttributeValues,
-    showMessage,
-    isInWishlist,
-    isInCompare,
     quantity,
     averageRating,
     slug,
@@ -64,14 +61,11 @@ export function ProductPageClient({
     hasUnavailableAttributes,
     unavailableAttributes,
     canAddToCart,
-    scrollToReviews,
     getOptionValue,
     adjustQuantity,
     handleColorSelect,
     handleSizeSelect,
     handleAttributeValueSelect,
-    handleAddToWishlist,
-    handleCompareToggle,
     getRequiredAttributesMessage,
   } = useProductPage({
     params,
@@ -111,7 +105,6 @@ export function ProductPageClient({
           currency={currency}
           language={language}
           averageRating={averageRating}
-          reviewsCount={reviews.length}
           quantity={quantity}
           maxQuantity={maxQuantity}
           isOutOfStock={isOutOfStock}
@@ -119,9 +112,6 @@ export function ProductPageClient({
           hasUnavailableAttributes={hasUnavailableAttributes}
           unavailableAttributes={unavailableAttributes}
           canAddToCart={canAddToCart}
-          isInWishlist={isInWishlist}
-          isInCompare={isInCompare}
-          showMessage={showMessage}
           isLoggedIn={isLoggedIn}
           currentVariant={currentVariant}
           attributeGroups={attributeGroups}
@@ -131,9 +121,6 @@ export function ProductPageClient({
           colorGroups={colorGroups}
           sizeGroups={sizeGroups}
           onQuantityAdjust={adjustQuantity}
-          onAddToWishlist={handleAddToWishlist}
-          onCompareToggle={handleCompareToggle}
-          onScrollToReviews={scrollToReviews}
           onColorSelect={handleColorSelect}
           onSizeSelect={handleSizeSelect}
           onAttributeValueSelect={handleAttributeValueSelect}
@@ -142,7 +129,10 @@ export function ProductPageClient({
         />
       </div>
 
-      <div id="product-reviews" className="mt-24 scroll-mt-24">
+      <div className="mt-24">
+        <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />
+      </div>
+      <div id="product-reviews" className="mt-16 scroll-mt-24">
         <ProductReviews
           productSlug={slug}
           productId={product.id}
@@ -150,9 +140,6 @@ export function ProductPageClient({
           setReviews={setReviews}
           loading={reviewsLoading}
         />
-      </div>
-      <div className="mt-16">
-        <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />
       </div>
     </div>
   );

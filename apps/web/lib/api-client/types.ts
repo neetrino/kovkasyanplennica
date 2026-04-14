@@ -20,7 +20,9 @@ export class ApiError extends Error {
     this.status = status;
     this.statusText = statusText;
     this.data = data;
-    
+
+    Object.setPrototypeOf(this, new.target.prototype);
+
     // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError);

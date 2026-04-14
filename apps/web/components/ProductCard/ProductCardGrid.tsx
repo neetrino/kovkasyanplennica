@@ -85,7 +85,7 @@ export function ProductCardGrid({
         }`}
       >
         <Link
-          href="/coming-soon"
+          href={`/products/${product.slug}`}
           className="relative w-full h-full bg-transparent block"
         >
           {product.image && !imageError ? (

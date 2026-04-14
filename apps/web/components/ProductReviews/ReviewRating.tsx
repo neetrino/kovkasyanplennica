@@ -7,6 +7,8 @@ interface ReviewRatingProps {
   onHover: (rating: number) => void;
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
+  /** PDP — stars match section text (cream or muted gray) */
+  variant?: 'default' | 'cream' | 'muted';
 }
 
 /**
@@ -19,6 +21,7 @@ export function ReviewRating({
   onHover,
   size = 'md',
   interactive = true,
+  variant = 'default',
 }: ReviewRatingProps) {
   const sizeClasses = {
     sm: 'w-4 h-4',
@@ -27,6 +30,18 @@ export function ReviewRating({
   };
 
   const sizeClass = sizeClasses[size];
+  const starActive =
+    variant === 'cream'
+      ? 'text-[#FFE5C2]'
+      : variant === 'muted'
+        ? 'text-[#ACACAC]'
+        : 'text-yellow-400';
+  const starInactive =
+    variant === 'cream'
+      ? 'text-[#FFE5C2]/35'
+      : variant === 'muted'
+        ? 'text-[#ACACAC]/35'
+        : 'text-gray-300';
 
   return (
     <div className="flex items-center gap-1">
@@ -45,9 +60,7 @@ export function ReviewRating({
             >
               <svg
                 className={`${sizeClass} transition-colors ${
-                  isActive
-                    ? 'text-yellow-400'
-                    : 'text-gray-300'
+                  isActive ? starActive : starInactive
                 }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
@@ -61,11 +74,7 @@ export function ReviewRating({
         return (
           <svg
             key={star}
-            className={`${sizeClass} ${
-              isActive
-                ? 'text-yellow-400'
-                : 'text-gray-300'
-            }`}
+            className={`${sizeClass} ${isActive ? starActive : starInactive}`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >

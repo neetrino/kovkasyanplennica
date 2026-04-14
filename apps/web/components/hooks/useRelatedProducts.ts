@@ -14,6 +14,9 @@ export interface RelatedProduct {
   discountPercent?: number | null;
   image: string | null;
   inStock: boolean;
+  /** From list API — same as products page carousel */
+  defaultVariantId?: string | null;
+  stock?: number;
   brand?: {
     id: string;
     name: string;

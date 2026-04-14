@@ -37,14 +37,14 @@ export function ProductInfo({
     <div className="flex flex-col h-full">
       <div className="flex-1">
         {product.brand && <p className="text-sm text-gray-500 mb-2">{product.brand.name}</p>}
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-black mb-4">
           {getProductText(language, product.id, 'title') || product.title}
         </h1>
         <div className="mb-6">
           <div className="flex flex-col gap-1">
             {/* Discounted price with discount percentage */}
             <div className="flex items-center gap-2">
-              <p className="text-3xl font-bold text-gray-900">{formatPrice(price, currency)}</p>
+              <p className="text-3xl font-bold text-black">{formatPrice(price, currency)}</p>
               {discountPercent && discountPercent > 0 && (
                 <span className="text-lg font-semibold text-blue-600">
                   -{discountPercent}%
@@ -61,9 +61,9 @@ export function ProductInfo({
         </div>
         <div className="text-gray-600 mb-8 prose prose-sm" dangerouslySetInnerHTML={{ __html: getProductText(language, product.id, 'longDescription') || product.description || '' }} />
 
-        <div className="mt-8 p-4 bg-white border border-gray-200 rounded-2xl space-y-4">
+        <div className="mt-8 space-y-4">
           {/* Rating Section */}
-          <div className="flex items-center gap-2 pb-3 border-b border-gray-200">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
