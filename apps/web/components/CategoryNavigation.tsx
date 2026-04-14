@@ -9,7 +9,7 @@ import { useCategoryScroll } from './CategoryNavigation/hooks/useCategoryScroll'
 import { CategoryItem } from './CategoryNavigation/CategoryItem';
 import { CategoryEdgeScrollButton } from './CategoryNavigation/CategoryScrollButtons';
 import { CategoryNavigationLoading } from './CategoryNavigation/CategoryNavigationLoading';
-import { CATEGORY_NAV_VISIBLE_COUNT, type Category } from './CategoryNavigation/utils';
+import type { Category } from './CategoryNavigation/utils';
 
 function CategoryNavigationContent() {
   const router = useRouter();
@@ -61,7 +61,7 @@ function CategoryNavigationContent() {
     ...categories
   ];
 
-  const displayCategories = allCategoriesWithAll.slice(0, CATEGORY_NAV_VISIBLE_COUNT);
+  const displayCategories = allCategoriesWithAll;
 
   return (
     <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-4 sm:py-5 md:py-7 w-full">

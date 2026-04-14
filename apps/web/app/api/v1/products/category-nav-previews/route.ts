@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST } from "@/lib/category-nav-preview-limits";
 import { getCategoryNavPreviews } from "@/lib/services/products-nav-preview.service";
-
-const MAX_SLUGS = 16;
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,12 +16,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data: {} });
     }
 
-    if (slugs.length > MAX_SLUGS) {
+    if (slugs.length > CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST) {
       return NextResponse.json(
         {
           type: "https://api.shop.am/problems/bad-request",
           title: "Bad Request",
-          detail: `At most ${MAX_SLUGS} category slugs allowed`,
+          detail: `At most ${CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST} category slugs allowed`,
         },
         { status: 400 }
       );

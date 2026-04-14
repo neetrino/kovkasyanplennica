@@ -8,9 +8,6 @@ export interface Category {
   children: Category[];
 }
 
-/** Chips shown in the horizontal nav — preview fetches must match this count */
-export const CATEGORY_NAV_VISIBLE_COUNT = 10;
-
 /**
  * Flatten categories tree to get all categories
  */

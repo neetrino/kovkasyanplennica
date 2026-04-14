@@ -25,10 +25,6 @@
     "itemsPlural": "товаров",
     "placedOn": "Размещен",
     "viewDetails": "Показать детали →",
-    "quickActions": "Быстрые действия",
-    "viewAllOrders": "Показать все заказы",
-    "manageAddresses": "Управление адресами",
-    "continueShopping": "Продолжить покупки",
     "failedToLoad": "Не удалось загрузить данные панели управления"
   },
   "personal": {
