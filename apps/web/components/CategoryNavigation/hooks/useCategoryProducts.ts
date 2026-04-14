@@ -17,10 +17,12 @@ interface NavPreviewsResponse {
   data: Record<string, Product | null>;
 }
 
+const categoryPreviewsCache = new Map<string, Record<string, Product | null>>();
+
 /**
  * Fetches one preview product per visible category chip via a single lightweight API (not N× full `/products` list).
  */
-export function useCategoryProducts(categories: Category[], t: (path: string) => string) {
+export function useCategoryProducts(categories: Category[]) {
   const [categoryProducts, setCategoryProducts] = useState<Record<string, Product | null>>({});
   const [loading, setLoading] = useState(true);
 
@@ -30,42 +32,68 @@ export function useCategoryProducts(categories: Category[], t: (path: string) =>
       return;
     }
 
+    let mounted = true;
+
     const fetchCategoryProducts = async () => {
       try {
-        setLoading(true);
         const language = getStoredLanguage();
+        setLoading(true);
 
         const allCategoriesWithAll = [
-          { id: 'all', slug: 'all', title: t('products.categoryNavigation.all'), fullPath: 'all', children: [] } as Category,
-          ...categories
+          { id: 'all', slug: 'all', title: 'all', fullPath: 'all', children: [] } as Category,
+          ...categories,
         ];
 
         const slugList = allCategoriesWithAll.map((c) => c.slug);
+        const cacheKey = `${language}:${slugList.join(',')}`;
+        const cached = categoryPreviewsCache.get(cacheKey);
+        if (cached) {
+          if (mounted) {
+            setCategoryProducts(cached);
+            setLoading(false);
+          }
+          return;
+        }
+
         const merged: Record<string, Product | null> = {};
+        const requests: Promise<NavPreviewsResponse>[] = [];
 
         for (let i = 0; i < slugList.length; i += CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST) {
           const batch = slugList.slice(i, i + CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST);
           const slugs = batch.join(',');
-
-          const response = await apiClient.get<NavPreviewsResponse>(
+          requests.push(apiClient.get<NavPreviewsResponse>(
             '/api/v1/products/category-nav-previews',
             { params: { lang: language, slugs } }
-          );
+          ));
+        }
 
+        const responses = await Promise.all(requests);
+        for (const response of responses) {
           Object.assign(merged, response.data ?? {});
         }
 
-        setCategoryProducts(merged);
+        categoryPreviewsCache.set(cacheKey, merged);
+        if (mounted) {
+          setCategoryProducts(merged);
+        }
       } catch (err) {
         console.error('Error fetching category nav previews:', err);
-        setCategoryProducts({});
+        if (mounted) {
+          setCategoryProducts({});
+        }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchCategoryProducts();
-  }, [categories, t]);
+
+    return () => {
+      mounted = false;
+    };
+  }, [categories]);
 
   return { categoryProducts, loading };
 }

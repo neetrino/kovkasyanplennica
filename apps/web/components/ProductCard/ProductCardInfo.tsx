@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import type { MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import type { CurrencyCode } from '../../lib/currency';
+import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 
 interface ProductCardInfoProps {
   slug: string;
@@ -57,7 +59,11 @@ export function ProductCardInfo({
   onAddToCart,
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const categoryValue = category || brandName || t('common.defaults.category');
+  const handleProductIntent = useCallback(() => {
+    prefetchProductByIntent(router, slug);
+  }, [router, slug]);
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
@@ -73,7 +79,14 @@ export function ProductCardInfo({
         compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
       }`}
     >
-      <Link href={`/products/${slug}`} className="block">
+      <Link
+        href={`/products/${slug}`}
+        prefetch
+        onMouseEnter={handleProductIntent}
+        onTouchStart={handleProductIntent}
+        onFocus={handleProductIntent}
+        className="block"
+      >
         {/* Product Title - Centered, Bold */}
         <h3
           className={`text-center font-bold text-black ${

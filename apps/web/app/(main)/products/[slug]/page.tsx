@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ProductPageClient } from './ProductPageClient';
 import { getProductForPage } from './get-product';
-import { getPdpReviewsAndRelated } from './pdp-supplemental';
 import { RESERVED_ROUTES } from './types';
 import type { Product } from './types';
 
@@ -38,14 +37,10 @@ export default async function Page({ params }: PageParams) {
     notFound();
   }
 
-  const { reviews, related } = await getPdpReviewsAndRelated(slug);
-
   return (
     <ProductPageClient
       params={params}
       initialProduct={product as unknown as Product}
-      initialReviews={reviews}
-      initialRelatedProducts={related}
     />
   );
 }
