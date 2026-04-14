@@ -31,21 +31,21 @@ export function CategoryIcon({ category, product, isActive, t }: CategoryIconPro
 
   // Regular categories show product image or placeholder
   return (
-    <div className={`w-[72px] h-[72px] sm:w-[92px] sm:h-[92px] rounded-full bg-transparent border-2 flex items-center justify-center overflow-hidden transition-all ${
+    <div className={`w-[80px] h-[80px] sm:w-[104px] sm:h-[104px] rounded-full bg-transparent border-2 flex items-center justify-center overflow-hidden transition-all ${
       isActive ? 'border-gray-400 shadow-md' : 'border-gray-200'
     }`}>
       {product?.image ? (
         <Image
           src={product.image}
           alt={category.title}
-          width={80}
-          height={80}
+          width={112}
+          height={112}
           className="w-full h-full object-contain"
           unoptimized
         />
       ) : (
         <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-          <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-7 h-7 sm:w-9 sm:h-9 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
