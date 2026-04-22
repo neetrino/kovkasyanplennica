@@ -29,6 +29,11 @@ interface Product {
 
 const WISHLIST_KEY = 'shop_wishlist';
 
+function getProductHref(slug: string): string {
+  const normalizedSlug = slug.trim();
+  return normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
+}
+
 function getWishlist(): string[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -265,7 +270,7 @@ export default function WishlistPage() {
                 {/* Product Name */}
                 <div className="md:col-span-5 flex items-center gap-4">
                   <Link
-                    href={`/products/${product.slug}`}
+                    href={getProductHref(product.slug)}
                     className="w-20 h-20 bg-gray-100 rounded-lg flex-shrink-0 relative overflow-hidden"
                   >
                     {product.image ? (
@@ -287,7 +292,7 @@ export default function WishlistPage() {
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link
-                      href={`/products/${product.slug}`}
+                      href={getProductHref(product.slug)}
                       className="text-base font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2"
                     >
                       {product.title}

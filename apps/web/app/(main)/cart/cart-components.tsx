@@ -26,6 +26,8 @@ export function CartItemRow({
   const currencyCode = currency as CurrencyCode;
   const isUpdating = updatingItems.has(item.id);
   const hasDiscount = item.originalPrice != null && item.originalPrice > item.price;
+  const normalizedSlug = item.variant.product.slug.trim();
+  const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 px-5 sm:px-6 py-6 relative group hover:bg-[#3d504e]/30 transition-colors duration-200">
@@ -45,7 +47,7 @@ export function CartItemRow({
       {/* Product — image + title */}
       <div className="md:col-span-6 flex items-start gap-4 pr-8 md:pr-0">
         <Link
-          href={`/products/${item.variant.product.slug}`}
+          href={productHref}
           className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl flex-shrink-0 relative overflow-hidden bg-[#3d504e]/60 border border-[#3d504e] hover:border-[#7CB342]/50 transition-colors"
         >
           {item.variant.product.image ? (
@@ -68,7 +70,7 @@ export function CartItemRow({
 
         <div className="flex-1 min-w-0 pt-1">
           <Link
-            href={`/products/${item.variant.product.slug}`}
+            href={productHref}
             className="text-[#fff4de] text-sm md:text-base font-medium hover:text-[#7CB342] transition-colors line-clamp-2 leading-snug"
           >
             {item.variant.product.title}

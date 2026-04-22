@@ -46,7 +46,8 @@ export function MobileRecipeProductCard({
     originalPrice: originalPrice ?? compareAtPrice ?? null,
   });
 
-  const href = `/products/${slug}`;
+  const normalizedSlug = slug.trim();
+  const href = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();

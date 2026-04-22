@@ -67,6 +67,10 @@ type MobileTopSectionProps = {
 
 export function MobileTopSection({ products }: MobileTopSectionProps) {
   const currency = getStoredCurrency();
+  const getProductHref = (slug: string): string => {
+    const normalizedSlug = slug.trim();
+    return normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/coming-soon';
+  };
 
   return (
     <section className="mb-8">
@@ -79,9 +83,7 @@ export function MobileTopSection({ products }: MobileTopSectionProps) {
               title={product.title}
               meta={formatPrice(product.price, currency)}
               imageSrc={product.image}
-              href={
-                product.slug ? `/products/${product.slug}` : '/coming-soon'
-              }
+              href={getProductHref(product.slug)}
               priority={index < 3}
             />
           ))}
