@@ -117,6 +117,47 @@ function isAttributeValuesColorsError(error: unknown): boolean {
 }
 
 /**
+ * Fetch product by slug regardless of translation locale.
+ * Used as a fallback when exact language match is missing.
+ */
+async function fetchBySlugAnyLocale(slug: string): Promise<ProductWithFullRelations | null> {
+  const baseInclude = getBaseInclude();
+  const baseWhere = {
+    translations: {
+      some: { slug },
+    },
+    published: true,
+    deletedAt: null,
+  };
+
+  try {
+    return await db.product.findFirst({
+      where: baseWhere,
+      include: {
+        ...baseInclude,
+        ...getProductAttributesInclude(),
+      },
+    });
+  } catch (error: unknown) {
+    if (isProductAttributesError(error)) {
+      return db.product.findFirst({
+        where: baseWhere,
+        include: baseInclude,
+      });
+    }
+
+    if (isAttributeValuesColorsError(error)) {
+      return db.product.findFirst({
+        where: baseWhere,
+        include: getBaseIncludeWithoutAttributeValue(),
+      });
+    }
+
+    throw error;
+  }
+}
+
+/**
  * Fetch product with productAttributes (with fallback handling)
  */
 async function fetchWithProductAttributes(
@@ -273,13 +314,19 @@ export async function buildProductQuery(
   lang: string = "en"
 ): Promise<ProductWithFullRelations | null> {
   const product = await fetchWithProductAttributes(slug, lang);
-  
-  // If product not found, log diagnostic information
-  if (!product) {
-    await logProductNotFoundDiagnostics(slug, lang);
+  if (product) {
+    return product;
+  }
+
+  const fallbackProduct = await fetchBySlugAnyLocale(slug);
+  if (fallbackProduct) {
+    return fallbackProduct;
   }
   
-  return product;
+  // If product not found, log diagnostic information
+  await logProductNotFoundDiagnostics(slug, lang);
+  
+  return null;
 }
 
 /**

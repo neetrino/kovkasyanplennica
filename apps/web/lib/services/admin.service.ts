@@ -56,6 +56,34 @@ class AdminService {
   // Categories methods
   getCategories = adminCategoriesService.getCategories.bind(adminCategoriesService);
   createCategory = adminCategoriesService.createCategory.bind(adminCategoriesService);
+  createVotingCategory = async (
+    _votingId: string,
+    data: {
+      title?: string;
+      slug?: string;
+      locale?: string;
+      parentId?: string;
+      requiresSizes?: boolean;
+    },
+  ) => {
+    const title = data.title?.trim();
+    if (!title) {
+      throw {
+        status: 400,
+        type: "https://api.shop.am/problems/bad-request",
+        title: "Invalid request body",
+        detail: "Category title is required",
+      };
+    }
+
+    return this.createCategory({
+      title,
+      slug: data.slug,
+      locale: data.locale,
+      parentId: data.parentId,
+      requiresSizes: data.requiresSizes,
+    });
+  };
   getCategoryById = adminCategoriesService.getCategoryById.bind(adminCategoriesService);
   updateCategory = adminCategoriesService.updateCategory.bind(adminCategoriesService);
   deleteCategory = adminCategoriesService.deleteCategory.bind(adminCategoriesService);
