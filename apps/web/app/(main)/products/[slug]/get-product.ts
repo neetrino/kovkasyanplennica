@@ -17,6 +17,14 @@ const getCachedProductBySlug = unstable_cache(
   { revalidate: 300, tags: ['products'] },
 );
 
+async function getFreshProductBySlug(slug: string, lang: string) {
+  try {
+    return await productsService.findBySlug(slug, lang);
+  } catch {
+    return null;
+  }
+}
+
 async function getProductWithLanguageFallback(slug: string, lang: string) {
   const languagePriority = [lang, 'en', 'ru'];
   const seen = new Set<string>();
@@ -32,6 +40,14 @@ async function getProductWithLanguageFallback(slug: string, lang: string) {
       }
     } catch {
       // Try the next language.
+    }
+  }
+
+  // Safety net for stale cache entries that may store `null` for existing products.
+  for (const language of seen) {
+    const freshProduct = await getFreshProductBySlug(slug, language);
+    if (freshProduct) {
+      return freshProduct;
     }
   }
 
