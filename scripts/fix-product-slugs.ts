@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { db } from "../packages/db";
+import { normalizeProductSlug } from "../apps/web/lib/utils/slug";
 
 type ProductTranslationRow = {
   id: string;
@@ -9,26 +10,8 @@ type ProductTranslationRow = {
   title: string;
 };
 
-function safeDecode(value: string): string {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function sanitizeSlug(value: string): string {
-  return safeDecode(value)
-    .trim()
-    .toLowerCase()
-    .replace(/[\s/\\_]+/g, "-")
-    .replace(/[^\p{L}\p{N}-]+/gu, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 function buildFallbackSlug(title: string, productId: string): string {
-  const fromTitle = sanitizeSlug(title);
+  const fromTitle = normalizeProductSlug(title);
   if (fromTitle) {
     return fromTitle;
   }
@@ -78,7 +61,7 @@ async function fixProductSlugs(): Promise<void> {
   const updates: Array<{ id: string; oldSlug: string; newSlug: string; locale: string }> = [];
 
   for (const row of translations) {
-    const sanitized = sanitizeSlug(row.slug);
+    const sanitized = normalizeProductSlug(row.slug);
     const baseSlug = sanitized || buildFallbackSlug(row.title, row.productId);
     const finalSlug = ensureUniqueSlug(row.locale, baseSlug, row.id, usedByLocale);
 
