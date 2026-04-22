@@ -26,6 +26,11 @@ interface ProductsListResponse {
   data: SearchProductItem[];
 }
 
+function getProductHref(slug: string): string {
+  const normalizedSlug = slug.trim();
+  return normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
+}
+
 export type HeaderSearchOverlayProps = {
   open: boolean;
   onClose: () => void;
@@ -250,7 +255,7 @@ export function HeaderSearchOverlay({
               results.map((product) => (
                 <Link
                   key={product.id}
-                  href={`/products/${product.slug}`}
+                  href={getProductHref(product.slug)}
                   prefetch
                   onMouseEnter={() => handleProductIntent(product.slug)}
                   onTouchStart={() => handleProductIntent(product.slug)}

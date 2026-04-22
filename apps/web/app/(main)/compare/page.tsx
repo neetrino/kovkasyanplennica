@@ -31,6 +31,11 @@ interface Product {
 
 const COMPARE_KEY = 'shop_compare';
 
+function getProductHref(slug: string): string {
+  const normalizedSlug = slug.trim();
+  return normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
+}
+
 function getCompare(): string[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -300,7 +305,7 @@ export default function ComparePage() {
                   </td>
                   {products.map((product) => (
                     <td key={product.id} className="px-4 py-4 text-center">
-                      <Link href={`/products/${product.slug}`} className="inline-block">
+                      <Link href={getProductHref(product.slug)} className="inline-block">
                         <div className="w-32 h-32 mx-auto bg-gray-100 rounded-lg overflow-hidden relative">
                           {product.image ? (
                             <Image
@@ -330,7 +335,7 @@ export default function ComparePage() {
                   {products.map((product) => (
                     <td key={product.id} className="px-4 py-4">
                       <Link
-                        href={`/products/${product.slug}`}
+                        href={getProductHref(product.slug)}
                         className="text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors block text-center"
                       >
                         {product.title}
@@ -408,7 +413,7 @@ export default function ComparePage() {
                     <td key={product.id} className="px-4 py-4 text-center">
                       <div className="flex flex-col gap-2 items-center">
                         <Link
-                          href={`/products/${product.slug}`}
+                          href={getProductHref(product.slug)}
                           className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                         >
                           {t('common.compare.viewDetails')}
