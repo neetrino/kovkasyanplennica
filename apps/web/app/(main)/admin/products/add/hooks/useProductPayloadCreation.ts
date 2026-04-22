@@ -44,7 +44,7 @@ export async function createAndSubmitPayload({
 }: CreateAndSubmitPayloadProps): Promise<void> {
   const payload: any = {
       title: formData.title,
-      slug: formData.slug,
+      slug: formData.slug.trim(),
       descriptionHtml: formData.descriptionHtml || undefined,
       brandId: finalBrandIds.length > 0 ? finalBrandIds[0] : undefined,
       primaryCategoryId: finalPrimaryCategoryId || undefined,

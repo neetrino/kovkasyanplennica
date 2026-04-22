@@ -11,6 +11,9 @@ import {
 import { getProductById } from "./admin-products-read/product-operations";
 
 class AdminProductsCreateService {
+  private normalizeSlug(rawSlug: string): string {
+    return rawSlug.trim();
+  }
   /**
    * Generate unique SKU for product variant
    * Checks database to ensure uniqueness
@@ -124,6 +127,10 @@ class AdminProductsCreateService {
   }) {
     try {
       console.log('🆕 [ADMIN PRODUCTS CREATE SERVICE] Creating product:', data.title);
+      const normalizedSlug = this.normalizeSlug(data.slug);
+      if (!normalizedSlug) {
+        throw new Error("Product slug is required");
+      }
 
       const result = await db.$transaction(async (tx: any) => {
         // Track used SKUs within this transaction to ensure uniqueness
@@ -237,7 +244,7 @@ class AdminProductsCreateService {
             const uniqueSku = await this.generateUniqueSku(
               tx,
               variant.sku,
-              data.slug,
+              normalizedSlug,
               variantIndex,
               usedSkus
             );
@@ -346,7 +353,7 @@ class AdminProductsCreateService {
               create: {
                 locale: data.locale || "en",
                 title: data.title,
-                slug: data.slug,
+                slug: normalizedSlug,
                 subtitle: data.subtitle || undefined,
                 descriptionHtml: data.descriptionHtml || undefined,
               },
