@@ -46,6 +46,8 @@ export function ProductCardList({
 }: ProductCardListProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const normalizedSlug = product.slug.trim();
+  const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
   const handleProductIntent = useCallback(() => {
     prefetchProductByIntent(router, product.slug);
   }, [router, product.slug]);
@@ -55,7 +57,7 @@ export function ProductCardList({
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4">
         {/* Product Image */}
         <Link
-          href={`/products/${product.slug}`}
+          href={productHref}
           prefetch
           onMouseEnter={handleProductIntent}
           onTouchStart={handleProductIntent}
@@ -84,7 +86,7 @@ export function ProductCardList({
         {/* Product Info */}
         <div className="flex-1 min-w-0 w-full sm:w-auto">
           <Link
-            href={`/products/${product.slug}`}
+            href={productHref}
             prefetch
             onMouseEnter={handleProductIntent}
             onTouchStart={handleProductIntent}

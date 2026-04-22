@@ -57,6 +57,8 @@ export function ProductCardGrid({
   onAddToCart,
 }: ProductCardGridProps) {
   const router = useRouter();
+  const normalizedSlug = product.slug.trim();
+  const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
   const imageSizesAttr = largeCompactImage && compactHeight ? 'min(60vw, 280px)' : '223px';
   const handleProductIntent = useCallback(() => {
     prefetchProductByIntent(router, product.slug);
@@ -91,7 +93,7 @@ export function ProductCardGrid({
         }`}
       >
         <Link
-          href={`/products/${product.slug}`}
+          href={productHref}
           prefetch
           onMouseEnter={handleProductIntent}
           onTouchStart={handleProductIntent}

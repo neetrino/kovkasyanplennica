@@ -7,9 +7,22 @@ import type { Product } from './types';
 
 type PageParams = { params: Promise<{ slug: string }> };
 
+function normalizeSlug(slug: string): string {
+  const trimmed = slug.trim();
+  if (!trimmed) {
+    return '';
+  }
+  try {
+    return decodeURIComponent(trimmed);
+  } catch {
+    return trimmed;
+  }
+}
+
 export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
-  const { slug } = await params;
-  if (RESERVED_ROUTES.includes(slug.toLowerCase())) {
+  const { slug: rawSlug } = await params;
+  const slug = normalizeSlug(rawSlug);
+  if (!slug || RESERVED_ROUTES.includes(slug.toLowerCase())) {
     return { title: 'Product' };
   }
   const product = await getProductForPage(slug);
@@ -27,7 +40,11 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
 }
 
 export default async function Page({ params }: PageParams) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const slug = normalizeSlug(rawSlug);
+  if (!slug) {
+    notFound();
+  }
   if (RESERVED_ROUTES.includes(slug.toLowerCase())) {
     redirect(`/${slug}`);
   }
