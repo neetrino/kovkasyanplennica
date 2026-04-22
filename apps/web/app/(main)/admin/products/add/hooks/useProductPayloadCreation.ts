@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/api-client';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { normalizeProductSlug } from '@/lib/utils/slug';
 import type { Attribute } from '../types';
 
 interface CreateAndSubmitPayloadProps {
@@ -44,7 +45,7 @@ export async function createAndSubmitPayload({
 }: CreateAndSubmitPayloadProps): Promise<void> {
   const payload: any = {
       title: formData.title,
-      slug: formData.slug.trim(),
+      slug: normalizeProductSlug(formData.slug),
       descriptionHtml: formData.descriptionHtml || undefined,
       brandId: finalBrandIds.length > 0 ? finalBrandIds[0] : undefined,
       primaryCategoryId: finalPrimaryCategoryId || undefined,

@@ -8,11 +8,12 @@ import {
   cleanImageUrls,
   separateMainAndVariantImages,
 } from "../../utils/image-utils";
+import { normalizeProductSlug } from "../../utils/slug";
 import { getProductById } from "./admin-products-read/product-operations";
 
 class AdminProductsCreateService {
   private normalizeSlug(rawSlug: string): string {
-    return rawSlug.trim();
+    return normalizeProductSlug(rawSlug);
   }
   /**
    * Generate unique SKU for product variant

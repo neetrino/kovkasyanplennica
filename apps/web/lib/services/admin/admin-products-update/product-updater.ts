@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { logger } from "../../../utils/logger";
 import { cleanImageUrls, separateMainAndVariantImages, smartSplitUrls } from "../../../utils/image-utils";
+import { normalizeProductSlug } from "../../../utils/slug";
 import type { UpdateProductData } from "./types";
 
 /**
@@ -102,7 +103,7 @@ export async function updateProductTranslation(
   data: UpdateProductData,
   tx: Prisma.TransactionClient
 ) {
-  const normalizedSlug = typeof data.slug === "string" ? data.slug.trim() : undefined;
+  const normalizedSlug = typeof data.slug === "string" ? normalizeProductSlug(data.slug) : undefined;
   if (data.title || data.slug || data.subtitle !== undefined || data.descriptionHtml !== undefined) {
     const locale = data.locale || "en";
     await tx.productTranslation.upsert({

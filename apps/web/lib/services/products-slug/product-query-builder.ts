@@ -1,6 +1,7 @@
 import { db } from "@white-shop/db";
 import { ensureProductVariantAttributesColumn } from "../../utils/db-ensure";
 import { logger } from "../../utils/logger";
+import { buildProductSlugCandidates } from "../../utils/slug";
 import type { ProductWithFullRelations } from "./types";
 
 /**
@@ -76,10 +77,12 @@ const getProductAttributesInclude = () => ({
 /**
  * Base where clause for product queries
  */
-const getBaseWhere = (slug: string, lang: string) => ({
+const getBaseWhere = (slugCandidates: string[], lang: string) => ({
   translations: {
     some: {
-      slug,
+      slug: {
+        in: slugCandidates,
+      },
       locale: lang,
     },
   },
@@ -120,11 +123,15 @@ function isAttributeValuesColorsError(error: unknown): boolean {
  * Fetch product by slug regardless of translation locale.
  * Used as a fallback when exact language match is missing.
  */
-async function fetchBySlugAnyLocale(slug: string): Promise<ProductWithFullRelations | null> {
+async function fetchBySlugAnyLocale(slugCandidates: string[]): Promise<ProductWithFullRelations | null> {
   const baseInclude = getBaseInclude();
   const baseWhere = {
     translations: {
-      some: { slug },
+      some: {
+        slug: {
+          in: slugCandidates,
+        },
+      },
     },
     published: true,
     deletedAt: null,
@@ -161,11 +168,11 @@ async function fetchBySlugAnyLocale(slug: string): Promise<ProductWithFullRelati
  * Fetch product with productAttributes (with fallback handling)
  */
 async function fetchWithProductAttributes(
-  slug: string,
+  slugCandidates: string[],
   lang: string
 ): Promise<ProductWithFullRelations | null> {
   const baseInclude = getBaseInclude();
-  const baseWhere = getBaseWhere(slug, lang);
+  const baseWhere = getBaseWhere(slugCandidates, lang);
 
   try {
     const product = await db.product.findFirst({
@@ -184,7 +191,7 @@ async function fetchWithProductAttributes(
       logger.warn('product_attributes table not found, fetching without it', { 
         error: error instanceof Error ? error.message : String(error) 
       });
-      return fetchWithoutProductAttributes(slug, lang);
+      return fetchWithoutProductAttributes(slugCandidates, lang);
     }
 
     if (isVariantAttributesError(error)) {
@@ -197,7 +204,7 @@ async function fetchWithProductAttributes(
         });
         return product;
       } catch (attributesError: unknown) {
-        return handleAttributesError(attributesError, slug, lang);
+        return handleAttributesError(attributesError, slugCandidates, lang);
       }
     }
 
@@ -205,7 +212,7 @@ async function fetchWithProductAttributes(
       logger.warn('attribute_values.colors column not found, fetching without attributeValue', { 
         error: error instanceof Error ? error.message : String(error) 
       });
-      return fetchWithoutAttributeValue(slug, lang);
+      return fetchWithoutAttributeValue(slugCandidates, lang);
     }
 
     throw error;
@@ -216,11 +223,11 @@ async function fetchWithProductAttributes(
  * Fetch product without productAttributes (fallback)
  */
 async function fetchWithoutProductAttributes(
-  slug: string,
+  slugCandidates: string[],
   lang: string
 ): Promise<ProductWithFullRelations | null> {
   const baseInclude = getBaseInclude();
-  const baseWhere = getBaseWhere(slug, lang);
+  const baseWhere = getBaseWhere(slugCandidates, lang);
 
   try {
     const product = await db.product.findFirst({
@@ -241,7 +248,7 @@ async function fetchWithoutProductAttributes(
         });
         return product;
       } catch (attributesError: unknown) {
-        return handleAttributesError(attributesError, slug, lang);
+        return handleAttributesError(attributesError, slugCandidates, lang);
       }
     }
 
@@ -249,7 +256,7 @@ async function fetchWithoutProductAttributes(
       logger.warn('attribute_values.colors column not found, fetching without attributeValue', { 
         error: retryError instanceof Error ? retryError.message : String(retryError) 
       });
-      return fetchWithoutAttributeValue(slug, lang);
+      return fetchWithoutAttributeValue(slugCandidates, lang);
     }
 
     throw retryError;
@@ -261,14 +268,14 @@ async function fetchWithoutProductAttributes(
  */
 async function handleAttributesError(
   error: unknown,
-  slug: string,
+  slugCandidates: string[],
   lang: string
 ): Promise<ProductWithFullRelations | null> {
   if (isAttributeValuesColorsError(error)) {
     logger.warn('attribute_values.colors column not found, fetching without attributeValue', { 
       error: error instanceof Error ? error.message : String(error) 
     });
-    return fetchWithoutAttributeValue(slug, lang);
+    return fetchWithoutAttributeValue(slugCandidates, lang);
   }
   throw error;
 }
@@ -277,11 +284,11 @@ async function handleAttributesError(
  * Fetch product without attributeValue relation (fallback)
  */
 async function fetchWithoutAttributeValue(
-  slug: string,
+  slugCandidates: string[],
   lang: string
 ): Promise<ProductWithFullRelations | null> {
   const baseIncludeWithoutAttributeValue = getBaseIncludeWithoutAttributeValue();
-  const baseWhere = getBaseWhere(slug, lang);
+  const baseWhere = getBaseWhere(slugCandidates, lang);
 
   // Try to include productAttributes even in fallback
   try {
@@ -313,18 +320,23 @@ export async function buildProductQuery(
   slug: string,
   lang: string = "en"
 ): Promise<ProductWithFullRelations | null> {
-  const product = await fetchWithProductAttributes(slug, lang);
+  const slugCandidates = buildProductSlugCandidates(slug);
+  if (slugCandidates.length === 0) {
+    return null;
+  }
+
+  const product = await fetchWithProductAttributes(slugCandidates, lang);
   if (product) {
     return product;
   }
 
-  const fallbackProduct = await fetchBySlugAnyLocale(slug);
+  const fallbackProduct = await fetchBySlugAnyLocale(slugCandidates);
   if (fallbackProduct) {
     return fallbackProduct;
   }
   
   // If product not found, log diagnostic information
-  await logProductNotFoundDiagnostics(slug, lang);
+  await logProductNotFoundDiagnostics(slug, slugCandidates, lang);
   
   return null;
 }
@@ -332,15 +344,17 @@ export async function buildProductQuery(
 /**
  * Log diagnostic information when product is not found
  */
-async function logProductNotFoundDiagnostics(slug: string, lang: string): Promise<void> {
+async function logProductNotFoundDiagnostics(
+  originalSlug: string,
+  slugCandidates: string[],
+  lang: string
+): Promise<void> {
   try {
     // Check if product exists with this slug in any language
     const productAnyLang = await db.product.findFirst({
       where: {
         translations: {
-          some: {
-            slug,
-          },
+          some: { slug: { in: slugCandidates } },
         },
       },
       include: {
@@ -356,7 +370,8 @@ async function logProductNotFoundDiagnostics(slug: string, lang: string): Promis
     if (productAnyLang) {
       const availableLangs = productAnyLang.translations.map((t: { locale: string; slug: string }) => t.locale).join(', ');
       logger.warn('Product found with slug but not in requested language', {
-        slug,
+        slug: originalSlug,
+        slugCandidates,
         requestedLang: lang,
         availableLangs,
         published: productAnyLang.published,
@@ -368,7 +383,7 @@ async function logProductNotFoundDiagnostics(slug: string, lang: string): Promis
         where: {
           translations: {
             some: {
-              slug,
+              slug: { in: slugCandidates },
               locale: lang,
             },
           },
@@ -382,19 +397,25 @@ async function logProductNotFoundDiagnostics(slug: string, lang: string): Promis
 
       if (productUnpublished) {
         logger.warn('Product found but not available', {
-          slug,
+          slug: originalSlug,
+          slugCandidates,
           lang,
           published: productUnpublished.published,
           deletedAt: productUnpublished.deletedAt,
         });
       } else {
-        logger.debug('Product not found in database', { slug, lang });
+        logger.debug('Product not found in database', {
+          slug: originalSlug,
+          slugCandidates,
+          lang,
+        });
       }
     }
   } catch (error) {
     logger.error('Error during product diagnostics', {
       error: error instanceof Error ? error.message : String(error),
-      slug,
+      slug: originalSlug,
+      slugCandidates,
       lang,
     });
   }
