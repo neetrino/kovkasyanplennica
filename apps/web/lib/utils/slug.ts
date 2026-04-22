@@ -24,13 +24,7 @@ function safeDecode(value: string): string {
 }
 
 export function normalizeProductSlug(rawSlug: string): string {
-  return safeDecode(rawSlug)
-    .trim()
-    .toLowerCase()
-    .replace(/[\s/\\_]+/g, "-")
-    .replace(/[^\p{L}\p{N}-]+/gu, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return toSlug(safeDecode(rawSlug).trim());
 }
 
 export function buildProductSlugCandidates(rawSlug: string): string[] {
