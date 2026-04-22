@@ -131,7 +131,11 @@ export function useCarousel({ itemCount, visibleItems, autoRotateInterval = 5000
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (e.deltaY === 0) return;
-    e.preventDefault();
+    // React may attach passive wheel listeners in some environments.
+    // Guard `preventDefault` to avoid browser warnings.
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     const delta = e.deltaY > 0 ? 1 : -1;
     setCurrentIndex((prevIndex) => {
       const newIndex = prevIndex + delta;
