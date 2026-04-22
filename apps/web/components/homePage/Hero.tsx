@@ -30,7 +30,7 @@ export function Hero() {
           <img
             src="/assets/hero/hero.png"
             alt=""
-            className="absolute inset-0 size-full object-cover object-[center_35%]"
+            className="absolute inset-0 size-full object-cover object-[center_70%]"
           />
         </div>
       </div>

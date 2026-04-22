@@ -17,9 +17,30 @@ const getCachedProductBySlug = unstable_cache(
   { revalidate: 300, tags: ['products'] },
 );
 
+async function getProductWithLanguageFallback(slug: string, lang: string) {
+  const languagePriority = [lang, 'en', 'ru'];
+  const seen = new Set<string>();
+
+  for (const language of languagePriority) {
+    if (seen.has(language)) continue;
+    seen.add(language);
+
+    try {
+      const product = await getCachedProductBySlug(slug, language);
+      if (product) {
+        return product;
+      }
+    } catch {
+      // Try the next language.
+    }
+  }
+
+  return null;
+}
+
 export const getProductForPage = cache(async (slug: string, lang = 'ru') => {
   try {
-    return await getCachedProductBySlug(slug, lang);
+    return await getProductWithLanguageFallback(slug, lang);
   } catch {
     return null;
   }
