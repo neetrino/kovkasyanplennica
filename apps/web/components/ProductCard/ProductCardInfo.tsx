@@ -60,6 +60,8 @@ export function ProductCardInfo({
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const normalizedSlug = slug.trim();
+  const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
   const categoryValue = category || brandName || t('common.defaults.category');
   const handleProductIntent = useCallback(() => {
     prefetchProductByIntent(router, slug);
@@ -80,7 +82,7 @@ export function ProductCardInfo({
       }`}
     >
       <Link
-        href={`/products/${slug}`}
+        href={productHref}
         prefetch
         onMouseEnter={handleProductIntent}
         onTouchStart={handleProductIntent}

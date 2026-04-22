@@ -3,6 +3,18 @@ import { productsService } from "@/lib/services/products.service";
 
 export const dynamic = "force-dynamic";
 
+function normalizeSlug(slug: string): string {
+  const trimmed = slug.trim();
+  if (!trimmed) {
+    return '';
+  }
+  try {
+    return decodeURIComponent(trimmed);
+  } catch {
+    return trimmed;
+  }
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -10,7 +22,20 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url);
     const lang = searchParams.get("lang") || "en";
-    const { slug } = await params;
+    const { slug: rawSlug } = await params;
+    const slug = normalizeSlug(rawSlug);
+    if (!slug) {
+      return NextResponse.json(
+        {
+          type: "https://api.shop.am/problems/bad-request",
+          title: "Bad Request",
+          status: 400,
+          detail: "Product slug is required",
+          instance: req.url,
+        },
+        { status: 400 }
+      );
+    }
     const result = await productsService.findBySlug(slug, lang);
     return NextResponse.json(result);
   } catch (error: any) {
