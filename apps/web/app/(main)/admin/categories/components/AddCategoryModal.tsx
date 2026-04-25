@@ -3,7 +3,6 @@
 import type { ChangeEvent } from 'react';
 import { Button, Input } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
-import { showToast } from '@/components/Toast';
 import type { Category, CategoryFormData } from '../types';
 
 interface AddCategoryModalProps {
@@ -11,8 +10,11 @@ interface AddCategoryModalProps {
   formData: CategoryFormData;
   categories: Category[];
   saving: boolean;
+  imageUploading: boolean;
   onClose: () => void;
   onFormDataChange: (data: CategoryFormData) => void;
+  onImageUpload: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
+  onImageRemove: () => void;
   onSubmit: () => Promise<void>;
 }
 
@@ -21,8 +23,11 @@ export function AddCategoryModal({
   formData,
   categories,
   saving,
+  imageUploading,
   onClose,
   onFormDataChange,
+  onImageUpload,
+  onImageRemove,
   onSubmit,
 }: AddCategoryModalProps) {
   const { t } = useTranslation();
@@ -89,6 +94,42 @@ export function AddCategoryModal({
                 {t('admin.categories.requiresSizes')}
               </span>
             </label>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('admin.categories.categoryImage')}
+            </label>
+            {formData.imageUrl ? (
+              <div className="mb-3 flex items-center gap-3 rounded-md border border-gray-200 p-2">
+                <img
+                  src={formData.imageUrl}
+                  alt={formData.title || 'Category image'}
+                  className="h-14 w-14 rounded-md object-cover"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onImageRemove}
+                  disabled={saving || imageUploading}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  {t('admin.categories.removeImage')}
+                </Button>
+              </div>
+            ) : null}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(event) => {
+                void onImageUpload(event);
+              }}
+              disabled={saving || imageUploading}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 file:mr-3 file:rounded file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              {imageUploading ? t('admin.categories.uploadingImage') : t('admin.categories.uploadImage')}
+            </p>
           </div>
         </div>
         <div className="flex gap-3 mt-6">

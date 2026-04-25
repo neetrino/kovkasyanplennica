@@ -4,7 +4,7 @@ import { uploadToR2 } from "@/lib/r2";
 import { randomUUID } from "crypto";
 
 /** R2 object key prefix (folder). Only these values are allowed — prevents path injection. */
-const R2_UPLOAD_PREFIXES = ["products", "vacancies"] as const;
+const R2_UPLOAD_PREFIXES = ["products", "vacancies", "categories"] as const;
 type R2UploadPrefix = (typeof R2_UPLOAD_PREFIXES)[number];
 
 function resolveR2Prefix(body: { namespace?: unknown }): R2UploadPrefix {
@@ -21,7 +21,7 @@ function resolveR2Prefix(body: { namespace?: unknown }): R2UploadPrefix {
  *
  * Request body should contain:
  * - images: string[] (array of base64 image strings)
- * - namespace?: "products" | "vacancies" — R2 key prefix (default "products")
+ * - namespace?: "products" | "vacancies" | "categories" — R2 key prefix (default "products")
  *
  * Response:
  * - urls: string[] (array of image URLs)

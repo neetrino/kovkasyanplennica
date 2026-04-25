@@ -21,6 +21,13 @@ export function CategoryItem({ category, parentCategory, onEdit, onDelete }: Cat
     >
       <div className="flex-1">
         <div className="flex items-center gap-2">
+          {category.imageUrl ? (
+            <img
+              src={category.imageUrl}
+              alt={category.title}
+              className="h-9 w-9 rounded-md object-cover border border-gray-200"
+            />
+          ) : null}
           <div className="text-sm font-medium text-gray-900">{category.title}</div>
           {category.requiresSizes && (
             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">

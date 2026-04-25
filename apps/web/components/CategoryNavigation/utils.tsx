@@ -5,6 +5,7 @@ export interface Category {
   slug: string;
   title: string;
   fullPath: string;
+  imageUrl?: string | null;
   children: Category[];
 }
 

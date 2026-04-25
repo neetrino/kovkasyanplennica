@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { logger } from '@/lib/utils/logger';
 import { showToast } from '@/components/Toast';
 import { useTranslation } from '@/lib/i18n-client';
+import { processImageFile } from '@/lib/utils/image-utils';
 import type { Category, CategoryFormData } from '../types';
 
 interface UseCategoryActionsReturn {
@@ -11,9 +12,12 @@ interface UseCategoryActionsReturn {
   editingCategory: Category | null;
   formData: CategoryFormData;
   saving: boolean;
+  imageUploading: boolean;
   setShowAddModal: (show: boolean) => void;
   setShowEditModal: (show: boolean) => void;
   setFormData: (data: CategoryFormData) => void;
+  handleCategoryImageUpload: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
+  removeCategoryImage: () => void;
   handleAddCategory: (fetchCategories: () => Promise<void>) => Promise<void>;
   handleEditCategory: (category: Category) => Promise<void>;
   handleUpdateCategory: (fetchCategories: () => Promise<void>) => Promise<void>;
@@ -26,6 +30,7 @@ const initialFormData: CategoryFormData = {
   slug: '',
   parentId: '',
   requiresSizes: false,
+  imageUrl: '',
   subcategoryIds: [],
 };
 
@@ -39,9 +44,53 @@ export function useCategoryActions(): UseCategoryActionsReturn {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(initialFormData);
   const [saving, setSaving] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const resetForm = () => {
     setFormData(initialFormData);
+  };
+
+  const removeCategoryImage = () => {
+    setFormData((prev) => ({ ...prev, imageUrl: '' }));
+  };
+
+  const handleCategoryImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast(t('admin.categories.imageNotValid'), 'warning');
+      event.target.value = '';
+      return;
+    }
+
+    try {
+      setImageUploading(true);
+      const outputType =
+        file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
+      const base64 = await processImageFile(file, {
+        maxSizeMB: 2,
+        maxWidthOrHeight: 1600,
+        useWebWorker: true,
+        fileType: outputType,
+        initialQuality: 0.82,
+      });
+      const { urls } = await apiClient.post<{ urls: string[] }>(
+        '/api/v1/admin/products/upload-images',
+        { images: [base64], namespace: 'categories' }
+      );
+      const uploadedUrl = urls[0];
+      if (!uploadedUrl) {
+        throw new Error(t('admin.categories.imageUploadFailed'));
+      }
+      setFormData((prev) => ({ ...prev, imageUrl: uploadedUrl }));
+      showToast(t('admin.categories.imageUploaded'), 'success');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : t('admin.categories.imageUploadFailed');
+      showToast(message, 'error');
+    } finally {
+      setImageUploading(false);
+      event.target.value = '';
+    }
   };
 
   const handleAddCategory = async (fetchCategories: () => Promise<void>) => {
@@ -57,6 +106,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         slug: formData.slug.trim() || undefined,
         parentId: formData.parentId || undefined,
         requiresSizes: formData.requiresSizes,
+        imageUrl: formData.imageUrl || undefined,
         locale: 'ru',
       });
       setShowAddModal(false);
@@ -88,6 +138,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         slug: category.slug || '',
         parentId: category.parentId || '',
         requiresSizes: category.requiresSizes || false,
+        imageUrl: category.imageUrl || '',
         subcategoryIds: categoryWithChildren.children?.map(child => child.id) || [],
       });
     } catch (err: unknown) {
@@ -97,6 +148,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         slug: category.slug || '',
         parentId: category.parentId || '',
         requiresSizes: category.requiresSizes || false,
+        imageUrl: category.imageUrl || '',
         subcategoryIds: [],
       });
     }
@@ -118,6 +170,7 @@ export function useCategoryActions(): UseCategoryActionsReturn {
         parentId: formData.parentId || null,
         requiresSizes: formData.requiresSizes,
         subcategoryIds: formData.subcategoryIds,
+        imageUrl: formData.imageUrl || null,
         locale: 'ru',
       });
       setShowEditModal(false);
@@ -180,9 +233,12 @@ export function useCategoryActions(): UseCategoryActionsReturn {
     editingCategory,
     formData,
     saving,
+    imageUploading,
     setShowAddModal,
     setShowEditModal,
     setFormData,
+    handleCategoryImageUpload,
+    removeCategoryImage,
     handleAddCategory,
     handleEditCategory,
     handleUpdateCategory,
