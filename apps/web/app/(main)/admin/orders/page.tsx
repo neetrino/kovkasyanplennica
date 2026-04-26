@@ -1,24 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { OrdersPageContent } from './OrdersPageContent';
 
 export default function OrdersPage() {
   const { t } = useTranslation();
-  const { isLoggedIn, isAdmin, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (!isLoggedIn || !isAdmin) {
-        router.push('/admin');
-        return;
-      }
-    }
-  }, [isLoggedIn, isAdmin, isLoading, router]);
+  const { isLoggedIn, canAccessAdmin, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -31,7 +19,7 @@ export default function OrdersPage() {
     );
   }
 
-  if (!isLoggedIn || !isAdmin) {
+  if (!isLoggedIn || !canAccessAdmin) {
     return null;
   }
 

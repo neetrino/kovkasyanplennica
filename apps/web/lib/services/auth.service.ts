@@ -12,6 +12,7 @@ export interface RegisterData {
 }
 
 export interface LoginData {
+  login?: string;
   email?: string;
   phone?: string;
   password: string;
@@ -21,6 +22,7 @@ export interface AuthResponse {
   user: {
     id: string;
     email: string | null;
+    username: string | null;
     phone: string | null;
     firstName: string | null;
     lastName: string | null;
@@ -142,6 +144,7 @@ class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        username: null,
         phone: user.phone,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -155,7 +158,11 @@ class AuthService {
    * Login user
    */
   async login(data: LoginData): Promise<AuthResponse> {
-    logger.info("Auth login attempt", { hasEmail: !!data.email, hasPhone: !!data.phone });
+    logger.info("Auth login attempt", {
+      hasLogin: !!data.login,
+      hasEmail: !!data.email,
+      hasPhone: !!data.phone,
+    });
 
     if (data.phone) {
       throw {
@@ -166,13 +173,13 @@ class AuthService {
       };
     }
 
-    const email = data.email?.trim();
-    if (!email) {
+    const login = data.login?.trim() || data.email?.trim();
+    if (!login) {
       throw {
         status: 400,
         type: "https://api.shop.am/problems/validation-error",
         title: "Validation failed",
-        detail: "Email is required",
+        detail: "Username or email is required",
       };
     }
 
@@ -185,14 +192,19 @@ class AuthService {
       };
     }
 
+    const normalizedLogin = login.toLowerCase();
     const user = await db.user.findFirst({
       where: {
-        email: { equals: email, mode: "insensitive" },
+        OR: [
+          { email: { equals: normalizedLogin, mode: "insensitive" } },
+          { username: { equals: normalizedLogin, mode: "insensitive" } },
+        ],
         deletedAt: null,
       },
       select: {
         id: true,
         email: true,
+        username: true,
         phone: true,
         firstName: true,
         lastName: true,
@@ -259,6 +271,7 @@ class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         phone: user.phone,
         firstName: user.firstName,
         lastName: user.lastName,

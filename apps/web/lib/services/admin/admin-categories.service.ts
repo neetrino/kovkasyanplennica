@@ -1,5 +1,31 @@
 import { db } from "@white-shop/db";
+import { Prisma } from "@prisma/client";
 import { toSlug } from "@/lib/utils/slug";
+
+type CategoryMediaItemObject = { url?: string; src?: string; value?: string };
+
+function normalizeCategoryImageUrl(imageUrl: string | null | undefined): string | null {
+  if (typeof imageUrl !== "string") return null;
+  const normalized = imageUrl.trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
+function extractCategoryImageUrl(media: unknown): string | null {
+  if (!Array.isArray(media) || media.length === 0) return null;
+  for (const item of media) {
+    if (typeof item === "string") {
+      const normalized = normalizeCategoryImageUrl(item);
+      if (normalized) return normalized;
+      continue;
+    }
+    if (item && typeof item === "object") {
+      const typed = item as CategoryMediaItemObject;
+      const normalized = normalizeCategoryImageUrl(typed.url || typed.src || typed.value || null);
+      if (normalized) return normalized;
+    }
+  }
+  return null;
+}
 
 class AdminCategoriesService {
   /**
@@ -22,7 +48,7 @@ class AdminCategoriesService {
     });
 
     return {
-      data: categories.map((category: { id: string; parentId: string | null; requiresSizes: boolean | null; translations?: Array<{ title: string; slug: string }> }) => {
+      data: categories.map((category: { id: string; parentId: string | null; requiresSizes: boolean | null; media?: unknown; translations?: Array<{ title: string; slug: string }> }) => {
         const translations = Array.isArray(category.translations) ? category.translations : [];
         const translation = translations[0] || null;
         return {
@@ -31,6 +57,7 @@ class AdminCategoriesService {
           slug: translation?.slug || "",
           parentId: category.parentId,
           requiresSizes: category.requiresSizes || false,
+          imageUrl: extractCategoryImageUrl(category.media),
         };
       }),
     };
@@ -45,6 +72,7 @@ class AdminCategoriesService {
     locale?: string;
     parentId?: string;
     requiresSizes?: boolean;
+    imageUrl?: string;
   }) {
     const locale = data.locale || "en";
     
@@ -65,12 +93,14 @@ class AdminCategoriesService {
     }
     
     const slug = (data.slug && data.slug.trim()) ? toSlug(data.slug.trim()) : toSlug(data.title);
+    const imageUrl = normalizeCategoryImageUrl(data.imageUrl);
 
     const category = await db.category.create({
       data: {
         parentId: data.parentId || undefined,
         requiresSizes: data.requiresSizes || false,
         published: true,
+        media: imageUrl ? [imageUrl] : [],
         translations: {
           create: {
             locale,
@@ -96,6 +126,7 @@ class AdminCategoriesService {
         slug: translation?.slug || "",
         parentId: category.parentId,
         requiresSizes: category.requiresSizes || false,
+        imageUrl: extractCategoryImageUrl(category.media),
       },
     };
   }
@@ -135,7 +166,8 @@ class AdminCategoriesService {
       slug: translation?.slug || "",
       parentId: category.parentId,
       requiresSizes: category.requiresSizes || false,
-      children: category.children.map((child: { id: string; parentId: string | null; requiresSizes: boolean | null; translations?: Array<{ title: string; slug: string }> }) => {
+      imageUrl: extractCategoryImageUrl(category.media),
+      children: category.children.map((child: { id: string; parentId: string | null; requiresSizes: boolean | null; media?: unknown; translations?: Array<{ title: string; slug: string }> }) => {
         const childTranslations = Array.isArray(child.translations) ? child.translations : [];
         const childTranslation = childTranslations[0] || null;
         return {
@@ -144,6 +176,7 @@ class AdminCategoriesService {
           slug: childTranslation?.slug || "",
           parentId: child.parentId,
           requiresSizes: child.requiresSizes || false,
+          imageUrl: extractCategoryImageUrl(child.media),
         };
       }),
     };
@@ -159,6 +192,7 @@ class AdminCategoriesService {
     parentId?: string | null;
     requiresSizes?: boolean;
     subcategoryIds?: string[];
+    imageUrl?: string | null;
   }) {
     const locale = data.locale || "en";
     
@@ -259,7 +293,7 @@ class AdminCategoriesService {
       }
     }
 
-    const updateData: any = {};
+    const updateData: Prisma.CategoryUncheckedUpdateInput = {};
     
     if (data.parentId !== undefined) {
       updateData.parentId = data.parentId || null;
@@ -267,6 +301,11 @@ class AdminCategoriesService {
     
     if (data.requiresSizes !== undefined) {
       updateData.requiresSizes = data.requiresSizes;
+    }
+
+    if (data.imageUrl !== undefined) {
+      const imageUrl = normalizeCategoryImageUrl(data.imageUrl);
+      updateData.media = imageUrl ? [imageUrl] : [];
     }
 
     // Update translation if title or slug is provided
@@ -320,6 +359,7 @@ class AdminCategoriesService {
         slug: translation?.slug || "",
         parentId: updatedCategory.parentId,
         requiresSizes: updatedCategory.requiresSizes || false,
+        imageUrl: extractCategoryImageUrl(updatedCategory.media),
       },
     };
   }

@@ -34,9 +34,9 @@ export function CategoryIcon({ category, product, isActive, t }: CategoryIconPro
     <div className={`w-[80px] h-[80px] sm:w-[104px] sm:h-[104px] rounded-full bg-transparent border-2 flex items-center justify-center overflow-hidden transition-all ${
       isActive ? 'border-gray-400 shadow-md' : 'border-gray-200'
     }`}>
-      {product?.image ? (
+      {(category.imageUrl || product?.image) ? (
         <Image
-          src={product.image}
+          src={category.imageUrl || product?.image || ''}
           alt={category.title}
           width={112}
           height={112}

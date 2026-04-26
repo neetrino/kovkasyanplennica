@@ -1,5 +1,22 @@
 import { db } from "@white-shop/db";
 
+function getCategoryImageUrl(media: unknown): string | null {
+  if (!Array.isArray(media)) return null;
+  for (const entry of media) {
+    if (typeof entry === "string" && entry.trim()) {
+      return entry.trim();
+    }
+    if (entry && typeof entry === "object") {
+      const mediaObject = entry as { url?: string; src?: string; value?: string };
+      const candidate = mediaObject.url || mediaObject.src || mediaObject.value;
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate.trim();
+      }
+    }
+  }
+  return null;
+}
+
 class CategoriesService {
   /**
    * Get category tree
@@ -30,6 +47,7 @@ class CategoriesService {
     categories.forEach((category: {
       id: string;
       parentId: string | null;
+      media?: unknown;
       translations: Array<{ locale: string; slug: string; title: string; fullPath: string }>;
     }) => {
       const translation =
@@ -42,6 +60,7 @@ class CategoriesService {
         slug: translation.slug,
         title: translation.title,
         fullPath: translation.fullPath,
+        imageUrl: getCategoryImageUrl(category.media),
         children: [] as any[],
       };
 

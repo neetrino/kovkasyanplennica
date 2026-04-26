@@ -68,6 +68,12 @@
     "phone": "Телефон",
     "date": "Дата",
     "time": "Время",
+    "occasion": "По какому поводу",
+    "occasionPlaceholder": "Выберите повод",
+    "occasions": {
+      "birthday": "День рождения",
+      "regular": "Обычный визит"
+    },
     "guestCount": "Количество гостей",
     "note": "Комментарий (необязательно)",
     "placeholders": {
@@ -89,6 +95,9 @@
       "phoneRequired": "Укажите телефон",
       "dateRequired": "Укажите дату",
       "timeRequired": "Укажите время",
+      "timePast": "Нельзя выбрать прошедшее время",
+      "occasionRequired": "Выберите повод визита",
+      "timeUnavailable": "Выбранное время уже недоступно",
       "submitFailed": "Не удалось оформить бронирование",
       "unknownError": "Неизвестная ошибка"
     }

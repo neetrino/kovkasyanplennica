@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
+import { resolveAdminDefaultPath } from '@/lib/auth/roles';
 import { AdminSidebar } from './components/AdminSidebar';
 import { StatsGrid } from './components/StatsGrid';
 import { RecentOrdersCard } from './components/RecentOrdersCard';
@@ -14,7 +15,7 @@ import { useAdminDashboard } from './hooks/useAdminDashboard';
 
 export default function AdminPanel() {
   const { t } = useTranslation();
-  const { isLoggedIn, isAdmin, isLoading, user } = useAuth();
+  const { isLoggedIn, isAdmin, canAccessAdmin, isLoading, user, roles } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -40,13 +41,16 @@ export default function AdminPanel() {
         router.push('/login');
         return;
       }
-      if (!isAdmin) {
+      if (!canAccessAdmin) {
         console.log('❌ [ADMIN] User is not admin, redirecting to home...');
         router.push('/');
         return;
       }
+      if (!isAdmin) {
+        router.replace(resolveAdminDefaultPath(roles));
+      }
     }
-  }, [isLoggedIn, isAdmin, isLoading, router]);
+  }, [isLoggedIn, isAdmin, canAccessAdmin, isLoading, roles, router]);
 
   const [currentPath, setCurrentPath] = useState(pathname || '/admin');
 

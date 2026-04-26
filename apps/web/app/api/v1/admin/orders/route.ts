@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authenticateToken, requireAdmin } from "@/lib/middleware/auth";
+import { authenticateToken, requireAdminOrHostess } from "@/lib/middleware/auth";
 import { adminService } from "@/lib/services/admin.service";
 
 export async function GET(req: NextRequest) {
   try {
     const user = await authenticateToken(req);
-    if (!user || !requireAdmin(user)) {
+    if (!user || !requireAdminOrHostess(user)) {
       return NextResponse.json(
         {
           type: "https://api.shop.am/problems/forbidden",
           title: "Forbidden",
           status: 403,
-          detail: "Admin access required",
+          detail: "Admin or hostess access required",
           instance: req.url,
         },
         { status: 403 }

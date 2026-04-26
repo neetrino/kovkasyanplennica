@@ -64,6 +64,7 @@ class AdminService {
       locale?: string;
       parentId?: string;
       requiresSizes?: boolean;
+      imageUrl?: string;
     },
   ) => {
     const title = data.title?.trim();
@@ -82,6 +83,7 @@ class AdminService {
       locale: data.locale,
       parentId: data.parentId,
       requiresSizes: data.requiresSizes,
+      imageUrl: data.imageUrl,
     });
   };
   getCategoryById = adminCategoriesService.getCategoryById.bind(adminCategoriesService);
