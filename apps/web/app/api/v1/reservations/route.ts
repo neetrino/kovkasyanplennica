@@ -4,6 +4,7 @@ import { logger } from "@/lib/utils/logger";
 import {
   getUnavailableTimeSlots,
   hasReservationConflict,
+  isPastTimeSlotForDate,
   normalizeReservationOccasion,
   type ReservationOccasion,
 } from "@/lib/reservations/availability";
@@ -137,6 +138,9 @@ export async function POST(req: NextRequest) {
     const trimmedTableId = tableId.trim();
     const trimmedDate = date.trim();
     const trimmedTime = time.trim();
+    if (isPastTimeSlotForDate(trimmedDate, trimmedTime)) {
+      return reservationValidationError("Selected date/time is in the past");
+    }
     const existingReservations = await getExistingReservations(trimmedTableId, trimmedDate);
     if (hasReservationConflict(trimmedTime, normalizedOccasion, existingReservations)) {
       return NextResponse.json(

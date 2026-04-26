@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateToken, requireAdmin } from "@/lib/middleware/auth";
 import { db } from "@white-shop/db";
 import { logger } from "@/lib/utils/logger";
-import { hasReservationConflict, normalizeReservationOccasion } from "@/lib/reservations/availability";
+import {
+  hasReservationConflict,
+  isPastTimeSlotForDate,
+  normalizeReservationOccasion,
+} from "@/lib/reservations/availability";
 
 function validationError(detail: string) {
   return NextResponse.json(
@@ -143,6 +147,9 @@ export async function POST(req: NextRequest) {
     const trimmedTableId = tableId.trim();
     const trimmedDate = date.trim();
     const trimmedTime = time.trim();
+    if (isPastTimeSlotForDate(trimmedDate, trimmedTime)) {
+      return validationError("Selected date/time is in the past");
+    }
     const existingReservations = await db.tableReservation.findMany({
       where: {
         tableId: trimmedTableId,

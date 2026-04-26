@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { getAppScrollRegion } from '@/lib/appScrollRegion';
 import { formatLocalISODate } from '@/lib/formatLocalISODate';
+import { isPastTimeSlotForDate } from '@/lib/reservations/availability';
 import type { TableConfig } from './table-data';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 
@@ -131,6 +132,9 @@ export function ReservationModal({
     if (!form.phone.trim()) next.phone = t(`${v}.phoneRequired`);
     if (!form.date) next.date = t(`${v}.dateRequired`);
     if (!form.time) next.time = t(`${v}.timeRequired`);
+    if (form.date && form.time && isPastTimeSlotForDate(form.date, form.time)) {
+      next.time = t(`${v}.timePast`);
+    }
     if (!form.occasion) next.occasion = t(`${v}.occasionRequired`);
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -398,7 +402,11 @@ export function ReservationModal({
                 >
                   <option value="">{t('desktops.modal.timePlaceholder')}</option>
                   {RESERVATION_TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot} disabled={unavailableSlots.includes(slot)}>
+                    <option
+                      key={slot}
+                      value={slot}
+                      disabled={unavailableSlots.includes(slot) || isPastTimeSlotForDate(form.date, slot)}
+                    >
                       {slot}
                     </option>
                   ))}

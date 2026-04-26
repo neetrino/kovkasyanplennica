@@ -14,6 +14,7 @@ const LOCK_HOURS_BY_OCCASION: Record<ReservationOccasion, number> = {
 };
 
 const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 const MINUTES_IN_HOUR = 60;
 const ACTIVE_STATUS = 'cancelled';
 
@@ -37,6 +38,32 @@ export function parseTimeToMinutes(value: string): number | null {
   const hours = Number(match[1]);
   const minutes = Number(match[2]);
   return hours * MINUTES_IN_HOUR + minutes;
+}
+
+function parseDateToLocalDate(value: string): Date | null {
+  const match = DATE_PATTERN.exec(value.trim());
+  if (!match) return null;
+  const year = Number(match[1]);
+  const monthIndex = Number(match[2]) - 1;
+  const day = Number(match[3]);
+  return new Date(year, monthIndex, day);
+}
+
+export function isPastTimeSlotForDate(
+  date: string,
+  time: string,
+  now: Date = new Date(),
+): boolean {
+  const targetDate = parseDateToLocalDate(date);
+  const targetMinutes = parseTimeToMinutes(time);
+  if (!targetDate || targetMinutes == null) return true;
+
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (targetDate.getTime() < nowDate.getTime()) return true;
+  if (targetDate.getTime() > nowDate.getTime()) return false;
+
+  const nowMinutes = now.getHours() * MINUTES_IN_HOUR + now.getMinutes();
+  return targetMinutes < nowMinutes;
 }
 
 export function normalizeStoredOccasion(occasion: string | null): ReservationOccasion {

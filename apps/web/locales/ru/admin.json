@@ -814,6 +814,7 @@
       "validationEmail": "Введите email",
       "validationPhone": "Введите телефон",
       "validationDateTime": "Выберите дату и время",
+      "validationTimePast": "Нельзя создать бронирование на прошедшее время",
       "validationOccasion": "Выберите повод визита"
     }
   },

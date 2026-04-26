@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
 import { useTranslation } from '@/lib/i18n-client';
+import { isPastTimeSlotForDate } from '@/lib/reservations/availability';
 import { TABLES } from '../../desktops/table-data';
 import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
 
@@ -210,6 +211,10 @@ export default function AdminDesktopsPage() {
     }
     if (!createForm.date || !createForm.time) {
       setCreateError(t('admin.desktopsReservations.create.validationDateTime'));
+      return;
+    }
+    if (isPastTimeSlotForDate(createForm.date, createForm.time)) {
+      setCreateError(t('admin.desktopsReservations.create.validationTimePast'));
       return;
     }
     if (!createForm.occasion) {
@@ -433,7 +438,14 @@ export default function AdminDesktopsPage() {
             >
               <option value="">{t('admin.desktopsReservations.create.time')}</option>
               {RESERVATION_TIME_SLOTS.map((slot) => (
-                <option key={slot} value={slot} disabled={createUnavailableSlots.includes(slot)}>
+                <option
+                  key={slot}
+                  value={slot}
+                  disabled={
+                    createUnavailableSlots.includes(slot) ||
+                    isPastTimeSlotForDate(createForm.date, slot)
+                  }
+                >
                   {slot}
                 </option>
               ))}
