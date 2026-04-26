@@ -558,6 +558,7 @@ model TableReservation {
   phone       String
   date        String
   time        String
+  occasion    String   @default("regular")
   guestCount  Int      @default(1)
   note        String?  @db.Text
   status           String   @default("pending")

@@ -16,6 +16,7 @@ interface ReservationForm {
   phone: string;
   date: string;
   time: string;
+  occasion: string;
   guestCount: string;
   note: string;
 }
@@ -27,6 +28,7 @@ const INITIAL_FORM: ReservationForm = {
   phone: '',
   date: '',
   time: '',
+  occasion: '',
   guestCount: '1',
   note: '',
 };
@@ -59,6 +61,7 @@ export function ReservationModal({
   const [errors, setErrors] = useState<Partial<ReservationForm>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
   const didPrefillFromUser = useRef(false);
 
   /** Lock app scroll root so `fixed` centering is stable while the dialog is open. */
@@ -128,9 +131,60 @@ export function ReservationModal({
     if (!form.phone.trim()) next.phone = t(`${v}.phoneRequired`);
     if (!form.date) next.date = t(`${v}.dateRequired`);
     if (!form.time) next.time = t(`${v}.timeRequired`);
+    if (!form.occasion) next.occasion = t(`${v}.occasionRequired`);
     setErrors(next);
     return Object.keys(next).length === 0;
   }, [form, t]);
+
+  useEffect(() => {
+    if (!form.date || !form.occasion) {
+      setUnavailableSlots([]);
+      return;
+    }
+
+    let cancelled = false;
+    const search = new URLSearchParams({
+      tableId: table.id,
+      date: form.date,
+      occasion: form.occasion,
+    });
+
+    async function loadUnavailableSlots() {
+      try {
+        const res = await fetch(`/api/v1/reservations?${search.toString()}`);
+        if (!res.ok) throw new Error('Failed to load reservation availability');
+        const data: unknown = await res.json();
+        const payload =
+          typeof data === 'object' && data !== null && 'data' in data
+            ? (data.data as { unavailableSlots?: unknown })
+            : null;
+        const slots = Array.isArray(payload?.unavailableSlots)
+          ? payload.unavailableSlots.filter((x): x is string => typeof x === 'string')
+          : [];
+
+        if (!cancelled) {
+          setUnavailableSlots(slots);
+          if (form.time && slots.includes(form.time)) {
+            setForm((prev) => ({ ...prev, time: '' }));
+            setErrors((prev) => ({
+              ...prev,
+              time: t('desktops.modal.validation.timeUnavailable'),
+            }));
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          setUnavailableSlots([]);
+        }
+      }
+    }
+
+    void loadUnavailableSlots();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [form.date, form.occasion, form.time, t, table.id]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -150,6 +204,7 @@ export function ReservationModal({
           phone: form.phone.trim(),
           date: form.date,
           time: form.time,
+          occasion: form.occasion,
           guestCount: parseInt(form.guestCount, 10) || 1,
           note: form.note.trim() || null,
           ...(productTitle && { productTitle: productTitle.trim() }),
@@ -343,11 +398,29 @@ export function ReservationModal({
                 >
                   <option value="">{t('desktops.modal.timePlaceholder')}</option>
                   {RESERVATION_TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot}>{slot}</option>
+                    <option key={slot} value={slot} disabled={unavailableSlots.includes(slot)}>
+                      {slot}
+                    </option>
                   ))}
                 </select>
                 {errors.time && <p className="text-red-400 text-xs mt-1">{errors.time}</p>}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
+                {t('desktops.modal.occasion')} <span className="text-[#7CB342]">*</span>
+              </label>
+              <select
+                value={form.occasion}
+                onChange={set('occasion')}
+                className={`${errors.occasion ? inputError : inputNormal} appearance-none`}
+              >
+                <option value="">{t('desktops.modal.occasionPlaceholder')}</option>
+                <option value="birthday">{t('desktops.modal.occasions.birthday')}</option>
+                <option value="regular">{t('desktops.modal.occasions.regular')}</option>
+              </select>
+              {errors.occasion && <p className="text-red-400 text-xs mt-1">{errors.occasion}</p>}
             </div>
 
             <div>

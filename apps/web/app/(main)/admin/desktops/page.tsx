@@ -6,6 +6,8 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
 import { useTranslation } from '@/lib/i18n-client';
+import { TABLES } from '../../desktops/table-data';
+import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
 
 interface Reservation {
   id: string;
@@ -18,6 +20,7 @@ interface Reservation {
   phone: string;
   date: string;
   time: string;
+  occasion: 'birthday' | 'regular';
   guestCount: number;
   note: string | null;
   status: string;
@@ -25,6 +28,19 @@ interface Reservation {
   productTitle: string | null;
   productImageUrl: string | null;
   createdAt: string;
+}
+
+interface ReservationCreateForm {
+  tableId: string;
+  date: string;
+  time: string;
+  occasion: '' | 'birthday' | 'regular';
+  guestCount: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  note: string;
 }
 
 interface ReservationsResponse {
@@ -44,6 +60,18 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const DISPLAY_DATE_LOCALE = 'ru-RU';
+const INITIAL_CREATE_FORM: ReservationCreateForm = {
+  tableId: '',
+  date: '',
+  time: '',
+  occasion: '',
+  guestCount: '1',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  note: '',
+};
 
 /** Stored reservation date is usually YYYY-MM-DD from <input type="date"> — show as DD.MM.YYYY */
 function formatStoredReservationDate(dateStr: string): string {
@@ -77,6 +105,10 @@ export default function AdminDesktopsPage() {
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('');
+  const [createForm, setCreateForm] = useState<ReservationCreateForm>(INITIAL_CREATE_FORM);
+  const [createUnavailableSlots, setCreateUnavailableSlots] = useState<string[]>([]);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || !isAdmin)) {
@@ -111,6 +143,126 @@ export default function AdminDesktopsPage() {
       fetchReservations();
     }
   }, [isLoggedIn, isAdmin, fetchReservations]);
+
+  const selectedTable = TABLES.find((table) => table.id === createForm.tableId) ?? null;
+
+  useEffect(() => {
+    if (!createForm.tableId || !createForm.date || !createForm.occasion) {
+      setCreateUnavailableSlots([]);
+      return;
+    }
+
+    let cancelled = false;
+    const search = new URLSearchParams({
+      tableId: createForm.tableId,
+      date: createForm.date,
+      occasion: createForm.occasion,
+    });
+
+    async function loadCreateUnavailableSlots() {
+      try {
+        const response = await apiClient.get<{ data?: { unavailableSlots?: string[] } }>(
+          `/api/v1/reservations?${search.toString()}`,
+        );
+        const rawSlots = response.data?.unavailableSlots;
+        const slots: string[] = Array.isArray(rawSlots) ? rawSlots : [];
+        if (!cancelled) {
+          setCreateUnavailableSlots(slots);
+          if (createForm.time && slots.includes(createForm.time)) {
+            setCreateForm((prev) => ({ ...prev, time: '' }));
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          setCreateUnavailableSlots([]);
+        }
+      }
+    }
+
+    void loadCreateUnavailableSlots();
+    return () => {
+      cancelled = true;
+    };
+  }, [createForm.date, createForm.occasion, createForm.tableId, createForm.time]);
+
+  const setCreateField = (field: keyof ReservationCreateForm, value: string) => {
+    setCreateForm((prev) => ({ ...prev, [field]: value }));
+    setCreateError(null);
+  };
+
+  const handleCreateReservation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTable) {
+      setCreateError(t('admin.desktopsReservations.create.validationTable'));
+      return;
+    }
+    if (!createForm.firstName.trim() || !createForm.lastName.trim()) {
+      setCreateError(t('admin.desktopsReservations.create.validationName'));
+      return;
+    }
+    if (!createForm.email.trim()) {
+      setCreateError(t('admin.desktopsReservations.create.validationEmail'));
+      return;
+    }
+    if (!createForm.phone.trim()) {
+      setCreateError(t('admin.desktopsReservations.create.validationPhone'));
+      return;
+    }
+    if (!createForm.date || !createForm.time) {
+      setCreateError(t('admin.desktopsReservations.create.validationDateTime'));
+      return;
+    }
+    if (!createForm.occasion) {
+      setCreateError(t('admin.desktopsReservations.create.validationOccasion'));
+      return;
+    }
+
+    setCreating(true);
+    setCreateError(null);
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      const response = await fetch('/api/v1/admin/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          tableId: selectedTable.id,
+          tableLabel: t(`desktops.tables.${selectedTable.labelKey}`),
+          tableSeats: selectedTable.seats,
+          firstName: createForm.firstName.trim(),
+          lastName: createForm.lastName.trim(),
+          email: createForm.email.trim(),
+          phone: createForm.phone.trim(),
+          date: createForm.date,
+          time: createForm.time,
+          occasion: createForm.occasion,
+          guestCount: parseInt(createForm.guestCount, 10) || 1,
+          note: createForm.note.trim() || null,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const detail = typeof data.detail === 'string'
+          ? data.detail
+          : t('admin.desktopsReservations.create.failed');
+        throw new Error(detail);
+      }
+
+      setCreateForm(INITIAL_CREATE_FORM);
+      setCreateUnavailableSlots([]);
+      await fetchReservations();
+    } catch (error: unknown) {
+      const message = error instanceof Error
+        ? error.message
+        : t('admin.desktopsReservations.create.failed');
+      setCreateError(message);
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
@@ -233,6 +385,126 @@ export default function AdminDesktopsPage() {
           </div>
         </div>
 
+        <form onSubmit={handleCreateReservation} className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t('admin.desktopsReservations.create.title')}
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              {t('admin.desktopsReservations.create.subtitle')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+            <select
+              value={createForm.tableId}
+              onChange={(e) => setCreateField('tableId', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('admin.desktopsReservations.create.table')}</option>
+              {TABLES.map((table) => (
+                <option key={table.id} value={table.id}>
+                  {t(`desktops.tables.${table.labelKey}`)}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="date"
+              value={createForm.date}
+              onChange={(e) => setCreateField('date', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+
+            <select
+              value={createForm.occasion}
+              onChange={(e) => setCreateField('occasion', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('admin.desktopsReservations.create.occasion')}</option>
+              <option value="birthday">{t('admin.desktopsReservations.create.occasionBirthday')}</option>
+              <option value="regular">{t('admin.desktopsReservations.create.occasionRegular')}</option>
+            </select>
+
+            <select
+              value={createForm.time}
+              onChange={(e) => setCreateField('time', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('admin.desktopsReservations.create.time')}</option>
+              {RESERVATION_TIME_SLOTS.map((slot) => (
+                <option key={slot} value={slot} disabled={createUnavailableSlots.includes(slot)}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="text"
+              value={createForm.firstName}
+              onChange={(e) => setCreateField('firstName', e.target.value)}
+              placeholder={t('admin.desktopsReservations.create.firstName')}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="text"
+              value={createForm.lastName}
+              onChange={(e) => setCreateField('lastName', e.target.value)}
+              placeholder={t('admin.desktopsReservations.create.lastName')}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="email"
+              value={createForm.email}
+              onChange={(e) => setCreateField('email', e.target.value)}
+              placeholder={t('admin.desktopsReservations.create.email')}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <input
+              type="tel"
+              value={createForm.phone}
+              onChange={(e) => setCreateField('phone', e.target.value)}
+              placeholder={t('admin.desktopsReservations.create.phone')}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <select
+              value={createForm.guestCount}
+              onChange={(e) => setCreateField('guestCount', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              {Array.from({ length: selectedTable?.seats ?? 8 }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>
+                  {t('admin.desktopsReservations.create.guests').replace('{n}', String(n))}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              value={createForm.note}
+              onChange={(e) => setCreateField('note', e.target.value)}
+              placeholder={t('admin.desktopsReservations.create.note')}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2 lg:col-span-3"
+            />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            {createError ? (
+              <p className="text-sm text-red-600">{createError}</p>
+            ) : (
+              <span className="text-xs text-gray-500">{t('admin.desktopsReservations.create.hint')}</span>
+            )}
+            <button
+              type="submit"
+              disabled={creating}
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-60"
+            >
+              {creating
+                ? t('admin.desktopsReservations.create.creating')
+                : t('admin.desktopsReservations.create.submit')}
+            </button>
+          </div>
+        </form>
+
         {/* Table */}
         <div className="bg-white shadow rounded-2xl overflow-hidden">
           {loading ? (
@@ -272,6 +544,9 @@ export default function AdminDesktopsPage() {
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       {t('admin.desktopsReservations.colDateTime')}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      {t('admin.desktopsReservations.colOccasion')}
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       {t('admin.desktopsReservations.colGuests')}
@@ -335,6 +610,11 @@ export default function AdminDesktopsPage() {
                           {formatStoredReservationDate(r.date)}
                         </div>
                         <div className="text-xs text-gray-500">{r.time}</div>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-gray-700">
+                        {r.occasion === 'birthday'
+                          ? t('admin.desktopsReservations.occasionBirthday')
+                          : t('admin.desktopsReservations.occasionRegular')}
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700 text-center">{r.guestCount}</td>
                       <td className="px-4 py-4">
