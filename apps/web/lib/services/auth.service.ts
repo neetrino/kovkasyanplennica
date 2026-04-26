@@ -31,6 +31,80 @@ export interface AuthResponse {
   token: string;
 }
 
+type LoginUserRecord = {
+  id: string;
+  email: string | null;
+  username: string | null;
+  phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  passwordHash: string | null;
+  roles: string[];
+  blocked: boolean;
+};
+
+const LOGIN_SELECT_BASE = {
+  id: true,
+  email: true,
+  phone: true,
+  firstName: true,
+  lastName: true,
+  passwordHash: true,
+  roles: true,
+  blocked: true,
+} as const;
+
+const LOGIN_SELECT_WITH_USERNAME = {
+  ...LOGIN_SELECT_BASE,
+  username: true,
+} as const;
+
+const isUnknownUsernameArgumentError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return error.message.includes("Unknown argument `username`");
+};
+
+const findLoginUser = async (normalizedLogin: string): Promise<LoginUserRecord | null> => {
+  try {
+    return await db.user.findFirst({
+      where: {
+        OR: [
+          { email: { equals: normalizedLogin, mode: "insensitive" } },
+          { username: { equals: normalizedLogin, mode: "insensitive" } },
+        ],
+        deletedAt: null,
+      },
+      select: LOGIN_SELECT_WITH_USERNAME,
+    });
+  } catch (error: unknown) {
+    if (!isUnknownUsernameArgumentError(error)) {
+      throw error;
+    }
+
+    logger.warn("Auth login: username field is unavailable, fallback to email-only login");
+
+    const userWithoutUsername = await db.user.findFirst({
+      where: {
+        email: { equals: normalizedLogin, mode: "insensitive" },
+        deletedAt: null,
+      },
+      select: LOGIN_SELECT_BASE,
+    });
+
+    if (!userWithoutUsername) {
+      return null;
+    }
+
+    return {
+      ...userWithoutUsername,
+      username: null,
+    };
+  }
+};
+
 class AuthService {
   /**
    * Register new user
@@ -193,26 +267,7 @@ class AuthService {
     }
 
     const normalizedLogin = login.toLowerCase();
-    const user = await db.user.findFirst({
-      where: {
-        OR: [
-          { email: { equals: normalizedLogin, mode: "insensitive" } },
-          { username: { equals: normalizedLogin, mode: "insensitive" } },
-        ],
-        deletedAt: null,
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        phone: true,
-        firstName: true,
-        lastName: true,
-        passwordHash: true,
-        roles: true,
-        blocked: true,
-      },
-    });
+    const user = await findLoginUser(normalizedLogin);
 
     if (!user || !user.passwordHash) {
       logger.warn("Auth login: user not found or no password set");
