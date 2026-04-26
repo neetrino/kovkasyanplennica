@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authenticateToken, requireAdmin } from "@/lib/middleware/auth";
+import { authenticateToken, requireAdminOrHostess } from "@/lib/middleware/auth";
 import { db } from "@white-shop/db";
 import { logger } from "@/lib/utils/logger";
 import {
@@ -15,9 +15,9 @@ function validationError(detail: string) {
   );
 }
 
-async function authenticateAdmin(req: NextRequest) {
+async function authenticateAdminOrHostess(req: NextRequest) {
   const user = await authenticateToken(req);
-  if (!user || !requireAdmin(user)) {
+  if (!user || !requireAdminOrHostess(user)) {
     return null;
   }
   return user;
@@ -29,10 +29,10 @@ async function authenticateAdmin(req: NextRequest) {
  */
 export async function GET(req: NextRequest) {
   try {
-    const user = await authenticateAdmin(req);
+    const user = await authenticateAdminOrHostess(req);
     if (!user) {
       return NextResponse.json(
-        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin access required" },
+        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin or hostess access required" },
         { status: 403 }
       );
     }
@@ -80,10 +80,10 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const user = await authenticateAdmin(req);
+    const user = await authenticateAdminOrHostess(req);
     if (!user) {
       return NextResponse.json(
-        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin access required" },
+        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin or hostess access required" },
         { status: 403 }
       );
     }
@@ -213,10 +213,10 @@ export async function POST(req: NextRequest) {
  */
 export async function PATCH(req: NextRequest) {
   try {
-    const user = await authenticateAdmin(req);
+    const user = await authenticateAdminOrHostess(req);
     if (!user) {
       return NextResponse.json(
-        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin access required" },
+        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin or hostess access required" },
         { status: 403 }
       );
     }
@@ -255,10 +255,10 @@ export async function PATCH(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   try {
-    const user = await authenticateAdmin(req);
+    const user = await authenticateAdminOrHostess(req);
     if (!user) {
       return NextResponse.json(
-        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin access required" },
+        { type: "forbidden", title: "Forbidden", status: 403, detail: "Admin or hostess access required" },
         { status: 403 }
       );
     }

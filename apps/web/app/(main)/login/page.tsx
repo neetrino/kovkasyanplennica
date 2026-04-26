@@ -8,19 +8,18 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { resolvePostLoginDestination } from '@/lib/auth/postLoginRedirect';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
-import { isValidLoginEmail } from '@/lib/utils/emailValidation';
 import { Eye, EyeOff } from 'lucide-react';
 
 function LoginPageContent() {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login, isLoading, isLoggedIn, isAdmin } = useAuth();
+  const { login, isLoading, isLoggedIn, roles } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams?.get('redirect') || '/';
@@ -33,14 +32,8 @@ function LoginPageContent() {
     console.log('🔐 [LOGIN PAGE] Form submitted');
 
     // Validation
-    if (!email.trim()) {
-      setError(t('login.errors.emailRequired'));
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!isValidLoginEmail(email)) {
-      setError(t('login.errors.emailInvalid'));
+    if (!loginId.trim()) {
+      setError('Username or email is required');
       setIsSubmitting(false);
       return;
     }
@@ -53,11 +46,8 @@ function LoginPageContent() {
 
     try {
       console.log('📤 [LOGIN PAGE] Calling login function...');
-      const user = await login(email.trim(), password);
-      const destination = resolvePostLoginDestination(
-        redirectTo,
-        Array.isArray(user.roles) && user.roles.includes('admin'),
-      );
+      const user = await login(loginId.trim(), password);
+      const destination = resolvePostLoginDestination(redirectTo, Array.isArray(user.roles) ? user.roles : []);
       console.log('✅ [LOGIN PAGE] Login successful, redirecting to:', destination);
       router.push(destination);
     } catch (err: any) {
@@ -71,9 +61,9 @@ function LoginPageContent() {
   // Redirect if already logged in
   useEffect(() => {
     if (isLoggedIn && !isLoading) {
-      router.push(resolvePostLoginDestination(redirectTo, isAdmin));
+      router.push(resolvePostLoginDestination(redirectTo, roles));
     }
-  }, [isLoggedIn, isLoading, redirectTo, isAdmin, router]);
+  }, [isLoggedIn, isLoading, redirectTo, roles, router]);
 
   return (
     <div className="min-h-screen bg-[#2F3F3D] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
@@ -100,17 +90,17 @@ function LoginPageContent() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="rounded-xl">
-              <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                {t('login.form.email')}
+              <label htmlFor="loginId" className="block text-sm font-medium text-white/90 mb-2">
+                {t('login.form.email')} / Username
               </label>
             <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder={t('login.form.emailPlaceholder')}
+              id="loginId"
+              type="text"
+              autoComplete="username"
+              placeholder={`${t('login.form.emailPlaceholder')} / username`}
               className="w-full rounded-xl font-normal text-gray-900 placeholder:text-gray-500"
-              value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              value={loginId}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLoginId(e.target.value)}
               disabled={isSubmitting || isLoading}
               required
             />

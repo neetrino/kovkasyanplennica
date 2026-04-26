@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import * as jwt from "jsonwebtoken";
 import { db } from "@white-shop/db";
 import { logger } from "@/lib/utils/logger";
+import { canAccessAdminArea, isAdminRole } from "@/lib/auth/roles";
 
 export interface AuthUser {
   id: string;
@@ -76,6 +77,13 @@ export function requireAdmin(user: AuthUser | null): boolean {
   if (!user) {
     return false;
   }
-  return user.roles.includes("admin");
+  return isAdminRole(user.roles);
+}
+
+export function requireAdminOrHostess(user: AuthUser | null): boolean {
+  if (!user) {
+    return false;
+  }
+  return canAccessAdminArea(user.roles);
 }
 

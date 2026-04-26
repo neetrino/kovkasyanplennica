@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { AdminMenuDrawer } from '@/components/AdminMenuDrawer';
+import type { AdminMenuItem } from '@/components/AdminMenuDrawer';
 import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
 import {
   getAdminNavContainerClass,
@@ -16,10 +17,12 @@ interface AdminSidebarProps {
   currentPath: string;
   router: ReturnType<typeof useRouter>;
   t: ReturnType<typeof import('@/lib/i18n-client').useTranslation>['t'];
+  tabs?: AdminMenuItem[];
+  sticky?: boolean;
 }
 
-export function AdminSidebar({ currentPath, router, t }: AdminSidebarProps) {
-  const adminTabs = getAdminMenuTABS(t);
+export function AdminSidebar({ currentPath, router, t, tabs, sticky = false }: AdminSidebarProps) {
+  const adminTabs = tabs ?? getAdminMenuTABS(t);
   const { isDark } = useAdminNavTheme();
   const mode: AdminNavThemeMode = isDark ? 'dark' : 'light';
 
@@ -28,7 +31,7 @@ export function AdminSidebar({ currentPath, router, t }: AdminSidebarProps) {
       <div className="lg:hidden mb-6">
         <AdminMenuDrawer tabs={adminTabs} currentPath={currentPath} />
       </div>
-      <aside className="hidden lg:block lg:w-64 flex-shrink-0">
+      <aside className={`hidden lg:block lg:w-64 flex-shrink-0 ${sticky ? 'lg:sticky lg:top-4 self-start' : ''}`}>
         <nav className={getAdminNavContainerClass(mode)}>
           {adminTabs.map((tab) => {
             const isActive = isAdminMenuItemActive(tab.path, currentPath);

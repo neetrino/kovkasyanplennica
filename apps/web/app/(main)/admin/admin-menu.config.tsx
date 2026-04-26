@@ -280,4 +280,9 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
   ];
 }
 
+export function getHostessMenuTABS(t: (path: string) => string): AdminMenuItem[] {
+  const allowedIds = new Set(["orders", "desktops"]);
+  return getAdminMenuTABS(t).filter((item) => allowedIds.has(item.id));
+}
+
 

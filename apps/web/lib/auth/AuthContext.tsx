@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, ApiError } from '../api-client';
+import { canAccessAdminArea, isAdminRole, isHostessRole } from '@/lib/auth/roles';
 
 /**
  * User interface
@@ -10,6 +11,7 @@ import { apiClient, ApiError } from '../api-client';
 export interface User {
   id: string;
   email?: string;
+  username?: string;
   phone?: string;
   firstName?: string;
   lastName?: string;
@@ -25,8 +27,10 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isLoading: boolean;
   isAdmin: boolean;
+  isHostess: boolean;
+  canAccessAdmin: boolean;
   roles: string[];
-  login: (_email: string, _password: string) => Promise<User>;
+  login: (_login: string, _password: string) => Promise<User>;
   register: (_data: RegisterData) => Promise<void>;
   logout: () => void;
 }
@@ -113,11 +117,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * Login user
    */
-  const login = async (email: string, password: string): Promise<User> => {
+  const login = async (loginId: string, password: string): Promise<User> => {
     try {
       setIsLoading(true);
 
-      const requestData = { email: email.trim(), password };
+      const requestData = { login: loginId.trim(), password };
 
       console.log('📤 [AUTH] Sending login request to API...');
       const response = await apiClient.post<AuthResponse>('/api/v1/auth/login', requestData, {
@@ -296,7 +300,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Calculate roles and admin status
   const roles = user && Array.isArray(user.roles) ? user.roles : [];
-  const isAdmin = roles.includes('admin');
+  const isAdmin = isAdminRole(roles);
+  const isHostess = isHostessRole(roles);
+  const canAccessAdmin = canAccessAdminArea(roles);
   
   // Debug logging and ensure roles are loaded
   useEffect(() => {
@@ -338,6 +344,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoggedIn: !!token && !!user,
     isLoading,
     isAdmin,
+    isHostess,
+    canAccessAdmin,
     roles,
     login,
     register,

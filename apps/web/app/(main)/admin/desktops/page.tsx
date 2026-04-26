@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
 import { useTranslation } from '@/lib/i18n-client';
 import { isPastTimeSlotForDate } from '@/lib/reservations/availability';
+import { getHostessMenuTABS } from '../admin-menu.config';
+import { AdminSidebar } from '../components/AdminSidebar';
 import { TABLES } from '../../desktops/table-data';
 import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
 
@@ -96,7 +98,8 @@ function formatCreatedAtDate(iso: string): string {
 
 export default function AdminDesktopsPage() {
   const { t } = useTranslation();
-  const { isLoggedIn, isAdmin, isLoading } = useAuth();
+  const { isLoggedIn, canAccessAdmin, isHostess, isLoading } = useAuth();
+  const pathname = usePathname();
   const router = useRouter();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,12 +113,7 @@ export default function AdminDesktopsPage() {
   const [createUnavailableSlots, setCreateUnavailableSlots] = useState<string[]>([]);
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading && (!isLoggedIn || !isAdmin)) {
-      router.push('/admin');
-    }
-  }, [isLoggedIn, isAdmin, isLoading, router]);
+  const sidebarTabs = isHostess ? getHostessMenuTABS(t) : undefined;
 
   const fetchReservations = useCallback(async () => {
     try {
@@ -140,10 +138,10 @@ export default function AdminDesktopsPage() {
   }, [page, filterStatus]);
 
   useEffect(() => {
-    if (isLoggedIn && isAdmin) {
+    if (isLoggedIn && canAccessAdmin) {
       fetchReservations();
     }
-  }, [isLoggedIn, isAdmin, fetchReservations]);
+  }, [isLoggedIn, canAccessAdmin, fetchReservations]);
 
   const selectedTable = TABLES.find((table) => table.id === createForm.tableId) ?? null;
 
@@ -343,11 +341,20 @@ export default function AdminDesktopsPage() {
     );
   }
 
-  if (!isLoggedIn || !isAdmin) return null;
+  if (!isLoggedIn || !canAccessAdmin) return null;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="w-full">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <AdminSidebar
+            currentPath={pathname || '/admin/desktops'}
+            router={router}
+            t={t}
+            tabs={sidebarTabs}
+            sticky={isHostess}
+          />
+          <div className="flex-1 min-w-0">
 
         {/* Header */}
         <div className="mb-8">
@@ -722,6 +729,8 @@ export default function AdminDesktopsPage() {
           )}
         </div>
 
+          </div>
+        </div>
       </div>
     </div>
   );
