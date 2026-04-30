@@ -53,53 +53,47 @@ export function ProductCardList({
   }, [router, product.slug]);
 
   return (
-    <div className="group bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4">
+    <div className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
+      <Link
+        href={productHref}
+        prefetch
+        onMouseEnter={handleProductIntent}
+        onTouchStart={handleProductIntent}
+        onFocus={handleProductIntent}
+        className="absolute inset-0 z-0 rounded-lg outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+        aria-label={`${product.title} — view product`}
+      />
+      <div className="relative z-[1] flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-4 pointer-events-none">
         {/* Product Image */}
-        <Link
-          href={productHref}
-          prefetch
-          onMouseEnter={handleProductIntent}
-          onTouchStart={handleProductIntent}
-          onFocus={handleProductIntent}
-          className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-10"
-        >
+        <div className="w-20 h-20 bg-transparent rounded-lg flex-shrink-0 relative overflow-hidden self-start sm:self-center origin-center transition-transform duration-700 ease-in-out lg:group-hover:scale-[1.5] lg:group-hover:z-10">
           {product.image && !imageError ? (
             <Image
               src={product.image}
-              alt={product.title}
+              alt=""
               fill
               className="object-cover transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
               sizes="80px"
               unoptimized
               onError={onImageError}
+              aria-hidden
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center" aria-hidden>
               <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           )}
-        </Link>
+        </div>
 
         {/* Product Info */}
         <div className="flex-1 min-w-0 w-full sm:w-auto">
-          <Link
-            href={productHref}
-            prefetch
-            onMouseEnter={handleProductIntent}
-            onTouchStart={handleProductIntent}
-            onFocus={handleProductIntent}
-            className="block"
-          >
-            <h3 className="text-lg sm:text-xl font-medium text-gray-900 hover:text-blue-600 transition-colors line-clamp-2">
-              {product.title}
-            </h3>
-            <p className="text-base sm:text-lg text-gray-500 mt-1">
-              {product.brand?.name || t('common.defaults.category')}
-            </p>
-          </Link>
+          <h3 className="text-lg sm:text-xl font-medium text-gray-900 transition-colors line-clamp-2">
+            {product.title}
+          </h3>
+          <p className="text-base sm:text-lg text-gray-500 mt-1">
+            {product.brand?.name || t('common.defaults.category')}
+          </p>
         </div>
 
         {/* Price and Actions */}
@@ -130,7 +124,7 @@ export function ProductCardList({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 self-start sm:self-center">
+          <div className="pointer-events-auto flex items-center gap-2 self-start sm:self-center relative z-[2]">
             <button
               onClick={onAddToCart}
               disabled={!product.inStock || isAddingToCart}

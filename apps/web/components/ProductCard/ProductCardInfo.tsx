@@ -31,6 +31,8 @@ interface ProductCardInfoProps {
   inStock?: boolean;
   isAddingToCart?: boolean;
   onAddToCart?: (e: MouseEvent) => void;
+  /** When the parent card uses a full-area product link (stretched link), omit nested title link */
+  omitProductTitleLink?: boolean;
 }
 
 /**
@@ -57,6 +59,7 @@ export function ProductCardInfo({
   inStock = true,
   isAddingToCart = false,
   onAddToCart,
+  omitProductTitleLink = false,
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -81,15 +84,7 @@ export function ProductCardInfo({
         compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
       }`}
     >
-      <Link
-        href={productHref}
-        prefetch
-        onMouseEnter={handleProductIntent}
-        onTouchStart={handleProductIntent}
-        onFocus={handleProductIntent}
-        className="block"
-      >
-        {/* Product Title - Centered, Bold */}
+      {omitProductTitleLink ? (
         <h3
           className={`text-center font-bold text-black ${
             compactHeight ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]' : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
@@ -103,7 +98,30 @@ export function ProductCardInfo({
         >
           {title}
         </h3>
-      </Link>
+      ) : (
+        <Link
+          href={productHref}
+          prefetch
+          onMouseEnter={handleProductIntent}
+          onTouchStart={handleProductIntent}
+          onFocus={handleProductIntent}
+          className="block"
+        >
+          <h3
+            className={`text-center font-bold text-black ${
+              compactHeight ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]' : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
+            }`}
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {title}
+          </h3>
+        </Link>
+      )}
 
       {/* Description - Centered, Grey, Semibold */}
       {description && description.trim() && (
@@ -148,7 +166,7 @@ export function ProductCardInfo({
           <button
             onClick={handleAddToCart}
             disabled={!inStock || isAddingToCart}
-            className={`absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
+            className={`pointer-events-auto absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
               largeCompactImage
                 ? 'bottom-0 translate-y-1/2 w-[46px] h-[46px]'
                 : compactHeight
