@@ -49,7 +49,8 @@
   "grid": {
     "noProducts": "Товары не найдены.",
     "otherCategory": "Другое",
-    "viewAllInCategory": "Все в этой категории"
+    "viewAllInCategory": "Все в этой категории",
+    "showMore": "Показать ещё один ряд"
   },
   "carousel": {
     "previous": "Предыдущие товары",
