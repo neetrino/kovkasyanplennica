@@ -114,7 +114,7 @@ function SidebarCategoryRow({
     : [
         'relative z-0 min-h-[90px] w-[220px] shrink-0 self-start rounded-br-[140px] rounded-tr-[140px]',
         'py-2 pl-3.5 pr-2',
-        'transition-[width,background-color,box-shadow] duration-1000 ease-in-out',
+        'transition-[width,background-color,box-shadow] duration-700 ease-out',
         'hover:z-30 focus-visible:z-30',
       ].join(' ');
 
@@ -145,13 +145,13 @@ function SidebarCategoryRow({
     ? `min-w-0 flex-1 font-semibold uppercase leading-snug tracking-wide transition-colors text-[11px] ${
         isActive ? 'text-[#2F3F3D]' : 'text-[#9e9e9e] group-hover:text-[#6b6b6b]'
       }`
-    : `min-w-0 flex-1 font-semibold uppercase leading-snug tracking-wide transition-[color,font-weight] duration-1000 ease-in-out text-[12px] ${
+    : `min-w-0 flex-1 font-semibold uppercase leading-snug tracking-wide transition-[color,font-weight] duration-700 ease-out text-[12px] ${
         isActive ? 'text-[#2F3F3D]' : 'text-[#9e9e9e]'
       } group-hover:font-bold group-hover:text-[#1a1a1a] group-focus-visible:font-bold group-focus-visible:text-[#1a1a1a]`;
 
   const iconWrap = strip
     ? 'shrink-0'
-    : 'shrink-0 transition-[filter] duration-1000 ease-in-out group-hover:drop-shadow-[0_10px_22px_rgba(47,63,61,0.22)] group-focus-visible:drop-shadow-[0_10px_22px_rgba(47,63,61,0.22)]';
+    : 'shrink-0 transition-[filter] duration-700 ease-out group-hover:drop-shadow-[0_10px_22px_rgba(47,63,61,0.22)] group-focus-visible:drop-shadow-[0_10px_22px_rgba(47,63,61,0.22)]';
 
   return (
     <Link
