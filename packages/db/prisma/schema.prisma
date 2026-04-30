@@ -13,6 +13,7 @@ datasource db {
 model User {
   id                   String    @id @default(cuid())
   email                String?   @unique
+  username             String?   @unique
   phone                String?   @unique
   passwordHash         String?
   passwordResetToken   String?
@@ -558,6 +559,7 @@ model TableReservation {
   phone       String
   date        String
   time        String
+  timeEnd     String
   occasion    String   @default("regular")
   guestCount  Int      @default(1)
   note        String?  @db.Text

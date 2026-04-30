@@ -28,9 +28,13 @@ interface ProductCardInfoProps {
   largeHeightOnDesktop?: boolean;
   /** Products page mobile — ավելի ցածր քարտ */
   largeCompactImage?: boolean;
+  /** Products carousel listing — tighter typography / spacing */
+  compactListing?: boolean;
   inStock?: boolean;
   isAddingToCart?: boolean;
   onAddToCart?: (e: MouseEvent) => void;
+  /** When the parent card uses a full-area product link (stretched link), omit nested title link */
+  omitProductTitleLink?: boolean;
 }
 
 /**
@@ -54,9 +58,11 @@ export function ProductCardInfo({
   largeSize = false,
   largeHeightOnDesktop = false,
   largeCompactImage = false,
+  compactListing = false,
   inStock = true,
   isAddingToCart = false,
   onAddToCart,
+  omitProductTitleLink = false,
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -75,24 +81,33 @@ export function ProductCardInfo({
     }
   };
 
+  const denseDesktop = compactListing && !compactHeight;
+  const denseMobile = compactListing && compactHeight;
+
   return (
     <div
       className={`w-full h-full flex flex-col ${
-        compactHeight ? (largeCompactImage ? 'mt-5' : 'mt-6') : 'mt-12'
+        compactHeight
+          ? largeCompactImage
+            ? denseMobile
+              ? 'mt-4'
+              : 'mt-5'
+            : denseMobile
+              ? 'mt-5'
+              : 'mt-6'
+          : denseDesktop
+            ? 'mt-10'
+            : 'mt-12'
       }`}
     >
-      <Link
-        href={productHref}
-        prefetch
-        onMouseEnter={handleProductIntent}
-        onTouchStart={handleProductIntent}
-        onFocus={handleProductIntent}
-        className="block"
-      >
-        {/* Product Title - Centered, Bold */}
+      {omitProductTitleLink ? (
         <h3
           className={`text-center font-bold text-black ${
-            compactHeight ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]' : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
+            compactHeight
+              ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]'
+              : denseDesktop
+                ? 'text-[18px] mb-2 min-h-[48px] leading-[24px]'
+                : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
           }`}
           style={{
             display: '-webkit-box',
@@ -103,25 +118,62 @@ export function ProductCardInfo({
         >
           {title}
         </h3>
-      </Link>
+      ) : (
+        <Link
+          href={productHref}
+          prefetch
+          onMouseEnter={handleProductIntent}
+          onTouchStart={handleProductIntent}
+          onFocus={handleProductIntent}
+          className="block"
+        >
+          <h3
+            className={`text-center font-bold text-black ${
+              compactHeight
+                ? 'text-[14px] mb-1 min-h-[34px] leading-[17px]'
+                : denseDesktop
+                  ? 'text-[18px] mb-2 min-h-[48px] leading-[24px]'
+                  : 'text-[20px] mb-2 min-h-[56px] leading-[28px]'
+            }`}
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {title}
+          </h3>
+        </Link>
+      )}
 
       {/* Description - Centered, Grey, Semibold */}
       {description && description.trim() && (
-        <p className={`text-center font-semibold text-[#acacac] leading-normal ${compactHeight ? 'text-[12px] mb-1' : 'text-[16px] mb-3'}`}>
+        <p
+          className={`text-center font-semibold text-[#acacac] leading-normal ${
+            compactHeight ? 'text-[12px] mb-1' : denseDesktop ? 'text-[15px] mb-2' : 'text-[16px] mb-3'
+          }`}
+        >
           {description}
         </p>
       )}
 
       {/* Divider Line */}
-      <div className={`w-full mx-auto border-t border-[rgba(172,172,172,0.2)] ${compactHeight ? 'mb-1' : 'mb-3'}`} />
+      <div className={`w-full mx-auto border-t border-[rgba(172,172,172,0.2)] ${compactHeight ? 'mb-1' : denseDesktop ? 'mb-2' : 'mb-3'}`} />
 
       {/* Category - fixed row regardless of title length */}
-      <div className={`flex items-center justify-between gap-2 ${compactHeight ? 'mb-1' : 'mb-3'}`}>
-        <span className={`font-medium text-[#5c5c5c] leading-normal ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
+      <div className={`flex items-center justify-between gap-2 ${compactHeight ? 'mb-1' : denseDesktop ? 'mb-2' : 'mb-3'}`}>
+        <span
+          className={`font-medium text-[#5c5c5c] leading-normal ${
+            compactHeight ? 'text-[12px]' : denseDesktop ? 'text-[15px]' : 'text-[16px]'
+          }`}
+        >
           {t('common.navigation.categories')}
         </span>
         <p
-          className={`text-right font-medium text-[#acacac] leading-normal truncate ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}
+          className={`text-right font-medium text-[#acacac] leading-normal truncate ${
+            compactHeight ? 'text-[12px]' : denseDesktop ? 'text-[15px]' : 'text-[16px]'
+          }`}
           title={categoryValue}
         >
           {categoryValue}
@@ -135,11 +187,17 @@ export function ProductCardInfo({
             ? largeCompactImage
               ? 'pt-2 pb-2'
               : 'pt-3 pb-3'
-            : 'pt-8 pb-[25px]'
+            : denseDesktop
+              ? 'pt-6 pb-5'
+              : 'pt-8 pb-[25px]'
         } ${largeHeightOnDesktop ? 'lg:mt-6 lg:pt-8 lg:pb-6' : ''}`}
       >
         {/* Price Label - Left, Grey, Medium */}
-        <span className={`font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap ${compactHeight ? 'text-[12px]' : 'text-[16px]'}`}>
+        <span
+          className={`font-medium text-[#5c5c5c] leading-normal whitespace-pre-wrap ${
+            compactHeight ? 'text-[12px]' : denseDesktop ? 'text-[15px]' : 'text-[16px]'
+          }`}
+        >
           {t('common.price')}
         </span>
         
@@ -148,12 +206,14 @@ export function ProductCardInfo({
           <button
             onClick={handleAddToCart}
             disabled={!inStock || isAddingToCart}
-            className={`absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
+            className={`pointer-events-auto absolute left-1/2 -translate-x-1/2 rounded-full bg-[#87CB6F] flex items-center justify-center transition-all duration-200 hover:bg-[#7ab85f] disabled:bg-gray-300 disabled:cursor-not-allowed shadow-md z-30 ${
               largeCompactImage
                 ? 'bottom-0 translate-y-1/2 w-[46px] h-[46px]'
                 : compactHeight
                   ? 'bottom-[-8px] translate-y-1/2 w-10 h-10'
-                  : 'bottom-[-8px] translate-y-1/2 w-[58px] h-[58px]'
+                  : denseDesktop
+                    ? 'bottom-[-8px] translate-y-1/2 w-[52px] h-[52px]'
+                    : 'bottom-[-8px] translate-y-1/2 w-[58px] h-[58px]'
             }`}
             title={inStock ? t('common.buttons.addToCart') : t('common.stock.outOfStock')}
             aria-label={inStock ? t('common.ariaLabels.addToCart') : t('common.ariaLabels.outOfStock')}
@@ -182,7 +242,11 @@ export function ProductCardInfo({
         
         {/* Price Value - Right, Bold, aligned with price label */}
         <div className="flex items-center gap-2 ml-auto">
-          <span className={`font-black text-black leading-normal whitespace-pre-wrap ${compactHeight ? 'text-sm' : 'text-lg'}`}>
+          <span
+            className={`font-black text-black leading-normal whitespace-pre-wrap ${
+              compactHeight ? 'text-sm' : denseDesktop ? 'text-base' : 'text-lg'
+            }`}
+          >
             {formatPrice(price || 0, currency)}
           </span>
           {discountPercent && discountPercent > 0 ? (

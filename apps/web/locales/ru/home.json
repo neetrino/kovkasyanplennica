@@ -70,9 +70,9 @@
       "selectTableButton": "Выбрать стол"
     },
     "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
-    "descriptionLine1": "Возрождая традиции высоко",
-    "descriptionLine2": "кулинарного искусства Грузии и",
-    "descriptionLine3": "Армении в центре города.",
+    "descriptionLine1": "Возражая традиции высокого",
+    "descriptionLine2": "кулинарного искусства",
+    "descriptionLine3": "",
     "socialMedia": {
       "telegram": "Telegram",
       "instagram": "Instagram",
@@ -97,9 +97,9 @@
     "workingHours": {
       "title": "РЕЖИМ РАБОТЫ",
       "weekdays": "Доставка",
-      "weekdaysTime": "10:00 - 23:00",
+      "weekdaysTime": "11:00 - 22:30",
       "weekend": "Ресторан",
-      "weekendTime": "11:00 - 24:00",
+      "weekendTime": "11:00 - 23:30",
       "deliveryInfo": ""
     },
     "bottomLinks": {
