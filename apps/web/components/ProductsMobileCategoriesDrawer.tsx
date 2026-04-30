@@ -92,7 +92,7 @@ export function ProductsMobileCategoriesDrawer({
       {shell}
 
       {open ? (
-        <div className="fixed inset-0 z-[100] lg:hidden" role="presentation">
+        <div className="fixed inset-0 z-app-overlay lg:hidden" role="presentation">
           <button
             type="button"
             className="absolute inset-0 bg-black/50"
@@ -104,7 +104,7 @@ export function ProductsMobileCategoriesDrawer({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="absolute left-0 top-0 flex h-full w-[min(100vw-3rem,288px)] max-w-full flex-col border-r border-[#3d504e] bg-[#2F3F3D] shadow-2xl"
+            className="absolute left-0 top-0 flex h-[100dvh] max-h-[100dvh] w-[min(100vw-3rem,288px)] max-w-full flex-col border-r border-[#3d504e] bg-[#2F3F3D] pt-[env(safe-area-inset-top,0px)] shadow-2xl"
           >
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[#3d504e] px-3 py-3 pr-2">
               <h2
