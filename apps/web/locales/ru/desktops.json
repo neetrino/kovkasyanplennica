@@ -2,7 +2,8 @@
   "quickBar": {
     "tagline": "Зарезервируйте ваш идеальный вечер всего за несколько кликов.",
     "date": "Дата",
-    "time": "Время",
+    "time": "С",
+    "timeEnd": "До",
     "guests": "Гости",
     "cta": "Забронировать"
   },
@@ -68,8 +69,11 @@
     "phone": "Телефон",
     "date": "Дата",
     "time": "Время",
+    "timeFrom": "С",
+    "timeTo": "До",
+    "timeEndPlaceholder": "До",
     "occasion": "По какому поводу",
-    "occasionPlaceholder": "Выберите повод",
+    "occasionPlaceholder": "Не указано",
     "occasions": {
       "birthday": "День рождения",
       "regular": "Обычный визит"
@@ -94,9 +98,10 @@
       "emailInvalid": "Некорректный адрес эл. почты",
       "phoneRequired": "Укажите телефон",
       "dateRequired": "Укажите дату",
-      "timeRequired": "Укажите время",
+      "timeRequired": "Укажите время начала",
+      "timeEndRequired": "Укажите время окончания",
+      "timeRangeInvalid": "Время «до» должно быть позже «с»",
       "timePast": "Нельзя выбрать прошедшее время",
-      "occasionRequired": "Выберите повод визита",
       "timeUnavailable": "Выбранное время уже недоступно",
       "submitFailed": "Не удалось оформить бронирование",
       "unknownError": "Неизвестная ошибка"

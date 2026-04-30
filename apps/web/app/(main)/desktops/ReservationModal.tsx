@@ -6,7 +6,12 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
 import { getAppScrollRegion } from '@/lib/appScrollRegion';
 import { formatLocalISODate } from '@/lib/formatLocalISODate';
-import { isPastTimeSlotForDate } from '@/lib/reservations/availability';
+import {
+  getValidEndTimeSlots,
+  isPastTimeSlotForDate,
+  isStartTimeSlotBookable,
+  type ReservationBusyInterval,
+} from '@/lib/reservations/availability';
 import type { TableConfig } from './table-data';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 
@@ -17,6 +22,7 @@ interface ReservationForm {
   phone: string;
   date: string;
   time: string;
+  timeEnd: string;
   occasion: string;
   guestCount: string;
   note: string;
@@ -29,6 +35,7 @@ const INITIAL_FORM: ReservationForm = {
   phone: '',
   date: '',
   time: '',
+  timeEnd: '',
   occasion: '',
   guestCount: '1',
   note: '',
@@ -45,7 +52,7 @@ interface ReservationModalProps {
   productImageUrl?: string | null;
   profitCents?: number | null;
   /** Վերևի quick-bar-ից ամսաթիվ / ժամ / հյուրեր */
-  quickBarPrefill?: { date: string; time: string; guestCount: string } | null;
+  quickBarPrefill?: { date: string; time: string; timeEnd?: string; guestCount: string } | null;
 }
 
 export function ReservationModal({
@@ -62,7 +69,7 @@ export function ReservationModal({
   const [errors, setErrors] = useState<Partial<ReservationForm>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [busyIntervals, setBusyIntervals] = useState<ReservationBusyInterval[]>([]);
   const didPrefillFromUser = useRef(false);
 
   /** Lock app scroll root so `fixed` centering is stable while the dialog is open. */
@@ -101,9 +108,17 @@ export function ReservationModal({
       ...prev,
       date: quickBarPrefill.date || prev.date,
       time: quickBarPrefill.time || prev.time,
+      timeEnd: quickBarPrefill.timeEnd ?? prev.timeEnd,
       guestCount: String(guests),
     }));
-  }, [table.id, table.seats, quickBarPrefill?.date, quickBarPrefill?.time, quickBarPrefill?.guestCount]);
+  }, [
+    table.id,
+    table.seats,
+    quickBarPrefill?.date,
+    quickBarPrefill?.time,
+    quickBarPrefill?.timeEnd,
+    quickBarPrefill?.guestCount,
+  ]);
 
   // Close on Escape
   useEffect(() => {
@@ -132,17 +147,20 @@ export function ReservationModal({
     if (!form.phone.trim()) next.phone = t(`${v}.phoneRequired`);
     if (!form.date) next.date = t(`${v}.dateRequired`);
     if (!form.time) next.time = t(`${v}.timeRequired`);
+    if (!form.timeEnd) next.timeEnd = t(`${v}.timeEndRequired`);
     if (form.date && form.time && isPastTimeSlotForDate(form.date, form.time)) {
       next.time = t(`${v}.timePast`);
     }
-    if (!form.occasion) next.occasion = t(`${v}.occasionRequired`);
+    if (form.time && form.timeEnd && form.timeEnd <= form.time) {
+      next.timeEnd = t(`${v}.timeRangeInvalid`);
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   }, [form, t]);
 
   useEffect(() => {
-    if (!form.date || !form.occasion) {
-      setUnavailableSlots([]);
+    if (!form.date) {
+      setBusyIntervals([]);
       return;
     }
 
@@ -150,45 +168,53 @@ export function ReservationModal({
     const search = new URLSearchParams({
       tableId: table.id,
       date: form.date,
-      occasion: form.occasion,
     });
 
-    async function loadUnavailableSlots() {
+    async function loadBusy() {
       try {
         const res = await fetch(`/api/v1/reservations?${search.toString()}`);
         if (!res.ok) throw new Error('Failed to load reservation availability');
         const data: unknown = await res.json();
         const payload =
           typeof data === 'object' && data !== null && 'data' in data
-            ? (data.data as { unavailableSlots?: unknown })
+            ? (data.data as { busyIntervals?: unknown })
             : null;
-        const slots = Array.isArray(payload?.unavailableSlots)
-          ? payload.unavailableSlots.filter((x): x is string => typeof x === 'string')
-          : [];
+        const raw = Array.isArray(payload?.busyIntervals) ? payload.busyIntervals : [];
+        const intervals: ReservationBusyInterval[] = [];
+        for (const item of raw) {
+          if (typeof item !== 'object' || item === null) continue;
+          const o = item as { time?: unknown; timeEnd?: unknown };
+          if (typeof o.time === 'string' && typeof o.timeEnd === 'string') {
+            intervals.push({ time: o.time, timeEnd: o.timeEnd });
+          }
+        }
 
         if (!cancelled) {
-          setUnavailableSlots(slots);
-          if (form.time && slots.includes(form.time)) {
-            setForm((prev) => ({ ...prev, time: '' }));
-            setErrors((prev) => ({
-              ...prev,
-              time: t('desktops.modal.validation.timeUnavailable'),
-            }));
-          }
+          setBusyIntervals(intervals);
         }
       } catch {
         if (!cancelled) {
-          setUnavailableSlots([]);
+          setBusyIntervals([]);
         }
       }
     }
 
-    void loadUnavailableSlots();
+    void loadBusy();
 
     return () => {
       cancelled = true;
     };
-  }, [form.date, form.occasion, form.time, t, table.id]);
+  }, [form.date, table.id]);
+
+  useEffect(() => {
+    if (!form.time) return;
+    setForm((prev) => {
+      if (!prev.timeEnd) return prev;
+      const ends = getValidEndTimeSlots(prev.time, RESERVATION_TIME_SLOTS, busyIntervals);
+      if (ends.includes(prev.timeEnd)) return prev;
+      return { ...prev, timeEnd: '' };
+    });
+  }, [form.time, busyIntervals]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -208,7 +234,8 @@ export function ReservationModal({
           phone: form.phone.trim(),
           date: form.date,
           time: form.time,
-          occasion: form.occasion,
+          timeEnd: form.timeEnd,
+          occasion: form.occasion.trim() ? form.occasion : 'regular',
           guestCount: parseInt(form.guestCount, 10) || 1,
           note: form.note.trim() || null,
           ...(productTitle && { productTitle: productTitle.trim() }),
@@ -303,7 +330,7 @@ export function ReservationModal({
               {t('desktops.modal.successTitle')}
             </h3>
             <p className="text-[#fff4de]/60 text-sm mb-2">
-              {tableTitle} · {form.date} · {form.time}
+              {tableTitle} · {form.date} · {form.time}–{form.timeEnd}
             </p>
             <p className="text-[#fff4de]/40 text-xs mb-8">
               {t('desktops.modal.successConfirm').replace('{email}', form.email)}
@@ -378,7 +405,22 @@ export function ReservationModal({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div>
+              <div className="min-w-0">
+                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
+                  {t('desktops.modal.occasion')}
+                </label>
+                <select
+                  value={form.occasion}
+                  onChange={set('occasion')}
+                  className={`${errors.occasion ? inputError : inputNormal} appearance-none`}
+                >
+                  <option value="">{t('desktops.modal.occasionPlaceholder')}</option>
+                  <option value="birthday">{t('desktops.modal.occasions.birthday')}</option>
+                  <option value="regular">{t('desktops.modal.occasions.regular')}</option>
+                </select>
+                {errors.occasion && <p className="text-red-400 text-xs mt-1">{errors.occasion}</p>}
+              </div>
+              <div className="min-w-0">
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                   {t('desktops.modal.date')} <span className="text-[#7CB342]">*</span>
                 </label>
@@ -391,44 +433,6 @@ export function ReservationModal({
                 />
                 {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date}</p>}
               </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  {t('desktops.modal.time')} <span className="text-[#7CB342]">*</span>
-                </label>
-                <select
-                  value={form.time}
-                  onChange={set('time')}
-                  className={`${errors.time ? inputError : inputNormal} appearance-none`}
-                >
-                  <option value="">{t('desktops.modal.timePlaceholder')}</option>
-                  {RESERVATION_TIME_SLOTS.map((slot) => (
-                    <option
-                      key={slot}
-                      value={slot}
-                      disabled={unavailableSlots.includes(slot) || isPastTimeSlotForDate(form.date, slot)}
-                    >
-                      {slot}
-                    </option>
-                  ))}
-                </select>
-                {errors.time && <p className="text-red-400 text-xs mt-1">{errors.time}</p>}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                {t('desktops.modal.occasion')} <span className="text-[#7CB342]">*</span>
-              </label>
-              <select
-                value={form.occasion}
-                onChange={set('occasion')}
-                className={`${errors.occasion ? inputError : inputNormal} appearance-none`}
-              >
-                <option value="">{t('desktops.modal.occasionPlaceholder')}</option>
-                <option value="birthday">{t('desktops.modal.occasions.birthday')}</option>
-                <option value="regular">{t('desktops.modal.occasions.regular')}</option>
-              </select>
-              {errors.occasion && <p className="text-red-400 text-xs mt-1">{errors.occasion}</p>}
             </div>
 
             <div>
@@ -446,6 +450,57 @@ export function ReservationModal({
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
+                  {t('desktops.modal.timeFrom')} <span className="text-[#7CB342]">*</span>
+                </label>
+                <select
+                  value={form.time}
+                  onChange={(e) => {
+                    const nextTime = e.target.value;
+                    setForm((prev) => ({ ...prev, time: nextTime, timeEnd: '' }));
+                    setErrors((prev) => ({ ...prev, time: undefined, timeEnd: undefined }));
+                  }}
+                  className={`${errors.time ? inputError : inputNormal} appearance-none`}
+                >
+                  <option value="">{t('desktops.modal.timePlaceholder')}</option>
+                  {RESERVATION_TIME_SLOTS.map((slot) => (
+                    <option
+                      key={slot}
+                      value={slot}
+                      disabled={
+                        !isStartTimeSlotBookable(slot, RESERVATION_TIME_SLOTS, busyIntervals) ||
+                        isPastTimeSlotForDate(form.date, slot)
+                      }
+                    >
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+                {errors.time && <p className="text-red-400 text-xs mt-1">{errors.time}</p>}
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
+                  {t('desktops.modal.timeTo')} <span className="text-[#7CB342]">*</span>
+                </label>
+                <select
+                  value={form.timeEnd}
+                  onChange={set('timeEnd')}
+                  className={`${errors.timeEnd ? inputError : inputNormal} appearance-none`}
+                  disabled={!form.time}
+                >
+                  <option value="">{t('desktops.modal.timeEndPlaceholder')}</option>
+                  {getValidEndTimeSlots(form.time, RESERVATION_TIME_SLOTS, busyIntervals).map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
+                {errors.timeEnd && <p className="text-red-400 text-xs mt-1">{errors.timeEnd}</p>}
+              </div>
             </div>
 
             <div>

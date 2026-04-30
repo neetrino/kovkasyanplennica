@@ -2,18 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@white-shop/db";
 import { logger } from "@/lib/utils/logger";
 import {
-  getUnavailableTimeSlots,
-  hasReservationConflict,
+  hasReservationTimeRangeConflict,
   isPastTimeSlotForDate,
   normalizeReservationOccasion,
-  type ReservationOccasion,
+  reservationIntervalToMinutes,
+  type ReservationBusyInterval,
 } from "@/lib/reservations/availability";
+import { RESERVATION_TIME_SLOTS } from "@/lib/reservations/time-slots";
+
+const SLOT_SET = new Set<string>(RESERVATION_TIME_SLOTS as unknown as string[]);
 
 function reservationValidationError(detail: string) {
   return NextResponse.json(
     { type: "validation-error", title: "Validation Error", status: 400, detail },
     { status: 400 }
   );
+}
+
+function isValidSlotPair(time: string, timeEnd: string): boolean {
+  if (!SLOT_SET.has(time) || !SLOT_SET.has(timeEnd)) return false;
+  return reservationIntervalToMinutes(time, timeEnd) != null;
 }
 
 async function getExistingReservations(tableId: string, date: string) {
@@ -26,23 +34,33 @@ async function getExistingReservations(tableId: string, date: string) {
     select: {
       status: true,
       time: true,
-      occasion: true,
+      timeEnd: true,
     },
   });
 }
 
+function toBusyIntervals(
+  rows: readonly { status: string; time: string; timeEnd: string | null }[],
+): ReservationBusyInterval[] {
+  const out: ReservationBusyInterval[] = [];
+  for (const r of rows) {
+    if (r.status === "cancelled") continue;
+    if (r.timeEnd == null || r.timeEnd.trim() === "") continue;
+    if (reservationIntervalToMinutes(r.time, r.timeEnd) == null) continue;
+    out.push({ time: r.time, timeEnd: r.timeEnd });
+  }
+  return out;
+}
+
 /**
- * GET /api/v1/reservations?tableId=...&date=...&occasion=...
- * Վերադարձնում է զբաղված ժամային slot-երը կոնկրետ սեղանի և օրվա համար
+ * GET /api/v1/reservations?tableId=...&date=...
+ * Returns busy [time, timeEnd) intervals for the table on that date.
  */
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const tableId = searchParams.get("tableId")?.trim() ?? "";
     const date = searchParams.get("date")?.trim() ?? "";
-    const occasionRaw = searchParams.get("occasion");
-    const occasion: ReservationOccasion =
-      normalizeReservationOccasion(occasionRaw ?? "regular") ?? "regular";
 
     if (!tableId) {
       return reservationValidationError("Query param 'tableId' is required");
@@ -52,10 +70,10 @@ export async function GET(req: NextRequest) {
     }
 
     const existingReservations = await getExistingReservations(tableId, date);
-    const unavailableSlots = getUnavailableTimeSlots(occasion, existingReservations);
+    const busyIntervals = toBusyIntervals(existingReservations);
 
     return NextResponse.json({
-      data: { unavailableSlots },
+      data: { busyIntervals },
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -84,6 +102,7 @@ export async function POST(req: NextRequest) {
       phone,
       date,
       time,
+      timeEnd,
       guestCount,
       note,
       occasion,
@@ -120,7 +139,18 @@ export async function POST(req: NextRequest) {
       return reservationValidationError("Field 'time' is required");
     }
 
-    const normalizedOccasion = normalizeReservationOccasion(occasion);
+    if (!timeEnd || typeof timeEnd !== "string" || timeEnd.trim().length === 0) {
+      return reservationValidationError("Field 'timeEnd' is required");
+    }
+
+    const trimmedTime = time.trim();
+    const trimmedTimeEnd = timeEnd.trim();
+    if (!isValidSlotPair(trimmedTime, trimmedTimeEnd)) {
+      return reservationValidationError("Invalid time range: use on-the-hour or half-hour slots with end after start");
+    }
+
+    const occasionInput = occasion === undefined || occasion === null || occasion === "" ? "regular" : occasion;
+    const normalizedOccasion = normalizeReservationOccasion(occasionInput);
     if (normalizedOccasion == null) {
       return reservationValidationError("Field 'occasion' must be one of: birthday, regular");
     }
@@ -137,18 +167,19 @@ export async function POST(req: NextRequest) {
 
     const trimmedTableId = tableId.trim();
     const trimmedDate = date.trim();
-    const trimmedTime = time.trim();
     if (isPastTimeSlotForDate(trimmedDate, trimmedTime)) {
       return reservationValidationError("Selected date/time is in the past");
     }
     const existingReservations = await getExistingReservations(trimmedTableId, trimmedDate);
-    if (hasReservationConflict(trimmedTime, normalizedOccasion, existingReservations)) {
+    if (
+      hasReservationTimeRangeConflict(trimmedTime, trimmedTimeEnd, existingReservations, RESERVATION_TIME_SLOTS)
+    ) {
       return NextResponse.json(
         {
           type: "conflict",
           title: "Reservation Conflict",
           status: 409,
-          detail: "Selected time is unavailable for this table",
+          detail: "Selected time range is unavailable for this table",
         },
         { status: 409 }
       );
@@ -165,6 +196,7 @@ export async function POST(req: NextRequest) {
         phone: phone.trim(),
         date: trimmedDate,
         time: trimmedTime,
+        timeEnd: trimmedTimeEnd,
         guestCount: Number(guestCount) || 1,
         note: note ? String(note).trim() : null,
         occasion: normalizedOccasion,

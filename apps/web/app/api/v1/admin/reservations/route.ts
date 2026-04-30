@@ -3,10 +3,14 @@ import { authenticateToken, requireAdminOrHostess } from "@/lib/middleware/auth"
 import { db } from "@white-shop/db";
 import { logger } from "@/lib/utils/logger";
 import {
-  hasReservationConflict,
+  hasReservationTimeRangeConflict,
   isPastTimeSlotForDate,
   normalizeReservationOccasion,
+  reservationIntervalToMinutes,
 } from "@/lib/reservations/availability";
+import { RESERVATION_TIME_SLOTS } from "@/lib/reservations/time-slots";
+
+const SLOT_SET = new Set<string>(RESERVATION_TIME_SLOTS as unknown as string[]);
 
 function validationError(detail: string) {
   return NextResponse.json(
@@ -129,7 +133,22 @@ export async function POST(req: NextRequest) {
       return validationError("Field 'time' is required");
     }
 
-    const normalizedOccasion = normalizeReservationOccasion(occasion);
+    const { timeEnd } = body;
+    if (!timeEnd || typeof timeEnd !== "string" || timeEnd.trim().length === 0) {
+      return validationError("Field 'timeEnd' is required");
+    }
+
+    const trimmedTime = time.trim();
+    const trimmedTimeEnd = timeEnd.trim();
+    if (!SLOT_SET.has(trimmedTime) || !SLOT_SET.has(trimmedTimeEnd)) {
+      return validationError("Invalid time slot values");
+    }
+    if (reservationIntervalToMinutes(trimmedTime, trimmedTimeEnd) == null) {
+      return validationError("timeEnd must be after time");
+    }
+
+    const occasionInput = occasion === undefined || occasion === null || occasion === "" ? "regular" : occasion;
+    const normalizedOccasion = normalizeReservationOccasion(occasionInput);
     if (normalizedOccasion == null) {
       return validationError("Field 'occasion' must be one of: birthday, regular");
     }
@@ -146,7 +165,6 @@ export async function POST(req: NextRequest) {
 
     const trimmedTableId = tableId.trim();
     const trimmedDate = date.trim();
-    const trimmedTime = time.trim();
     if (isPastTimeSlotForDate(trimmedDate, trimmedTime)) {
       return validationError("Selected date/time is in the past");
     }
@@ -159,11 +177,13 @@ export async function POST(req: NextRequest) {
       select: {
         status: true,
         time: true,
-        occasion: true,
+        timeEnd: true,
       },
     });
 
-    if (hasReservationConflict(trimmedTime, normalizedOccasion, existingReservations)) {
+    if (
+      hasReservationTimeRangeConflict(trimmedTime, trimmedTimeEnd, existingReservations, RESERVATION_TIME_SLOTS)
+    ) {
       return NextResponse.json(
         {
           type: "conflict",
@@ -186,6 +206,7 @@ export async function POST(req: NextRequest) {
         phone: phone.trim(),
         date: trimmedDate,
         time: trimmedTime,
+        timeEnd: trimmedTimeEnd,
         guestCount: Number(guestCount) || 1,
         note: note ? String(note).trim() : null,
         occasion: normalizedOccasion,
