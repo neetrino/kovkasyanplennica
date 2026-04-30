@@ -84,6 +84,7 @@ function SidebarCategoryRow({
   onCategoryClick,
   t,
   strip,
+  fixedSidebarPillWidth,
 }: {
   category: Category;
   product: { id: string; slug: string; title: string; image: string | null } | null;
@@ -91,6 +92,8 @@ function SidebarCategoryRow({
   onCategoryClick: (categorySlug: string | null) => void;
   t: (path: string) => string;
   strip: boolean;
+  /** When true (e.g. mobile drawer), keep pill width; skip page-based hover expansion. */
+  fixedSidebarPillWidth?: boolean;
 }) {
   const title = category.title;
   const slug = category.slug;
@@ -117,16 +120,26 @@ function SidebarCategoryRow({
 
   const sidebarSurface = strip
     ? ''
-    : [
-        'bg-white shadow-sm',
-        'hover:w-[var(--products-category-pill-hover)] hover:bg-[#fff4de] hover:shadow-md',
-        'focus-visible:w-[var(--products-category-pill-hover)] focus-visible:bg-[#fff4de] focus-visible:shadow-md',
+    : fixedSidebarPillWidth
+      ? [
+          'bg-white shadow-sm',
+          'hover:bg-[#fff4de] hover:shadow-md',
+          'focus-visible:bg-[#fff4de] focus-visible:shadow-md',
+          'outline-none',
+          isActive
+            ? 'ring-1 ring-[#2F3F3D]/40'
+            : 'hover:ring-1 hover:ring-[#2F3F3D]/20 focus-visible:ring-1 focus-visible:ring-[#2F3F3D]/20',
+        ].join(' ')
+      : [
+          'bg-white shadow-sm',
+          'hover:w-[var(--products-category-pill-hover)] hover:bg-[#fff4de] hover:shadow-md',
+          'focus-visible:w-[var(--products-category-pill-hover)] focus-visible:bg-[#fff4de] focus-visible:shadow-md',
 
-        'outline-none',
-        isActive
-          ? 'ring-1 ring-[#2F3F3D]/40'
-          : 'hover:ring-1 hover:ring-[#2F3F3D]/20 focus-visible:ring-1 focus-visible:ring-[#2F3F3D]/20',
-      ].join(' ');
+          'outline-none',
+          isActive
+            ? 'ring-1 ring-[#2F3F3D]/40'
+            : 'hover:ring-1 hover:ring-[#2F3F3D]/20 focus-visible:ring-1 focus-visible:ring-[#2F3F3D]/20',
+        ].join(' ');
 
   const labelClasses = strip
     ? `min-w-0 flex-1 font-semibold uppercase leading-snug tracking-wide transition-colors text-[11px] ${
@@ -166,7 +179,15 @@ function SidebarCategoryRow({
   );
 }
 
-function ProductsCategorySidebarInner({ variant }: { variant: 'sidebar' | 'strip' }) {
+function ProductsCategorySidebarInner({
+  variant,
+  onNavigate,
+  fixedSidebarPillWidth,
+}: {
+  variant: 'sidebar' | 'strip';
+  onNavigate?: () => void;
+  fixedSidebarPillWidth?: boolean;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
@@ -176,7 +197,8 @@ function ProductsCategorySidebarInner({ variant }: { variant: 'sidebar' | 'strip
   const { categories, loading: categoriesLoading } = useCategories();
   const { categoryProducts } = useCategoryProducts(categories);
 
-  const pillHoverEnabled = variant === 'sidebar' && !categoriesLoading;
+  const pillHoverEnabled =
+    variant === 'sidebar' && !categoriesLoading && !fixedSidebarPillWidth;
   const pillHoverWidthPx = useCategoryPillHoverWidthPx(pillHoverEnabled, categoryNavRef);
 
   const handleCategoryClick = (categorySlug: string | null) => {
@@ -188,6 +210,7 @@ function ProductsCategorySidebarInner({ variant }: { variant: 'sidebar' | 'strip
     }
     params.delete('page');
     router.push(`/products?${params.toString()}`);
+    onNavigate?.();
   };
 
   if (categoriesLoading) {
@@ -214,6 +237,7 @@ function ProductsCategorySidebarInner({ variant }: { variant: 'sidebar' | 'strip
             onCategoryClick={handleCategoryClick}
             t={t}
             strip={variant === 'strip'}
+            fixedSidebarPillWidth={Boolean(fixedSidebarPillWidth)}
           />
         );
       })}
@@ -248,12 +272,24 @@ function ProductsCategorySidebarInner({ variant }: { variant: 'sidebar' | 'strip
 export type ProductsCategorySidebarProps = {
   /** Desktop: fixed-width left rail. Mobile: horizontal strip. */
   variant?: 'sidebar' | 'strip';
+  /** Called after navigating to a category (e.g. close mobile drawer). */
+  onNavigate?: () => void;
+  /** Sidebar only: do not expand pills toward the product grid (e.g. overlay drawer). */
+  fixedSidebarPillWidth?: boolean;
 };
 
-export function ProductsCategorySidebar({ variant = 'sidebar' }: ProductsCategorySidebarProps) {
+export function ProductsCategorySidebar({
+  variant = 'sidebar',
+  onNavigate,
+  fixedSidebarPillWidth,
+}: ProductsCategorySidebarProps) {
   return (
     <Suspense fallback={<ProductsCategorySidebarSkeleton variant={variant === 'strip' ? 'strip' : 'sidebar'} />}>
-      <ProductsCategorySidebarInner variant={variant === 'strip' ? 'strip' : 'sidebar'} />
+      <ProductsCategorySidebarInner
+        variant={variant === 'strip' ? 'strip' : 'sidebar'}
+        onNavigate={onNavigate}
+        fixedSidebarPillWidth={fixedSidebarPillWidth}
+      />
     </Suspense>
   );
 }

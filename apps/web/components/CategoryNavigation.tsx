@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
@@ -11,7 +12,24 @@ import { CategoryEdgeScrollButton } from './CategoryNavigation/CategoryScrollBut
 import { CategoryNavigationLoading } from './CategoryNavigation/CategoryNavigationLoading';
 import type { Category } from './CategoryNavigation/utils';
 
-function CategoryNavigationContent() {
+function LeadingCategoryBarFallback({ leadingSlot }: { leadingSlot?: ReactNode }) {
+  if (!leadingSlot) {
+    return <CategoryNavigationLoading />;
+  }
+  return (
+    <div className="w-full border-b border-[#3d504e] bg-[#2F3F3D] py-4 sm:py-5 md:py-7">
+      <div className="flex min-w-0 items-center gap-2 px-3 sm:gap-3 sm:px-5 md:px-7 lg:px-10">
+        <div className="shrink-0">{leadingSlot}</div>
+        <div
+          className="min-h-[96px] min-w-0 flex-1 rounded-br-3xl rounded-tr-3xl bg-white/10 animate-pulse sm:min-h-[116px]"
+          aria-hidden
+        />
+      </div>
+    </div>
+  );
+}
+
+function CategoryNavigationContent({ leadingSlot }: { leadingSlot?: ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
@@ -50,7 +68,7 @@ function CategoryNavigationContent() {
   }, [categories.length, Object.keys(categoryProducts).length, categoriesLoading, updateScrollButtons]);
 
   if (categoriesLoading) {
-    return <CategoryNavigationLoading />;
+    return <LeadingCategoryBarFallback leadingSlot={leadingSlot} />;
   }
 
   // Add "All" category at the beginning
@@ -62,9 +80,10 @@ function CategoryNavigationContent() {
   const displayCategories = allCategoriesWithAll;
 
   return (
-    <div className="bg-[#2F3F3D] border-b border-[#3d504e] py-4 sm:py-5 md:py-7 w-full">
+    <div className="w-full border-b border-[#3d504e] bg-[#2F3F3D] py-4 sm:py-5 md:py-7">
       <div className="w-full px-3 sm:px-5 md:px-7 lg:px-10">
         <div className="flex min-w-0 items-center gap-1 sm:gap-2">
+          {leadingSlot ? <div className="shrink-0 pr-1 sm:pr-2">{leadingSlot}</div> : null}
           <CategoryEdgeScrollButton
             direction="left"
             canScroll={canScrollLeft}
@@ -107,10 +126,15 @@ function CategoryNavigationContent() {
   );
 }
 
-export function CategoryNavigation() {
+export type CategoryNavigationProps = {
+  /** e.g. mobile filter control, aligned with the first category on one row */
+  leadingSlot?: ReactNode;
+};
+
+export function CategoryNavigation({ leadingSlot }: CategoryNavigationProps) {
   return (
-    <Suspense fallback={<CategoryNavigationLoading />}>
-      <CategoryNavigationContent />
+    <Suspense fallback={<LeadingCategoryBarFallback leadingSlot={leadingSlot} />}>
+      <CategoryNavigationContent leadingSlot={leadingSlot} />
     </Suspense>
   );
 }

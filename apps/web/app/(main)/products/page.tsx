@@ -6,6 +6,7 @@ import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
 import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
+import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
@@ -318,15 +319,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </aside>
 
         <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-[76px] sm:pt-[92px] lg:pt-[88px] xl:pt-[96px]">
-          <div className="px-3 pb-3 sm:px-5 lg:hidden">
-            <ProductsCategorySidebar variant="strip" />
-          </div>
-
-          <ProductsShopToolbar className="px-3 pb-1 sm:px-6 lg:px-8 lg:pt-2" />
+          <ProductsShopToolbar className="hidden px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" />
 
           <div
             data-products-card-column
-            className="relative mx-auto max-w-7xl overflow-x-visible px-3 pb-8 pt-2 sm:px-5 md:px-6 lg:px-8 lg:pb-10 lg:pt-4"
+            className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pt-[56px] pb-4 sm:pl-4 sm:pr-6 sm:pt-[88px] md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
           >
           {normalizedProducts.length > 0 ? (
             <>
@@ -336,13 +333,28 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   className="mb-12 overflow-x-visible sm:mb-16 md:mb-20 last:mb-0"
                   aria-labelledby={`category-row-${index}`}
                 >
-                  <h2
-                    id={`category-row-${index}`}
-                    className="mb-12 md:mb-6 lg:mb-10 w-full text-right min-h-[48px] leading-[48px] text-[43px] font-light italic text-[#fff4de]"
-                    style={{ fontFamily: "'Sansation Light', sans-serif" }}
-                  >
-                    {row.categoryTitle}
-                  </h2>
+                  {index === 0 ? (
+                    <div className="mb-12 flex min-h-[36px] items-start gap-3 sm:min-h-[42px] sm:gap-4 md:mb-6 md:min-h-[48px] lg:mb-10 lg:block">
+                      <h2
+                        id={`category-row-${index}`}
+                        className="min-w-0 flex-1 text-left text-[28px] font-light leading-[34px] text-[#fff4de] sm:text-[32px] sm:leading-[38px] md:text-[38px] md:leading-[44px] lg:mb-10 lg:inline-block lg:w-full lg:flex-none lg:text-right lg:italic lg:text-[43px] lg:leading-[48px]"
+                        style={{ fontFamily: "'Sansation Light', sans-serif" }}
+                      >
+                        {row.categoryTitle}
+                      </h2>
+                      <div className="shrink-0 pt-1 lg:hidden">
+                        <ProductsMobileCategoriesDrawer layout="inline" />
+                      </div>
+                    </div>
+                  ) : (
+                    <h2
+                      id={`category-row-${index}`}
+                      className="mb-12 inline-block min-h-[36px] text-left text-[28px] font-light leading-[34px] text-[#fff4de] sm:min-h-[42px] sm:text-[32px] sm:leading-[38px] md:mb-6 md:min-h-[48px] md:text-[38px] md:leading-[44px] lg:mb-10 lg:w-full lg:text-right lg:italic lg:text-[43px] lg:leading-[48px]"
+                      style={{ fontFamily: "'Sansation Light', sans-serif" }}
+                    >
+                      {row.categoryTitle}
+                    </h2>
+                  )}
                   {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
                   <ProductsCategoryCarousel products={row.products} sortBy={params.sort || "default"} minVisibleCards={2} />
                 </section>
@@ -393,8 +405,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               )}
             </>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">{t(language, 'common.messages.noProductsFound')}</p>
+            <div className="py-12">
+              <div className="mb-6 flex justify-end lg:hidden">
+                <ProductsMobileCategoriesDrawer layout="inline" />
+              </div>
+              <p className="text-center text-lg text-gray-500">
+                {t(language, 'common.messages.noProductsFound')}
+              </p>
             </div>
           )}
           </div>
