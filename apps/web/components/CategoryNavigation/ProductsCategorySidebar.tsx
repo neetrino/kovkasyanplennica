@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import type { MouseEvent, RefObject } from 'react';
+import type { RefObject } from 'react';
 import { Suspense, useCallback, useLayoutEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { CategoryIcon } from './CategoryIcon';
 import { useCategories } from './hooks/useCategories';
@@ -51,7 +51,7 @@ function useCategoryPillHoverWidthPx(enabled: boolean, navRef: RefObject<HTMLEle
   return hoverPx;
 }
 
-function ProductsCategorySidebarSkeleton({ variant }: { variant: 'sidebar' | 'strip' }) {
+export function ProductsCategorySidebarSkeleton({ variant }: { variant: 'sidebar' | 'strip' }) {
   const rows = [1, 2, 3, 4, 5, 6, 7];
   if (variant === 'strip') {
     return (
@@ -81,7 +81,8 @@ function SidebarCategoryRow({
   category,
   product,
   isActive,
-  onCategoryClick,
+  navHref,
+  onNavigate,
   t,
   strip,
   fixedSidebarPillWidth,
@@ -90,7 +91,10 @@ function SidebarCategoryRow({
   category: Category;
   product: { id: string; slug: string; title: string; image: string | null } | null;
   isActive: boolean;
-  onCategoryClick: (categorySlug: string | null) => void;
+  /** Full `/products?...` URL preserving filters (same as merged client navigation). */
+  navHref: string;
+  /** e.g. close mobile drawer after choosing a category */
+  onNavigate?: () => void;
   t: (path: string) => string;
   strip: boolean;
   /** When true (e.g. mobile drawer), keep pill width; skip page-based hover expansion. */
@@ -108,8 +112,6 @@ function SidebarCategoryRow({
   } else if (title.toLowerCase().includes('sale')) {
     labelText = t('products.categoryNavigation.sale');
   }
-
-  const href = category.slug === 'all' ? '/products' : `/products?category=${category.slug}`;
 
   const pillClass = strip
     ? 'min-h-[84px] min-w-[200px] shrink-0 rounded-br-[120px] rounded-tr-[120px] bg-white shadow-sm transition-[box-shadow,transform] hover:shadow-md'
@@ -157,11 +159,10 @@ function SidebarCategoryRow({
 
   return (
     <Link
-      href={href}
-      onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        onCategoryClick(category.slug === 'all' ? null : category.slug);
-      }}
+      href={navHref}
+      prefetch
+      scroll={false}
+      onClick={() => onNavigate?.()}
       className={`group flex items-center justify-between gap-1.5 ${strip ? pillClass : `${pillClass} ${sidebarSurface}`} ${
         strip ? (isActive ? 'ring-1 ring-[#2F3F3D]/40' : '') : ''
       }`}
@@ -198,7 +199,6 @@ function ProductsCategorySidebarInner({
     { id: string; slug: string; title: string; image: string | null } | null
   >;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
   const currentCategory = searchParams?.get('category');
@@ -211,17 +211,20 @@ function ProductsCategorySidebarInner({
     variant === 'sidebar' && !categoriesLoading && !fixedSidebarPillWidth;
   const pillHoverWidthPx = useCategoryPillHoverWidthPx(pillHoverEnabled, categoryNavRef);
 
-  const handleCategoryClick = (categorySlug: string | null) => {
-    const params = new URLSearchParams(searchParams?.toString() || '');
-    if (categorySlug && categorySlug !== 'all') {
-      params.set('category', categorySlug);
-    } else {
-      params.delete('category');
-    }
-    params.delete('page');
-    router.push(`/products?${params.toString()}`);
-    onNavigate?.();
-  };
+  const buildCategoryHref = useCallback(
+    (categorySlug: string | null) => {
+      const params = new URLSearchParams(searchParams?.toString() || '');
+      if (categorySlug && categorySlug !== 'all') {
+        params.set('category', categorySlug);
+      } else {
+        params.delete('category');
+      }
+      params.delete('page');
+      const qs = params.toString();
+      return qs ? `/products?${qs}` : '/products';
+    },
+    [searchParams]
+  );
 
   if (categoriesLoading) {
     return <ProductsCategorySidebarSkeleton variant={variant} />;
@@ -238,13 +241,15 @@ function ProductsCategorySidebarInner({
         const isActive =
           category.slug === 'all' ? !currentCategory : currentCategory === category.slug;
         const product = categoryProducts[category.slug];
+        const navHref = buildCategoryHref(category.slug === 'all' ? null : category.slug);
         return (
           <SidebarCategoryRow
             key={category.id}
             category={category}
             product={product}
             isActive={isActive}
-            onCategoryClick={handleCategoryClick}
+            navHref={navHref}
+            onNavigate={onNavigate}
             t={t}
             strip={variant === 'strip'}
             fixedSidebarPillWidth={Boolean(fixedSidebarPillWidth)}

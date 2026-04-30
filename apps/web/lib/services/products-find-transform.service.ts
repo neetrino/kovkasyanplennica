@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { db } from "@white-shop/db";
 import { processImageUrl } from "../utils/image-utils";
 import { translations } from "../translations";
@@ -11,6 +12,21 @@ const getOutOfStockLabel = (lang: string = "ru"): string => {
   const translation = translations[langKey] || translations.ru;
   return translation.stock.outOfStock;
 };
+
+const DISCOUNT_SETTINGS_REVALIDATE_SECONDS = 120;
+
+const getDiscountSettingsCached = unstable_cache(
+  async () =>
+    db.settings.findMany({
+      where: {
+        key: {
+          in: ["globalDiscount", "categoryDiscounts", "brandDiscounts"],
+        },
+      },
+    }),
+  ["product-list-discount-settings-v1"],
+  { revalidate: DISCOUNT_SETTINGS_REVALIDATE_SECONDS, tags: ["settings"] }
+);
 
 function toPlainTextDescription(value: string | null | undefined): string | null {
   if (!value) return null;
@@ -30,14 +46,7 @@ class ProductsFindTransformService {
     products: ProductWithRelations[],
     lang: string = "ru"
   ): Promise<any[]> {
-    // Get discount settings
-    const discountSettings = await db.settings.findMany({
-      where: {
-        key: {
-          in: ["globalDiscount", "categoryDiscounts", "brandDiscounts"],
-        },
-      },
-    });
+    const discountSettings = await getDiscountSettingsCached();
 
     const globalDiscount =
       Number(
@@ -91,8 +100,6 @@ class ProductsFindTransformService {
       // IMPORTANT: Only collect colors that actually exist in variants
       // IMPORTANT: Process ALL variants to get ALL colors, not just the first variant
       const colorMap = new Map<string, { value: string; imageUrl?: string | null; colors?: string[] | null }>();
-      
-      console.log(`🎨 [PRODUCTS FIND TRANSFORM SERVICE] Processing ${variants.length} variants for product ${product.id} to collect colors`);
       
       // Process all variants to collect all unique colors
       variants.forEach((v) => {
@@ -161,9 +168,7 @@ class ProductsFindTransformService {
           });
         }
       });
-      
-      console.log(`🎨 [PRODUCTS FIND TRANSFORM SERVICE] Collected ${colorMap.size} unique colors from ${variants.length} variants for product ${product.id}`);
-      
+
       // Also check productAttributes for color attribute values with imageUrl and colors
       // IMPORTANT: Only update colors that already exist in variants (already in colorMap)
       // Do not add new colors that don't exist in variants
@@ -323,8 +328,6 @@ class ProductsFindTransformService {
                 position: position as 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right',
                 color: '#6B7280', // Gray color for out of stock
               });
-              
-              console.log(`🏷️ [PRODUCTS FIND TRANSFORM SERVICE] Added "Out of Stock" label to product ${product.id} (${lang})`);
             }
           }
           

@@ -4,6 +4,13 @@ import { ensureProductVariantAttributesColumn } from "../../utils/db-ensure";
 import { logger } from "../../utils/logger";
 import type { ProductWithRelations } from "./types";
 
+/** Hard cap so a misconfigured `limit` cannot trigger massive `findMany` (e.g. shop page ×10 multiplier). */
+const MAX_PRODUCTS_RAW_FETCH = 4000;
+
+function rawFetchTake(limit: number): number {
+  return Math.min(Math.max(limit, 1) * 10, MAX_PRODUCTS_RAW_FETCH);
+}
+
 /**
  * Base include configuration for product queries
  */
@@ -113,6 +120,7 @@ export async function executeProductQuery(
   limit: number
 ): Promise<ProductWithRelations[]> {
   const baseInclude = getBaseInclude();
+  const take = rawFetchTake(limit);
 
   try {
     const products = await db.product.findMany({
@@ -122,7 +130,7 @@ export async function executeProductQuery(
         ...getProductAttributesInclude(),
       },
       skip: 0,
-      take: limit * 10, // Get more to filter in memory
+      take,
     });
     logger.info(`Found ${products.length} products from database (with productAttributes)`);
     return products as ProductWithRelations[];
@@ -143,7 +151,7 @@ export async function executeProductQuery(
           where,
           include: baseInclude,
           skip: 0,
-          take: limit * 10,
+          take,
         });
         logger.info(`Found ${products.length} products from database (after creating attributes column)`);
         return products as ProductWithRelations[];
@@ -171,13 +179,14 @@ async function executeWithoutProductAttributes(
   limit: number
 ): Promise<ProductWithRelations[]> {
   const baseInclude = getBaseInclude();
+  const take = rawFetchTake(limit);
 
   try {
     const products = await db.product.findMany({
       where,
       include: baseInclude,
       skip: 0,
-      take: limit * 10,
+      take,
     });
     logger.info(`Found ${products.length} products from database (without productAttributes)`);
     return products as ProductWithRelations[];
@@ -190,7 +199,7 @@ async function executeWithoutProductAttributes(
           where,
           include: baseInclude,
           skip: 0,
-          take: limit * 10,
+          take,
         });
         logger.info(`Found ${products.length} products from database (after creating attributes column)`);
         return products as ProductWithRelations[];
@@ -235,6 +244,7 @@ async function executeWithoutAttributeValue(
   limit: number
 ): Promise<ProductWithRelations[]> {
   const baseIncludeWithoutAttributeValue = getBaseIncludeWithoutAttributeValue();
+  const take = rawFetchTake(limit);
 
   // Try to include productAttributes even in fallback
   try {
@@ -245,7 +255,7 @@ async function executeWithoutAttributeValue(
         ...getProductAttributesInclude(),
       },
       skip: 0,
-      take: limit * 10,
+      take,
     });
     logger.info(`Found ${products.length} products from database (without attributeValue, with productAttributes)`);
     return products as ProductWithRelations[];
@@ -256,7 +266,7 @@ async function executeWithoutAttributeValue(
         where,
         include: baseIncludeWithoutAttributeValue,
         skip: 0,
-        take: limit * 10,
+        take,
       });
       logger.info(`Found ${products.length} products from database (without attributeValue and productAttributes)`);
       return products as ProductWithRelations[];

@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { db } from "@white-shop/db";
 import { processImageUrl } from "../utils/image-utils";
@@ -124,6 +125,47 @@ async function findPreviewForCategorySlug(
   };
 }
 
+const NAV_PREVIEW_REVALIDATE_SECONDS = 120;
+/** Avoid opening dozens of concurrent DB queries (pool / CPU spikes on `/products`). */
+const NAV_PREVIEW_CONCURRENCY = 6;
+
+async function resolveNavPreviewSlugs(
+  lang: string,
+  uniqueSortedSlugs: string[]
+): Promise<Record<string, NavPreviewProduct | null>> {
+  const out: Record<string, NavPreviewProduct | null> = {};
+
+  for (let i = 0; i < uniqueSortedSlugs.length; i += NAV_PREVIEW_CONCURRENCY) {
+    const batch = uniqueSortedSlugs.slice(i, i + NAV_PREVIEW_CONCURRENCY);
+    await Promise.all(
+      batch.map(async (slug) => {
+        try {
+          out[slug] =
+            slug === "all"
+              ? await findPreviewForAll(lang)
+              : await findPreviewForCategorySlug(slug, lang);
+        } catch {
+          out[slug] = null;
+        }
+      })
+    );
+  }
+
+  return out;
+}
+
+const getCategoryNavPreviewsCached = unstable_cache(
+  async (lang: string, slugKey: string) => {
+    const uniqueSortedSlugs = slugKey.length > 0 ? slugKey.split("\u0001") : [];
+    return resolveNavPreviewSlugs(lang, uniqueSortedSlugs);
+  },
+  ["category-nav-previews-v2"],
+  {
+    revalidate: NAV_PREVIEW_REVALIDATE_SECONDS,
+    tags: ["category-nav-previews"],
+  }
+);
+
 /**
  * One preview product per category slug for the horizontal nav (minimal DB work vs. N× full `findAll`).
  */
@@ -131,21 +173,10 @@ export async function getCategoryNavPreviews(
   lang: string,
   slugs: string[]
 ): Promise<Record<string, NavPreviewProduct | null>> {
-  const unique = [...new Set(slugs.filter(Boolean))];
-  const out: Record<string, NavPreviewProduct | null> = {};
-
-  await Promise.all(
-    unique.map(async (slug) => {
-      try {
-        out[slug] =
-          slug === "all"
-            ? await findPreviewForAll(lang)
-            : await findPreviewForCategorySlug(slug, lang);
-      } catch {
-        out[slug] = null;
-      }
-    })
-  );
-
-  return out;
+  const uniqueSorted = [...new Set(slugs.filter(Boolean))].sort();
+  if (uniqueSorted.length === 0) {
+    return {};
+  }
+  const slugKey = uniqueSorted.join("\u0001");
+  return getCategoryNavPreviewsCached(lang, slugKey);
 }

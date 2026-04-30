@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { unstable_cache } from 'next/cache';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { t } from '@/lib/i18n';
@@ -6,13 +7,18 @@ import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
 import { flattenCategories } from '@/components/CategoryNavigation/utils';
-import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
+import {
+  ProductsCategorySidebar,
+  ProductsCategorySidebarSkeleton,
+} from '@/components/CategoryNavigation/ProductsCategorySidebar';
 import { categoriesService } from '@/lib/services/categories.service';
 import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.service';
 import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
+/** Returned product count for shop grouping; DB raw fetch is capped (see query-executor). */
+const PRODUCTS_SHOP_LIST_LIMIT = 120;
 
 export const revalidate = PRODUCTS_LIST_REVALIDATE_SECONDS;
 
@@ -46,6 +52,12 @@ const fetchProductsCached = unstable_cache(
   },
   ['main-products-list-v2'],
   { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['products-list'] }
+);
+
+const getCategoryTreeCached = unstable_cache(
+  async (lang: string) => categoriesService.getTree(lang),
+  ['products-shop-category-tree-v1'],
+  { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['categories'] }
 );
 
 interface ProductCategory {
@@ -205,46 +217,75 @@ function firstParam(
   return v;
 }
 
-type ProductsPageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
+function ProductsPageMainSkeleton() {
+  return (
+    <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-4 sm:pt-6 lg:pt-[88px] xl:pt-[96px]">
+      <div className="hidden h-10 px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" aria-hidden />
+      <div
+        data-products-card-column
+        className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pb-4 pt-4 sm:pl-4 sm:pr-6 sm:pt-6 md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
+      >
+        {Array.from({ length: 2 }).map((_, rowIndex) => (
+          <section key={rowIndex} className="mb-14 last:mb-0">
+            <div className="mb-10 h-10 w-44 rounded-full bg-white/10 animate-pulse" />
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, cardIndex) => (
+                <div
+                  key={cardIndex}
+                  className="overflow-hidden rounded-[24px] border border-white/10 bg-[#364744]"
+                >
+                  <div className="aspect-square bg-white/10 animate-pulse" />
+                  <div className="space-y-3 p-4">
+                    <div className="h-4 w-2/3 rounded-full bg-white/10 animate-pulse" />
+                    <div className="h-4 w-full rounded-full bg-white/10 animate-pulse" />
+                    <div className="h-5 w-24 rounded-full bg-[#75bf5e]/40 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-/**
- * PAGE
- */
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const raw = searchParams ? await searchParams : {};
-  const page = parseInt(firstParam(raw.page) ?? '1', 10);
-  // Fetch enough products so category rows can be paginated reliably on the page.
-  const DEFAULT_PER_PAGE = 9999;
-  const perPage = DEFAULT_PER_PAGE;
-
+async function ProductsPageSidebarSlot() {
   const language = getStoredLanguage();
-
-  // `page` query param is for category-row UI pagination, not API pagination.
-  // Always fetch from the first API page with a large limit so all filtered
-  // products are available for local row slicing across pages.
-  // Category tree loads in parallel with the product list; nav previews load next
-  // so the sidebar can hydrate thumbnails without two client round-trips.
-  const [productsData, { data: categoryTreeRoots }] = await Promise.all([
-    getProducts(
-      1,
-      firstParam(raw.search),
-      firstParam(raw.category),
-      firstParam(raw.minPrice),
-      firstParam(raw.maxPrice),
-      firstParam(raw.colors),
-      firstParam(raw.sizes),
-      firstParam(raw.brand),
-      firstParam(raw.sort),
-      perPage
-    ),
-    categoriesService.getTree(language),
-  ]);
-
+  const { data: categoryTreeRoots } = await getCategoryTreeCached(language);
   const flatCategoriesForNav = flattenCategories(categoryTreeRoots ?? []);
   const categoryNavPreviewSlugs = ['all', ...flatCategoriesForNav.map((c) => c.slug)];
   const categoryNavPreviews = await getCategoryNavPreviews(language, categoryNavPreviewSlugs);
+
+  return (
+    <ProductsCategorySidebar
+      variant="sidebar"
+      initialCategories={flatCategoriesForNav}
+      initialCategoryNavPreviews={categoryNavPreviews}
+    />
+  );
+}
+
+async function ProductsPageMainSlot({
+  raw,
+}: {
+  raw: Record<string, string | string[] | undefined>;
+}) {
+  const page = parseInt(firstParam(raw.page) ?? '1', 10);
+  const language = getStoredLanguage();
+
+  const productsData = await getProducts(
+    1,
+    firstParam(raw.search),
+    firstParam(raw.category),
+    firstParam(raw.minPrice),
+    firstParam(raw.maxPrice),
+    firstParam(raw.colors),
+    firstParam(raw.sizes),
+    firstParam(raw.brand),
+    firstParam(raw.sort),
+    PRODUCTS_SHOP_LIST_LIMIT
+  );
 
   const params = {
     page: firstParam(raw.page),
@@ -263,9 +304,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   );
 
   const categoryRows = buildCategoryRows(normalizedProducts, language);
-
-  /** ≤2 category rows (e.g. filtered): one union decorative at bottom only — avoid stacked overlays when content is short */
-  const showFullDecorativeBackground = categoryRows.length > 2;
 
   // PAGINATION: build URL for page N, keep existing filters
   const buildPaginationUrl = (num: number) => {
@@ -307,41 +345,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   };
 
   return (
-    <div className="w-full max-w-full bg-[#2F3F3D] relative">
-      {showFullDecorativeBackground && (
-        <>
-          {/* Decorative: վերևի հատված – կենտրոն */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-          </div>
-          {/* Decorative: մեջտեղ – նույն չափսը, ցածր */}
-          <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-          </div>
-        </>
-      )}
-      {/* Decorative: ներքևի հատված – մի քիչ footer-ի վրա (միշտ՝ կամ միայն սա երբ ≤2 category row) */}
-      <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
-      </div>
-      <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
-        <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">
-          <div className="sticky top-[104px] overflow-visible pb-12 pl-2 pr-2 xl:top-[104px]">
-            <ProductsCategorySidebar
-              variant="sidebar"
-              initialCategories={flatCategoriesForNav}
-              initialCategoryNavPreviews={categoryNavPreviews}
-            />
-          </div>
-        </aside>
+    <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-4 sm:pt-6 lg:pt-[88px] xl:pt-[96px]">
+      <ProductsShopToolbar className="hidden px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" />
 
-        <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-4 sm:pt-6 lg:pt-[88px] xl:pt-[96px]">
-          <ProductsShopToolbar className="hidden px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" />
-
-          <div
-            data-products-card-column
-            className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pb-4 pt-4 sm:pl-4 sm:pr-6 sm:pt-6 md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
-          >
+      <div
+        data-products-card-column
+        className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pb-4 pt-4 sm:pl-4 sm:pr-6 sm:pt-6 md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
+      >
           {normalizedProducts.length > 0 ? (
             <>
               {pageRows.map((row, index) => (
@@ -431,8 +441,49 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </p>
             </div>
           )}
+      </div>
+    </div>
+  );
+}
+
+type ProductsPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+};
+
+/**
+ * Shell streams immediately; sidebar and product grid load in parallel Suspense boundaries.
+ */
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const raw = searchParams ? await searchParams : {};
+  const showFullDecorativeBackground = !firstParam(raw.category);
+
+  return (
+    <div className="w-full max-w-full bg-[#2F3F3D] relative">
+      {showFullDecorativeBackground && (
+        <>
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
           </div>
-        </div>
+          <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+          </div>
+        </>
+      )}
+      <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
+        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
+        <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">
+          <div className="sticky top-[104px] overflow-visible pb-12 pl-2 pr-2 xl:top-[104px]">
+            <Suspense fallback={<ProductsCategorySidebarSkeleton variant="sidebar" />}>
+              <ProductsPageSidebarSlot />
+            </Suspense>
+          </div>
+        </aside>
+
+        <Suspense fallback={<ProductsPageMainSkeleton />}>
+          <ProductsPageMainSlot raw={raw} />
+        </Suspense>
       </div>
     </div>
   );
