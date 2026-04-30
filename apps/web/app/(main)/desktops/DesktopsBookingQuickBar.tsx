@@ -15,6 +15,7 @@ const QUICK_BAR_MAX_GUESTS = 8;
 export type QuickBookingValues = {
   date: string;
   time: string;
+  timeEnd: string;
   guestCount: string;
 };
 
@@ -42,7 +43,7 @@ export function DesktopsBookingQuickBar({
   minDate,
 }: DesktopsBookingQuickBarProps) {
   const { t } = useTranslation();
-  const [openMenu, setOpenMenu] = useState<'time' | 'guests' | null>(null);
+  const [openMenu, setOpenMenu] = useState<'time' | 'timeEnd' | 'guests' | null>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   function patch(partial: Partial<QuickBookingValues>) {
@@ -142,7 +143,7 @@ export function DesktopsBookingQuickBar({
               <BookingQuickBarDropdownOption
                 selected={value.time === ''}
                 onPick={() => {
-                  patch({ time: '' });
+                  patch({ time: '', timeEnd: '' });
                   setOpenMenu(null);
                 }}
               >
@@ -153,7 +154,60 @@ export function DesktopsBookingQuickBar({
                   key={slot}
                   selected={value.time === slot}
                   onPick={() => {
-                    patch({ time: slot });
+                    const slots = RESERVATION_TIME_SLOTS as readonly string[];
+                    const si = slots.indexOf(slot);
+                    const ei = value.timeEnd ? slots.indexOf(value.timeEnd) : -1;
+                    const keepEnd = si >= 0 && ei > si;
+                    patch({ time: slot, timeEnd: keepEnd ? value.timeEnd : '' });
+                    setOpenMenu(null);
+                  }}
+                >
+                  {slot}
+                </BookingQuickBarDropdownOption>
+              ))}
+            </BookingQuickBarDropdown>
+          </FieldShell>
+        </div>
+
+        <div className="min-w-0 flex-1 lg:max-w-[200px]">
+          <p className="mb-2 text-center text-xs font-bold uppercase tracking-[0.1em] text-[#cbc0af] lg:text-left">
+            {t('desktops.quickBar.timeEnd')}
+          </p>
+          <FieldShell>
+            <BookingQuickBarDropdown
+              listboxId="desktops-quick-bar-time-end"
+              isOpen={openMenu === 'timeEnd'}
+              onOpenChange={(open) => setOpenMenu(open ? 'timeEnd' : null)}
+              iconSrc={bookingQuickBarAssets.clock}
+              chevronSrc={bookingQuickBarAssets.chevron}
+              triggerLabel={value.timeEnd || t('desktops.modal.timeEndPlaceholder')}
+              isPlaceholder={!value.timeEnd}
+              triggerTextSize="sm"
+              roundedClass="rounded-[48px]"
+              ariaLabel={t('desktops.quickBar.timeEnd')}
+              iconClassName="h-[15px] w-[15px]"
+            >
+              <BookingQuickBarDropdownOption
+                selected={value.timeEnd === ''}
+                onPick={() => {
+                  patch({ timeEnd: '' });
+                  setOpenMenu(null);
+                }}
+              >
+                {t('desktops.modal.timeEndPlaceholder')}
+              </BookingQuickBarDropdownOption>
+              {RESERVATION_TIME_SLOTS.filter((slot) => {
+                if (!value.time) return false;
+                const slots = RESERVATION_TIME_SLOTS as readonly string[];
+                const si = slots.indexOf(value.time);
+                const ei = slots.indexOf(slot);
+                return si >= 0 && ei > si;
+              }).map((slot) => (
+                <BookingQuickBarDropdownOption
+                  key={slot}
+                  selected={value.timeEnd === slot}
+                  onPick={() => {
+                    patch({ timeEnd: slot });
                     setOpenMenu(null);
                   }}
                 >

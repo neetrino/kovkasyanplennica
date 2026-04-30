@@ -18,25 +18,34 @@ export default function DesktopsPage() {
   const [quickBooking, setQuickBooking] = useState<QuickBookingValues>({
     date: '',
     time: '',
+    timeEnd: '',
     guestCount: '2',
   });
 
   useEffect(() => {
     const d = searchParams.get('date');
     const timeParam = searchParams.get('time');
+    const timeEndParam = searchParams.get('timeEnd');
     const g = searchParams.get('guests');
-    if (d == null && timeParam == null && g == null) return;
+    if (d == null && timeParam == null && timeEndParam == null && g == null) return;
 
     setQuickBooking((prev) => {
       const nextDate = d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : prev.date;
       let nextTime = prev.time;
+      const slotList = RESERVATION_TIME_SLOTS as readonly string[];
       if (timeParam !== null) {
-        if (timeParam === '' || RESERVATION_TIME_SLOTS.includes(timeParam)) {
+        if (timeParam === '' || slotList.includes(timeParam)) {
           nextTime = timeParam;
         }
       }
+      let nextTimeEnd = prev.timeEnd;
+      if (timeEndParam !== null) {
+        if (timeEndParam === '' || slotList.includes(timeEndParam)) {
+          nextTimeEnd = timeEndParam;
+        }
+      }
       const nextGuests = g && /^[1-8]$/.test(g) ? g : prev.guestCount;
-      return { date: nextDate, time: nextTime, guestCount: nextGuests };
+      return { date: nextDate, time: nextTime, timeEnd: nextTimeEnd, guestCount: nextGuests };
     });
   }, [searchParams]);
 

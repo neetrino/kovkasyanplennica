@@ -792,11 +792,12 @@
     "occasionRegular": "Обычный визит",
     "create": {
       "title": "Добавить бронирование вручную",
-      "subtitle": "Форма создаёт бронирование с тем же ограничением слотов (6ч / 2ч).",
+      "subtitle": "Укажите интервал визита (с / до) по слотам зала.",
       "table": "Стол",
       "date": "Дата",
-      "time": "Время",
-      "occasion": "Повод",
+      "time": "С",
+      "timeEnd": "До",
+      "occasion": "Повод (необязательно)",
       "occasionBirthday": "День рождения",
       "occasionRegular": "Обычный визит",
       "firstName": "Имя",
@@ -814,8 +815,8 @@
       "validationEmail": "Введите email",
       "validationPhone": "Введите телефон",
       "validationDateTime": "Выберите дату и время",
-      "validationTimePast": "Нельзя создать бронирование на прошедшее время",
-      "validationOccasion": "Выберите повод визита"
+      "validationTimeEnd": "Укажите время окончания",
+      "validationTimePast": "Нельзя создать бронирование на прошедшее время"
     }
   },
   "common": {

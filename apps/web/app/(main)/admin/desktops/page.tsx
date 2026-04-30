@@ -6,7 +6,12 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
 import { useTranslation } from '@/lib/i18n-client';
-import { isPastTimeSlotForDate } from '@/lib/reservations/availability';
+import {
+  getValidEndTimeSlots,
+  isPastTimeSlotForDate,
+  isStartTimeSlotBookable,
+  type ReservationBusyInterval,
+} from '@/lib/reservations/availability';
 import { getHostessMenuTABS } from '../admin-menu.config';
 import { AdminSidebar } from '../components/AdminSidebar';
 import { TABLES } from '../../desktops/table-data';
@@ -23,6 +28,7 @@ interface Reservation {
   phone: string;
   date: string;
   time: string;
+  timeEnd: string;
   occasion: 'birthday' | 'regular';
   guestCount: number;
   note: string | null;
@@ -37,6 +43,7 @@ interface ReservationCreateForm {
   tableId: string;
   date: string;
   time: string;
+  timeEnd: string;
   occasion: '' | 'birthday' | 'regular';
   guestCount: string;
   firstName: string;
@@ -67,6 +74,7 @@ const INITIAL_CREATE_FORM: ReservationCreateForm = {
   tableId: '',
   date: '',
   time: '',
+  timeEnd: '',
   occasion: '',
   guestCount: '1',
   firstName: '',
@@ -110,7 +118,7 @@ export default function AdminDesktopsPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('');
   const [createForm, setCreateForm] = useState<ReservationCreateForm>(INITIAL_CREATE_FORM);
-  const [createUnavailableSlots, setCreateUnavailableSlots] = useState<string[]>([]);
+  const [createBusyIntervals, setCreateBusyIntervals] = useState<ReservationBusyInterval[]>([]);
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
@@ -158,8 +166,8 @@ export default function AdminDesktopsPage() {
   const selectedTable = TABLES.find((table) => table.id === createForm.tableId) ?? null;
 
   useEffect(() => {
-    if (!createForm.tableId || !createForm.date || !createForm.occasion) {
-      setCreateUnavailableSlots([]);
+    if (!createForm.tableId || !createForm.date) {
+      setCreateBusyIntervals([]);
       return;
     }
 
@@ -167,34 +175,49 @@ export default function AdminDesktopsPage() {
     const search = new URLSearchParams({
       tableId: createForm.tableId,
       date: createForm.date,
-      occasion: createForm.occasion,
     });
 
-    async function loadCreateUnavailableSlots() {
+    async function loadCreateBusy() {
       try {
-        const response = await apiClient.get<{ data?: { unavailableSlots?: string[] } }>(
+        const response = await apiClient.get<{ data?: { busyIntervals?: unknown } }>(
           `/api/v1/reservations?${search.toString()}`,
         );
-        const rawSlots = response.data?.unavailableSlots;
-        const slots: string[] = Array.isArray(rawSlots) ? rawSlots : [];
-        if (!cancelled) {
-          setCreateUnavailableSlots(slots);
-          if (createForm.time && slots.includes(createForm.time)) {
-            setCreateForm((prev) => ({ ...prev, time: '' }));
+        const raw = response.data?.busyIntervals;
+        const intervals: ReservationBusyInterval[] = [];
+        if (Array.isArray(raw)) {
+          for (const item of raw) {
+            if (typeof item !== 'object' || item === null) continue;
+            const o = item as { time?: unknown; timeEnd?: unknown };
+            if (typeof o.time === 'string' && typeof o.timeEnd === 'string') {
+              intervals.push({ time: o.time, timeEnd: o.timeEnd });
+            }
           }
+        }
+        if (!cancelled) {
+          setCreateBusyIntervals(intervals);
         }
       } catch {
         if (!cancelled) {
-          setCreateUnavailableSlots([]);
+          setCreateBusyIntervals([]);
         }
       }
     }
 
-    void loadCreateUnavailableSlots();
+    void loadCreateBusy();
     return () => {
       cancelled = true;
     };
-  }, [createForm.date, createForm.occasion, createForm.tableId, createForm.time]);
+  }, [createForm.date, createForm.tableId]);
+
+  useEffect(() => {
+    if (!createForm.time) return;
+    setCreateForm((prev) => {
+      if (!prev.timeEnd) return prev;
+      const ends = getValidEndTimeSlots(prev.time, RESERVATION_TIME_SLOTS, createBusyIntervals);
+      if (ends.includes(prev.timeEnd)) return prev;
+      return { ...prev, timeEnd: '' };
+    });
+  }, [createForm.time, createBusyIntervals]);
 
   const setCreateField = (field: keyof ReservationCreateForm, value: string) => {
     setCreateForm((prev) => ({ ...prev, [field]: value }));
@@ -223,12 +246,12 @@ export default function AdminDesktopsPage() {
       setCreateError(t('admin.desktopsReservations.create.validationDateTime'));
       return;
     }
-    if (isPastTimeSlotForDate(createForm.date, createForm.time)) {
-      setCreateError(t('admin.desktopsReservations.create.validationTimePast'));
+    if (!createForm.timeEnd) {
+      setCreateError(t('admin.desktopsReservations.create.validationTimeEnd'));
       return;
     }
-    if (!createForm.occasion) {
-      setCreateError(t('admin.desktopsReservations.create.validationOccasion'));
+    if (isPastTimeSlotForDate(createForm.date, createForm.time)) {
+      setCreateError(t('admin.desktopsReservations.create.validationTimePast'));
       return;
     }
 
@@ -252,7 +275,8 @@ export default function AdminDesktopsPage() {
           phone: createForm.phone.trim(),
           date: createForm.date,
           time: createForm.time,
-          occasion: createForm.occasion,
+          timeEnd: createForm.timeEnd,
+          occasion: createForm.occasion || 'regular',
           guestCount: parseInt(createForm.guestCount, 10) || 1,
           note: createForm.note.trim() || null,
         }),
@@ -267,7 +291,7 @@ export default function AdminDesktopsPage() {
       }
 
       setCreateForm(INITIAL_CREATE_FORM);
-      setCreateUnavailableSlots([]);
+      setCreateBusyIntervals([]);
       await fetchReservations();
     } catch (error: unknown) {
       const message = error instanceof Error
@@ -474,7 +498,7 @@ export default function AdminDesktopsPage() {
               onSubmit={handleCreateReservation}
               aria-labelledby="admin-desktops-manual-booking-heading"
             >
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
             <select
               value={createForm.tableId}
               onChange={(e) => setCreateField('tableId', e.target.value)}
@@ -496,18 +520,11 @@ export default function AdminDesktopsPage() {
             />
 
             <select
-              value={createForm.occasion}
-              onChange={(e) => setCreateField('occasion', e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">{t('admin.desktopsReservations.create.occasion')}</option>
-              <option value="birthday">{t('admin.desktopsReservations.create.occasionBirthday')}</option>
-              <option value="regular">{t('admin.desktopsReservations.create.occasionRegular')}</option>
-            </select>
-
-            <select
               value={createForm.time}
-              onChange={(e) => setCreateField('time', e.target.value)}
+              onChange={(e) => {
+                setCreateForm((prev) => ({ ...prev, time: e.target.value, timeEnd: '' }));
+                setCreateError(null);
+              }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">{t('admin.desktopsReservations.create.time')}</option>
@@ -516,13 +533,41 @@ export default function AdminDesktopsPage() {
                   key={slot}
                   value={slot}
                   disabled={
-                    createUnavailableSlots.includes(slot) ||
+                    !isStartTimeSlotBookable(slot, RESERVATION_TIME_SLOTS, createBusyIntervals) ||
                     isPastTimeSlotForDate(createForm.date, slot)
                   }
                 >
                   {slot}
                 </option>
               ))}
+            </select>
+
+            <select
+              value={createForm.timeEnd}
+              onChange={(e) => setCreateField('timeEnd', e.target.value)}
+              disabled={!createForm.time}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('admin.desktopsReservations.create.timeEnd')}</option>
+              {getValidEndTimeSlots(
+                createForm.time,
+                RESERVATION_TIME_SLOTS,
+                createBusyIntervals,
+              ).map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={createForm.occasion}
+              onChange={(e) => setCreateField('occasion', e.target.value)}
+              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">{t('admin.desktopsReservations.create.occasion')}</option>
+              <option value="birthday">{t('admin.desktopsReservations.create.occasionBirthday')}</option>
+              <option value="regular">{t('admin.desktopsReservations.create.occasionRegular')}</option>
             </select>
 
             <input
@@ -697,7 +742,9 @@ export default function AdminDesktopsPage() {
                         <div className="text-sm font-medium text-gray-900">
                           {formatStoredReservationDate(r.date)}
                         </div>
-                        <div className="text-xs text-gray-500">{r.time}</div>
+                        <div className="text-xs text-gray-500">
+                          {r.time}–{r.timeEnd}
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700">
                         {r.occasion === 'birthday'
