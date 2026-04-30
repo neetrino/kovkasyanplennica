@@ -5,7 +5,10 @@ import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
+import { flattenCategories } from '@/components/CategoryNavigation/utils';
 import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
+import { categoriesService } from '@/lib/services/categories.service';
+import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.service';
 import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 
@@ -216,21 +219,32 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const DEFAULT_PER_PAGE = 9999;
   const perPage = DEFAULT_PER_PAGE;
 
+  const language = getStoredLanguage();
+
   // `page` query param is for category-row UI pagination, not API pagination.
   // Always fetch from the first API page with a large limit so all filtered
   // products are available for local row slicing across pages.
-  const productsData = await getProducts(
-    1,
-    firstParam(raw.search),
-    firstParam(raw.category),
-    firstParam(raw.minPrice),
-    firstParam(raw.maxPrice),
-    firstParam(raw.colors),
-    firstParam(raw.sizes),
-    firstParam(raw.brand),
-    firstParam(raw.sort),
-    perPage
-  );
+  // Category tree loads in parallel with the product list; nav previews load next
+  // so the sidebar can hydrate thumbnails without two client round-trips.
+  const [productsData, { data: categoryTreeRoots }] = await Promise.all([
+    getProducts(
+      1,
+      firstParam(raw.search),
+      firstParam(raw.category),
+      firstParam(raw.minPrice),
+      firstParam(raw.maxPrice),
+      firstParam(raw.colors),
+      firstParam(raw.sizes),
+      firstParam(raw.brand),
+      firstParam(raw.sort),
+      perPage
+    ),
+    categoriesService.getTree(language),
+  ]);
+
+  const flatCategoriesForNav = flattenCategories(categoryTreeRoots ?? []);
+  const categoryNavPreviewSlugs = ['all', ...flatCategoriesForNav.map((c) => c.slug)];
+  const categoryNavPreviews = await getCategoryNavPreviews(language, categoryNavPreviewSlugs);
 
   const params = {
     page: firstParam(raw.page),
@@ -248,7 +262,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     normalizeProduct(product as Product & { originalPrice?: number | null; colors?: ProductRow['colors'] }),
   );
 
-  const language = getStoredLanguage();
   const categoryRows = buildCategoryRows(normalizedProducts, language);
 
   /** ≤2 category rows (e.g. filtered): one union decorative at bottom only — avoid stacked overlays when content is short */
@@ -314,7 +327,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
         <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">
           <div className="sticky top-[104px] overflow-visible pb-12 pl-2 pr-2 xl:top-[104px]">
-            <ProductsCategorySidebar variant="sidebar" />
+            <ProductsCategorySidebar
+              variant="sidebar"
+              initialCategories={flatCategoriesForNav}
+              initialCategoryNavPreviews={categoryNavPreviews}
+            />
           </div>
         </aside>
 

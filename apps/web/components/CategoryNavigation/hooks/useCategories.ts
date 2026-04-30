@@ -12,13 +12,32 @@ interface CategoriesResponse {
 const categoriesCache = new Map<string, Category[]>();
 
 /**
- * Hook for fetching categories
+ * Hook for fetching categories.
+ * When `initialCategories` is set (e.g. from the products page RSC), skips the client round-trip.
  */
-export function useCategories() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useCategories(initialCategories?: Category[]) {
+  const hydratedFromServer = initialCategories !== undefined;
+
+  const [categories, setCategories] = useState<Category[]>(() =>
+    hydratedFromServer ? initialCategories : []
+  );
+  const [loading, setLoading] = useState(() => !hydratedFromServer);
+
+  const serverTreeSignature = hydratedFromServer
+    ? initialCategories.map((c) => c.id).join(',')
+    : '';
 
   useEffect(() => {
+    if (hydratedFromServer) {
+      setCategories(initialCategories);
+      setLoading(false);
+      const language = getStoredLanguage();
+      if (initialCategories.length > 0) {
+        categoriesCache.set(language, initialCategories);
+      }
+      return;
+    }
+
     let mounted = true;
 
     const fetchCategories = async () => {
@@ -56,7 +75,7 @@ export function useCategories() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [hydratedFromServer, initialCategories, serverTreeSignature]);
 
   return { categories, loading };
 }
