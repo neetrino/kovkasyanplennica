@@ -120,6 +120,7 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
                       viewMode="grid-3"
                       compactHeight={isMobile}
                       largeCompactImage={isMobile}
+                      compactListing
                     />
                   </div>
                 ))}

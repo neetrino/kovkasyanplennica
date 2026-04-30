@@ -5,7 +5,8 @@ import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
-import { CategoryNavigation } from '@/components/CategoryNavigation';
+import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
+import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
 
@@ -309,18 +310,35 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
-      {/* Category Navigation - Full Width */}
-      <CategoryNavigation />
+      <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
+        <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block">
+          <div className="sticky top-28 overflow-visible pb-12 pl-2 pr-2 pt-[88px] xl:top-32 xl:pt-[100px]">
+            <ProductsCategorySidebar variant="sidebar" />
+          </div>
+        </aside>
 
-      <div className="max-w-7xl mx-auto pl-2 sm:pl-4 md:pl-6 lg:pl-8 pr-4 sm:pr-6 lg:pr-8 pt-[80px] sm:pt-[110px] pb-4 relative z-10">
+        <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-[76px] sm:pt-[92px] lg:pt-[88px] xl:pt-[96px]">
+          <div className="px-3 pb-3 sm:px-5 lg:hidden">
+            <ProductsCategorySidebar variant="strip" />
+          </div>
 
+          <ProductsShopToolbar className="px-3 pb-1 sm:px-6 lg:px-8 lg:pt-2" />
+
+          <div
+            data-products-card-column
+            className="relative mx-auto max-w-7xl overflow-x-visible px-3 pb-8 pt-2 sm:px-5 md:px-6 lg:px-8 lg:pb-10 lg:pt-4"
+          >
           {normalizedProducts.length > 0 ? (
             <>
               {pageRows.map((row, index) => (
-                <section key={row.categorySlug} className="mb-12 sm:mb-16 md:mb-20 last:mb-0" aria-labelledby={`category-row-${index}`}>
+                <section
+                  key={row.categorySlug}
+                  className="mb-12 overflow-x-visible sm:mb-16 md:mb-20 last:mb-0"
+                  aria-labelledby={`category-row-${index}`}
+                >
                   <h2
                     id={`category-row-${index}`}
-                    className="mb-12 md:mb-6 lg:mb-10 inline-block text-left min-h-[48px] leading-[48px] text-[43px] font-light text-[#fff4de]"
+                    className="mb-12 md:mb-6 lg:mb-10 w-full text-right min-h-[48px] leading-[48px] text-[43px] font-light italic text-[#fff4de]"
                     style={{ fontFamily: "'Sansation Light', sans-serif" }}
                   >
                     {row.categoryTitle}
@@ -379,6 +397,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               <p className="text-gray-500 text-lg">{t(language, 'common.messages.noProductsFound')}</p>
             </div>
           )}
+          </div>
+        </div>
       </div>
     </div>
   );

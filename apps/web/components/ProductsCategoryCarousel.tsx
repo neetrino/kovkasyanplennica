@@ -135,6 +135,7 @@ export function ProductsCategoryCarousel({ products: rawProducts, sortBy = 'defa
                 viewMode="grid-3"
                 compactHeight={isMobile}
                 largeCompactImage={isMobile}
+                compactListing
               />
             </div>
           ))}

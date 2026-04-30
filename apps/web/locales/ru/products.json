@@ -21,6 +21,11 @@
       "loading": "Загрузка..."
     }
   },
+  "shop": {
+    "sort": "Сортировать",
+    "filter": "Фильтр",
+    "categoriesAria": "Категории каталога"
+  },
   "header": {
     "allProducts": "Все товары ({total})",
     "clearFilters": "Очистить фильтры",

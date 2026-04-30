@@ -36,6 +36,8 @@ interface ProductCardGridProps {
   largeHeightOnDesktop?: boolean;
   /** Products page mobile — մեծ կլոր պատկեր */
   largeCompactImage?: boolean;
+  /** Products carousel — tighter card (more room for category rail) */
+  compactListing?: boolean;
   onImageError: () => void;
   onAddToCart: (e: MouseEvent) => void;
 }
@@ -53,13 +55,17 @@ export function ProductCardGrid({
   largeSize = false,
   largeHeightOnDesktop = false,
   largeCompactImage = false,
+  compactListing = false,
   onImageError,
   onAddToCart,
 }: ProductCardGridProps) {
   const router = useRouter();
   const normalizedSlug = product.slug.trim();
   const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
-  const imageSizesAttr = largeCompactImage && compactHeight ? 'min(60vw, 280px)' : '223px';
+  const imageSizesAttr =
+    largeCompactImage && compactHeight ? 'min(60vw, 280px)' : compactListing ? '200px' : '223px';
+  const denseDesktop = compactListing && !compactHeight;
+  const denseMobile = compactListing && compactHeight;
   const handleProductIntent = useCallback(() => {
     prefetchProductByIntent(router, product.slug);
   }, [router, product.slug]);
@@ -71,11 +77,17 @@ export function ProductCardGrid({
           ? largeHeightOnDesktop
             ? 'min-h-[180px] lg:min-h-[280px]'
             : largeCompactImage
-              ? 'min-h-[172px]'
-              : 'min-h-[180px]'
+              ? denseMobile
+                ? 'min-h-[158px]'
+                : 'min-h-[172px]'
+              : denseMobile
+                ? 'min-h-[168px]'
+                : 'min-h-[180px]'
           : largeSize
             ? 'min-h-[320px]'
-            : 'min-h-[240px]'
+            : denseDesktop
+              ? 'min-h-[208px]'
+              : 'min-h-[240px]'
       }`}
     >
       <Link
@@ -95,11 +107,15 @@ export function ProductCardGrid({
               ? largeHeightOnDesktop
                 ? 'w-[45%] lg:w-[52%]'
                 : largeCompactImage
-                  ? 'w-[58%]'
+                  ? denseMobile
+                    ? 'w-[54%]'
+                    : 'w-[58%]'
                   : 'w-[45%]'
               : largeSize
                 ? 'w-[58%]'
-                : 'w-[50%]'
+                : denseDesktop
+                  ? 'w-[46%]'
+                  : 'w-[50%]'
           }`}
         >
           <div className="relative w-full h-full bg-transparent block">
@@ -131,11 +147,15 @@ export function ProductCardGrid({
               ? largeHeightOnDesktop
                 ? 'pt-[14%] pb-[4%] lg:pt-[18%] lg:pb-[8%]'
                 : largeCompactImage
-                  ? 'pt-[20%] pb-[4%]'
+                  ? denseMobile
+                    ? 'pt-[18%] pb-[3%]'
+                    : 'pt-[20%] pb-[4%]'
                   : 'pt-[14%] pb-[4%]'
               : largeSize
                 ? 'pt-[20%] pb-[10%]'
-                : 'pt-[18%] pb-[8%]'
+                : denseDesktop
+                  ? 'pt-[15%] pb-[6%]'
+                  : 'pt-[18%] pb-[8%]'
           }`}
         >
           <ProductCardInfo
@@ -155,6 +175,7 @@ export function ProductCardGrid({
             largeSize={largeSize}
             largeHeightOnDesktop={largeHeightOnDesktop}
             largeCompactImage={largeCompactImage}
+            compactListing={compactListing}
             inStock={product.inStock}
             isAddingToCart={isAddingToCart}
             onAddToCart={onAddToCart}

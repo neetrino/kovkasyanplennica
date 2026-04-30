@@ -44,6 +44,8 @@ interface ProductCardProps {
   largeHeightOnDesktop?: boolean;
   /** Products page mobile — ավելի մեծ կլոր պատկեր compact ռեժիմում */
   largeCompactImage?: boolean;
+  /** Products listing carousel — slightly smaller card so sidebar category rail can be wider */
+  compactListing?: boolean;
 }
 
 /**
@@ -57,6 +59,7 @@ export function ProductCard({
   largeSize = false,
   largeHeightOnDesktop = false,
   largeCompactImage = false,
+  compactListing = false,
 }: ProductCardProps) {
   const isCompact = viewMode === 'grid-3';
   const currency = useCurrency();
@@ -103,6 +106,7 @@ export function ProductCard({
       largeSize={largeSize}
       largeHeightOnDesktop={largeHeightOnDesktop}
       largeCompactImage={largeCompactImage}
+      compactListing={compactListing}
       onImageError={() => setImageError(true)}
       onAddToCart={handleAddToCart}
     />
