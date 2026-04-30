@@ -24,6 +24,7 @@
   "shop": {
     "sort": "Сортировать",
     "filter": "Фильтр",
+    "categoryFilter": "Фильтр категорий",
     "categoriesAria": "Категории каталога"
   },
   "header": {
