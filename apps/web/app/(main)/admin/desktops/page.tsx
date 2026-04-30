@@ -113,7 +113,19 @@ export default function AdminDesktopsPage() {
   const [createUnavailableSlots, setCreateUnavailableSlots] = useState<string[]>([]);
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [manualBookingOpen, setManualBookingOpen] = useState(false);
   const sidebarTabs = isHostess ? getHostessMenuTABS(t) : undefined;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.location.hash !== '#admin-desktops-manual-booking') return;
+    setManualBookingOpen(true);
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById('admin-desktops-manual-booking')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
 
   const fetchReservations = useCallback(async () => {
     try {
@@ -378,7 +390,7 @@ export default function AdminDesktopsPage() {
               )}
             </div>
             {/* Filter */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <label htmlFor="desktop-reservation-status" className="text-sm font-medium text-gray-700">
                 {t('admin.desktopsReservations.statusFilter')}
               </label>
@@ -393,20 +405,75 @@ export default function AdminDesktopsPage() {
                 <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
                 <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
               </select>
+              <button
+                type="button"
+                onClick={() => {
+                  setManualBookingOpen(true);
+                  window.requestAnimationFrame(() => {
+                    document
+                      .getElementById('admin-desktops-manual-booking')
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-800 transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-controls="admin-desktops-manual-booking-panel"
+            aria-expanded={manualBookingOpen}
+              >
+                {t('admin.desktopsReservations.create.title')}
+                <svg
+                  className="h-4 w-4 shrink-0 text-indigo-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleCreateReservation} className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {t('admin.desktopsReservations.create.title')}
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              {t('admin.desktopsReservations.create.subtitle')}
-            </p>
-          </div>
+        <section
+          id="admin-desktops-manual-booking"
+          className="mb-8 scroll-mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm"
+        >
+          <button
+            type="button"
+            onClick={() => setManualBookingOpen((open) => !open)}
+            className="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
+            aria-expanded={manualBookingOpen}
+            aria-controls="admin-desktops-manual-booking-panel"
+            id="admin-desktops-manual-booking-heading"
+          >
+            <div className="min-w-0">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {t('admin.desktopsReservations.create.title')}
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                {t('admin.desktopsReservations.create.subtitle')}
+              </p>
+            </div>
+            <svg
+              className={`h-5 w-5 shrink-0 text-gray-500 transition-transform duration-200 ${manualBookingOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
+          <div
+            id="admin-desktops-manual-booking-panel"
+            hidden={!manualBookingOpen}
+            className="border-t border-gray-100 px-5 pb-5 pt-4"
+          >
+            <form
+              onSubmit={handleCreateReservation}
+              aria-labelledby="admin-desktops-manual-booking-heading"
+            >
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
             <select
               value={createForm.tableId}
@@ -522,7 +589,9 @@ export default function AdminDesktopsPage() {
                 : t('admin.desktopsReservations.create.submit')}
             </button>
           </div>
-        </form>
+            </form>
+          </div>
+        </section>
 
         {/* Table */}
         <div className="bg-white shadow rounded-2xl overflow-hidden">
