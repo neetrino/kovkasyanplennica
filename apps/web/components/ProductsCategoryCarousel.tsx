@@ -77,7 +77,12 @@ export function ProductsCategoryCarousel({
   const maxRows = columnsPerRow > 0 ? Math.ceil(products.length / columnsPerRow) : 1;
   const shownCount = Math.min(products.length, visibleRows * columnsPerRow);
   const displayed = products.slice(0, shownCount);
-  const hasMoreRows = visibleRows < maxRows;
+  const canExpand = visibleRows < maxRows;
+  const canCollapse = visibleRows > 1;
+  const showRowControls = maxRows > 1;
+
+  const roundNavBtnClass =
+    'flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fff4de] text-[#2F3F3D] shadow-md transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff4de]/80 sm:h-12 sm:w-12';
 
   if (products.length === 0) {
     return (
@@ -113,19 +118,37 @@ export function ProductsCategoryCarousel({
         ))}
       </div>
 
-      {hasMoreRows ? (
-        <div className="flex shrink-0 flex-col items-center justify-center">
-          <button
-            type="button"
-            onClick={() => setVisibleRows((r) => Math.min(maxRows, r + 1))}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fff4de] text-[#2F3F3D] shadow-md transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff4de]/80 sm:h-12 sm:w-12"
-            aria-label={t('products.grid.showMore')}
-            aria-expanded={visibleRows > 1}
-          >
-            <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+      {showRowControls ? (
+        <div
+          className="flex shrink-0 flex-col items-center justify-center gap-2"
+          role="group"
+          aria-label={t('products.grid.rowExpandGroup')}
+        >
+          {canCollapse ? (
+            <button
+              type="button"
+              onClick={() => setVisibleRows((r) => Math.max(1, r - 1))}
+              className={roundNavBtnClass}
+              aria-label={t('products.grid.showFewer')}
+            >
+              <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+          ) : null}
+          {canExpand ? (
+            <button
+              type="button"
+              onClick={() => setVisibleRows((r) => Math.min(maxRows, r + 1))}
+              className={roundNavBtnClass}
+              aria-label={t('products.grid.showMore')}
+              aria-expanded={visibleRows > 1}
+            >
+              <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>

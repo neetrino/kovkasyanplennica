@@ -50,7 +50,9 @@
     "noProducts": "Товары не найдены.",
     "otherCategory": "Другое",
     "viewAllInCategory": "Все в этой категории",
-    "showMore": "Показать ещё один ряд"
+    "showMore": "Показать ещё один ряд",
+    "showFewer": "Скрыть один ряд",
+    "rowExpandGroup": "Развернуть или свернуть ряды товаров"
   },
   "carousel": {
     "previous": "Предыдущие товары",
