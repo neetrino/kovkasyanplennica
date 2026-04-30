@@ -16,7 +16,7 @@ export default function ProductsLoading() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pb-8 pt-[80px] sm:px-6 sm:pt-[110px] lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 sm:pt-6 lg:px-8">
         {Array.from({ length: 2 }).map((_, rowIndex) => (
           <section key={rowIndex} className="mb-14 last:mb-0">
             <div className="mb-10 h-10 w-44 rounded-full bg-white/10 animate-pulse" />

@@ -298,7 +298,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       {showFullDecorativeBackground && (
         <>
           {/* Decorative: վերևի հատված – կենտրոն */}
-          <div className="absolute top-[80px] left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
             <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
           </div>
           {/* Decorative: մեջտեղ – նույն չափսը, ցածր */}
@@ -318,12 +318,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </div>
         </aside>
 
-        <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-[76px] sm:pt-[92px] lg:pt-[88px] xl:pt-[96px]">
+        <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-4 sm:pt-6 lg:pt-[88px] xl:pt-[96px]">
           <ProductsShopToolbar className="hidden px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" />
 
           <div
             data-products-card-column
-            className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pt-[56px] pb-4 sm:pl-4 sm:pr-6 sm:pt-[88px] md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
+            className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pb-4 pt-4 sm:pl-4 sm:pr-6 sm:pt-6 md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
           >
           {normalizedProducts.length > 0 ? (
             <>

@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useId, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from '@/lib/i18n-client';
+import { getAppScrollRegion } from '@/lib/appScrollRegion';
 import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
 
 const pillBase =
@@ -40,6 +42,7 @@ export function ProductsMobileCategoriesDrawer({
 }: ProductsMobileCategoriesDrawerProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const titleId = useId();
   const closeLabel = t('products.mobileFilters.close');
   const isInline = layout === 'inline';
@@ -47,11 +50,17 @@ export function ProductsMobileCategoriesDrawer({
   const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const root = getAppScrollRegion();
+    if (!root) return;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = prevOverflow;
+      root.style.overflow = prevOverflow;
     };
   }, [open]);
 
@@ -91,49 +100,53 @@ export function ProductsMobileCategoriesDrawer({
     <>
       {shell}
 
-      {open ? (
-        <div className="fixed inset-0 z-[100] lg:hidden" role="presentation">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/50"
-            aria-label={closeLabel}
-            onClick={close}
-          />
-          <div
-            id="products-mobile-categories-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className="absolute left-0 top-0 flex h-full w-[min(100vw-3rem,288px)] max-w-full flex-col border-r border-[#3d504e] bg-[#2F3F3D] shadow-2xl"
-          >
-            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[#3d504e] px-3 py-3 pr-2">
-              <h2
-                id={titleId}
-                className="min-w-0 truncate text-left text-base font-medium tracking-wide text-[#fff4de]"
+      {mounted && open
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-app-overlay flex min-h-0 flex-col bg-[#2F3F3D] lg:hidden"
+              role="presentation"
+              style={{
+                paddingTop: 'env(safe-area-inset-top, 0px)',
+                paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+              }}
+            >
+              <div
+                id="products-mobile-categories-panel"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
+                className="flex min-h-0 flex-1 flex-col shadow-2xl"
               >
-                {t('products.mobileFilters.title')}
-              </h2>
-              <button
-                type="button"
-                onClick={close}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#fff4de] transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff4de]/60"
-                aria-label={closeLabel}
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-4 pb-8">
-              <ProductsCategorySidebar
-                variant="sidebar"
-                fixedSidebarPillWidth
-                onNavigate={close}
-              />
-            </div>
-          </div>
-        </div>
-      ) : null}
+                <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[#3d504e] px-3 py-3 pr-2">
+                  <h2
+                    id={titleId}
+                    className="min-w-0 truncate text-left text-base font-medium tracking-wide text-[#fff4de]"
+                  >
+                    {t('products.mobileFilters.title')}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={close}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#fff4de] transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff4de]/60"
+                    aria-label={closeLabel}
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-4 pb-8">
+                  <ProductsCategorySidebar
+                    variant="sidebar"
+                    fixedSidebarPillWidth
+                    onNavigate={close}
+                  />
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }

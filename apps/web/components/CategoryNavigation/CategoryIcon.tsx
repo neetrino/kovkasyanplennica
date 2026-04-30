@@ -37,7 +37,7 @@ export function CategoryIcon({
 
   const imgZoom =
     size === 'sidebar' && sidebarHoverGrow
-      ? 'origin-center transition-transform duration-1000 ease-in-out group-hover:scale-[1.14] group-focus-visible:scale-[1.14]'
+      ? 'origin-center transition-transform duration-700 ease-out group-hover:scale-[1.26] group-focus-visible:scale-[1.26]'
       : '';
 
   // Special categories (all, new, sale) use getCategoryIcon
