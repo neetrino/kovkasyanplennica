@@ -21,12 +21,39 @@ const categoryPreviewsCache = new Map<string, Record<string, Product | null>>();
 
 /**
  * Fetches one preview product per visible category chip via a single lightweight API (not N× full `/products` list).
+ * When `initialNavPreviews` is set (e.g. from RSC), skips the client fetch for first paint.
  */
-export function useCategoryProducts(categories: Category[]) {
-  const [categoryProducts, setCategoryProducts] = useState<Record<string, Product | null>>({});
-  const [loading, setLoading] = useState(true);
+export function useCategoryProducts(
+  categories: Category[],
+  initialNavPreviews?: Record<string, Product | null>
+) {
+  const fromServer = initialNavPreviews !== undefined;
+
+  const [categoryProducts, setCategoryProducts] = useState<Record<string, Product | null>>(() =>
+    fromServer ? (initialNavPreviews ?? {}) : {}
+  );
+  const [loading, setLoading] = useState(() => !fromServer);
 
   useEffect(() => {
+    const applyServerPreviews = () => {
+      if (!initialNavPreviews) return;
+      const language = getStoredLanguage();
+      const allWithAll = [
+        { id: 'all', slug: 'all', title: 'all', fullPath: 'all', children: [] } as Category,
+        ...categories,
+      ];
+      const slugList = allWithAll.map((c) => c.slug);
+      const cacheKey = `${language}:${slugList.join(',')}`;
+      categoryPreviewsCache.set(cacheKey, initialNavPreviews);
+      setCategoryProducts(initialNavPreviews);
+      setLoading(false);
+    };
+
+    if (fromServer) {
+      applyServerPreviews();
+      return;
+    }
+
     if (categories.length === 0) {
       setLoading(false);
       return;
@@ -93,7 +120,7 @@ export function useCategoryProducts(categories: Category[]) {
     return () => {
       mounted = false;
     };
-  }, [categories]);
+  }, [categories, fromServer, initialNavPreviews]);
 
   return { categoryProducts, loading };
 }

@@ -19,6 +19,8 @@ interface CategoryIconProps {
   size?: CategoryIconSize;
   /** Products sidebar: zoom image inside fixed circle on parent pill hover */
   sidebarHoverGrow?: boolean;
+  /** Prefer LCP for first visible category thumbnails */
+  priority?: boolean;
 }
 
 /**
@@ -31,6 +33,7 @@ export function CategoryIcon({
   t,
   size = 'default',
   sidebarHoverGrow = false,
+  priority = false,
 }: CategoryIconProps) {
   const title = category.title.toLowerCase();
   const slug = category.slug.toLowerCase();
@@ -80,6 +83,7 @@ export function CategoryIcon({
           height={dim}
           className={`h-full w-full object-cover ${imgZoom}`}
           unoptimized
+          priority={priority}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-gray-100">

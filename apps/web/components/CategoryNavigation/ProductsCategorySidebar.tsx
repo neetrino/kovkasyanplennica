@@ -85,6 +85,7 @@ function SidebarCategoryRow({
   t,
   strip,
   fixedSidebarPillWidth,
+  imagePriority,
 }: {
   category: Category;
   product: { id: string; slug: string; title: string; image: string | null } | null;
@@ -94,6 +95,7 @@ function SidebarCategoryRow({
   strip: boolean;
   /** When true (e.g. mobile drawer), keep pill width; skip page-based hover expansion. */
   fixedSidebarPillWidth?: boolean;
+  imagePriority?: boolean;
 }) {
   const title = category.title;
   const slug = category.slug;
@@ -173,6 +175,7 @@ function SidebarCategoryRow({
           t={t}
           size="sidebar"
           sidebarHoverGrow={!strip}
+          priority={Boolean(imagePriority)}
         />
       </div>
     </Link>
@@ -183,10 +186,17 @@ function ProductsCategorySidebarInner({
   variant,
   onNavigate,
   fixedSidebarPillWidth,
+  initialCategories,
+  initialCategoryNavPreviews,
 }: {
   variant: 'sidebar' | 'strip';
   onNavigate?: () => void;
   fixedSidebarPillWidth?: boolean;
+  initialCategories?: Category[];
+  initialCategoryNavPreviews?: Record<
+    string,
+    { id: string; slug: string; title: string; image: string | null } | null
+  >;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,8 +204,8 @@ function ProductsCategorySidebarInner({
   const currentCategory = searchParams?.get('category');
   const categoryNavRef = useRef<HTMLElement>(null);
 
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { categoryProducts } = useCategoryProducts(categories);
+  const { categories, loading: categoriesLoading } = useCategories(initialCategories);
+  const { categoryProducts } = useCategoryProducts(categories, initialCategoryNavPreviews);
 
   const pillHoverEnabled =
     variant === 'sidebar' && !categoriesLoading && !fixedSidebarPillWidth;
@@ -224,7 +234,7 @@ function ProductsCategorySidebarInner({
 
   const list = (
     <>
-      {allCategoriesWithAll.map((category) => {
+      {allCategoriesWithAll.map((category, index) => {
         const isActive =
           category.slug === 'all' ? !currentCategory : currentCategory === category.slug;
         const product = categoryProducts[category.slug];
@@ -238,6 +248,7 @@ function ProductsCategorySidebarInner({
             t={t}
             strip={variant === 'strip'}
             fixedSidebarPillWidth={Boolean(fixedSidebarPillWidth)}
+            imagePriority={variant === 'sidebar' && index < 8}
           />
         );
       })}
@@ -276,12 +287,20 @@ export type ProductsCategorySidebarProps = {
   onNavigate?: () => void;
   /** Sidebar only: do not expand pills toward the product grid (e.g. overlay drawer). */
   fixedSidebarPillWidth?: boolean;
+  /** From `/products` RSC: avoids client waterfall for category thumbnails. */
+  initialCategories?: Category[];
+  initialCategoryNavPreviews?: Record<
+    string,
+    { id: string; slug: string; title: string; image: string | null } | null
+  >;
 };
 
 export function ProductsCategorySidebar({
   variant = 'sidebar',
   onNavigate,
   fixedSidebarPillWidth,
+  initialCategories,
+  initialCategoryNavPreviews,
 }: ProductsCategorySidebarProps) {
   return (
     <Suspense fallback={<ProductsCategorySidebarSkeleton variant={variant === 'strip' ? 'strip' : 'sidebar'} />}>
@@ -289,6 +308,8 @@ export function ProductsCategorySidebar({
         variant={variant === 'strip' ? 'strip' : 'sidebar'}
         onNavigate={onNavigate}
         fixedSidebarPillWidth={fixedSidebarPillWidth}
+        initialCategories={initialCategories}
+        initialCategoryNavPreviews={initialCategoryNavPreviews}
       />
     </Suspense>
   );
