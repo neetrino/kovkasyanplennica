@@ -93,15 +93,15 @@ export function ProductsCategoryCarousel({
   }
 
   return (
-    <div className="relative flex flex-row items-center gap-3 sm:gap-4 md:gap-6">
+    <div className="relative flex flex-col items-stretch gap-3 sm:gap-4 md:flex-row md:items-center md:gap-6">
       <div
-        className="min-w-0 flex-1 grid gap-x-3 gap-y-12 pt-24 pb-14 sm:gap-x-3.5 sm:gap-y-14 sm:pt-28 sm:pb-16 md:gap-x-4 md:gap-y-16 md:pt-32 md:pb-20 lg:gap-x-5 lg:gap-y-20 lg:pt-36"
+        className="order-2 min-w-0 w-full flex-1 grid gap-x-2 gap-y-16 pb-10 pt-2 sm:gap-x-3 sm:gap-y-20 sm:pb-12 sm:pt-3 md:order-1 md:gap-x-4 md:gap-y-16 md:pt-32 md:pb-20 lg:gap-x-5 lg:gap-y-20 lg:pt-36"
         style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
       >
         {displayed.map((product) => (
           <div
             key={product.id}
-            className="min-w-0 px-1.5 pb-8 sm:px-2 md:px-2.5 md:pb-10"
+            className="min-w-0 px-0 pb-2 pt-3 sm:px-2 sm:pb-4 sm:pt-4 md:px-2.5 md:pb-10 md:pt-0"
           >
             <ProductCard
               product={{
@@ -120,7 +120,7 @@ export function ProductsCategoryCarousel({
 
       {showRowControls ? (
         <div
-          className="flex shrink-0 flex-col items-center justify-center gap-2"
+          className="order-1 flex w-full shrink-0 flex-col items-end justify-center gap-2 pb-1 md:order-2 md:w-auto md:items-center md:pb-0"
           role="group"
           aria-label={t('products.grid.rowExpandGroup')}
         >

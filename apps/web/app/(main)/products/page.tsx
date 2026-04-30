@@ -5,6 +5,7 @@ import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
+import { CategoryNavigation } from '@/components/CategoryNavigation';
 import { ProductsCategorySidebar } from '@/components/CategoryNavigation/ProductsCategorySidebar';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 
@@ -318,15 +319,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </aside>
 
         <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-[76px] sm:pt-[92px] lg:pt-[88px] xl:pt-[96px]">
-          <div className="px-3 pb-3 sm:px-5 lg:hidden">
-            <ProductsCategorySidebar variant="strip" />
+          {/* Mobile: same shell as a928cd7 — full-width CategoryNavigation + legacy paddings/titles; desktop unchanged */}
+          <div className="relative z-20 w-full lg:hidden">
+            <CategoryNavigation />
           </div>
 
-          <ProductsShopToolbar className="px-3 pb-1 sm:px-6 lg:px-8 lg:pt-2" />
+          <ProductsShopToolbar className="hidden px-3 pb-1 sm:px-6 lg:block lg:px-8 lg:pt-2" />
 
           <div
             data-products-card-column
-            className="relative mx-auto max-w-7xl overflow-x-visible px-3 pb-8 pt-2 sm:px-5 md:px-6 lg:px-8 lg:pb-10 lg:pt-4"
+            className="relative z-10 mx-auto max-w-7xl overflow-x-visible pl-2 pr-4 pt-[80px] pb-4 sm:pl-4 sm:pr-6 sm:pt-[110px] md:pl-6 lg:px-8 lg:pb-10 lg:pt-4"
           >
           {normalizedProducts.length > 0 ? (
             <>
@@ -338,7 +340,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 >
                   <h2
                     id={`category-row-${index}`}
-                    className="mb-12 md:mb-6 lg:mb-10 w-full text-right min-h-[48px] leading-[48px] text-[43px] font-light italic text-[#fff4de]"
+                    className="mb-12 md:mb-6 lg:mb-10 inline-block min-h-[48px] text-left leading-[48px] text-[43px] font-light text-[#fff4de] lg:w-full lg:text-right lg:italic"
                     style={{ fontFamily: "'Sansation Light', sans-serif" }}
                   >
                     {row.categoryTitle}
