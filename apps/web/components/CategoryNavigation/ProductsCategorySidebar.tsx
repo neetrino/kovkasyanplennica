@@ -121,6 +121,7 @@ function SidebarCategoryRow({
         'bg-white shadow-sm',
         'hover:w-[var(--products-category-pill-hover)] hover:bg-[#fff4de] hover:shadow-md',
         'focus-visible:w-[var(--products-category-pill-hover)] focus-visible:bg-[#fff4de] focus-visible:shadow-md',
+
         'outline-none',
         isActive
           ? 'ring-1 ring-[#2F3F3D]/40'

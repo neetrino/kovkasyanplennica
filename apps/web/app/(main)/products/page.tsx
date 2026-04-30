@@ -311,8 +311,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
       </div>
       <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
-        <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block">
-          <div className="sticky top-28 overflow-visible pb-12 pl-2 pr-2 pt-[88px] xl:top-32 xl:pt-[100px]">
+        <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">
+          <div className="sticky top-[104px] overflow-visible pb-12 pl-2 pr-2 xl:top-[104px]">
             <ProductsCategorySidebar variant="sidebar" />
           </div>
         </aside>
