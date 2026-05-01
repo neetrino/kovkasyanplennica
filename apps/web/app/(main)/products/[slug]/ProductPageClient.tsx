@@ -84,8 +84,8 @@ export function ProductPageClient({
     getProductText(language, product.id, 'longDescription') || product.description || '';
 
   return (
-    <div className="relative mx-auto max-w-[1440px] px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-[88px] xl:pt-[112px]">
-      <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[minmax(0,min(100%,494px))_minmax(0,1fr)] lg:gap-[22px]">
+    <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-[76px]">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,min(100%,494px))_minmax(0,1fr)] lg:gap-[42px]">
         <ProductImageGallery
           images={images}
           product={product}

@@ -34,7 +34,7 @@ import ruVacancies from '../locales/ru/vacancies.json';
 import ruTeam from '../locales/ru/team.json';
 
 export type Namespace = 'common' | 'home' | 'product' | 'products' | 'attributes' | 'delivery' | 'about' | 'contact' | 'faq' | 'login' | 'cookies' | 'delivery-terms' | 'terms' | 'privacy' | 'support' | 'stores' | 'returns' | 'refund-policy' | 'profile' | 'checkout' | 'register' | 'categories' | 'orders' | 'admin' | 'desktops' | 'vacancies' | 'team';
-export type ProductField = 'title' | 'shortDescription' | 'longDescription';
+export type ProductField = 'title' | 'subtitle' | 'shortDescription' | 'longDescription';
 
 type TranslationNamespaces = Record<Namespace, Record<string, unknown>>;
 

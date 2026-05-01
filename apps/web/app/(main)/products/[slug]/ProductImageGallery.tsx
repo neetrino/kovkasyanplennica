@@ -48,14 +48,14 @@ export function ProductImageGallery({
 
           {product.labels && <ProductLabels labels={product.labels} />}
 
-          <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-3">
+          <div className="pointer-events-none absolute bottom-4 left-4 z-10 flex flex-col gap-3 opacity-0 transition-opacity duration-300 group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
             <button
               type="button"
               onClick={() => setShowZoom(true)}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-white/80 shadow-[0_2px_8px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-all duration-300 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/75 shadow-[0_2px_8px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-all duration-200 hover:bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
               aria-label={t(language, 'common.ariaLabels.fullscreenImage')}
             >
-              <Maximize2 className="h-5 w-5 text-gray-800" />
+              <Maximize2 className="h-4 w-4 text-gray-800" />
             </button>
           </div>
         </div>

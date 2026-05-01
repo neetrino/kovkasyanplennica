@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import { formatPrice, type CurrencyCode } from '@/lib/currency';
 import { t, getProductText } from '@/lib/i18n';
 import type { LanguageCode } from '@/lib/language';
@@ -179,18 +179,18 @@ export function ProductInfoAndActions({
   const lineSubtotal = price * qtyForLine;
 
   return (
-    <div className="font-roboto flex h-full min-h-0 flex-col text-[#ffe5c2]">
-      <div className="min-h-0 flex-1 space-y-0">
+    <div className="font-roboto flex flex-col text-[#ffe5c2]">
+      <div className="space-y-0">
         {product.brand ? (
           <p className="mb-2 text-sm font-medium text-[#ffe5c2]/70">{product.brand.name}</p>
         ) : null}
 
-        <h1 className="w-full text-[clamp(2rem,4.2vw,3.75rem)] font-bold leading-[1.07] tracking-tight text-[#ffe5c2]">
+        <h1 className="w-full text-[clamp(2rem,4.2vw,3.75rem)] font-bold leading-[1.1] tracking-tight text-[#ffe5c2] lg:leading-[80px]">
           {title}
         </h1>
 
         {portionLine ? (
-          <p className="mt-1 w-full text-[22px] font-bold leading-snug text-[#ffe5c2]/[0.68] sm:text-[26px] lg:text-[28px]">
+          <p className="w-full font-bold text-[rgba(255,229,194,0.68)] text-[22px] leading-snug sm:text-[26px] lg:text-[28px] lg:leading-[80px]">
             {portionLine}
           </p>
         ) : null}
@@ -201,9 +201,9 @@ export function ProductInfoAndActions({
           </p>
         ) : null}
 
-        <div className="mt-4 flex flex-col gap-1">
+        <div className="mt-4 flex flex-col gap-1 lg:mt-0">
           <div className="flex flex-wrap items-baseline gap-3">
-            <p className="text-[34px] font-bold leading-none text-[#ffe5c2] sm:text-[38px] lg:text-[40px]">
+            <p className="text-[34px] font-bold leading-tight text-[#ffe5c2] sm:text-[38px] lg:text-[40px] lg:leading-[80px]">
               {formatPrice(price, currency as CurrencyCode)}
             </p>
             {discountPercent && discountPercent > 0 ? (
@@ -217,7 +217,13 @@ export function ProductInfoAndActions({
           )}
         </div>
 
-        <div className="mt-8 [&_label]:text-[#ffe5c2]/90 [&_span]:text-[#c8c8c8]">
+        <div
+          className={
+            attributeGroups.size > 0 || colorGroups.length > 0 || sizeGroups.length > 0
+              ? 'mt-6 [&_label]:text-[#ffe5c2]/90 [&_span]:text-[#c8c8c8]'
+              : '[&_label]:text-[#ffe5c2]/90 [&_span]:text-[#c8c8c8]'
+          }
+        >
           <ProductAttributesSelector
             product={product}
             attributeGroups={attributeGroups}
@@ -246,7 +252,7 @@ export function ProductInfoAndActions({
         </div>
       </div>
 
-      <div className="mt-8 shrink-0 lg:mt-auto">
+      <div className="mt-6 shrink-0 lg:mt-2">
         {isVariationRequired && (
           <div className="mb-3 rounded-2xl border border-[#ffe5c2]/25 bg-[#ffe5c2]/10 p-3">
             <p className="text-sm font-medium text-[#ffe5c2]">{getRequiredAttributesMessage()}</p>
@@ -275,27 +281,27 @@ export function ProductInfoAndActions({
         )}
 
         <div className="flex flex-wrap items-center gap-[22px] pt-2">
-          <div className="relative h-14 w-[161px] shrink-0 rounded-[80px] border-2 border-[#ffe5c2] bg-[rgba(255,229,194,0.12)]">
+          <div className="relative h-14 w-[161px] shrink-0 rounded-[80px] border-2 border-solid border-[#ffe5c2] bg-[rgba(255,229,194,0.12)]">
             <button
               type="button"
               onClick={() => onQuantityAdjust(-1)}
               disabled={quantity <= 1 || isOutOfStock || isVariationRequired}
-              className="absolute left-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-[#ffe5c2] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-35"
+              className="absolute left-[6px] top-1/2 flex size-[43px] -translate-y-1/2 items-center justify-center rounded-full bg-[#ffe5c2] text-[#2f3f3d] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
               aria-label={t(language, 'product.decreaseQuantity')}
             >
-              −
+              <Minus className="size-[17px]" strokeWidth={2.5} aria-hidden />
             </button>
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[27px] font-bold leading-none text-[#ffe5c2]">
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[27px] font-bold leading-[40px] text-[#ffe5c2]">
               {quantity}
             </span>
             <button
               type="button"
               onClick={() => onQuantityAdjust(1)}
               disabled={quantity >= maxQuantity || isOutOfStock || isVariationRequired}
-              className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-[#ffe5c2] transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-35"
+              className="absolute right-[6px] top-1/2 flex size-[43px] -translate-y-1/2 items-center justify-center rounded-full bg-[#ffe5c2] text-[#2f3f3d] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
               aria-label={t(language, 'product.increaseQuantity')}
             >
-              +
+              <Plus className="size-[17px]" strokeWidth={2.5} aria-hidden />
             </button>
           </div>
 
