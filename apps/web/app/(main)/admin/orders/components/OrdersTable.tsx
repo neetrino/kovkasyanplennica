@@ -3,6 +3,17 @@
 import { useTranslation } from '@/lib/i18n-client';
 import { Card } from '@shop/ui';
 import { CurrencyCode } from '@/lib/currency';
+import {
+  adminSortIconActiveClass,
+  adminSortIconIdleClass,
+  adminTableBodyClass,
+  adminTableHeadCellClass,
+  adminTableHeadRowClass,
+  adminTableSortableThClass,
+  adminTableWrapClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+} from '../../components/dashboardUi';
 import { OrderRow } from './OrderRow';
 import { OrdersPagination } from './OrdersPagination';
 import type { Order } from '../useOrders';
@@ -50,10 +61,10 @@ export function OrdersTable({
 
   if (loading) {
     return (
-      <Card className="p-6">
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.orders.loadingOrders')}</p>
+      <Card variant="admin" className={dashboardCardPadding}>
+        <div className="py-10 text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className={dashboardEmptyText}>{t('admin.orders.loadingOrders')}</p>
         </div>
       </Card>
     );
@@ -61,19 +72,19 @@ export function OrdersTable({
 
   if (orders.length === 0) {
     return (
-      <Card className="p-6">
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t('admin.orders.noOrders')}</p>
+      <Card variant="admin" className={dashboardCardPadding}>
+        <div className="py-10 text-center">
+          <p className={dashboardEmptyText}>{t('admin.orders.noOrders')}</p>
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="p-6">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className="overflow-x-auto rounded-lg border border-admin-brand-2/15">
+        <table className={adminTableWrapClass}>
+          <thead className={adminTableHeadRowClass}>
             <tr>
               <th className="px-4 py-3">
                 <input
@@ -81,30 +92,24 @@ export function OrdersTable({
                   aria-label={t('admin.orders.selectAllOrders')}
                   checked={orders.length > 0 && orders.every(o => selectedIds.has(o.id))}
                   onChange={onToggleSelectAll}
+                  className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                 />
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('admin.orders.orderNumber')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('admin.orders.customer')}
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                onClick={() => onSort('total')}
-              >
+              <th className={adminTableHeadCellClass}>{t('admin.orders.orderNumber')}</th>
+              <th className={adminTableHeadCellClass}>{t('admin.orders.customer')}</th>
+              <th className={adminTableSortableThClass} onClick={() => onSort('total')}>
                 <div className="flex items-center gap-1">
                   {t('admin.orders.total')}
                   <div className="flex flex-col">
                     <svg
-                      className={`w-3 h-3 ${sortBy === 'total' && sortOrder === 'asc' ? 'text-blue-600' : 'text-gray-400'}`}
+                      className={`h-3 w-3 ${sortBy === 'total' && sortOrder === 'asc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
                     </svg>
                     <svg
-                      className={`w-3 h-3 -mt-1 ${sortBy === 'total' && sortOrder === 'desc' ? 'text-blue-600' : 'text-gray-400'}`}
+                      className={`-mt-1 h-3 w-3 ${sortBy === 'total' && sortOrder === 'desc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -113,31 +118,22 @@ export function OrdersTable({
                   </div>
                 </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('admin.orders.items')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('admin.orders.status')}
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {t('admin.orders.payment')}
-              </th>
-              <th
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                onClick={() => onSort('createdAt')}
-              >
+              <th className={adminTableHeadCellClass}>{t('admin.orders.items')}</th>
+              <th className={adminTableHeadCellClass}>{t('admin.orders.status')}</th>
+              <th className={adminTableHeadCellClass}>{t('admin.orders.payment')}</th>
+              <th className={adminTableSortableThClass} onClick={() => onSort('createdAt')}>
                 <div className="flex items-center gap-1">
                   {t('admin.orders.date')}
                   <div className="flex flex-col">
                     <svg
-                      className={`w-3 h-3 ${sortBy === 'createdAt' && sortOrder === 'asc' ? 'text-blue-600' : 'text-gray-400'}`}
+                      className={`h-3 w-3 ${sortBy === 'createdAt' && sortOrder === 'asc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
                     </svg>
                     <svg
-                      className={`w-3 h-3 -mt-1 ${sortBy === 'createdAt' && sortOrder === 'desc' ? 'text-blue-600' : 'text-gray-400'}`}
+                      className={`-mt-1 h-3 w-3 ${sortBy === 'createdAt' && sortOrder === 'desc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -148,7 +144,7 @@ export function OrdersTable({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className={adminTableBodyClass}>
             {orders.map((order) => (
               <OrderRow
                 key={order.id}

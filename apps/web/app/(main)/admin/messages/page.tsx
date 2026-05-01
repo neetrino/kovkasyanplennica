@@ -6,6 +6,21 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { Card, Button } from '@shop/ui';
 import { apiClient } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
+import { AdminNumericPagination } from '../components/AdminNumericPagination';
+import {
+  adminBulkDangerButtonClass,
+  adminPaginationMetaClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardMainClass,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+  adminTableBodyClass,
+  adminTableHeadCellClass,
+  adminTableHeadRowClass,
+  adminTableRowHoverClass,
+  adminTableWrapClass,
+} from '../components/dashboardUi';
 
 interface Message {
   id: string;
@@ -24,6 +39,16 @@ interface MessagesResponse {
     limit: number;
     totalPages: number;
   };
+}
+
+function messageFromUnknownError(err: unknown, fallback: string): string {
+  if (typeof err === 'object' && err !== null && 'message' in err) {
+    const m = (err as { message: unknown }).message;
+    if (typeof m === 'string' && m.length > 0) {
+      return m;
+    }
+  }
+  return fallback;
 }
 
 export default function MessagesPage() {
@@ -50,7 +75,7 @@ export default function MessagesPage() {
     try {
       setLoading(true);
       console.log('📧 [ADMIN] Fetching messages...', { page });
-      
+
       const response = await apiClient.get<MessagesResponse>('/api/v1/admin/messages', {
         params: {
           page: page.toString(),
@@ -76,9 +101,10 @@ export default function MessagesPage() {
   }, [isLoggedIn, isAdmin, page]);
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -107,18 +133,23 @@ export default function MessagesPage() {
         },
         body: JSON.stringify({ ids }),
       });
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = (await response.json().catch(() => ({}))) as {
+          detail?: string;
+          message?: string;
+        };
         throw new Error(errorData.detail || errorData.message || 'Failed to delete messages');
       }
-      
+
       setSelectedIds(new Set());
       await fetchMessages();
       alert(t('admin.messages.deletedSuccess'));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [ADMIN] Bulk delete messages error:', err);
-      alert(t('admin.messages.failedToDelete') + ': ' + (err.message || 'Unknown error'));
+      alert(
+        `${t('admin.messages.failedToDelete')}: ${messageFromUnknownError(err, t('admin.common.unknownErrorFallback'))}`,
+      );
     } finally {
       setBulkDeleting(false);
     }
@@ -126,10 +157,10 @@ export default function MessagesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
@@ -140,136 +171,107 @@ export default function MessagesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div className="mb-8">
-          <button
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.messages.backToAdmin')}
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">{t('admin.messages.title')}</h1>
-        </div>
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.messages.title')}</h1>
+      </section>
 
-        {/* Messages Table */}
-        <Card className="p-6">
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-              <p className="text-gray-600">{t('admin.messages.loadingMessages')}</p>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-600">{t('admin.messages.noMessages')}</p>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3">
+      <Card variant="admin" className={dashboardCardPadding}>
+        {loading ? (
+          <div className="py-10 text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+            <p className={dashboardEmptyText}>{t('admin.messages.loadingMessages')}</p>
+          </div>
+        ) : messages.length === 0 ? (
+          <div className="py-10 text-center">
+            <p className={dashboardEmptyText}>{t('admin.messages.noMessages')}</p>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-lg border border-admin-brand-2/15">
+              <table className={adminTableWrapClass}>
+                <thead className={adminTableHeadRowClass}>
+                  <tr>
+                    <th className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={t('admin.messages.selectAll')}
+                        checked={messages.length > 0 && messages.every((m) => selectedIds.has(m.id))}
+                        onChange={toggleSelectAll}
+                        className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+                      />
+                    </th>
+                    <th className={adminTableHeadCellClass}>{t('admin.messages.name')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.messages.email')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.messages.subject')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.messages.message')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.messages.date')}</th>
+                  </tr>
+                </thead>
+                <tbody className={adminTableBodyClass}>
+                  {messages.map((msg) => (
+                    <tr key={msg.id} className={adminTableRowHoverClass}>
+                      <td className="px-4 py-4">
                         <input
                           type="checkbox"
-                          aria-label={t('admin.messages.selectAll')}
-                          checked={messages.length > 0 && messages.every(m => selectedIds.has(m.id))}
-                          onChange={toggleSelectAll}
+                          aria-label={t('admin.messages.selectMessage').replace('{email}', msg.email)}
+                          checked={selectedIds.has(msg.id)}
+                          onChange={() => toggleSelect(msg.id)}
+                          className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                         />
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.messages.name')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.messages.email')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.messages.subject')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.messages.message')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.messages.date')}
-                      </th>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={dashboardRowPrimaryMedium}>{msg.name}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={dashboardRowPrimaryMedium}>{msg.email}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className={dashboardRowPrimaryMedium}>{msg.subject}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className={`max-w-md truncate ${dashboardRowPrimaryMedium}`}>{msg.message}</div>
+                      </td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${dashboardRowMeta}`}>
+                        {new Date(msg.createdAt).toLocaleDateString()}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {messages.map((message) => (
-                      <tr key={message.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4">
-                          <input
-                            type="checkbox"
-                            aria-label={t('admin.messages.selectMessage').replace('{email}', message.email)}
-                            checked={selectedIds.has(message.id)}
-                            onChange={() => toggleSelect(message.id)}
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {message.name}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{message.email}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900">{message.subject}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-md truncate">{message.message}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(message.createdAt).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
-                    {t('admin.messages.showingPage').replace('{page}', meta.page.toString()).replace('{totalPages}', meta.totalPages.toString()).replace('{total}', meta.total.toString())}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                    >
-                      {t('admin.messages.previous')}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                      disabled={page === meta.totalPages}
-                    >
-                      {t('admin.messages.next')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-              <div className="mt-4 flex items-center justify-between">
-                <div className="text-sm text-gray-700">{t('admin.messages.selectedMessages').replace('{count}', selectedIds.size.toString())}</div>
-                <Button
-                  variant="outline"
-                  onClick={handleBulkDelete}
-                  disabled={selectedIds.size === 0 || bulkDeleting}
-                >
-                  {bulkDeleting ? t('admin.messages.deleting') : t('admin.messages.deleteSelected')}
-                </Button>
+            {meta && meta.totalPages > 1 ? (
+              <AdminNumericPagination
+                page={page}
+                totalPages={meta.totalPages}
+                onPageChange={(n) => setPage(n)}
+                summary={t('admin.messages.showingPage')
+                  .replace('{page}', meta.page.toString())
+                  .replace('{totalPages}', meta.totalPages.toString())
+                  .replace('{total}', meta.total.toString())}
+                previousLabel={t('admin.messages.previous')}
+                nextLabel={t('admin.messages.next')}
+              />
+            ) : null}
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-admin-brand-2/12 pt-4">
+              <div className={adminPaginationMetaClass}>
+                {t('admin.messages.selectedMessages').replace('{count}', selectedIds.size.toString())}
               </div>
-            </>
-          )}
-        </Card>
-      </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={selectedIds.size === 0 || bulkDeleting}
+                className={adminBulkDangerButtonClass}
+              >
+                {bulkDeleting ? t('admin.messages.deleting') : t('admin.messages.deleteSelected')}
+              </Button>
+            </div>
+          </>
+        )}
+      </Card>
     </div>
   );
 }
-

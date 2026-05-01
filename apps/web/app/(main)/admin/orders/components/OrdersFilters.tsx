@@ -2,6 +2,12 @@
 
 import { useTranslation } from '@/lib/i18n-client';
 import { Card } from '@shop/ui';
+import {
+  adminAlertErrorClass,
+  adminAlertSuccessClass,
+  adminFormControlClass,
+  dashboardCardPadding,
+} from '../../components/dashboardUi';
 import type { useOrders } from '../useOrders';
 
 interface OrdersFiltersProps {
@@ -71,10 +77,10 @@ export function OrdersFilters({
   };
 
   return (
-    <Card className="p-4 mb-6">
-      <div className="flex gap-4 items-center flex-wrap">
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         <select
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={adminFormControlClass}
           value={statusFilter}
           onChange={(e) => handleStatusChange(e.target.value)}
         >
@@ -85,7 +91,7 @@ export function OrdersFilters({
           <option value="cancelled">{t('admin.orders.cancelled')}</option>
         </select>
         <select
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={adminFormControlClass}
           value={paymentStatusFilter}
           onChange={(e) => handlePaymentStatusChange(e.target.value)}
         >
@@ -97,17 +103,15 @@ export function OrdersFilters({
         <input
           type="text"
           placeholder={t('admin.orders.searchPlaceholder')}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 min-w-[200px]"
+          className={`${adminFormControlClass} min-w-[200px] flex-1`}
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
         />
         {updateMessage && (
           <div
-            className={`px-4 py-2 rounded-md text-sm ${
-              updateMessage.type === 'success'
-                ? 'bg-green-100 text-green-800'
-                : 'bg-red-100 text-red-800'
-            }`}
+            className={
+              updateMessage.type === 'success' ? adminAlertSuccessClass : adminAlertErrorClass
+            }
           >
             {updateMessage.text}
           </div>

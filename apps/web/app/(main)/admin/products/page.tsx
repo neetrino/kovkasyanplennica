@@ -6,6 +6,13 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
 import { getStoredCurrency, initializeCurrencyRates, type CurrencyCode } from '@/lib/currency';
+import { Button } from '@shop/ui';
+import {
+  adminBulkDangerButtonClass,
+  adminPrimaryCtaClass,
+  dashboardGhostLink,
+  dashboardMainClass,
+} from '../components/dashboardUi';
 import { ProductFilters } from './components/ProductFilters';
 import { ProductsTable } from './components/ProductsTable';
 import { useProductHandlers } from './hooks/useProductHandlers';
@@ -297,10 +304,10 @@ export default function ProductsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
@@ -311,33 +318,16 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div className="mb-6">
-          <button
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-2 flex items-center text-sm"
-          >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.products.backToAdmin')}
-          </button>
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{t('admin.products.title')}</h1>
-            {(search || selectedCategories.size > 0 || skuSearch || stockFilter !== 'all') && (
-              <button
-                type="button"
-                onClick={handleClearFilters}
-                className="text-sm text-gray-600 hover:text-gray-900 underline"
-              >
-                {t('admin.products.clearAll')}
-              </button>
-            )}
+    <div className={dashboardMainClass}>
+        {(search || selectedCategories.size > 0 || skuSearch || stockFilter !== 'all') && (
+          <div className="flex justify-end">
+            <button type="button" onClick={handleClearFilters} className={`${dashboardGhostLink} underline`}>
+              {t('admin.products.clearAll')}
+            </button>
           </div>
-        </div>
+        )}
 
-        <div className="min-w-0">
+        <div className="flex min-w-0 flex-col gap-5 sm:gap-6">
             <ProductFilters
               search={search}
               setSearch={setSearch}
@@ -355,25 +345,38 @@ export default function ProductsPage() {
               setMinPrice={setMinPrice}
               maxPrice={maxPrice}
               setMaxPrice={setMaxPrice}
-              selectedIds={selectedIds}
               handleSearch={handlers.handleSearch}
-              handleBulkDelete={handlers.handleBulkDelete}
-              handleClearFilters={handleClearFilters}
-              bulkDeleting={bulkDeleting}
               setPage={setPage}
             />
 
-            {/* Add New Product Button */}
-            <div className="mb-6">
+            <div>
               <button
+                type="button"
                 onClick={() => router.push('/admin/products/add')}
-                className="w-full px-4 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 font-medium text-sm"
+                className={adminPrimaryCtaClass}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 {t('admin.products.addNewProduct')}
               </button>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-admin-brand-2/18 bg-admin-surface/45 px-4 py-3">
+              <div className="text-sm font-medium text-admin-brand">
+                {t('admin.products.selectedProducts').replace('{count}', selectedIds.size.toString())}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  void handlers.handleBulkDelete();
+                }}
+                disabled={bulkDeleting || selectedIds.size === 0}
+                className={adminBulkDangerButtonClass}
+              >
+                {bulkDeleting ? t('admin.products.deleting') : t('admin.products.deleteSelected')}
+              </Button>
             </div>
 
             {/* Products Table */}
@@ -396,7 +399,6 @@ export default function ProductsPage() {
               setPage={setPage}
             />
         </div>
-      </div>
     </div>
   );
 }

@@ -22,7 +22,7 @@ export function MainSiteChrome({ children }: { children: ReactNode }) {
       <div
         id={APP_SCROLL_REGION_DOM_ID}
         data-app-scroll-region
-        className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-gray-50"
+        className="relative flex h-dvh min-h-0 flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain bg-admin-brand"
       >
         <main className="w-full min-h-0 flex-1">{children}</main>
       </div>

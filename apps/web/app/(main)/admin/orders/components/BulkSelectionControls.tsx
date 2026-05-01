@@ -2,6 +2,11 @@
 
 import { useTranslation } from '@/lib/i18n-client';
 import { Card, Button } from '@shop/ui';
+import {
+  adminBulkDangerButtonClass,
+  dashboardCardPadding,
+  dashboardRowPrimaryMedium,
+} from '../../components/dashboardUi';
 
 interface BulkSelectionControlsProps {
   selectedCount: number;
@@ -21,15 +26,16 @@ export function BulkSelectionControls({
   }
 
   return (
-    <Card className="p-4 mb-6">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-700">
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className={`text-sm ${dashboardRowPrimaryMedium}`}>
           {t('admin.orders.selectedOrders').replace('{count}', selectedCount.toString())}
         </div>
         <Button
           variant="outline"
           onClick={onBulkDelete}
           disabled={bulkDeleting}
+          className={adminBulkDangerButtonClass}
         >
           {bulkDeleting ? t('admin.orders.deleting') : t('admin.orders.deleteSelected')}
         </Button>

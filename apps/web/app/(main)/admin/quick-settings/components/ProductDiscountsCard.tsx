@@ -4,6 +4,17 @@ import type { ChangeEvent } from 'react';
 import { Card, Button, Input } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
 import { formatPrice } from '@/lib/currency';
+import {
+  adminFormControlClass,
+  adminModalTitleClass,
+  adminSectionSubtitleClass,
+  adminSolidButtonClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardInsetRow,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+} from '../../components/dashboardUi';
 
 interface Product {
   id: string;
@@ -33,23 +44,23 @@ export function ProductDiscountsCard({
   const { t } = useTranslation();
 
   return (
-    <Card className="p-6 bg-white border-gray-200">
+    <Card variant="admin" className={dashboardCardPadding}>
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('admin.quickSettings.productDiscounts')}</h2>
-        <p className="text-sm text-gray-600">{t('admin.quickSettings.productDiscountsSubtitle')}</p>
+        <h2 className={adminModalTitleClass}>{t('admin.quickSettings.productDiscounts')}</h2>
+        <p className={`mt-1 ${adminSectionSubtitleClass}`}>{t('admin.quickSettings.productDiscountsSubtitle')}</p>
       </div>
 
       {productsLoading ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.quickSettings.loadingProducts')}</p>
+        <div className="py-10 text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className={dashboardEmptyText}>{t('admin.quickSettings.loadingProducts')}</p>
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600">{t('admin.quickSettings.noProducts')}</p>
+        <div className="py-10 text-center">
+          <p className={dashboardEmptyText}>{t('admin.quickSettings.noProducts')}</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {products.map((product) => {
             const currentDiscount = Number(productDiscounts[product.id] ?? product.discountPercent ?? 0);
             const originalPrice = product.price || 0;
@@ -60,34 +71,28 @@ export function ProductDiscountsCard({
             return (
               <div
                 key={product.id}
-                className="flex items-center gap-4 p-4 border-2 border-blue-300 rounded-lg hover:bg-blue-50 transition-colors bg-blue-50/30"
+                className={`flex flex-wrap items-center gap-4 ${dashboardInsetRow}`}
               >
                 {product.image && (
                   <div className="flex-shrink-0">
                     <img
                       src={product.image}
                       alt={product.title}
-                      className="w-16 h-16 object-cover rounded"
+                      className="h-16 w-16 rounded-md border border-admin-brand-2/15 object-cover"
                     />
                   </div>
                 )}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">{product.title}</h3>
-                  <div className="flex items-center gap-2 mt-1">
+                <div className="min-w-0 flex-1">
+                  <h3 className={`truncate ${dashboardRowPrimaryMedium}`}>{product.title}</h3>
+                  <div className="mt-1 flex flex-wrap items-center gap-2">
                     {currentDiscount > 0 && originalPrice > 0 ? (
                       <>
-                        <span className="text-xs font-semibold text-blue-600 select-none">
-                          {formatPrice(discountedPrice)}
-                        </span>
-                        <span className="text-xs text-gray-400 line-through select-none">
-                          {formatPrice(originalPrice)}
-                        </span>
-                        <span className="text-xs text-red-600 font-medium">
-                          -{currentDiscount}%
-                        </span>
+                        <span className="select-none text-xs font-semibold text-admin-brand">{formatPrice(discountedPrice)}</span>
+                        <span className={`select-none text-xs line-through ${dashboardRowMeta}`}>{formatPrice(originalPrice)}</span>
+                        <span className="text-xs font-medium text-red-800/90">-{currentDiscount}%</span>
                       </>
                     ) : (
-                      <span className="text-xs text-gray-500 select-none">
+                      <span className={`select-none text-xs ${dashboardRowMeta}`}>
                         {originalPrice > 0 ? formatPrice(originalPrice) : 'N/A'}
                       </span>
                     )}
@@ -113,20 +118,20 @@ export function ProductDiscountsCard({
                         return updated;
                       });
                     }}
-                    className="w-20"
+                    className={`${adminFormControlClass} !w-20`}
                     placeholder="0"
                   />
-                  <span className="text-sm font-medium text-gray-700 w-6">%</span>
+                  <span className="w-6 text-sm font-medium text-admin-brand/70">%</span>
                   <Button
                     variant="primary"
                     size="sm"
                     onClick={() => handleProductDiscountSave(product.id)}
                     disabled={savingProductId === product.id}
-                    className="px-4"
+                    className={`px-4 ${adminSolidButtonClass}`}
                   >
                     {savingProductId === product.id ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                        <div className="h-3 w-3 animate-spin rounded-full border-2 border-admin-flesh/40 border-b-admin-flesh" />
                       </div>
                     ) : (
                       t('admin.quickSettings.save')

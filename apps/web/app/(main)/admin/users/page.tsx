@@ -4,9 +4,27 @@ import type { ChangeEvent } from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Card, Button, Input } from '@shop/ui';
+import { Card, Button } from '@shop/ui';
 import { apiClient } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
+import { AdminNumericPagination } from '../components/AdminNumericPagination';
+import {
+  adminBulkDangerButtonClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminPaginationMetaClass,
+  adminSolidButtonClass,
+  dashboardEmptyText,
+  dashboardMainClass,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+  dashboardCardPadding,
+  adminTableBodyClass,
+  adminTableHeadCellClass,
+  adminTableHeadRowClass,
+  adminTableRowHoverClass,
+  adminTableWrapClass,
+} from '../components/dashboardUi';
 
 interface User {
   id: string;
@@ -32,12 +50,22 @@ interface UsersResponse {
 
 function getRoleBadgeClassName(role: string): string {
   if (role === 'admin') {
-    return 'bg-violet-100 text-violet-800 ring-1 ring-violet-200/60';
+    return 'rounded-full bg-admin-warm/50 px-2 py-1 text-xs font-medium text-admin-brand ring-1 ring-inset ring-admin-brand/12';
   }
   if (role === 'customer') {
-    return 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200/60';
+    return 'rounded-full bg-admin-surface px-2 py-1 text-xs font-medium text-admin-brand ring-1 ring-inset ring-admin-brand-2/18';
   }
-  return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200/60';
+  return 'rounded-full bg-admin-surface px-2 py-1 text-xs font-medium text-admin-muted ring-1 ring-inset ring-admin-brand-2/14';
+}
+
+function messageFromUnknownError(err: unknown, fallback: string): string {
+  if (typeof err === 'object' && err !== null && 'message' in err) {
+    const m = (err as { message: unknown }).message;
+    if (typeof m === 'string' && m.length > 0) {
+      return m;
+    }
+  }
+  return fallback;
 }
 
 export default function UsersPage() {
@@ -66,7 +94,7 @@ export default function UsersPage() {
     try {
       setLoading(true);
       console.log('👥 [ADMIN] Fetching users...', { page, search, roleFilter });
-      
+
       const response = await apiClient.get<UsersResponse>('/api/v1/admin/users', {
         params: {
           page: page.toString(),
@@ -100,22 +128,20 @@ export default function UsersPage() {
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
   const toggleSelectAll = () => {
-    // Ընտրում ենք միայն այն օգտատերերին, որոնք տեսանելի են ընթացիկ ֆիլտրով
     const visibleUsers =
       roleFilter === 'all'
         ? users
         : users.filter((u) =>
-            roleFilter === 'admin'
-              ? u.roles?.includes('admin')
-              : u.roles?.includes('customer')
+            roleFilter === 'admin' ? u.roles?.includes('admin') : u.roles?.includes('customer'),
           );
 
     if (visibleUsers.length === 0) return;
@@ -133,13 +159,15 @@ export default function UsersPage() {
     setBulkDeleting(true);
     try {
       const ids = Array.from(selectedIds);
-      const results = await Promise.allSettled(
-        ids.map(id => apiClient.delete(`/api/v1/admin/users/${id}`))
-      );
-      const failed = results.filter(r => r.status === 'rejected');
+      const results = await Promise.allSettled(ids.map((id) => apiClient.delete(`/api/v1/admin/users/${id}`)));
+      const failed = results.filter((r) => r.status === 'rejected');
       setSelectedIds(new Set());
       await fetchUsers();
-      alert(t('admin.users.bulkDeleteFinished').replace('{success}', (ids.length - failed.length).toString()).replace('{total}', ids.length.toString()));
+      alert(
+        t('admin.users.bulkDeleteFinished')
+          .replace('{success}', (ids.length - failed.length).toString())
+          .replace('{total}', ids.length.toString()),
+      );
     } catch (err) {
       console.error('❌ [ADMIN] Bulk delete users error:', err);
       alert(t('admin.users.failedToDelete'));
@@ -154,29 +182,33 @@ export default function UsersPage() {
       await apiClient.put(`/api/v1/admin/users/${userId}`, {
         blocked: newStatus,
       });
-      
+
       console.log(`✅ [ADMIN] User ${newStatus ? 'blocked' : 'unblocked'} successfully`);
-      
-      // Refresh users list
+
       fetchUsers();
-      
+
       if (newStatus) {
         alert(t('admin.users.userBlocked').replace('{name}', userName));
       } else {
         alert(t('admin.users.userActive').replace('{name}', userName));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [ADMIN] Error updating user status:', err);
-      alert(t('admin.users.errorUpdatingStatus').replace('{message}', err.message || t('admin.common.unknownErrorFallback')));
+      alert(
+        t('admin.users.errorUpdatingStatus').replace(
+          '{message}',
+          messageFromUnknownError(err, t('admin.common.unknownErrorFallback')),
+        ),
+      );
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
@@ -186,261 +218,206 @@ export default function UsersPage() {
     return null;
   }
 
-  // Տեսանելի օգտատերերի filter Admin / Customer ֆիլտրով
   const filteredUsers =
     roleFilter === 'all'
       ? users
       : users.filter((user) =>
-          roleFilter === 'admin'
-            ? user.roles?.includes('admin')
-            : user.roles?.includes('customer')
+          roleFilter === 'admin' ? user.roles?.includes('admin') : user.roles?.includes('customer'),
         );
 
+  const rolePillBase = 'rounded-full px-3 py-1 text-xs font-medium transition-all';
+  const rolePillActive = 'bg-white text-admin-brand shadow-sm ring-1 ring-admin-brand-2/18';
+  const rolePillIdle = 'text-admin-brand/55 hover:text-admin-brand';
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div className="mb-8">
-          <button
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.users.backToAdmin')}
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">{t('admin.users.title')}</h1>
-        </div>
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.users.title')}</h1>
+      </section>
 
-        {/* Search */}
-        <Card className="p-4 mb-6">
-          <form onSubmit={handleSearch} className="flex flex-col gap-4">
-            <div className="flex gap-4">
-              <Input
-                type="text"
-                value={search}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-                placeholder={t('admin.users.searchPlaceholder')}
-                className="flex-1"
-              />
-              <Button type="submit" variant="primary">
-                {t('admin.users.search')}
-              </Button>
-            </div>
+      <Card variant="admin" className={dashboardCardPadding}>
+        <form onSubmit={handleSearch} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+            <input
+              type="text"
+              value={search}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+              placeholder={t('admin.users.searchPlaceholder')}
+              className={`${adminFormControlClass} min-w-0 flex-1`}
+            />
+            <button type="submit" className={`shrink-0 rounded-lg px-5 py-2.5 text-sm font-medium ${adminSolidButtonClass}`}>
+              {t('admin.users.search')}
+            </button>
+          </div>
 
-            {/* Admin / Customer filter */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                {t('admin.users.adminCustomer')}
-              </span>
-              <div className="inline-flex rounded-full bg-gray-100 p-1 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRoleFilter('all');
-                    setPage(1);
-                    console.log('👥 [ADMIN] Role filter changed to: all');
-                  }}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    roleFilter === 'all'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {t('admin.users.all')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRoleFilter('admin');
-                    setPage(1);
-                    console.log('👥 [ADMIN] Role filter changed to: admin');
-                  }}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    roleFilter === 'admin'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {t('admin.users.admins')}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRoleFilter('customer');
-                    setPage(1);
-                    console.log('👥 [ADMIN] Role filter changed to: customer');
-                  }}
-                  className={`px-3 py-1 rounded-full transition-all ${
-                    roleFilter === 'customer'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {t('admin.users.customers')}
-                </button>
-              </div>
+          <div>
+            <span className={adminFilterLabelClass}>{t('admin.users.adminCustomer')}</span>
+            <div className="inline-flex rounded-full bg-admin-surface p-1 text-xs ring-1 ring-inset ring-admin-brand-2/12">
+              <button
+                type="button"
+                onClick={() => {
+                  setRoleFilter('all');
+                  setPage(1);
+                  console.log('👥 [ADMIN] Role filter changed to: all');
+                }}
+                className={`${rolePillBase} ${roleFilter === 'all' ? rolePillActive : rolePillIdle}`}
+              >
+                {t('admin.users.all')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRoleFilter('admin');
+                  setPage(1);
+                  console.log('👥 [ADMIN] Role filter changed to: admin');
+                }}
+                className={`${rolePillBase} ${roleFilter === 'admin' ? rolePillActive : rolePillIdle}`}
+              >
+                {t('admin.users.admins')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRoleFilter('customer');
+                  setPage(1);
+                  console.log('👥 [ADMIN] Role filter changed to: customer');
+                }}
+                className={`${rolePillBase} ${roleFilter === 'customer' ? rolePillActive : rolePillIdle}`}
+              >
+                {t('admin.users.customers')}
+              </button>
             </div>
-          </form>
-        </Card>
+          </div>
+        </form>
+      </Card>
 
-        {/* Users Table */}
-        <Card className="p-6">
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-              <p className="text-gray-600">{t('admin.users.loadingUsers')}</p>
-            </div>
-          ) : filteredUsers.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-600">{t('admin.users.noUsers')}</p>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3">
+      <Card variant="admin" className={dashboardCardPadding}>
+        {loading ? (
+          <div className="py-10 text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+            <p className={dashboardEmptyText}>{t('admin.users.loadingUsers')}</p>
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="py-10 text-center">
+            <p className={dashboardEmptyText}>{t('admin.users.noUsers')}</p>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-lg border border-admin-brand-2/15">
+              <table className={adminTableWrapClass}>
+                <thead className={adminTableHeadRowClass}>
+                  <tr>
+                    <th className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={t('admin.users.selectAll')}
+                        checked={filteredUsers.length > 0 && filteredUsers.every((u) => selectedIds.has(u.id))}
+                        onChange={toggleSelectAll}
+                        className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+                      />
+                    </th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.user')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.contact')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.orders')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.roles')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.status')}</th>
+                    <th className={adminTableHeadCellClass}>{t('admin.users.created')}</th>
+                  </tr>
+                </thead>
+                <tbody className={adminTableBodyClass}>
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id} className={adminTableRowHoverClass}>
+                      <td className="px-4 py-4">
                         <input
                           type="checkbox"
-                          aria-label={t('admin.users.selectAll')}
-                          checked={users.length > 0 && users.every(u => selectedIds.has(u.id))}
-                          onChange={toggleSelectAll}
+                          aria-label={t('admin.users.selectUser').replace('{email}', user.email)}
+                          checked={selectedIds.has(user.id)}
+                          onChange={() => toggleSelect(user.id)}
+                          className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                         />
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.user')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.contact')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.orders')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.roles')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.status')}
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {t('admin.users.created')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredUsers.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-4">
-                          <input
-                            type="checkbox"
-                            aria-label={t('admin.users.selectUser').replace('{email}', user.email)}
-                            checked={selectedIds.has(user.id)}
-                            onChange={() => toggleSelect(user.id)}
-                          />
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
-                          </div>
-                          <div className="text-sm text-gray-500">{user.id}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{user.email}</div>
-                          {user.phone && (
-                            <div className="text-sm text-gray-500">{user.phone}</div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {user.ordersCount ?? 0}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex gap-2">
-                            {user.roles?.map((role) => (
-                              <span
-                                key={role}
-                                className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getRoleBadgeClassName(role)}`}
-                              >
-                                {role}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleToggleBlocked(
-                                user.id,
-                                user.blocked,
-                                `${user.firstName} ${user.lastName}`,
-                              )
-                            }
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                              user.blocked
-                                ? 'bg-gray-300 focus:ring-gray-400'
-                                : 'bg-green-500 focus:ring-green-500'
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={dashboardRowPrimaryMedium}>
+                          {user.firstName} {user.lastName}
+                        </div>
+                        <div className={dashboardRowMeta}>{user.id}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className={dashboardRowPrimaryMedium}>{user.email}</div>
+                        {user.phone ? <div className={dashboardRowMeta}>{user.phone}</div> : null}
+                      </td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${dashboardRowPrimaryMedium}`}>
+                        {user.ordersCount ?? 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-wrap gap-2">
+                          {user.roles?.map((role) => (
+                            <span key={role} className={`inline-flex items-center ${getRoleBadgeClassName(role)}`}>
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleToggleBlocked(user.id, user.blocked, `${user.firstName} ${user.lastName}`)
+                          }
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brand/35 focus-visible:ring-offset-2 ${
+                            user.blocked ? 'bg-admin-brand-2/35' : 'bg-admin-brand'
+                          }`}
+                          title={user.blocked ? t('admin.users.clickToActivate') : t('admin.users.clickToBlock')}
+                          role="switch"
+                          aria-checked={!user.blocked}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                              user.blocked ? 'translate-x-1' : 'translate-x-6'
                             }`}
-                            title={user.blocked ? t('admin.users.clickToActivate') : t('admin.users.clickToBlock')}
-                            role="switch"
-                            aria-checked={!user.blocked}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                                user.blocked ? 'translate-x-1' : 'translate-x-6'
-                              }`}
-                            />
-                          </button>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          />
+                        </button>
+                      </td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm ${dashboardRowMeta}`}>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              {/* Pagination */}
-              {meta && meta.totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
-                    {t('admin.users.showingPage').replace('{page}', meta.page.toString()).replace('{totalPages}', meta.totalPages.toString()).replace('{total}', meta.total.toString())}
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                    >
-                      {t('admin.users.previous')}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                      disabled={page === meta.totalPages}
-                    >
-                      {t('admin.users.next')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-              <div className="mt-4 flex items-center justify-between">
-                <div className="text-sm text-gray-700">{t('admin.users.selectedUsers').replace('{count}', selectedIds.size.toString())}</div>
-                <Button
-                  variant="outline"
-                  onClick={handleBulkDelete}
-                  disabled={selectedIds.size === 0 || bulkDeleting}
-                >
-                  {bulkDeleting ? t('admin.users.deleting') : t('admin.users.deleteSelected')}
-                </Button>
+            {meta && meta.totalPages > 1 ? (
+              <AdminNumericPagination
+                page={page}
+                totalPages={meta.totalPages}
+                onPageChange={(n) => setPage(n)}
+                summary={t('admin.users.showingPage')
+                  .replace('{page}', meta.page.toString())
+                  .replace('{totalPages}', meta.totalPages.toString())
+                  .replace('{total}', meta.total.toString())}
+                previousLabel={t('admin.users.previous')}
+                nextLabel={t('admin.users.next')}
+              />
+            ) : null}
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-admin-brand-2/12 pt-4">
+              <div className={adminPaginationMetaClass}>
+                {t('admin.users.selectedUsers').replace('{count}', selectedIds.size.toString())}
               </div>
-            </>
-          )}
-        </Card>
-      </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleBulkDelete}
+                disabled={selectedIds.size === 0 || bulkDeleting}
+                className={adminBulkDangerButtonClass}
+              >
+                {bulkDeleting ? t('admin.users.deleting') : t('admin.users.deleteSelected')}
+              </Button>
+            </div>
+          </>
+        )}
+      </Card>
     </div>
   );
 }
-

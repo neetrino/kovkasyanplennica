@@ -3,6 +3,17 @@
 import { Card } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
 import { formatCurrency, formatDate } from '../utils/dashboardUtils';
+import {
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardInsetRow,
+  dashboardRowMeta,
+  dashboardRowPrimary,
+  dashboardRowSecondary,
+  dashboardSectionTitle,
+  dashboardSubsectionLabel,
+  dashboardTitleBlock,
+} from './dashboardUi';
 
 interface UserActivity {
   recentRegistrations: Array<{
@@ -34,30 +45,32 @@ export function UserActivityCard({ userActivity, userActivityLoading }: UserActi
   const { t } = useTranslation();
 
   return (
-    <Card className="p-6 mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('admin.dashboard.userActivity')}</h2>
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className={dashboardTitleBlock}>
+        <h2 className={dashboardSectionTitle}>{t('admin.dashboard.userActivity')}</h2>
+      </div>
       {userActivityLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {[1, 2].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="h-32 bg-gray-200 rounded"></div>
+              <div className="h-32 rounded-lg bg-admin-surface" />
             </div>
           ))}
         </div>
       ) : userActivity ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.dashboard.recentRegistrations')}</h3>
+            <h3 className={dashboardSubsectionLabel}>{t('admin.dashboard.recentRegistrations')}</h3>
             <div className="space-y-3">
               {userActivity.recentRegistrations.length === 0 ? (
-                <p className="text-sm text-gray-600">{t('admin.dashboard.noRecentRegistrations')}</p>
+                <p className={dashboardEmptyText}>{t('admin.dashboard.noRecentRegistrations')}</p>
               ) : (
                 userActivity.recentRegistrations.slice(0, 5).map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                  <div key={user.id} className={dashboardInsetRow}>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-600">{user.email || user.phone || 'N/A'}</p>
-                      <p className="text-xs text-gray-500 mt-1">{formatDate(user.registeredAt)}</p>
+                      <p className={dashboardRowPrimary}>{user.name}</p>
+                      <p className={dashboardRowSecondary}>{user.email || user.phone || 'N/A'}</p>
+                      <p className={`mt-1 ${dashboardRowMeta}`}>{formatDate(user.registeredAt)}</p>
                     </div>
                   </div>
                 ))
@@ -66,18 +79,21 @@ export function UserActivityCard({ userActivity, userActivityLoading }: UserActi
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.dashboard.mostActiveUsers')}</h3>
+            <h3 className={dashboardSubsectionLabel}>{t('admin.dashboard.mostActiveUsers')}</h3>
             <div className="space-y-3">
               {userActivity.activeUsers.length === 0 ? (
-                <p className="text-sm text-gray-600">{t('admin.dashboard.noActiveUsers')}</p>
+                <div className="flex min-h-[120px] items-center justify-center rounded-lg border border-dashed border-admin-brand-2/25 bg-admin-surface/50 px-4 py-10">
+                  <p className={`text-center ${dashboardEmptyText}`}>{t('admin.dashboard.noActiveUsers')}</p>
+                </div>
               ) : (
                 userActivity.activeUsers.slice(0, 5).map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                  <div key={user.id} className={dashboardInsetRow}>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-600">{user.email || user.phone || 'N/A'}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {t('admin.dashboard.ordersCount').replace('{count}', user.orderCount.toString())} • {formatCurrency(user.totalSpent, 'USD')}
+                      <p className={dashboardRowPrimary}>{user.name}</p>
+                      <p className={dashboardRowSecondary}>{user.email || user.phone || 'N/A'}</p>
+                      <p className={`mt-1 ${dashboardRowMeta}`}>
+                        {t('admin.dashboard.ordersCount').replace('{count}', user.orderCount.toString())} •{' '}
+                        {formatCurrency(user.totalSpent, 'USD')}
                       </p>
                     </div>
                   </div>
@@ -87,13 +103,8 @@ export function UserActivityCard({ userActivity, userActivityLoading }: UserActi
           </div>
         </div>
       ) : (
-        <p className="text-sm text-gray-600">{t('admin.dashboard.noUserActivityData')}</p>
+        <p className={dashboardEmptyText}>{t('admin.dashboard.noUserActivityData')}</p>
       )}
     </Card>
   );
 }
-
-
-
-
-

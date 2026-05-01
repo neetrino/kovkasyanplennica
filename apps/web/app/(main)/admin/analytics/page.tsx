@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Card } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardMainClass,
+  adminSectionSubtitleClass,
+} from '../components/dashboardUi';
 import { useAnalytics } from './hooks/useAnalytics';
-import { AnalyticsHeader } from './components/AnalyticsHeader';
-import { AdminSidebar } from './components/AdminSidebar';
 import { PeriodSelector } from './components/PeriodSelector';
 import { StatsCards } from './components/StatsCards';
 import { TopProducts } from './components/TopProducts';
@@ -41,10 +45,10 @@ export default function AnalyticsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
@@ -55,49 +59,43 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <AnalyticsHeader />
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.analytics.title')}</h1>
+        <p className={`mt-1 max-w-2xl ${adminSectionSubtitleClass}`}>{t('admin.analytics.subtitle')}</p>
+      </section>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <AdminSidebar t={t} />
+      <PeriodSelector
+        period={period}
+        startDate={startDate}
+        endDate={endDate}
+        analytics={analytics}
+        onPeriodChange={setPeriod}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+      />
 
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
-            <PeriodSelector
-              period={period}
-              startDate={startDate}
-              endDate={endDate}
-              analytics={analytics}
-              onPeriodChange={setPeriod}
-              onStartDateChange={setStartDate}
-              onEndDateChange={setEndDate}
-            />
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-                <p className="text-gray-600">{t('admin.analytics.loadingAnalytics')}</p>
-              </div>
-            ) : analytics ? (
-              <>
-                <StatsCards analytics={analytics} totalUsers={totalUsers} />
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                  <TopProducts products={analytics.topProducts} />
-                  <TopCategories categories={analytics.topCategories} />
-                </div>
-
-                <OrdersByDayChart ordersByDay={analytics.ordersByDay} />
-              </>
-            ) : (
-              <Card className="p-6">
-                <p className="text-gray-600 text-center">{t('admin.analytics.noAnalyticsData')}</p>
-              </Card>
-            )}
-          </div>
+      {loading ? (
+        <div className="py-12 text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className={dashboardEmptyText}>{t('admin.analytics.loadingAnalytics')}</p>
         </div>
-      </div>
+      ) : analytics ? (
+        <>
+          <StatsCards analytics={analytics} totalUsers={totalUsers} />
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <TopProducts products={analytics.topProducts} />
+            <TopCategories categories={analytics.topCategories} />
+          </div>
+
+          <OrdersByDayChart ordersByDay={analytics.ordersByDay} />
+        </>
+      ) : (
+        <Card variant="admin" className={dashboardCardPadding}>
+          <p className={`text-center ${dashboardEmptyText}`}>{t('admin.analytics.noAnalyticsData')}</p>
+        </Card>
+      )}
     </div>
   );
 }

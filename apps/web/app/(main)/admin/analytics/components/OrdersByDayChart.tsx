@@ -2,6 +2,14 @@
 
 import { Card } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminSectionIconWrapClass,
+  adminSectionSubtitleClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardRowMeta,
+  dashboardRowPrimary,
+} from '../../components/dashboardUi';
 import { LineChart } from '../LineChart';
 import { formatCurrency, formatDateShort } from '../utils';
 import type { AnalyticsData } from '../types';
@@ -14,65 +22,75 @@ export function OrdersByDayChart({ ordersByDay }: OrdersByDayChartProps) {
   const { t } = useTranslation();
 
   return (
-    <Card className="p-8 bg-white shadow-lg border border-gray-200 rounded-2xl hover:shadow-xl transition-shadow duration-300">
-      <div className="flex items-center justify-between mb-8">
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('admin.analytics.ordersByDay')}</h2>
-          <p className="text-sm text-gray-500 font-medium">{t('admin.analytics.dailyOrderTrends')}</p>
+          <h2 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.analytics.ordersByDay')}</h2>
+          <p className={`mt-1 text-sm ${adminSectionSubtitleClass}`}>{t('admin.analytics.dailyOrderTrends')}</p>
         </div>
-        <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <div className={adminSectionIconWrapClass}>
+          <svg className="h-6 w-6 text-admin-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            />
           </svg>
         </div>
       </div>
-      
+
       {ordersByDay.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        <div className="py-12 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-admin-surface ring-1 ring-inset ring-admin-brand-2/12">
+            <svg className="h-7 w-7 text-admin-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-500">{t('admin.analytics.noDataAvailable')}</p>
+          <p className={`font-medium ${dashboardEmptyText}`}>{t('admin.analytics.noDataAvailable')}</p>
         </div>
       ) : (
         <>
-          {/* SVG Line Chart - Modern Container */}
-          <div className="mb-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 border border-gray-100 shadow-inner">
+          <div className="mb-6 rounded-xl border border-admin-brand-2/15 bg-admin-surface/35 p-4 sm:p-6">
             <LineChart data={ordersByDay} />
           </div>
-          
-          {/* Detailed List - Modern Design */}
+
           <div className="space-y-3">
             {ordersByDay.map((day) => {
-              const maxCount = Math.max(...ordersByDay.map(d => d.count), 1);
+              const maxCount = Math.max(...ordersByDay.map((d) => d.count), 1);
               const percentage = (day.count / maxCount) * 100;
-              
+
               return (
-                <div 
-                  key={day._id} 
-                  className="flex items-center gap-4 p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-300 group"
+                <div
+                  key={day._id}
+                  className="group flex items-center gap-4 rounded-xl border border-admin-brand-2/18 bg-white p-4 transition-[box-shadow,border-color] duration-200 hover:border-admin-brand-2/35 hover:shadow-[0_4px_18px_-6px_rgba(47,63,61,0.12)]"
                 >
-                  <div className="w-32 text-sm font-semibold text-gray-700 flex-shrink-0">
+                  <div className={`w-28 shrink-0 sm:w-32 ${dashboardRowPrimary}`}>
                     {formatDateShort(day._id)}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 bg-gray-200 rounded-full h-10 relative overflow-hidden shadow-inner">
-                        <div
-                          className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 h-10 rounded-full flex items-center justify-between px-4 transition-all duration-700 group-hover:shadow-lg"
-                          style={{ width: `${percentage}%` }}
-                        >
-                          <span className="text-xs text-white font-bold">{t('admin.analytics.ordersLabel').replace('{count}', day.count.toString())}</span>
-                          <div className="w-2 h-2 bg-white rounded-full opacity-80"></div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="relative h-8 overflow-hidden rounded-full bg-admin-brand-2/15 ring-1 ring-inset ring-admin-brand-2/10 sm:h-9">
+                          <div
+                            className="flex h-full min-w-0 items-center justify-between rounded-full bg-gradient-to-r from-admin-brand to-admin-brand-2 px-3 transition-all duration-500 group-hover:brightness-[1.03]"
+                            style={{ width: `${Math.max(percentage, 8)}%` }}
+                          >
+                            <span className="truncate text-xs font-bold text-admin-flesh">
+                              {t('admin.analytics.ordersLabel').replace('{count}', day.count.toString())}
+                            </span>
+                            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-admin-flesh/80" />
+                          </div>
                         </div>
                       </div>
-                      <div className="w-36 text-right flex-shrink-0">
-                        <p className="text-sm font-bold text-gray-900">
-                          {formatCurrency(day.revenue)}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-0.5">{t('admin.analytics.revenue')}</p>
+                      <div className="shrink-0 text-left sm:w-36 sm:text-right">
+                        <p className="text-sm font-bold text-admin-brand">{formatCurrency(day.revenue)}</p>
+                        <p className={`mt-0.5 ${dashboardRowMeta}`}>{t('admin.analytics.revenue')}</p>
                       </div>
                     </div>
                   </div>
@@ -85,11 +103,3 @@ export function OrdersByDayChart({ ordersByDay }: OrdersByDayChartProps) {
     </Card>
   );
 }
-
-
-
-
-
-
-
-

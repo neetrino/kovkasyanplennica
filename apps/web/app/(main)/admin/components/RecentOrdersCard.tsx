@@ -1,9 +1,23 @@
 'use client';
 
-import { Card, Button } from '@shop/ui';
+import { Card } from '@shop/ui';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { formatCurrency, formatDate } from '../utils/dashboardUtils';
+import {
+  dashboardBadgeNeutral,
+  dashboardBadgePaid,
+  dashboardBadgePending,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardGhostLink,
+  dashboardInsetRow,
+  dashboardRowMeta,
+  dashboardRowPrimary,
+  dashboardRowPrimaryMedium,
+  dashboardSectionHeaderRow,
+  dashboardSectionTitle,
+} from './dashboardUi';
 
 interface RecentOrder {
   id: string;
@@ -28,57 +42,57 @@ export function RecentOrdersCard({ recentOrders, recentOrdersLoading }: RecentOr
   const router = useRouter();
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">{t('admin.dashboard.recentOrders')}</h2>
-        <Button
-          variant="ghost"
-          size="sm"
+    <Card variant="admin" className={dashboardCardPadding}>
+      <div className={dashboardSectionHeaderRow}>
+        <h2 className={dashboardSectionTitle}>{t('admin.dashboard.recentOrders')}</h2>
+        <button
+          type="button"
           onClick={() => router.push('/admin/orders')}
+          className={dashboardGhostLink}
         >
           {t('admin.dashboard.viewAll')}
-        </Button>
+        </button>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {recentOrdersLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="h-16 bg-gray-200 rounded"></div>
+                <div className="h-16 rounded-lg bg-admin-surface" />
               </div>
             ))}
           </div>
         ) : recentOrders.length === 0 ? (
-          <div className="text-sm text-gray-600 text-center py-8">
+          <div className={`py-14 text-center ${dashboardEmptyText}`}>
             <p>{t('admin.dashboard.noRecentOrders')}</p>
           </div>
         ) : (
           recentOrders.map((order) => (
             <div
               key={order.id}
-              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+              className={`cursor-pointer ${dashboardInsetRow}`}
               onClick={() => router.push(`/admin/orders?search=${order.number}`)}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-medium text-gray-900">#{order.number}</p>
+                  <div className="mb-1 flex items-center gap-2">
+                    <p className={dashboardRowPrimaryMedium}>#{order.number}</p>
                     <span
-                      className={`px-2 py-0.5 text-xs rounded-full ${
+                      className={
                         order.paymentStatus === 'paid'
-                          ? 'bg-green-100 text-green-800'
+                          ? dashboardBadgePaid
                           : order.paymentStatus === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+                            ? dashboardBadgePending
+                            : dashboardBadgeNeutral
+                      }
                     >
                       {order.paymentStatus}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600">
+                  <p className={dashboardRowMeta}>
                     {order.customerEmail || order.customerPhone || t('admin.dashboard.guest')}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className={`mt-1 ${dashboardRowMeta}`}>
                     {order.itemsCount === 1
                       ? t('admin.dashboard.items').replace('{count}', order.itemsCount.toString())
                       : t('admin.dashboard.itemsPlural').replace('{count}', order.itemsCount.toString())}{' '}
@@ -86,7 +100,7 @@ export function RecentOrdersCard({ recentOrders, recentOrdersLoading }: RecentOr
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className={dashboardRowPrimary}>
                     {formatCurrency(order.total, order.currency)}
                   </p>
                 </div>
@@ -98,8 +112,3 @@ export function RecentOrdersCard({ recentOrders, recentOrdersLoading }: RecentOr
     </Card>
   );
 }
-
-
-
-
-
