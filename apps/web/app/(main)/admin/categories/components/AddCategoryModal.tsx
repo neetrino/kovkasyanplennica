@@ -1,9 +1,28 @@
 'use client';
 
 import type { ChangeEvent } from 'react';
-import { Button, Input } from '@shop/ui';
+import { Button } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminBulkDangerButtonClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminGhostIconButtonClass,
+  adminModalBackdropAlignStartClass,
+  adminModalTitleClass,
+  adminPaginationNavButtonClass,
+  adminSolidButtonClass,
+  dashboardRowMeta,
+} from '../../components/dashboardUi';
 import type { Category, CategoryFormData } from '../types';
+
+const categoryModalPanelClass =
+  'relative max-h-[calc(100vh-6rem)] w-full max-w-md shrink-0 overflow-y-auto overscroll-contain rounded-xl border border-admin-brand-2/20 bg-white p-6 shadow-[0_24px_60px_-16px_rgba(47,63,61,0.28)]';
+
+const fileInputClass =
+  'block w-full text-sm text-admin-brand/65 file:mr-3 file:rounded-md file:border-0 file:bg-admin-surface file:px-3 file:py-2 file:text-xs file:font-medium file:text-admin-brand';
+
+const checkboxClass = 'rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30';
 
 interface AddCategoryModalProps {
   isOpen: boolean;
@@ -34,43 +53,67 @@ export function AddCategoryModal({
 
   if (!isOpen) return null;
 
+  const inputClass = `${adminFormControlClass} w-full`;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-app-modal">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('admin.categories.addCategory')}</h3>
+    <div
+      className={adminModalBackdropAlignStartClass}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="add-category-modal-title"
+      onClick={onClose}
+    >
+      <div className={categoryModalPanelClass} onClick={(e) => e.stopPropagation()}>
+        <div className="mb-6 flex items-center justify-between border-b border-admin-brand-2/15 pb-4">
+          <h2 id="add-category-modal-title" className={adminModalTitleClass}>
+            {t('admin.categories.addCategory')}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border border-admin-brand-2/20 text-lg leading-none ${adminGhostIconButtonClass}`}
+            aria-label={t('admin.common.close')}
+          >
+            ×
+          </button>
+        </div>
+
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="add-category-title" className={adminFilterLabelClass}>
               {t('admin.categories.categoryTitle')} *
             </label>
-            <Input
+            <input
+              id="add-category-title"
               type="text"
               value={formData.title}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onFormDataChange({ ...formData, title: e.target.value })}
               placeholder={t('admin.categories.categoryTitlePlaceholder')}
-              className="w-full"
+              className={inputClass}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="add-category-slug" className={adminFilterLabelClass}>
               {t('admin.categories.categorySlug')}
             </label>
-            <Input
+            <input
+              id="add-category-slug"
               type="text"
               value={formData.slug}
               onChange={(e: ChangeEvent<HTMLInputElement>) => onFormDataChange({ ...formData, slug: e.target.value })}
               placeholder={t('admin.categories.categorySlugPlaceholder')}
-              className="w-full font-mono text-sm"
+              className={`${inputClass} font-mono text-sm`}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="add-category-parent" className={adminFilterLabelClass}>
               {t('admin.categories.parentCategory')}
             </label>
             <select
+              id="add-category-parent"
               value={formData.parentId}
               onChange={(e: ChangeEvent<HTMLSelectElement>) => onFormDataChange({ ...formData, parentId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             >
               <option value="">{t('admin.categories.rootCategory')}</option>
               {categories
@@ -83,36 +126,30 @@ export function AddCategoryModal({
             </select>
           </div>
           <div>
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-admin-brand/80">
               <input
                 type="checkbox"
                 checked={formData.requiresSizes}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => onFormDataChange({ ...formData, requiresSizes: e.target.checked })}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onFormDataChange({ ...formData, requiresSizes: e.target.checked })
+                }
+                className={checkboxClass}
               />
-              <span className="text-sm text-gray-700">
-                {t('admin.categories.requiresSizes')}
-              </span>
+              <span>{t('admin.categories.requiresSizes')}</span>
             </label>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('admin.categories.categoryImage')}
-            </label>
+            <span className={adminFilterLabelClass}>{t('admin.categories.categoryImage')}</span>
             {formData.imageUrl ? (
-              <div className="mb-3 flex items-center gap-3 rounded-md border border-gray-200 p-2">
-                <img
-                  src={formData.imageUrl}
-                  alt={formData.title || 'Category image'}
-                  className="h-14 w-14 rounded-md object-cover"
-                />
+              <div className="mb-3 flex items-center gap-3 rounded-lg border border-admin-brand-2/18 bg-admin-surface/40 p-3">
+                <img src={formData.imageUrl} alt={formData.title || 'Category'} className="h-14 w-14 rounded-md object-cover" />
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={onImageRemove}
                   disabled={saving || imageUploading}
-                  className="text-red-600 hover:text-red-700"
+                  className={adminBulkDangerButtonClass}
                 >
                   {t('admin.categories.removeImage')}
                 </Button>
@@ -125,27 +162,25 @@ export function AddCategoryModal({
                 void onImageUpload(event);
               }}
               disabled={saving || imageUploading}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 file:mr-3 file:rounded file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
+              className={fileInputClass}
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className={`mt-1 ${dashboardRowMeta}`}>
               {imageUploading ? t('admin.categories.uploadingImage') : t('admin.categories.uploadImage')}
             </p>
           </div>
         </div>
-        <div className="flex gap-3 mt-6">
+
+        <div className="mt-6 flex flex-wrap gap-3 border-t border-admin-brand-2/12 pt-4">
           <Button
+            type="button"
             variant="primary"
-            onClick={onSubmit}
+            onClick={() => void onSubmit()}
             disabled={saving || !formData.title.trim()}
-            className="flex-1"
+            className={`min-w-[8rem] flex-1 ${adminSolidButtonClass}`}
           >
             {saving ? t('admin.categories.creating') : t('admin.categories.createCategory')}
           </Button>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            disabled={saving}
-          >
+          <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={saving} className={adminPaginationNavButtonClass}>
             {t('admin.common.cancel')}
           </Button>
         </div>
@@ -153,11 +188,3 @@ export function AddCategoryModal({
     </div>
   );
 }
-
-
-
-
-
-
-
-

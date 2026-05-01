@@ -4,6 +4,22 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@shop/ui';
 import { apiClient, ApiError } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminBulkDangerButtonClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminGhostIconButtonClass,
+  adminModalBackdropAlignStartClass,
+  adminModalTitleClass,
+  adminPaginationNavButtonClass,
+  adminSolidButtonClass,
+  dashboardBadgeNeutral,
+  dashboardBadgePaid,
+  dashboardEmptyText,
+  dashboardInsetRowCompact,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+} from '../components/dashboardUi';
 
 interface VacancyItem {
   id: string;
@@ -33,6 +49,9 @@ function extractDetail(err: unknown): string {
   if (err instanceof Error) return err.message;
   return 'Unknown error';
 }
+
+const vacancyModalPanelClass =
+  'relative max-h-[calc(100vh-6rem)] w-full max-w-lg shrink-0 overflow-y-auto overscroll-contain rounded-xl border border-admin-brand-2/20 bg-white p-6 shadow-[0_24px_60px_-16px_rgba(47,63,61,0.28)]';
 
 export function VacanciesAdminSection() {
   const { t } = useTranslation();
@@ -177,59 +196,69 @@ export function VacanciesAdminSection() {
 
   if (loading) {
     return (
-      <div className="text-center py-4">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto mb-2" />
-        <p className="text-sm text-gray-600">{t('admin.vacancies.loading')}</p>
+      <div className="py-6 text-center">
+        <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+        <p className={dashboardEmptyText}>{t('admin.vacancies.loading')}</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">{t('admin.vacancies.title')}</h2>
-        <Button type="button" onClick={openCreate} variant="primary" size="sm">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mb-5 flex justify-end">
+        <button
+          type="button"
+          onClick={openCreate}
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium ${adminSolidButtonClass}`}
+        >
+          <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t('admin.vacancies.addNew')}
-        </Button>
+        </button>
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-gray-500 py-2">{t('admin.vacancies.noItems')}</p>
+        <p className={`py-2 ${dashboardEmptyText}`}>{t('admin.vacancies.noItems')}</p>
       ) : (
-        <div className="space-y-2 max-h-[32rem] overflow-y-auto">
+        <div className="max-h-[32rem] space-y-2 overflow-y-auto pr-1">
           {items.map((row) => (
             <div
               key={row.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${dashboardInsetRowCompact}`}
             >
               <div className="min-w-0">
-                <div className="text-sm font-medium text-gray-900">{row.title}</div>
-                <div className="text-xs text-gray-500 truncate">
-                  {row.published ? '●' : '○'}
-                  {row.contactPhone ? ` · ${row.contactPhone}` : ''}
-                  {row.salary ? ` · ${row.salary}` : ''}
-                  {row.location ? ` · ${row.location}` : ''}
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <div className={dashboardRowPrimaryMedium}>{row.title}</div>
+                  <span
+                    className={row.published ? dashboardBadgePaid : dashboardBadgeNeutral}
+                    title={row.published ? t('admin.vacancies.fieldPublished') : ''}
+                  >
+                    {row.published ? '●' : '○'}
+                  </span>
+                </div>
+                <div className={`truncate ${dashboardRowMeta}`}>
+                  {row.contactPhone ? row.contactPhone : ''}
+                  {row.salary ? `${row.contactPhone ? ' · ' : ''}${row.salary}` : ''}
+                  {row.location ? `${row.contactPhone || row.salary ? ' · ' : ''}${row.location}` : ''}
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => openEdit(row)}
-                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                  className={adminPaginationNavButtonClass}
                 >
                   {t('admin.vacancies.edit')}
                 </Button>
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => void handleDelete(row)}
-                  className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                  className={adminBulkDangerButtonClass}
                 >
                   {t('admin.vacancies.delete')}
                 </Button>
@@ -239,27 +268,32 @@ export function VacanciesAdminSection() {
         </div>
       )}
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-app-modal p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 my-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+      {showModal ? (
+        <div
+          className={adminModalBackdropAlignStartClass}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="vacancy-modal-title"
+          onClick={closeModal}
+        >
+          <div className={vacancyModalPanelClass} onClick={(e) => e.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between border-b border-admin-brand-2/15 pb-4">
+              <h2 id="vacancy-modal-title" className={adminModalTitleClass}>
                 {editing ? t('admin.vacancies.editTitle') : t('admin.vacancies.addTitle')}
-              </h3>
+              </h2>
               <button
                 type="button"
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-admin-brand-2/20 text-lg leading-none ${adminGhostIconButtonClass}`}
+                aria-label={t('admin.common.close')}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                ×
               </button>
             </div>
 
             <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
               <div>
-                <label htmlFor="vac-title" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="vac-title" className={adminFilterLabelClass}>
                   {t('admin.vacancies.fieldTitle')}
                 </label>
                 <input
@@ -267,14 +301,14 @@ export function VacanciesAdminSection() {
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className={`${adminFormControlClass} w-full`}
                   placeholder={t('admin.vacancies.fieldTitlePlaceholder')}
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="vac-desc" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="vac-desc" className={adminFilterLabelClass}>
                   {t('admin.vacancies.fieldDescription')}
                 </label>
                 <textarea
@@ -282,26 +316,26 @@ export function VacanciesAdminSection() {
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className={`${adminFormControlClass} min-h-[120px] w-full resize-y`}
                   placeholder={t('admin.vacancies.fieldDescriptionPlaceholder')}
                   required
                 />
               </div>
 
               <div>
-                <p className="block text-sm font-medium text-gray-700 mb-1">{t('admin.vacancies.fieldImageHint')}</p>
+                <p className={adminFilterLabelClass}>{t('admin.vacancies.fieldImageHint')}</p>
                 <input
                   id="vac-file"
                   type="file"
                   accept="image/*"
                   onChange={(e) => void handleFile(e)}
                   disabled={uploading}
-                  className="block w-full text-sm text-gray-600"
+                  className="block w-full text-sm text-admin-brand/65 file:mr-3 file:rounded-md file:border-0 file:bg-admin-surface file:px-3 file:py-2 file:text-xs file:font-medium file:text-admin-brand"
                 />
-                {uploading ? <p className="text-xs text-gray-500 mt-1">{t('admin.vacancies.saving')}</p> : null}
+                {uploading ? <p className={`mt-1 text-xs ${dashboardRowMeta}`}>{t('admin.vacancies.saving')}</p> : null}
                 {form.imageUrl.trim() ? (
-                  <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
-                    <div className="relative mx-auto max-h-56 w-full overflow-hidden rounded-md">
+                  <div className="mt-3 rounded-lg border border-admin-brand-2/18 bg-admin-surface/40 p-3">
+                    <div className="relative mx-auto max-h-56 w-full overflow-hidden rounded-md border border-admin-brand-2/15">
                       {/* eslint-disable-next-line @next/next/no-img-element -- admin preview; R2 or legacy URLs */}
                       <img
                         src={form.imageUrl.trim()}
@@ -313,7 +347,7 @@ export function VacanciesAdminSection() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="mt-3"
+                      className={`mt-3 ${adminPaginationNavButtonClass}`}
                       onClick={() => setForm((f) => ({ ...f, imageUrl: '' }))}
                     >
                       {t('admin.vacancies.removeImage')}
@@ -322,9 +356,9 @@ export function VacanciesAdminSection() {
                 ) : null}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="vac-salary" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="vac-salary" className={adminFilterLabelClass}>
                     {t('admin.vacancies.fieldSalary')}
                   </label>
                   <input
@@ -332,12 +366,12 @@ export function VacanciesAdminSection() {
                     type="text"
                     value={form.salary}
                     onChange={(e) => setForm({ ...form, salary: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                    className={`${adminFormControlClass} w-full`}
                     placeholder={t('admin.vacancies.fieldSalaryPlaceholder')}
                   />
                 </div>
                 <div>
-                  <label htmlFor="vac-loc" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="vac-loc" className={adminFilterLabelClass}>
                     {t('admin.vacancies.fieldLocation')}
                   </label>
                   <input
@@ -345,14 +379,14 @@ export function VacanciesAdminSection() {
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                    className={`${adminFormControlClass} w-full`}
                     placeholder={t('admin.vacancies.fieldLocationPlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="vac-phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="vac-phone" className={adminFilterLabelClass}>
                   {t('admin.vacancies.fieldContactPhone')}
                 </label>
                 <input
@@ -361,27 +395,34 @@ export function VacanciesAdminSection() {
                   autoComplete="tel"
                   value={form.contactPhone}
                   onChange={(e) => setForm({ ...form, contactPhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className={`${adminFormControlClass} w-full`}
                   placeholder={t('admin.vacancies.fieldContactPhonePlaceholder')}
                 />
               </div>
 
               <div className="flex flex-wrap items-center gap-4">
-                <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+                <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-admin-brand/80">
                   <input
                     type="checkbox"
                     checked={form.published}
                     onChange={(e) => setForm({ ...form, published: e.target.checked })}
+                    className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                   />
                   {t('admin.vacancies.fieldPublished')}
                 </label>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={closeModal} disabled={submitting}>
+              <div className="flex flex-wrap items-center justify-end gap-3 border-t border-admin-brand-2/12 pt-4">
+                <Button type="button" variant="outline" size="sm" onClick={closeModal} disabled={submitting} className={adminPaginationNavButtonClass}>
                   {t('admin.vacancies.cancel')}
                 </Button>
-                <Button type="submit" variant="primary" disabled={submitting || uploading}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={submitting || uploading}
+                  className={adminSolidButtonClass}
+                >
                   {submitting
                     ? t('admin.vacancies.saving')
                     : editing
@@ -392,7 +433,7 @@ export function VacanciesAdminSection() {
             </form>
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
-import { PageHeader } from './components/PageHeader';
 import { ValueSelectionModal } from './components/ValueSelectionModal';
 import { AddProductFormContent } from './components/AddProductFormContent';
 import { useProductFormState } from './hooks/useProductFormState';
@@ -171,9 +170,9 @@ function AddProductPageContent() {
 
   if (isLoading || formState.loadingProduct) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"></div>
           <p className="text-gray-600">
             {formState.loadingProduct ? t('admin.products.add.loadingProduct') : t('admin.products.add.loading')}
           </p>
@@ -187,11 +186,7 @@ function AddProductPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div>
-          <PageHeader isEditMode={isEditMode} />
-
+    <div className="w-full">
           <AddProductFormContent
             formData={formState.formData}
             productType={formState.productType}
@@ -256,8 +251,6 @@ function AddProductPageContent() {
             generateSlug={generateSlug}
             handleSubmit={handleSubmit}
           />
-        </div>
-      </div>
 
       {formState.openValueModal && (
         <ValueSelectionModal
@@ -278,9 +271,9 @@ export default function AddProductPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex min-h-[50vh] items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
             <p className="text-sm text-gray-600">Loading...</p>
           </div>
         </div>

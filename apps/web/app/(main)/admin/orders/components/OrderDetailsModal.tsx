@@ -2,6 +2,14 @@
 
 import { useTranslation } from '@/lib/i18n-client';
 import { CurrencyCode } from '@/lib/currency';
+import {
+  adminModalBackdropClass,
+  adminModalHeaderClass,
+  adminModalPanelClass,
+  adminModalTitleClass,
+  adminGhostIconButtonClass,
+  dashboardEmptyText,
+} from '../../components/dashboardUi';
 import { OrderDetailsSummary } from './OrderDetailsSummary';
 import { OrderDetailsAddresses } from './OrderDetailsAddresses';
 import { OrderDetailsTotals } from './OrderDetailsTotals';
@@ -30,36 +38,29 @@ export function OrderDetailsModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-app-modal p-4"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
-          <h2 className="text-2xl font-bold text-gray-900">
+    <div className={adminModalBackdropClass} onClick={onClose} role="presentation">
+      <div className={adminModalPanelClass} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+        <div className={adminModalHeaderClass}>
+          <h2 className={adminModalTitleClass}>
             {t('admin.orders.orderDetails.title')} #{orderDetails.number}
           </h2>
           <button
+            type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className={`p-1 ${adminGhostIconButtonClass}`}
             aria-label={t('admin.common.close')}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">
+        <div className="p-6 sm:p-8">
           {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-              <p className="text-gray-600">{t('admin.orders.orderDetails.loadingOrderDetails')}</p>
+            <div className="py-10 text-center">
+              <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+              <p className={dashboardEmptyText}>{t('admin.orders.orderDetails.loadingOrderDetails')}</p>
             </div>
           ) : (
             <div className="space-y-6">

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { AdminMenuItem } from '@/components/AdminMenuDrawer';
 
 /**
@@ -15,17 +16,18 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
   return [
   {
     id: 'site-home',
-    label: t('admin.menu.homePage'),
+    label: '',
     path: '/',
+    isSiteLogoNav: true,
     icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-        />
-      </svg>
+      <Image
+        src="/hero-logo.png"
+        alt=""
+        width={520}
+        height={124}
+        className="h-auto max-h-16 w-auto max-w-full object-contain object-center sm:max-h-20"
+        unoptimized
+      />
     ),
   },
   {
@@ -62,6 +64,7 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
     id: 'products',
     label: t('admin.menu.products'),
     path: '/admin/products',
+    navCollapsibleParentId: 'products',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -78,6 +81,7 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
     label: t('admin.menu.categories'),
     path: '/admin/categories',
     isSubCategory: true,
+    navCollapsibleChildOf: 'products',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -94,6 +98,7 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
     label: t('admin.menu.brands'),
     path: '/admin/brands',
     isSubCategory: true,
+    navCollapsibleChildOf: 'products',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -110,6 +115,7 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
     label: t('admin.menu.attributes'),
     path: '/admin/attributes',
     isSubCategory: true,
+    navCollapsibleChildOf: 'products',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path

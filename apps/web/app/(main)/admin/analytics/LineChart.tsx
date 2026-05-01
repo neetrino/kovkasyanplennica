@@ -88,16 +88,15 @@ export function LineChart({ data }: LineChartProps) {
         <defs>
           {/* Modern gradient for area */}
           <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
-            <stop offset="50%" stopColor="#6366f1" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#3d504e" stopOpacity="0.35" />
+            <stop offset="50%" stopColor="#2f3f3d" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#2f3f3d" stopOpacity="0" />
           </linearGradient>
-          
-          {/* Gradient for line */}
+
           <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="50%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#8b5cf6" />
+            <stop offset="0%" stopColor="#3d504e" />
+            <stop offset="50%" stopColor="#2f3f3d" />
+            <stop offset="100%" stopColor="#ffe5c2" />
           </linearGradient>
           
           {/* Shadow filter for depth */}
@@ -131,7 +130,7 @@ export function LineChart({ data }: LineChartProps) {
             y1={padding.top + chartHeight * ratio}
             x2={width - padding.right}
             y2={padding.top + chartHeight * ratio}
-            stroke="#f1f5f9"
+            stroke="#e2eae8"
             strokeWidth="1"
             strokeDasharray="4 4"
           />
@@ -147,7 +146,7 @@ export function LineChart({ data }: LineChartProps) {
               y1={padding.top}
               x2={point.x}
               y2={padding.top + chartHeight}
-              stroke="#f1f5f9"
+              stroke="#e2eae8"
               strokeWidth="1"
               strokeDasharray="2 2"
               opacity="0.5"
@@ -181,7 +180,7 @@ export function LineChart({ data }: LineChartProps) {
               y1={y}
               x2={padding.left}
               y2={y}
-              stroke="#64748b"
+              stroke="#b8c5c0"
               strokeWidth="1"
             />
             <text
@@ -189,7 +188,7 @@ export function LineChart({ data }: LineChartProps) {
               y={y + 4}
               textAnchor="end"
               fontSize="11"
-              fill="#64748b"
+              fill="#3d504e"
               fontWeight="500"
             >
               {value}
@@ -201,44 +200,21 @@ export function LineChart({ data }: LineChartProps) {
         {points.map((point, i) => (
           <g key={i} className="cursor-pointer group">
             {/* Hover circle (invisible but interactive) */}
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r="8"
-              fill="transparent"
-              className="hover:fill-blue-100 hover:fill-opacity-30 transition-all duration-200"
-            />
-            
-            {/* Outer glow circle */}
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r="5"
-              fill="#3b82f6"
-              opacity="0.3"
-              className="group-hover:opacity-0.6 group-hover:r-7 transition-all duration-200"
-            />
-            
-            {/* Main point */}
+            <circle cx={point.x} cy={point.y} r="8" fill="transparent" />
+
+            <circle cx={point.x} cy={point.y} r="5" fill="#2f3f3d" opacity="0.22" />
+
             <circle
               cx={point.x}
               cy={point.y}
               r="4"
               fill="white"
-              stroke="#3b82f6"
-              strokeWidth="3"
-              className="group-hover:r-5 group-hover:stroke-[#6366f1] transition-all duration-200"
+              stroke="#2f3f3d"
+              strokeWidth="2.5"
               filter="url(#glow)"
             />
-            
-            {/* Inner dot */}
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r="2"
-              fill="#3b82f6"
-              className="group-hover:fill-[#6366f1] transition-all duration-200"
-            />
+
+            <circle cx={point.x} cy={point.y} r="2" fill="#ffe5c2" />
             
             {/* Tooltip on hover */}
             <title>
@@ -253,17 +229,16 @@ export function LineChart({ data }: LineChartProps) {
           y1={padding.top + chartHeight}
           x2={width - padding.right}
           y2={padding.top + chartHeight}
-          stroke="#cbd5e1"
+          stroke="#c5d1cc"
           strokeWidth="2"
         />
       </svg>
-      
-      {/* X-axis labels - Modern styling */}
-      <div className="flex justify-between mt-4 px-2">
+
+      <div className="mt-4 flex justify-between px-2">
         {data.length <= 10 ? (
           data.map((d, i) => (
             <div key={i} className="flex flex-col items-center">
-              <span className="text-xs font-medium text-gray-600 transform -rotate-45 origin-center whitespace-nowrap">
+              <span className="origin-center -rotate-45 whitespace-nowrap text-xs font-medium text-admin-brand/60">
                 {formatDateShort(d._id)}
               </span>
             </div>
@@ -271,17 +246,15 @@ export function LineChart({ data }: LineChartProps) {
         ) : (
           <>
             <div className="flex flex-col items-center">
-              <span className="text-xs font-medium text-gray-600">
-                {formatDateShort(data[0]._id)}
-              </span>
+              <span className="text-xs font-medium text-admin-brand/60">{formatDateShort(data[0]._id)}</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-xs font-medium text-gray-600">
+              <span className="text-xs font-medium text-admin-brand/60">
                 {formatDateShort(data[Math.floor(data.length / 2)]._id)}
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-xs font-medium text-gray-600">
+              <span className="text-xs font-medium text-admin-brand/60">
                 {formatDateShort(data[data.length - 1]._id)}
               </span>
             </div>

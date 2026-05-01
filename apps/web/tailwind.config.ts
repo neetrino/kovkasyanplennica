@@ -16,6 +16,19 @@ const config: Config = {
         warning: '#F59E0B',
         error: '#EF4444',
         info: '#3B82F6',
+        /** Storefront / mobile chrome — admin panel uses the same family */
+        admin: {
+          brand: '#2f3f3d',
+          'brand-2': '#3d504e',
+          surface: '#f1f5f4',
+          elevated: '#ffffff',
+          /** Peach accent (highlights, active nav) */
+          warm: '#ffe5c2',
+          muted: '#b8c5c0',
+          /** Cream / skin-tone text on green chrome */
+          flesh: '#faf3eb',
+          'flesh-muted': '#d4c4b0',
+        },
       },
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'sans-serif'],

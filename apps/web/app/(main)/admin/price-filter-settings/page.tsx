@@ -2,27 +2,37 @@
 
 import type { ChangeEvent } from 'react';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
-import { Card, Button, Input } from '@shop/ui';
-import { apiClient } from '@/lib/api-client';
-import { AdminMenuDrawer } from '@/components/AdminMenuDrawer';
-import {
-  getAdminNavContainerClass,
-  getAdminNavIconClass,
-  getAdminNavLinkButtonClasses,
-} from '@/components/admin/adminNavClasses';
-import { isAdminMenuItemActive } from '@/components/admin/isAdminMenuItemActive';
-import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
-import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
-import { getAdminMenuTABS } from '../admin-menu.config';
+import { Card, Button } from '@shop/ui';
+import { apiClient, ApiError } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminAlertSuccessClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminPaginationNavButtonClass,
+  adminSolidButtonClass,
+  adminSectionSubtitleClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardMainClass,
+  dashboardSectionTitle,
+} from '../components/dashboardUi';
 
-export default function PriceFilterSettingsPage() { 
+function saveErrorDetail(err: unknown): string {
+  if (err instanceof ApiError && err.data && typeof err.data === 'object' && err.data !== null) {
+    const d = (err.data as { detail?: unknown }).detail;
+    if (typeof d === 'string' && d.length > 0) return d;
+  }
+  if (err instanceof Error && err.message.length > 0) return err.message;
+  return 'Failed to save';
+}
+
+export default function PriceFilterSettingsPage() {
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [stepSizeUSD, setStepSizeUSD] = useState<string>('');
@@ -31,8 +41,7 @@ export default function PriceFilterSettingsPage() {
   const [stepSizeGEL, setStepSizeGEL] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  
-  // Храним предыдущее значение stepSize для расчета разницы
+
   const prevStepSizeRef = useRef<string>('');
   const isUpdatingRef = useRef<boolean>(false);
 
@@ -55,7 +64,7 @@ export default function PriceFilterSettingsPage() {
       const maxPriceStr = response.maxPrice?.toString() || '';
       const per = response.stepSizePerCurrency || {};
       const fallbackStep = response.stepSize?.toString() || '';
-      
+
       setMinPrice(minPriceStr);
       setMaxPrice(maxPriceStr);
       setStepSizeUSD(per.USD !== undefined ? per.USD.toString() : fallbackStep);
@@ -63,11 +72,10 @@ export default function PriceFilterSettingsPage() {
       setStepSizeRUB(per.RUB !== undefined ? per.RUB.toString() : '');
       setStepSizeGEL(per.GEL !== undefined ? per.GEL.toString() : '');
       prevStepSizeRef.current = fallbackStep;
-      
+
       console.log('✅ [PRICE FILTER SETTINGS] Settings loaded:', response);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [PRICE FILTER SETTINGS] Error fetching settings:', err);
-      // If settings don't exist, use empty values
       setMinPrice('');
       setMaxPrice('');
       setStepSizeUSD('');
@@ -80,51 +88,45 @@ export default function PriceFilterSettingsPage() {
     }
   }, []);
 
-  // Обработчик изменения базового Step Size (USD) - синхронизирует minPrice и maxPrice
   const handleStepSizeChange = (newValue: string) => {
     if (isUpdatingRef.current) return;
-    
+
     const prevStep = prevStepSizeRef.current;
-    
-    // Если предыдущее значение пустое, просто обновляем
+
     if (!prevStep) {
       prevStepSizeRef.current = newValue;
       setStepSizeUSD(newValue);
       return;
     }
-    
+
     const prevStepNum = parseFloat(prevStep);
     const newStepNum = parseFloat(newValue);
-    
-    // Если новое значение невалидно, просто обновляем stepSize
+
     if (isNaN(newStepNum) || newValue.trim() === '') {
       prevStepSizeRef.current = newValue;
       setStepSizeUSD(newValue);
       return;
     }
-    
-    // Вычисляем разницу
+
     const difference = newStepNum - prevStepNum;
-    
-    // Применяем разницу к minPrice и maxPrice, если они заполнены
+
     const prevMin = minPrice.trim();
     const prevMax = maxPrice.trim();
-    
+
     if (prevMin && prevMax) {
       const prevMinNum = parseFloat(prevMin);
       const prevMaxNum = parseFloat(prevMax);
-      
+
       if (!isNaN(prevMinNum) && !isNaN(prevMaxNum)) {
         const newMinNum = prevMinNum + difference;
         const newMaxNum = prevMaxNum + difference;
-        
-        // Обновляем все значения
+
         isUpdatingRef.current = true;
         setStepSizeUSD(newValue);
         setMinPrice(newMinNum > 0 ? newMinNum.toString() : '');
         setMaxPrice(newMaxNum > 0 ? newMaxNum.toString() : '');
         prevStepSizeRef.current = newValue;
-        
+
         console.log('🔄 [PRICE FILTER] StepSize changed:', {
           prevStep: prevStepNum,
           newStep: newStepNum,
@@ -132,18 +134,16 @@ export default function PriceFilterSettingsPage() {
           prevMin: prevMinNum,
           newMin: newMinNum,
           prevMax: prevMaxNum,
-          newMax: newMaxNum
+          newMax: newMaxNum,
         });
-        
-        // Сбрасываем флаг после небольшой задержки
+
         setTimeout(() => {
           isUpdatingRef.current = false;
         }, 0);
         return;
       }
     }
-    
-    // Если min/max не заполнены, просто обновляем stepSize
+
     prevStepSizeRef.current = newValue;
     setStepSizeUSD(newValue);
   };
@@ -209,16 +209,15 @@ export default function PriceFilterSettingsPage() {
       await apiClient.put('/api/v1/admin/settings/price-filter', {
         minPrice: minValue,
         maxPrice: maxValue,
-        stepSize: stepValueUSD, // keep legacy field for backwards compatibility (USD as base)
+        stepSize: stepValueUSD,
         stepSizePerCurrency: Object.keys(stepSizePerCurrency).length ? stepSizePerCurrency : null,
       });
-      
+
       alert(t('admin.priceFilter.savedSuccess'));
       console.log('✅ [PRICE FILTER SETTINGS] Settings saved');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [PRICE FILTER SETTINGS] Error saving settings:', err);
-      const errorMessage = err.response?.data?.detail || err.message || 'Failed to save';
-      alert(t('admin.priceFilter.errorSaving').replace('{message}', errorMessage));
+      alert(t('admin.priceFilter.errorSaving').replace('{message}', saveErrorDetail(err)));
     } finally {
       setSaving(false);
     }
@@ -245,216 +244,172 @@ export default function PriceFilterSettingsPage() {
     }
   }, [isLoggedIn, isAdmin, isLoading, router]);
 
-  // Get current path to highlight active tab
-  const [currentPath, setCurrentPath] = useState(pathname || '/admin');
-  
-  useEffect(() => {
-    if (pathname) {
-      setCurrentPath(pathname);
-    }
-  }, [pathname]);
-
-  const { isDark } = useAdminNavTheme();
-  const mode: AdminNavThemeMode = isDark ? 'dark' : 'light';
-
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
   }
 
   if (!isLoggedIn || !isAdmin) {
-    return null; // Will redirect
+    return null;
   }
 
-  const adminTabs = getAdminMenuTABS(t);
+  const numberInputClass = `${adminFormControlClass} w-full`;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.common.backToAdmin')}
-          </button>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{t('admin.priceFilter.title')}</h1>
-              <p className="text-gray-600 mt-2">{t('admin.priceFilter.subtitle')}</p>
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.priceFilter.title')}</h1>
+        <p className={`mt-1 max-w-2xl ${adminSectionSubtitleClass}`}>{t('admin.priceFilter.subtitle')}</p>
+      </section>
+
+      <Card variant="admin" className={dashboardCardPadding}>
+        <div className="mb-6 border-b border-admin-brand-2/12 pb-4">
+          <h2 className={dashboardSectionTitle}>{t('admin.priceFilter.priceFilterDefaultRange')}</h2>
+          <p className={`mt-2 text-sm ${adminSectionSubtitleClass}`}>{t('admin.priceFilter.stepSizeDescription')}</p>
+        </div>
+
+        {loading ? (
+          <div className="py-10 text-center">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+            <p className={dashboardEmptyText}>{t('admin.priceFilter.loadingSettings')}</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <label htmlFor="price-filter-step-usd" className={adminFilterLabelClass}>
+                  {t('admin.priceFilter.stepSizeUsd')}
+                </label>
+                <input
+                  id="price-filter-step-usd"
+                  type="number"
+                  value={stepSizeUSD}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleStepSizeChange(e.target.value)}
+                  placeholder={t('admin.priceFilter.usdPlaceholder')}
+                  min={1}
+                  step={1}
+                  className={numberInputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="price-filter-step-amd" className={adminFilterLabelClass}>
+                  {t('admin.priceFilter.stepSizeAmd')}
+                </label>
+                <input
+                  id="price-filter-step-amd"
+                  type="number"
+                  value={stepSizeAMD}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeAMD(e.target.value)}
+                  placeholder={t('admin.priceFilter.amdPlaceholder')}
+                  min={1}
+                  step={1}
+                  className={numberInputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="price-filter-step-rub" className={adminFilterLabelClass}>
+                  {t('admin.priceFilter.stepSizeRub')}
+                </label>
+                <input
+                  id="price-filter-step-rub"
+                  type="number"
+                  value={stepSizeRUB}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeRUB(e.target.value)}
+                  placeholder={t('admin.priceFilter.rubPlaceholder')}
+                  min={1}
+                  step={1}
+                  className={numberInputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="price-filter-step-gel" className={adminFilterLabelClass}>
+                  {t('admin.priceFilter.stepSizeGel')}
+                </label>
+                <input
+                  id="price-filter-step-gel"
+                  type="number"
+                  value={stepSizeGEL}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeGEL(e.target.value)}
+                  placeholder={t('admin.priceFilter.gelPlaceholder')}
+                  min={1}
+                  step={1}
+                  className={numberInputClass}
+                />
+              </div>
+            </div>
+
+            <div className={adminAlertSuccessClass}>
+              <div className="flex items-start gap-3">
+                <svg
+                  className="mt-0.5 h-5 w-5 shrink-0 text-admin-brand/70"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div className="min-w-0 text-sm text-admin-brand/90">
+                  <p className="mb-2 font-semibold text-admin-brand">{t('admin.priceFilter.howItWorks')}</p>
+                  <ul className="list-inside list-disc space-y-1 text-admin-brand/80">
+                    <li>{t('admin.priceFilter.stepSizeControls')}</li>
+                    <li>{t('admin.priceFilter.differentStepSizes')}</li>
+                    <li>{t('admin.priceFilter.usersCanAdjust')}</li>
+                    <li>{t('admin.priceFilter.changesTakeEffect')}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3 border-t border-admin-brand-2/12 pt-4">
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => void handleSave()}
+                disabled={saving}
+                className={`px-6 ${adminSolidButtonClass}`}
+              >
+                {saving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-admin-flesh/30 border-b-admin-flesh" />
+                    {t('admin.priceFilter.saving')}
+                  </span>
+                ) : (
+                  t('admin.priceFilter.saveSettings')
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setMinPrice('');
+                  setMaxPrice('');
+                  setStepSizeUSD('');
+                  setStepSizeAMD('');
+                  setStepSizeRUB('');
+                  setStepSizeGEL('');
+                  prevStepSizeRef.current = '';
+                }}
+                className={adminPaginationNavButtonClass}
+              >
+                {t('admin.priceFilter.clear')}
+              </Button>
             </div>
           </div>
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:hidden mb-6">
-            <AdminMenuDrawer tabs={adminTabs} currentPath={currentPath} />
-          </div>
-          {/* Sidebar Navigation */}
-          <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-            <nav className={getAdminNavContainerClass(mode)}>
-              {adminTabs.map((tab) => {
-                const isActive = isAdminMenuItemActive(tab.path, currentPath);
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      router.push(tab.path);
-                    }}
-                    className={getAdminNavLinkButtonClasses(mode, isActive, Boolean(tab.isSubCategory))}
-                  >
-                    <span className={getAdminNavIconClass(mode, isActive)}>
-                      {tab.icon}
-                    </span>
-                    <span className="text-left">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </aside>
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
-            <Card className="p-6">
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('admin.priceFilter.priceFilterDefaultRange')}</h2>
-                <p className="text-sm text-gray-600">
-                  {t('admin.priceFilter.stepSizeDescription')}
-                </p>
-              </div>
-
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-                  <p className="text-gray-600">{t('admin.priceFilter.loadingSettings')}</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('admin.priceFilter.stepSizeUsd')}
-                      </label>
-                      <Input
-                        type="number"
-                        value={stepSizeUSD}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleStepSizeChange(e.target.value)}
-                        placeholder="100"
-                        min="1"
-                        step="1"
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('admin.priceFilter.stepSizeAmd')}
-                      </label>
-                      <Input
-                        type="number"
-                        value={stepSizeAMD}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeAMD(e.target.value)}
-                        placeholder="5000"
-                        min="1"
-                        step="1"
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('admin.priceFilter.stepSizeRub')}
-                      </label>
-                      <Input
-                        type="number"
-                        value={stepSizeRUB}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeRUB(e.target.value)}
-                        placeholder="500"
-                        min="1"
-                        step="1"
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('admin.priceFilter.stepSizeGel')}
-                      </label>
-                      <Input
-                        type="number"
-                        value={stepSizeGEL}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => setStepSizeGEL(e.target.value)}
-                        placeholder="10"
-                        min="1"
-                        step="1"
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <div className="text-sm text-blue-800">
-                        <p className="font-medium mb-1">{t('admin.priceFilter.howItWorks')}</p>
-                        <ul className="list-disc list-inside space-y-1 text-blue-700">
-                          <li>{t('admin.priceFilter.stepSizeControls')}</li>
-                          <li>{t('admin.priceFilter.differentStepSizes')}</li>
-                          <li>{t('admin.priceFilter.defaultRange')}</li>
-                          <li>{t('admin.priceFilter.usersCanAdjust')}</li>
-                          <li>{t('admin.priceFilter.changesTakeEffect')}</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="primary"
-                      onClick={handleSave}
-                      disabled={saving}
-                      className="px-6"
-                    >
-                      {saving ? (
-                        <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          <span>{t('admin.priceFilter.saving')}</span>
-                        </div>
-                      ) : (
-                        t('admin.priceFilter.saveSettings')
-                      )}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        setMinPrice('');
-                        setMaxPrice('');
-                        setStepSizeUSD('');
-                        setStepSizeAMD('');
-                        setStepSizeRUB('');
-                        setStepSizeGEL('');
-                        prevStepSizeRef.current = '';
-                      }}
-                    >
-                      {t('admin.priceFilter.clear')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Card>
-          </div>
-        </div>
-      </div>
+        )}
+      </Card>
     </div>
   );
 }
-

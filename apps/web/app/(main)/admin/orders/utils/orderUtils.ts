@@ -2,31 +2,32 @@
  * Order utilities - helper functions for order status colors and formatting
  */
 
+/** Order status `<select>` surface — aligned with admin dashboard badge palette */
 export function getStatusColor(status: string): string {
   switch (status.toLowerCase()) {
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-admin-warm/60 text-admin-brand ring-1 ring-inset ring-admin-brand/10';
     case 'processing':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-admin-surface text-admin-brand ring-1 ring-inset ring-admin-brand/15';
     case 'completed':
-      return 'bg-green-100 text-green-800';
+      return 'bg-admin-surface text-admin-brand ring-1 ring-inset ring-emerald-700/15';
     case 'cancelled':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-50/95 text-red-900 ring-1 ring-inset ring-red-200/60';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-admin-surface text-admin-muted ring-1 ring-inset ring-admin-brand-2/14';
   }
 }
 
 export function getPaymentStatusColor(paymentStatus: string): string {
   switch (paymentStatus.toLowerCase()) {
     case 'paid':
-      return 'bg-green-100 text-green-800';
+      return 'bg-admin-surface text-admin-brand ring-1 ring-inset ring-admin-brand/12';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-admin-warm/60 text-admin-brand ring-1 ring-inset ring-admin-brand/10';
     case 'failed':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-50/95 text-red-900 ring-1 ring-inset ring-red-200/60';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-admin-surface text-admin-muted ring-1 ring-inset ring-admin-brand-2/14';
   }
 }
 

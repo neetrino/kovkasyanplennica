@@ -1,27 +1,46 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { Card, Button } from '@shop/ui';
-import { apiClient } from '@/lib/api-client';
-import { AdminMenuDrawer } from '@/components/AdminMenuDrawer';
-import {
-  getAdminNavContainerClass,
-  getAdminNavIconClass,
-  getAdminNavLinkButtonClasses,
-} from '@/components/admin/adminNavClasses';
-import { isAdminMenuItemActive } from '@/components/admin/isAdminMenuItemActive';
-import type { AdminNavThemeMode } from '@/components/admin/adminNavClasses';
-import { useAdminNavTheme } from '@/components/admin/AdminNavThemeContext';
-import { getAdminMenuTABS } from '../admin-menu.config';
+import { apiClient, ApiError } from '@/lib/api-client';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminBulkDangerButtonClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminGhostIconButtonClass,
+  adminModalBackdropAlignStartClass,
+  adminModalTitleClass,
+  adminPaginationNavButtonClass,
+  adminSolidButtonClass,
+  adminSectionSubtitleClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardInsetRowCompact,
+  dashboardMainClass,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+} from '../components/dashboardUi';
 
 interface Brand {
   id: string;
   name: string;
   slug: string;
 }
+
+function apiErrorDetail(err: unknown): string {
+  if (err instanceof ApiError && err.data && typeof err.data === 'object' && err.data !== null) {
+    const d = (err.data as { detail?: unknown }).detail;
+    if (typeof d === 'string' && d.length > 0) return d;
+  }
+  if (err instanceof Error && err.message.length > 0) return err.message;
+  return 'Unknown error occurred';
+}
+
+const brandModalPanelClass =
+  'relative max-h-[calc(100vh-6rem)] w-full max-w-md shrink-0 overflow-y-auto overscroll-contain rounded-xl border border-admin-brand-2/20 bg-white p-6 shadow-[0_24px_60px_-16px_rgba(47,63,61,0.28)]';
 
 function BrandsSection() {
   const { t } = useTranslation();
@@ -39,7 +58,7 @@ function BrandsSection() {
       const response = await apiClient.get<{ data: Brand[] }>('/api/v1/admin/brands');
       setBrands(response.data || []);
       console.log('✅ [ADMIN] Brands loaded:', response.data?.length || 0);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('❌ [ADMIN] Error fetching brands:', err);
       setBrands([]);
     } finally {
@@ -48,7 +67,7 @@ function BrandsSection() {
   }, []);
 
   useEffect(() => {
-    fetchBrands();
+    void fetchBrands();
   }, [fetchBrands]);
 
   const handleDeleteBrand = async (brandId: string, brandName: string) => {
@@ -60,21 +79,11 @@ function BrandsSection() {
       console.log(`🗑️ [ADMIN] Deleting brand: ${brandName} (${brandId})`);
       await apiClient.delete(`/api/v1/admin/brands/${brandId}`);
       console.log('✅ [ADMIN] Brand deleted successfully');
-      fetchBrands();
+      await fetchBrands();
       alert(t('admin.brands.deletedSuccess'));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [ADMIN] Error deleting brand:', err);
-      let errorMessage = 'Unknown error occurred';
-      if (err.data?.detail) {
-        errorMessage = err.data.detail;
-      } else if (err.detail) {
-        errorMessage = err.detail;
-      } else if (err.message) {
-        errorMessage = err.message;
-      } else if (err.response?.data?.detail) {
-        errorMessage = err.response.data.detail;
-      }
-      alert(t('admin.brands.errorDeleting') + '\n\n' + errorMessage);
+      alert(`${t('admin.brands.errorDeleting')}\n\n${apiErrorDetail(err)}`);
     }
   };
 
@@ -98,7 +107,7 @@ function BrandsSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim()) {
       alert(t('admin.brands.nameRequired'));
       return;
@@ -107,7 +116,6 @@ function BrandsSection() {
     setSubmitting(true);
     try {
       if (editingBrand) {
-        // Update existing brand
         console.log('🔄 [ADMIN] Updating brand:', editingBrand.id);
         await apiClient.put(`/api/v1/admin/brands/${editingBrand.id}`, {
           name: formData.name.trim(),
@@ -115,7 +123,6 @@ function BrandsSection() {
         console.log('✅ [ADMIN] Brand updated successfully');
         alert(t('admin.brands.updatedSuccess'));
       } else {
-        // Create new brand
         console.log('➕ [ADMIN] Creating brand:', formData.name);
         await apiClient.post('/api/v1/admin/brands', {
           name: formData.name.trim(),
@@ -123,120 +130,118 @@ function BrandsSection() {
         console.log('✅ [ADMIN] Brand created successfully');
         alert(t('admin.brands.createdSuccess'));
       }
-      
-      fetchBrands();
+
+      await fetchBrands();
       handleCloseModal();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('❌ [ADMIN] Error saving brand:', err);
-      let errorMessage = 'Unknown error occurred';
-      if (err.data?.detail) {
-        errorMessage = err.data.detail;
-      } else if (err.detail) {
-        errorMessage = err.detail;
-      } else if (err.message) {
-        errorMessage = err.message;
-      } else if (err.response?.data?.detail) {
-        errorMessage = err.response.data.detail;
-      }
-      alert(t('admin.brands.errorSaving') + '\n\n' + errorMessage);
+      alert(`${t('admin.brands.errorSaving')}\n\n${apiErrorDetail(err)}`);
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="text-center py-4">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto mb-2"></div>
-        <p className="text-sm text-gray-600">{t('admin.brands.loading')}</p>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">{t('admin.brands.title')}</h2>
-        <Button
+      <div className="mb-5 flex justify-end">
+        <button
+          type="button"
           onClick={handleOpenAddModal}
-          variant="primary"
-          size="sm"
+          className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium ${adminSolidButtonClass}`}
         >
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           {t('admin.brands.addNew')}
-        </Button>
+        </button>
       </div>
 
       {loading ? (
-        <div className="text-center py-4">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto mb-2"></div>
-          <p className="text-sm text-gray-600">{t('admin.brands.loading')}</p>
+        <div className="py-8 text-center">
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className={dashboardEmptyText}>{t('admin.brands.loading')}</p>
         </div>
       ) : brands.length === 0 ? (
-        <p className="text-sm text-gray-500 py-2">{t('admin.brands.noBrands')}</p>
+        <p className={`py-2 ${dashboardEmptyText}`}>{t('admin.brands.noBrands')}</p>
       ) : (
-        <div className="space-y-2 max-h-96 overflow-y-auto">
-        {brands.map((brand) => (
-          <div
-            key={brand.id}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            <div>
-              <div className="text-sm font-medium text-gray-900">{brand.name}</div>
-              <div className="text-xs text-gray-500">{brand.slug}</div>
+        <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+          {brands.map((brand) => (
+            <div key={brand.id} className={`flex items-center justify-between gap-3 ${dashboardInsetRowCompact}`}>
+              <div className="min-w-0">
+                <div className={dashboardRowPrimaryMedium}>{brand.name}</div>
+                <div className={`font-mono ${dashboardRowMeta}`}>{brand.slug}</div>
+              </div>
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleOpenEditModal(brand)}
+                  className={adminPaginationNavButtonClass}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    {t('admin.brands.edit')}
+                  </span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void handleDeleteBrand(brand.id, brand.name)}
+                  className={adminBulkDangerButtonClass}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                    {t('admin.brands.delete')}
+                  </span>
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleOpenEditModal(brand)}
-                className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-              >
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                {t('admin.brands.edit')}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDeleteBrand(brand.id, brand.name)}
-                className="text-red-600 hover:text-red-800 hover:bg-red-50"
-              >
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                {t('admin.brands.delete')}
-              </Button>
-            </div>
-          </div>
-        ))}
+          ))}
         </div>
       )}
 
-      {/* Add/Edit Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-app-modal p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
+      {showModal ? (
+        <div
+          className={adminModalBackdropAlignStartClass}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="brand-modal-title"
+          onClick={handleCloseModal}
+        >
+          <div className={brandModalPanelClass} onClick={(e) => e.stopPropagation()}>
+            <div className="mb-6 flex items-center justify-between border-b border-admin-brand-2/15 pb-4">
+              <h2 id="brand-modal-title" className={adminModalTitleClass}>
                 {editingBrand ? t('admin.brands.editBrand') : t('admin.brands.addNewBrand')}
-              </h3>
+              </h2>
               <button
+                type="button"
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-admin-brand-2/20 text-lg leading-none ${adminGhostIconButtonClass}`}
+                aria-label={t('admin.common.close')}
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                ×
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
               <div>
-                <label htmlFor="brand-name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="brand-name" className={adminFilterLabelClass}>
                   {t('admin.brands.brandName')}
                 </label>
                 <input
@@ -244,33 +249,31 @@ function BrandsSection() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className={`${adminFormControlClass} w-full`}
                   placeholder={t('admin.brands.enterBrandName')}
                   required
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4">
+              <div className="flex flex-wrap items-center justify-end gap-3 border-t border-admin-brand-2/12 pt-4">
                 <Button
                   type="button"
                   variant="outline"
+                  size="sm"
                   onClick={handleCloseModal}
                   disabled={submitting}
+                  className={adminPaginationNavButtonClass}
                 >
                   {t('admin.brands.cancel')}
                 </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={submitting}
-                >
-                  {submitting ? t('admin.brands.saving') : (editingBrand ? t('admin.brands.update') : t('admin.brands.create'))}
+                <Button type="submit" variant="primary" size="sm" disabled={submitting} className={adminSolidButtonClass}>
+                  {submitting ? t('admin.brands.saving') : editingBrand ? t('admin.brands.update') : t('admin.brands.create')}
                 </Button>
               </div>
             </form>
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 }
@@ -279,14 +282,6 @@ export default function BrandsPage() {
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
-  const [currentPath, setCurrentPath] = useState(pathname || '/admin/brands');
-
-  useEffect(() => {
-    if (pathname) {
-      setCurrentPath(pathname);
-    }
-  }, [pathname]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -297,16 +292,12 @@ export default function BrandsPage() {
     }
   }, [isLoggedIn, isAdmin, isLoading, router]);
 
-  const { isDark } = useAdminNavTheme();
-  const mode: AdminNavThemeMode = isDark ? 'dark' : 'light';
-  const adminTabs = getAdminMenuTABS(t);
-
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('admin.common.loading')}</p>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
         </div>
       </div>
     );
@@ -317,57 +308,15 @@ export default function BrandsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div className="mb-8">
-          <button
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.common.backToAdmin')}
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">{t('admin.brands.title')}</h1>
-        </div>
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.brands.title')}</h1>
+        <p className={`mt-1 max-w-2xl ${adminSectionSubtitleClass}`}>{t('admin.brands.subtitle')}</p>
+      </section>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:hidden mb-6">
-            <AdminMenuDrawer tabs={adminTabs} currentPath={currentPath} />
-          </div>
-          {/* Sidebar Navigation */}
-          <aside className="hidden lg:block lg:w-64 flex-shrink-0">
-            <nav className={getAdminNavContainerClass(mode)}>
-              {adminTabs.map((tab) => {
-                const isActive = isAdminMenuItemActive(tab.path, currentPath);
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      router.push(tab.path);
-                    }}
-                    className={getAdminNavLinkButtonClasses(mode, isActive, Boolean(tab.isSubCategory))}
-                  >
-                    <span className={getAdminNavIconClass(mode, isActive)}>
-                      {tab.icon}
-                    </span>
-                    <span className="text-left">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </aside>
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
-            <Card className="p-6">
-              <BrandsSection />
-            </Card>
-          </div>
-        </div>
-      </div>
+      <Card variant="admin" className={dashboardCardPadding}>
+        <BrandsSection />
+      </Card>
     </div>
   );
 }
-

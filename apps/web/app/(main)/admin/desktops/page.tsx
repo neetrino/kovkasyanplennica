@@ -1,19 +1,36 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
 import { useTranslation } from '@/lib/i18n-client';
+import { Card, Button } from '@shop/ui';
+import { AdminPaginationControls } from '../components/AdminNumericPagination';
+import {
+  adminAlertErrorClass,
+  adminBulkDangerButtonClass,
+  adminFilterLabelClass,
+  adminFormControlClass,
+  adminPaginationMetaClass,
+  adminSolidButtonClass,
+  adminTableBodyClass,
+  adminTableHeadCellClass,
+  adminTableHeadRowClass,
+  adminTableRowHoverClass,
+  adminTableWrapClass,
+  dashboardCardPadding,
+  dashboardEmptyText,
+  dashboardMainClass,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+} from '../components/dashboardUi';
 import {
   getValidEndTimeSlots,
   isPastTimeSlotForDate,
   isStartTimeSlotBookable,
   type ReservationBusyInterval,
 } from '@/lib/reservations/availability';
-import { getHostessMenuTABS } from '../admin-menu.config';
-import { AdminSidebar } from '../components/AdminSidebar';
 import { TABLES } from '../../desktops/table-data';
 import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
 
@@ -63,10 +80,13 @@ interface ReservationsResponse {
   };
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-amber-100 text-amber-900 border-amber-400',
-  confirmed: 'bg-emerald-100 text-emerald-900 border-emerald-500',
-  cancelled: 'bg-red-100 text-red-800 border-red-400',
+const STATUS_SELECT_SKIN: Record<string, string> = {
+  pending:
+    'border-admin-brand-2/25 bg-admin-warm/55 text-admin-brand ring-1 ring-inset ring-admin-brand/12',
+  confirmed:
+    'border-admin-brand-2/20 bg-admin-surface text-admin-brand ring-1 ring-inset ring-admin-brand/12',
+  cancelled:
+    'border-red-200/90 bg-red-50/90 text-red-900 ring-1 ring-inset ring-red-200/70',
 };
 
 const DISPLAY_DATE_LOCALE = 'ru-RU';
@@ -104,11 +124,16 @@ function formatCreatedAtDate(iso: string): string {
   });
 }
 
+function statusSelectClass(status: string): string {
+  return (
+    STATUS_SELECT_SKIN[status] ??
+    'border-admin-brand-2/20 bg-admin-surface text-admin-muted ring-1 ring-inset ring-admin-brand-2/14'
+  );
+}
+
 export default function AdminDesktopsPage() {
   const { t } = useTranslation();
-  const { isLoggedIn, canAccessAdmin, isHostess, isLoading } = useAuth();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { isLoggedIn, canAccessAdmin, isLoading } = useAuth();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -122,16 +147,13 @@ export default function AdminDesktopsPage() {
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
-  const sidebarTabs = isHostess ? getHostessMenuTABS(t) : undefined;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (window.location.hash !== '#admin-desktops-manual-booking') return;
     setManualBookingOpen(true);
     window.requestAnimationFrame(() => {
-      document
-        .getElementById('admin-desktops-manual-booking')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('admin-desktops-manual-booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }, []);
 
@@ -144,10 +166,7 @@ export default function AdminDesktopsPage() {
       };
       if (filterStatus) params.status = filterStatus;
 
-      const response = await apiClient.get<ReservationsResponse>(
-        '/api/v1/admin/reservations',
-        { params }
-      );
+      const response = await apiClient.get<ReservationsResponse>('/api/v1/admin/reservations', { params });
       setReservations(response.data || []);
       setMeta(response.meta || null);
     } catch {
@@ -284,9 +303,8 @@ export default function AdminDesktopsPage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        const detail = typeof data.detail === 'string'
-          ? data.detail
-          : t('admin.desktopsReservations.create.failed');
+        const detail =
+          typeof data.detail === 'string' ? data.detail : t('admin.desktopsReservations.create.failed');
         throw new Error(detail);
       }
 
@@ -294,9 +312,8 @@ export default function AdminDesktopsPage() {
       setCreateBusyIntervals([]);
       await fetchReservations();
     } catch (error: unknown) {
-      const message = error instanceof Error
-        ? error.message
-        : t('admin.desktopsReservations.create.failed');
+      const message =
+        error instanceof Error ? error.message : t('admin.desktopsReservations.create.failed');
       setCreateError(message);
     } finally {
       setCreating(false);
@@ -304,18 +321,19 @@ export default function AdminDesktopsPage() {
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
   const toggleSelectAll = () => {
     if (reservations.length === 0) return;
-    setSelectedIds(prev => {
-      const allIds = reservations.map(r => r.id);
-      const hasAll = allIds.every(id => prev.has(id));
+    setSelectedIds((prev) => {
+      const allIds = reservations.map((r) => r.id);
+      const hasAll = allIds.every((id) => prev.has(id));
       return hasAll ? new Set() : new Set(allIds);
     });
   };
@@ -345,7 +363,7 @@ export default function AdminDesktopsPage() {
     if (selectedIds.size === 0) return;
     const confirmMsg = t('admin.desktopsReservations.bulkDeleteConfirm').replace(
       '{count}',
-      String(selectedIds.size)
+      String(selectedIds.size),
     );
     if (!confirm(confirmMsg)) return;
     setBulkDeleting(true);
@@ -371,483 +389,439 @@ export default function AdminDesktopsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
+      <div className="flex min-h-[50vh] items-center justify-center px-4">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+          <p className="text-sm text-admin-brand/55">{t('admin.common.loading')}</p>
+        </div>
       </div>
     );
   }
 
   if (!isLoggedIn || !canAccessAdmin) return null;
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="w-full">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <AdminSidebar
-            currentPath={pathname || '/admin/desktops'}
-            router={router}
-            t={t}
-            tabs={sidebarTabs}
-            sticky={isHostess}
-          />
-          <div className="flex-1 min-w-0">
+  const controlGridClass = `${adminFormControlClass} min-w-0`;
 
-        {/* Header */}
-        <div className="mb-8">
+  return (
+    <div className={dashboardMainClass}>
+      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
+        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.desktopsReservations.title')}</h1>
+        {meta ? (
+          <p className="mt-1 text-sm text-admin-brand/60">
+            {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
+          </p>
+        ) : null}
+      </section>
+
+      <Card variant="admin" className={dashboardCardPadding}>
+        <div className="flex flex-wrap items-end justify-end gap-3 sm:items-center">
+          <div className="w-full sm:w-auto sm:min-w-[12rem]">
+            <label htmlFor="desktop-reservation-status" className={adminFilterLabelClass}>
+              {t('admin.desktopsReservations.statusFilter')}
+            </label>
+            <select
+              id="desktop-reservation-status"
+              value={filterStatus}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setPage(1);
+              }}
+              className={`${adminFormControlClass} w-full sm:w-auto sm:min-w-[12rem]`}
+            >
+              <option value="">{t('admin.desktopsReservations.filterAll')}</option>
+              <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+              <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+              <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
+            </select>
+          </div>
           <button
             type="button"
-            onClick={() => router.push('/admin')}
-            className="text-gray-600 hover:text-gray-900 mb-4 flex items-center gap-2 text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            {t('admin.desktopsReservations.back')}
-          </button>
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{t('admin.desktopsReservations.title')}</h1>
-              {meta && (
-                <p className="text-gray-500 text-sm mt-1">
-                  {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
-                </p>
-              )}
-            </div>
-            {/* Filter */}
-            <div className="flex flex-wrap items-center gap-3">
-              <label htmlFor="desktop-reservation-status" className="text-sm font-medium text-gray-700">
-                {t('admin.desktopsReservations.statusFilter')}
-              </label>
-              <select
-                id="desktop-reservation-status"
-                value={filterStatus}
-                onChange={e => { setFilterStatus(e.target.value); setPage(1); }}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="">{t('admin.desktopsReservations.filterAll')}</option>
-                <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
-                <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
-                <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
-              </select>
-              <button
-                type="button"
-                onClick={() => {
-                  setManualBookingOpen(true);
-                  window.requestAnimationFrame(() => {
-                    document
-                      .getElementById('admin-desktops-manual-booking')
-                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  });
-                }}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-800 transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            onClick={() => {
+              setManualBookingOpen(true);
+              window.requestAnimationFrame(() => {
+                document.getElementById('admin-desktops-manual-booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-admin-brand-2/25 bg-white px-3 py-2 text-sm font-medium text-admin-brand shadow-sm transition-colors hover:bg-admin-surface/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brand/25"
             aria-controls="admin-desktops-manual-booking-panel"
             aria-expanded={manualBookingOpen}
+          >
+            {t('admin.desktopsReservations.create.title')}
+            <svg className="h-4 w-4 shrink-0 text-admin-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </Card>
+
+      <section
+        id="admin-desktops-manual-booking"
+        className="scroll-mt-6 rounded-xl border border-admin-brand-2/18 bg-white shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)]"
+      >
+        <button
+          type="button"
+          onClick={() => setManualBookingOpen((open) => !open)}
+          className="flex w-full items-center justify-between gap-4 border-b border-admin-brand-2/12 p-5 text-left transition-colors hover:bg-admin-surface/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-admin-brand/20"
+          aria-expanded={manualBookingOpen}
+          aria-controls="admin-desktops-manual-booking-panel"
+          id="admin-desktops-manual-booking-heading"
+        >
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold text-admin-brand">{t('admin.desktopsReservations.create.title')}</h2>
+            <p className="mt-1 text-sm text-admin-brand/60">{t('admin.desktopsReservations.create.subtitle')}</p>
+          </div>
+          <svg
+            className={`h-5 w-5 shrink-0 text-admin-muted transition-transform duration-200 ${manualBookingOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <div
+          id="admin-desktops-manual-booking-panel"
+          hidden={!manualBookingOpen}
+          className="border-t border-admin-brand-2/10 px-5 pb-5 pt-4"
+        >
+          <form onSubmit={handleCreateReservation} aria-labelledby="admin-desktops-manual-booking-heading">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
+              <select
+                value={createForm.tableId}
+                onChange={(e) => setCreateField('tableId', e.target.value)}
+                className={controlGridClass}
               >
-                {t('admin.desktopsReservations.create.title')}
-                <svg
-                  className="h-4 w-4 shrink-0 text-indigo-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <option value="">{t('admin.desktopsReservations.create.table')}</option>
+                {TABLES.map((table) => (
+                  <option key={table.id} value={table.id}>
+                    {t(`desktops.tables.${table.labelKey}`)}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="date"
+                value={createForm.date}
+                onChange={(e) => setCreateField('date', e.target.value)}
+                className={controlGridClass}
+              />
+
+              <select
+                value={createForm.time}
+                onChange={(e) => {
+                  setCreateForm((prev) => ({ ...prev, time: e.target.value, timeEnd: '' }));
+                  setCreateError(null);
+                }}
+                className={controlGridClass}
+              >
+                <option value="">{t('admin.desktopsReservations.create.time')}</option>
+                {RESERVATION_TIME_SLOTS.map((slot) => (
+                  <option
+                    key={slot}
+                    value={slot}
+                    disabled={
+                      !isStartTimeSlotBookable(slot, RESERVATION_TIME_SLOTS, createBusyIntervals) ||
+                      isPastTimeSlotForDate(createForm.date, slot)
+                    }
+                  >
+                    {slot}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={createForm.timeEnd}
+                onChange={(e) => setCreateField('timeEnd', e.target.value)}
+                disabled={!createForm.time}
+                className={controlGridClass}
+              >
+                <option value="">{t('admin.desktopsReservations.create.timeEnd')}</option>
+                {getValidEndTimeSlots(createForm.time, RESERVATION_TIME_SLOTS, createBusyIntervals).map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={createForm.occasion}
+                onChange={(e) => setCreateField('occasion', e.target.value)}
+                className={controlGridClass}
+              >
+                <option value="">{t('admin.desktopsReservations.create.occasion')}</option>
+                <option value="birthday">{t('admin.desktopsReservations.create.occasionBirthday')}</option>
+                <option value="regular">{t('admin.desktopsReservations.create.occasionRegular')}</option>
+              </select>
+
+              <input
+                type="text"
+                value={createForm.firstName}
+                onChange={(e) => setCreateField('firstName', e.target.value)}
+                placeholder={t('admin.desktopsReservations.create.firstName')}
+                className={controlGridClass}
+              />
+              <input
+                type="text"
+                value={createForm.lastName}
+                onChange={(e) => setCreateField('lastName', e.target.value)}
+                placeholder={t('admin.desktopsReservations.create.lastName')}
+                className={controlGridClass}
+              />
+              <input
+                type="email"
+                value={createForm.email}
+                onChange={(e) => setCreateField('email', e.target.value)}
+                placeholder={t('admin.desktopsReservations.create.email')}
+                className={controlGridClass}
+              />
+              <input
+                type="tel"
+                value={createForm.phone}
+                onChange={(e) => setCreateField('phone', e.target.value)}
+                placeholder={t('admin.desktopsReservations.create.phone')}
+                className={controlGridClass}
+              />
+              <select
+                value={createForm.guestCount}
+                onChange={(e) => setCreateField('guestCount', e.target.value)}
+                className={controlGridClass}
+              >
+                {Array.from({ length: selectedTable?.seats ?? 8 }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {t('admin.desktopsReservations.create.guests').replace('{n}', String(n))}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={createForm.note}
+                onChange={(e) => setCreateField('note', e.target.value)}
+                placeholder={t('admin.desktopsReservations.create.note')}
+                className={`${controlGridClass} md:col-span-2 lg:col-span-3`}
+              />
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              {createError ? (
+                <p className={adminAlertErrorClass}>{createError}</p>
+              ) : (
+                <span className={dashboardEmptyText}>{t('admin.desktopsReservations.create.hint')}</span>
+              )}
+              <button
+                type="submit"
+                disabled={creating}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60 ${adminSolidButtonClass}`}
+              >
+                {creating
+                  ? t('admin.desktopsReservations.create.creating')
+                  : t('admin.desktopsReservations.create.submit')}
               </button>
             </div>
-          </div>
+          </form>
         </div>
+      </section>
 
-        <section
-          id="admin-desktops-manual-booking"
-          className="mb-8 scroll-mt-6 rounded-2xl border border-gray-200 bg-white shadow-sm"
-        >
-          <button
-            type="button"
-            onClick={() => setManualBookingOpen((open) => !open)}
-            className="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500"
-            aria-expanded={manualBookingOpen}
-            aria-controls="admin-desktops-manual-booking-panel"
-            id="admin-desktops-manual-booking-heading"
-          >
-            <div className="min-w-0">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {t('admin.desktopsReservations.create.title')}
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                {t('admin.desktopsReservations.create.subtitle')}
-              </p>
-            </div>
+      <Card variant="admin" className={dashboardCardPadding}>
+        {loading ? (
+          <div className="py-12 text-center">
+            <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
+            <p className={dashboardEmptyText}>{t('admin.desktopsReservations.loading')}</p>
+          </div>
+        ) : reservations.length === 0 ? (
+          <div className="py-16 text-center">
             <svg
-              className={`h-5 w-5 shrink-0 text-gray-500 transition-transform duration-200 ${manualBookingOpen ? 'rotate-180' : ''}`}
+              className="mx-auto mb-4 h-12 w-12 text-admin-brand/25"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
               aria-hidden
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
-          </button>
-
-          <div
-            id="admin-desktops-manual-booking-panel"
-            hidden={!manualBookingOpen}
-            className="border-t border-gray-100 px-5 pb-5 pt-4"
-          >
-            <form
-              onSubmit={handleCreateReservation}
-              aria-labelledby="admin-desktops-manual-booking-heading"
-            >
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-            <select
-              value={createForm.tableId}
-              onChange={(e) => setCreateField('tableId', e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">{t('admin.desktopsReservations.create.table')}</option>
-              {TABLES.map((table) => (
-                <option key={table.id} value={table.id}>
-                  {t(`desktops.tables.${table.labelKey}`)}
-                </option>
-              ))}
-            </select>
-
-            <input
-              type="date"
-              value={createForm.date}
-              onChange={(e) => setCreateField('date', e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-
-            <select
-              value={createForm.time}
-              onChange={(e) => {
-                setCreateForm((prev) => ({ ...prev, time: e.target.value, timeEnd: '' }));
-                setCreateError(null);
-              }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">{t('admin.desktopsReservations.create.time')}</option>
-              {RESERVATION_TIME_SLOTS.map((slot) => (
-                <option
-                  key={slot}
-                  value={slot}
-                  disabled={
-                    !isStartTimeSlotBookable(slot, RESERVATION_TIME_SLOTS, createBusyIntervals) ||
-                    isPastTimeSlotForDate(createForm.date, slot)
-                  }
-                >
-                  {slot}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={createForm.timeEnd}
-              onChange={(e) => setCreateField('timeEnd', e.target.value)}
-              disabled={!createForm.time}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">{t('admin.desktopsReservations.create.timeEnd')}</option>
-              {getValidEndTimeSlots(
-                createForm.time,
-                RESERVATION_TIME_SLOTS,
-                createBusyIntervals,
-              ).map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={createForm.occasion}
-              onChange={(e) => setCreateField('occasion', e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">{t('admin.desktopsReservations.create.occasion')}</option>
-              <option value="birthday">{t('admin.desktopsReservations.create.occasionBirthday')}</option>
-              <option value="regular">{t('admin.desktopsReservations.create.occasionRegular')}</option>
-            </select>
-
-            <input
-              type="text"
-              value={createForm.firstName}
-              onChange={(e) => setCreateField('firstName', e.target.value)}
-              placeholder={t('admin.desktopsReservations.create.firstName')}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="text"
-              value={createForm.lastName}
-              onChange={(e) => setCreateField('lastName', e.target.value)}
-              placeholder={t('admin.desktopsReservations.create.lastName')}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="email"
-              value={createForm.email}
-              onChange={(e) => setCreateField('email', e.target.value)}
-              placeholder={t('admin.desktopsReservations.create.email')}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="tel"
-              value={createForm.phone}
-              onChange={(e) => setCreateField('phone', e.target.value)}
-              placeholder={t('admin.desktopsReservations.create.phone')}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <select
-              value={createForm.guestCount}
-              onChange={(e) => setCreateField('guestCount', e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {Array.from({ length: selectedTable?.seats ?? 8 }, (_, i) => i + 1).map((n) => (
-                <option key={n} value={n}>
-                  {t('admin.desktopsReservations.create.guests').replace('{n}', String(n))}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              value={createForm.note}
-              onChange={(e) => setCreateField('note', e.target.value)}
-              placeholder={t('admin.desktopsReservations.create.note')}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2 lg:col-span-3"
-            />
+            <p className={dashboardEmptyText}>{t('admin.desktopsReservations.empty')}</p>
           </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-            {createError ? (
-              <p className="text-sm text-red-600">{createError}</p>
-            ) : (
-              <span className="text-xs text-gray-500">{t('admin.desktopsReservations.create.hint')}</span>
-            )}
-            <button
-              type="submit"
-              disabled={creating}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:opacity-60"
-            >
-              {creating
-                ? t('admin.desktopsReservations.create.creating')
-                : t('admin.desktopsReservations.create.submit')}
-            </button>
-          </div>
-            </form>
-          </div>
-        </section>
-
-        {/* Table */}
-        <div className="bg-white shadow rounded-2xl overflow-hidden">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-3" />
-              <p className="text-gray-500 text-sm">{t('admin.desktopsReservations.loading')}</p>
-            </div>
-          ) : reservations.length === 0 ? (
-            <div className="text-center py-16">
-              <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-gray-500">{t('admin.desktopsReservations.empty')}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left">
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-admin-brand-2/15">
+            <table className={adminTableWrapClass}>
+              <thead className={adminTableHeadRowClass}>
+                <tr>
+                  <th className="px-4 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      aria-label={t('admin.desktopsReservations.selectAllAria')}
+                      checked={reservations.length > 0 && reservations.every((r) => selectedIds.has(r.id))}
+                      onChange={toggleSelectAll}
+                      className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+                    />
+                  </th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colTable')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colName')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colContact')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colDateTime')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colOccasion')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colGuests')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colStatusShort')}</th>
+                  <th
+                    className={`${adminTableHeadCellClass} !px-4`}
+                    title={t('admin.desktopsReservations.colProfitTitle')}
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <svg
+                        className="h-4 w-4 shrink-0 text-admin-muted"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      {t('admin.desktopsReservations.colProfit')}
+                    </span>
+                  </th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colCreated')}</th>
+                </tr>
+              </thead>
+              <tbody className={adminTableBodyClass}>
+                {reservations.map((r) => (
+                  <tr key={r.id} className={adminTableRowHoverClass}>
+                    <td className="px-4 py-4">
                       <input
                         type="checkbox"
-                        aria-label={t('admin.desktopsReservations.selectAllAria')}
-                        checked={reservations.length > 0 && reservations.every(r => selectedIds.has(r.id))}
-                        onChange={toggleSelectAll}
-                        className="rounded border-gray-300"
-                      />
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colTable')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colName')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colContact')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colDateTime')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colOccasion')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colGuests')}
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colStatusShort')}
-                    </th>
-                    <th
-                      className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      title={t('admin.desktopsReservations.colProfitTitle')}
-                    >
-                      <span className="inline-flex items-center gap-1.5">
-                        <svg className="w-4 h-4 text-gray-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {t('admin.desktopsReservations.colProfit')}
-                      </span>
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      {t('admin.desktopsReservations.colCreated')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
-                  {reservations.map(r => (
-                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-4">
-                        <input
-                          type="checkbox"
-                          aria-label={t('admin.desktopsReservations.selectRowAria').replace(
-                            '{name}',
-                            `${r.firstName} ${r.lastName}`
-                          )}
-                          checked={selectedIds.has(r.id)}
-                          onChange={() => toggleSelect(r.id)}
-                          className="rounded border-gray-300"
-                        />
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="text-sm font-semibold text-gray-900">{r.tableLabel}</div>
-                        <div className="text-xs text-gray-400">
-                          {t('admin.desktopsReservations.seatsShort').replace('{n}', String(r.tableSeats))}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">{r.firstName} {r.lastName}</div>
-                        {r.note && (
-                          <div className="text-xs text-gray-400 max-w-[180px] truncate" title={r.note}>
-                            {r.note}
-                          </div>
+                        aria-label={t('admin.desktopsReservations.selectRowAria').replace(
+                          '{name}',
+                          `${r.firstName} ${r.lastName}`,
                         )}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-700 max-w-[220px]">
-                        <div className="flex flex-col gap-0.5 min-w-0">
-                          <span className="break-all">{r.email}</span>
-                          <span className="text-gray-600">{r.phone}</span>
+                        checked={selectedIds.has(r.id)}
+                        onChange={() => toggleSelect(r.id)}
+                        className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+                      />
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className={dashboardRowPrimaryMedium}>{r.tableLabel}</div>
+                      <div className={dashboardRowMeta}>
+                        {t('admin.desktopsReservations.seatsShort').replace('{n}', String(r.tableSeats))}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className={dashboardRowPrimaryMedium}>
+                        {r.firstName} {r.lastName}
+                      </div>
+                      {r.note ? (
+                        <div className="max-w-[180px] truncate text-xs text-admin-muted" title={r.note}>
+                          {r.note}
                         </div>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {formatStoredReservationDate(r.date)}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {r.time}–{r.timeEnd}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-700">
-                        {r.occasion === 'birthday'
-                          ? t('admin.desktopsReservations.occasionBirthday')
-                          : t('admin.desktopsReservations.occasionRegular')}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-700 text-center">{r.guestCount}</td>
-                      <td className="px-4 py-4">
-                        <select
-                          value={r.status}
-                          disabled={updatingId === r.id}
-                          onChange={e => handleStatusChange(r.id, e.target.value)}
-                          className={`text-xs font-semibold px-2 py-1 rounded-full border cursor-pointer focus:outline-none ${STATUS_COLORS[r.status] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}
-                        >
-                          <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
-                          <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
-                          <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
-                        </select>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-3 min-w-0 max-w-[220px]">
-                          {r.productImageUrl ? (
-                            <div className="relative h-10 w-10 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                              <img
-                                src={r.productImageUrl}
-                                alt=""
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                          ) : null}
-                          <div className="min-w-0 flex-1">
-                            {r.productTitle ? (
-                              <p className="text-sm font-medium text-gray-900 truncate" title={r.productTitle}>
-                                {r.productTitle}
-                              </p>
-                            ) : null}
-                            <p className="text-sm text-gray-600">
-                              {r.profitCents != null ? formatPriceInCurrency(r.profitCents, 'AMD') : '—'}
-                            </p>
+                      ) : null}
+                    </td>
+                    <td className="max-w-[220px] px-4 py-4 text-sm text-admin-brand/85">
+                      <div className="flex min-w-0 flex-col gap-0.5">
+                        <span className="break-all">{r.email}</span>
+                        <span className="text-admin-brand/65">{r.phone}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className={dashboardRowPrimaryMedium}>{formatStoredReservationDate(r.date)}</div>
+                      <div className={dashboardRowMeta}>
+                        {r.time}–{r.timeEnd}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-admin-brand/80">
+                      {r.occasion === 'birthday'
+                        ? t('admin.desktopsReservations.occasionBirthday')
+                        : t('admin.desktopsReservations.occasionRegular')}
+                    </td>
+                    <td className="px-4 py-4 text-center text-sm text-admin-brand/80">{r.guestCount}</td>
+                    <td className="px-4 py-4">
+                      <select
+                        value={r.status}
+                        disabled={updatingId === r.id}
+                        onChange={(e) => void handleStatusChange(r.id, e.target.value)}
+                        className={`max-w-[10.5rem] cursor-pointer rounded-md border px-2 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-admin-brand/25 disabled:opacity-50 ${statusSelectClass(r.status)}`}
+                      >
+                        <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+                        <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+                        <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex min-w-0 max-w-[220px] items-center gap-3">
+                        {r.productImageUrl ? (
+                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-admin-brand-2/15 bg-admin-surface">
+                            <img src={r.productImageUrl} alt="" className="h-full w-full object-cover" />
                           </div>
+                        ) : null}
+                        <div className="min-w-0 flex-1">
+                          {r.productTitle ? (
+                            <p className={`${dashboardRowPrimaryMedium} truncate`} title={r.productTitle}>
+                              {r.productTitle}
+                            </p>
+                          ) : null}
+                          <p className="text-sm text-admin-brand/70">
+                            {r.profitCents != null ? formatPriceInCurrency(r.profitCents, 'AMD') : '—'}
+                          </p>
                         </div>
-                      </td>
-                      <td className="px-4 py-4 text-xs text-gray-400 whitespace-nowrap">
-                        {formatCreatedAtDate(r.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination + bulk actions */}
-          {!loading && reservations.length > 0 && (
-            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">
-                  {t('admin.desktopsReservations.selectedCount').replace('{count}', String(selectedIds.size))}
-                </span>
-                {selectedIds.size > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleBulkDelete}
-                    disabled={bulkDeleting}
-                    className="px-4 py-1.5 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                  >
-                    {bulkDeleting
-                      ? t('admin.desktopsReservations.bulkDeleting')
-                      : t('admin.desktopsReservations.bulkDelete')}
-                  </button>
-                )}
-              </div>
-
-              {meta && meta.totalPages > 1 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">
-                    {meta.page} / {meta.totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPage(p => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))}
-                    disabled={page === meta.totalPages}
-                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-                  >
-                    →
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
+                      </div>
+                    </td>
+                    <td className={`whitespace-nowrap px-4 py-4 text-xs ${dashboardRowMeta}`}>
+                      {formatCreatedAtDate(r.createdAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      </div>
+        )}
+
+        {!loading && reservations.length > 0 ? (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-admin-brand-2/12 pt-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={adminPaginationMetaClass}>
+                {t('admin.desktopsReservations.selectedCount').replace('{count}', String(selectedIds.size))}
+              </span>
+              {selectedIds.size > 0 ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void handleBulkDelete()}
+                  disabled={bulkDeleting}
+                  className={adminBulkDangerButtonClass}
+                >
+                  {bulkDeleting
+                    ? t('admin.desktopsReservations.bulkDeleting')
+                    : t('admin.desktopsReservations.bulkDelete')}
+                </Button>
+              ) : null}
+            </div>
+
+            {meta && meta.totalPages > 1 ? (
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span className={adminPaginationMetaClass}>
+                  {meta.page} / {meta.totalPages}
+                </span>
+                <AdminPaginationControls
+                  page={page}
+                  totalPages={meta.totalPages}
+                  onPageChange={(n) => setPage(n)}
+                  previousLabel={t('admin.orders.previous')}
+                  nextLabel={t('admin.orders.next')}
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </Card>
     </div>
   );
 }

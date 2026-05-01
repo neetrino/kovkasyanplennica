@@ -2,6 +2,14 @@
 
 import { Button } from '@shop/ui';
 import { useTranslation } from '@/lib/i18n-client';
+import {
+  adminBulkDangerButtonClass,
+  adminPaginationNavButtonClass,
+  dashboardBadgePending,
+  dashboardInsetRowCompact,
+  dashboardRowMeta,
+  dashboardRowPrimaryMedium,
+} from '../../components/dashboardUi';
 import type { Category, CategoryWithLevel } from '../types';
 
 interface CategoryItemProps {
@@ -16,68 +24,76 @@ export function CategoryItem({ category, parentCategory, onEdit, onDelete }: Cat
 
   return (
     <div
-      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-      style={{ paddingLeft: `${16 + category.level * 24}px` }}
+      className={`flex items-center justify-between gap-3 ${dashboardInsetRowCompact}`}
+      style={{ paddingLeft: `${12 + category.level * 24}px` }}
     >
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
           {category.imageUrl ? (
             <img
               src={category.imageUrl}
               alt={category.title}
-              className="h-9 w-9 rounded-md object-cover border border-gray-200"
+              className="h-9 w-9 rounded-md border border-admin-brand-2/15 object-cover"
             />
           ) : null}
-          <div className="text-sm font-medium text-gray-900">{category.title}</div>
-          {category.requiresSizes && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
-              Sizes
+          <div className={dashboardRowPrimaryMedium}>{category.title}</div>
+          {category.requiresSizes ? (
+            <span className={dashboardBadgePending} title={t('admin.categories.requiresSizes')}>
+              {t('admin.categories.sizesBadge')}
             </span>
-          )}
+          ) : null}
         </div>
-        <div className="text-xs text-gray-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="font-mono text-gray-600">
-            <span className="text-gray-400">{t('admin.categories.slugLabel')}:</span> {category.slug || '—'}
+        <div className={`mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 ${dashboardRowMeta}`}>
+          <span className="font-mono">
+            <span className="text-admin-muted">{t('admin.categories.slugLabel')}:</span> {category.slug || '—'}
           </span>
-          {parentCategory && (
-            <span className="text-gray-400">
+          {parentCategory ? (
+            <span className="text-admin-muted">
               → {t('admin.categories.parentCategory')}: {parentCategory.title}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
         <Button
-          variant="ghost"
+          type="button"
+          variant="outline"
           size="sm"
           onClick={() => onEdit(category)}
-          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+          className={adminPaginationNavButtonClass}
         >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          {t('admin.common.edit')}
+          <span className="inline-flex items-center gap-1">
+            <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              />
+            </svg>
+            {t('admin.common.edit')}
+          </span>
         </Button>
         <Button
-          variant="ghost"
+          type="button"
+          variant="outline"
           size="sm"
           onClick={() => onDelete(category.id, category.title)}
-          className="text-red-600 hover:text-red-800 hover:bg-red-50"
+          className={adminBulkDangerButtonClass}
         >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-          {t('admin.common.delete')}
+          <span className="inline-flex items-center gap-1">
+            <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            {t('admin.common.delete')}
+          </span>
         </Button>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-

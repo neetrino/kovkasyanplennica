@@ -3,8 +3,17 @@
 import { useTranslation } from '@/lib/i18n-client';
 import { Card } from '@shop/ui';
 import { CurrencyCode } from '@/lib/currency';
+import {
+  adminDetailMutedClass,
+  adminDetailSectionTitleClass,
+  adminTableHeadCellClass,
+  adminTableHeadRowClass,
+  dashboardCardPadding,
+} from '../../components/dashboardUi';
 import { getColorValue } from '../utils/orderUtils';
 import type { OrderDetails } from '../useOrders';
+
+const itemsThClass = `${adminTableHeadCellClass} normal-case tracking-normal`;
 
 interface OrderDetailsItemsProps {
   orderDetails: OrderDetails;
@@ -33,35 +42,35 @@ export function OrderDetailsItems({
 
   if (!Array.isArray(orderDetails.items) || orderDetails.items.length === 0) {
     return (
-      <Card className="p-4 md:p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('admin.orders.orderDetails.items')}</h3>
-        <div className="text-sm text-gray-500">{t('admin.orders.orderDetails.noItemsFound')}</div>
+      <Card variant="admin" className={dashboardCardPadding}>
+        <h3 className={`${adminDetailSectionTitleClass} mb-3`}>{t('admin.orders.orderDetails.items')}</h3>
+        <div className={adminDetailMutedClass}>{t('admin.orders.orderDetails.noItemsFound')}</div>
       </Card>
     );
   }
 
   return (
-    <Card className="p-4 md:p-6">
-      <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('admin.orders.orderDetails.items')}</h3>
-      <div className="overflow-x-auto border border-gray-200 rounded-md">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-50">
+    <Card variant="admin" className={dashboardCardPadding}>
+      <h3 className={`${adminDetailSectionTitleClass} mb-3`}>{t('admin.orders.orderDetails.items')}</h3>
+      <div className="overflow-x-auto rounded-lg border border-admin-brand-2/15">
+        <table className="min-w-full text-sm text-admin-brand/90">
+          <thead className={adminTableHeadRowClass}>
             <tr>
-              <th className="px-3 py-2 text-left font-medium text-gray-500">{t('admin.orders.orderDetails.product')}</th>
-              <th className="px-3 py-2 text-left font-medium text-gray-500">{t('admin.orders.orderDetails.sku')}</th>
-              <th className="px-3 py-2 text-left font-medium text-gray-500">{t('admin.orders.orderDetails.colorSize')}</th>
-              <th className="px-3 py-2 text-right font-medium text-gray-500">{t('admin.orders.orderDetails.qty')}</th>
-              <th className="px-3 py-2 text-right font-medium text-gray-500">{t('admin.orders.orderDetails.price')}</th>
-              <th className="px-3 py-2 text-right font-medium text-gray-500">{t('admin.orders.orderDetails.totalCol')}</th>
+              <th className={`${itemsThClass} px-3 py-2`}>{t('admin.orders.orderDetails.product')}</th>
+              <th className={`${itemsThClass} px-3 py-2`}>{t('admin.orders.orderDetails.sku')}</th>
+              <th className={`${itemsThClass} px-3 py-2`}>{t('admin.orders.orderDetails.colorSize')}</th>
+              <th className={`${itemsThClass} px-3 py-2 text-right`}>{t('admin.orders.orderDetails.qty')}</th>
+              <th className={`${itemsThClass} px-3 py-2 text-right`}>{t('admin.orders.orderDetails.price')}</th>
+              <th className={`${itemsThClass} px-3 py-2 text-right`}>{t('admin.orders.orderDetails.totalCol')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
+          <tbody className="divide-y divide-admin-brand-2/12 bg-white">
             {orderDetails.items.map((item) => {
               const allOptions = item.variantOptions || [];
               return (
-                <tr key={item.id}>
-                  <td className="px-3 py-2">{item.productTitle}</td>
-                  <td className="px-3 py-2 text-gray-500">{item.sku}</td>
+                <tr key={item.id} className="transition-colors hover:bg-admin-surface/40">
+                  <td className="px-3 py-2 font-medium text-admin-brand">{item.productTitle}</td>
+                  <td className="px-3 py-2 text-admin-muted">{item.sku}</td>
                   <td className="px-3 py-2">
                     {allOptions.length > 0 ? (
                       <div className="flex flex-wrap gap-2 items-center">
@@ -79,32 +88,32 @@ export function OrderDetailsItems({
                                 <img
                                   src={opt.imageUrl!}
                                   alt={displayLabel}
-                                  className="w-4 h-4 rounded border border-gray-300 object-cover flex-shrink-0"
+                                  className="h-4 w-4 flex-shrink-0 rounded border border-admin-brand-2/25 object-cover"
                                   onError={(e) => {
                                     (e.target as HTMLImageElement).style.display = 'none';
                                   }}
                                 />
                               ) : isColor && colorHex ? (
                                 <div
-                                  className="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0"
+                                  className="h-4 w-4 flex-shrink-0 rounded-full border border-admin-brand-2/25"
                                   style={{ backgroundColor: colorHex }}
                                   title={displayLabel}
                                 />
                               ) : null}
-                              <span className="text-xs text-gray-700 capitalize">{displayLabel}</span>
+                              <span className="text-xs capitalize text-admin-brand/80">{displayLabel}</span>
                             </div>
                           );
                         })}
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400">—</span>
+                      <span className="text-xs text-admin-muted">—</span>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right">{item.quantity}</td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-2 text-right tabular-nums text-admin-brand/80">{item.quantity}</td>
+                  <td className="px-3 py-2 text-right tabular-nums font-medium text-admin-brand">
                     {formatCurrency(item.unitPrice, orderDetails.currency || 'AMD', 'USD')}
                   </td>
-                  <td className="px-3 py-2 text-right">
+                  <td className="px-3 py-2 text-right tabular-nums font-medium text-admin-brand">
                     {formatCurrency(item.total, orderDetails.currency || 'AMD', 'USD')}
                   </td>
                 </tr>
