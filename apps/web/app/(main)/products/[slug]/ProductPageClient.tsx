@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/lib/auth/AuthContext';
-import { t } from '@/lib/i18n';
+import { t, getProductText } from '@/lib/i18n';
 import { ProductReviews } from '@/components/ProductReviews';
 import { RelatedProducts } from '@/components/RelatedProducts';
 import { ProductImageGallery } from './ProductImageGallery';
@@ -34,15 +34,13 @@ export function ProductPageClient({
     setReviews,
     images,
     currentImageIndex,
-    setCurrentImageIndex,
-    thumbnailStartIndex,
-    setThumbnailStartIndex,
     currency,
     language,
     selectedColor,
     selectedSize,
     selectedAttributeValues,
     quantity,
+    setQuantity,
     averageRating,
     slug,
     relatedProducts,
@@ -76,24 +74,24 @@ export function ProductPageClient({
 
   if (loading || !product) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+      <div className="mx-auto max-w-7xl px-4 py-16 pt-4 text-center sm:pt-6 lg:pt-[88px] xl:pt-[112px]">
         {t(language, 'common.messages.loading')}
       </div>
     );
   }
 
+  const longDescriptionHtml =
+    getProductText(language, product.id, 'longDescription') || product.description || '';
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-12 items-start">
+    <div className="relative mx-auto max-w-[1440px] px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-[88px] xl:pt-[112px]">
+      <div className="grid grid-cols-1 items-stretch gap-10 lg:grid-cols-[minmax(0,min(100%,494px))_minmax(0,1fr)] lg:gap-[22px]">
         <ProductImageGallery
           images={images}
           product={product}
           discountPercent={discountPercent}
           language={language}
           currentImageIndex={currentImageIndex}
-          onImageIndexChange={setCurrentImageIndex}
-          thumbnailStartIndex={thumbnailStartIndex}
-          onThumbnailStartIndexChange={setThumbnailStartIndex}
         />
 
         <ProductInfoAndActions
@@ -121,6 +119,7 @@ export function ProductPageClient({
           colorGroups={colorGroups}
           sizeGroups={sizeGroups}
           onQuantityAdjust={adjustQuantity}
+          onResetQuantity={() => setQuantity(1)}
           onColorSelect={handleColorSelect}
           onSizeSelect={handleSizeSelect}
           onAttributeValueSelect={handleAttributeValueSelect}
@@ -129,7 +128,14 @@ export function ProductPageClient({
         />
       </div>
 
-      <div className="mt-24">
+      {longDescriptionHtml.trim() ? (
+        <div
+          className="prose prose-invert prose-p:leading-relaxed mx-auto mt-16 max-w-3xl text-[#ececec] prose-headings:text-[#fff4de] prose-a:text-[#ffe5c2] sm:prose-base"
+          dangerouslySetInnerHTML={{ __html: longDescriptionHtml }}
+        />
+      ) : null}
+
+      <div className="mt-20 lg:mt-24">
         <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />
       </div>
       <div id="product-reviews" className="mt-16 scroll-mt-24">

@@ -3,17 +3,7 @@
 import { processImageUrl } from '@/lib/utils/image-utils';
 import { t, getAttributeLabel } from '@/lib/i18n';
 import type { LanguageCode } from '@/lib/language';
-import type { Product, ProductVariant } from './types';
-
-interface AttributeGroupValue {
-  valueId?: string;
-  value: string;
-  label: string;
-  stock: number;
-  variants: ProductVariant[];
-  imageUrl?: string | null;
-  colors?: string[] | null;
-}
+import type { Product, ProductVariant, AttributeGroupValue } from './types';
 
 interface ProductAttributesSelectorProps {
   product: Product;
@@ -71,10 +61,7 @@ export function ProductAttributesSelector({
   getOptionValue,
 }: ProductAttributesSelectorProps) {
   const attributeGroupsEntries = Array.from(attributeGroups.entries());
-  console.log('🎨 [PRODUCT ATTRIBUTES SELECTOR] attributeGroups entries:', attributeGroupsEntries.length);
-  console.log('🎨 [PRODUCT ATTRIBUTES SELECTOR] attributeGroups keys:', Array.from(attributeGroups.keys()));
-  console.log('🎨 [PRODUCT ATTRIBUTES SELECTOR] product.productAttributes:', product?.productAttributes);
-  
+
   return (
     <div className="space-y-4">
       {/* Attribute Selectors - Support both new (productAttributes) and old (colorGroups) format */}
@@ -143,11 +130,7 @@ export function ProductAttributesSelector({
                               alt={g.label}
                               className="w-full h-full object-cover"
                               onError={(e) => {
-                                console.error(`❌ [COLOR IMAGE] Failed to load image for color "${g.value}":`, processedImageUrl);
                                 (e.target as HTMLImageElement).style.display = 'none';
-                              }}
-                              onLoad={() => {
-                                console.log(`✅ [COLOR IMAGE] Successfully loaded image for color "${g.value}":`, processedImageUrl);
                               }}
                             />
                           ) : null}
@@ -212,11 +195,7 @@ export function ProductAttributesSelector({
                             alt={g.label}
                             className={`${imageSizeClass} object-cover rounded border border-gray-300 flex-shrink-0`}
                             onError={(e) => {
-                              console.error(`❌ [SIZE IMAGE] Failed to load image for size "${g.value}":`, processedImageUrl);
                               (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                            onLoad={() => {
-                              console.log(`✅ [SIZE IMAGE] Successfully loaded image for size "${g.value}":`, processedImageUrl);
                             }}
                           />
                         )}
@@ -245,12 +224,7 @@ export function ProductAttributesSelector({
                     const colorHex = hasColors && g.colors 
                       ? g.colors[0] 
                       : null;
-                    
-                    // Debug logging for image issues
-                    if (g.imageUrl && !hasImage) {
-                      console.warn(`⚠️ [ATTRIBUTE IMAGE] Failed to process imageUrl for attribute "${attrKey}" value "${g.value}":`, g.imageUrl);
-                    }
-                    
+
                     // Dynamic sizing based on number of values
                     // Keep size consistent for 2 values, reduce for more
                     const totalValues = attrGroups.length;
@@ -294,11 +268,7 @@ export function ProductAttributesSelector({
                             alt={g.label}
                             className={`${imageSizeClass} object-cover rounded border border-gray-300 flex-shrink-0`}
                             onError={(e) => {
-                              console.error(`❌ [ATTRIBUTE IMAGE] Failed to load image for attribute "${attrKey}" value "${g.value}":`, processedImageUrl);
                               (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                            onLoad={() => {
-                              console.log(`✅ [ATTRIBUTE IMAGE] Successfully loaded image for attribute "${attrKey}" value "${g.value}":`, processedImageUrl);
                             }}
                           />
                         ) : hasColors && colorHex ? (

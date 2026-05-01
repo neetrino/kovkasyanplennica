@@ -52,9 +52,9 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
   const widthPercent = visibleCards > 0 ? 100 / visibleCards : 100;
 
   return (
-    <section className="py-12 mt-20 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-[#FFE5C2] mb-10">
+    <section className="mt-16 border-t border-white/10 py-12 sm:mt-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 className="mb-10 font-sansation text-3xl font-light italic uppercase leading-tight tracking-wide text-[#fff4de] sm:text-4xl md:text-5xl lg:text-[52px] lg:leading-[1.15]">
           {t(language, 'product.related_products_title')}
         </h2>
 
@@ -62,9 +62,9 @@ export function RelatedProducts({ products, loading, language }: RelatedProducts
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <div key={i} className="animate-pulse">
-                <div className="aspect-square bg-gray-200 rounded-lg mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="mb-4 aspect-square rounded-[35px] bg-white/10"></div>
+                <div className="mb-2 h-4 w-3/4 rounded bg-white/10"></div>
+                <div className="h-4 w-1/2 rounded bg-white/10"></div>
               </div>
             ))}
           </div>
