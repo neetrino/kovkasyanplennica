@@ -1,7 +1,8 @@
 'use client';
 
 import { useAuth } from '@/lib/auth/AuthContext';
-import { t, getProductText } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
+import { resolvePdpPortionBundle } from './utils/pdp-portion-text';
 import { ProductReviews } from '@/components/ProductReviews';
 import { RelatedProducts } from '@/components/RelatedProducts';
 import { ProductImageGallery } from './ProductImageGallery';
@@ -80,8 +81,7 @@ export function ProductPageClient({
     );
   }
 
-  const longDescriptionHtml =
-    getProductText(language, product.id, 'longDescription') || product.description || '';
+  const { longDescriptionHtml } = resolvePdpPortionBundle(language, product);
 
   return (
     <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-[76px]">

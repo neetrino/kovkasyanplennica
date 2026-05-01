@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { formatPrice, type CurrencyCode } from '@/lib/currency';
 import { t, getProductText } from '@/lib/i18n';
 import type { LanguageCode } from '@/lib/language';
@@ -11,14 +11,9 @@ import {
 } from '@/lib/guest-cart/mergeGuestCartLine';
 import { logger } from '@/lib/utils/logger';
 import { ProductAttributesSelector } from './ProductAttributesSelector';
+import { PdpTrashXFilledIcon } from './PdpTrashXFilledIcon';
+import { resolvePdpPortionBundle } from './utils/pdp-portion-text';
 import type { Product, ProductVariant, AttributeGroupValue } from './types';
-
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
 
 /**
  * Resolves image URL for guest-cart snapshot (aligned with hydrateGuestCart display).
@@ -106,15 +101,8 @@ export function ProductInfoAndActions({
   const bannerMessage = cartNotice;
 
   const title = getProductText(language, product.id, 'title') || product.title;
-  const portionLine =
-    getProductText(language, product.id, 'subtitle').trim() ||
-    (typeof product.subtitle === 'string' ? product.subtitle.trim() : '');
-
-  const shortForIngredients = getProductText(language, product.id, 'shortDescription').trim();
-  const longRaw = getProductText(language, product.id, 'longDescription') || product.description || '';
-  const ingredientsLine =
-    shortForIngredients ||
-    (longRaw ? stripHtml(longRaw).slice(0, 220) + (stripHtml(longRaw).length > 220 ? '…' : '') : '');
+  const { portionLine, ingredientsPlain } = resolvePdpPortionBundle(language, product);
+  const ingredientsLine = ingredientsPlain;
 
   const handleAddToCart = useCallback(async () => {
     if (!canAddToCart || !currentVariant) return;
@@ -330,10 +318,10 @@ export function ProductInfoAndActions({
             type="button"
             onClick={onResetQuantity}
             disabled={quantity <= 1 || isOutOfStock || isVariationRequired}
-            className="flex size-14 shrink-0 items-center justify-center rounded-full border border-[#ffe5c2]/30 bg-[rgba(255,229,194,0.08)] text-[#ffe5c2] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
+            className="flex size-[55px] shrink-0 items-center justify-center rounded-full border border-solid border-[#ffe5c2] bg-[#2f3f3d] text-[#ffe5c2] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-35"
             aria-label={t(language, 'product.resetQuantityToOne')}
           >
-            <Trash2 className="size-5" strokeWidth={2} />
+            <PdpTrashXFilledIcon className="size-[33px]" />
           </button>
         </div>
       </div>
