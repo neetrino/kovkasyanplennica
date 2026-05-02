@@ -404,88 +404,85 @@ export default function AdminDesktopsPage() {
 
   return (
     <div className={dashboardMainClass}>
-      <section className="rounded-xl border border-admin-brand-2/18 bg-white p-5 shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)] sm:p-6">
-        <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.desktopsReservations.title')}</h1>
-        {meta ? (
-          <p className="mt-1 text-sm text-admin-brand/60">
-            {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
-          </p>
-        ) : null}
-      </section>
-
-      <Card variant="admin" className={dashboardCardPadding}>
-        <div className="flex flex-wrap items-end justify-end gap-3 sm:items-center">
-          <div className="w-full sm:w-auto sm:min-w-[12rem]">
-            <label htmlFor="desktop-reservation-status" className={adminFilterLabelClass}>
-              {t('admin.desktopsReservations.statusFilter')}
-            </label>
-            <select
-              id="desktop-reservation-status"
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value);
-                setPage(1);
+      <Card variant="admin" className="overflow-hidden p-0">
+        <div className={`${dashboardCardPadding} space-y-5`}>
+          <header>
+            <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.desktopsReservations.title')}</h1>
+            {meta ? (
+              <p className="mt-1 text-sm text-admin-brand/60">
+                {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
+              </p>
+            ) : null}
+          </header>
+          <div className="flex flex-wrap items-end justify-end gap-3 sm:items-center">
+            <div className="w-full sm:w-auto sm:min-w-[12rem]">
+              <label htmlFor="desktop-reservation-status" className={adminFilterLabelClass}>
+                {t('admin.desktopsReservations.statusFilter')}
+              </label>
+              <select
+                id="desktop-reservation-status"
+                value={filterStatus}
+                onChange={(e) => {
+                  setFilterStatus(e.target.value);
+                  setPage(1);
+                }}
+                className={`${adminFormControlClass} w-full sm:w-auto sm:min-w-[12rem]`}
+              >
+                <option value="">{t('admin.desktopsReservations.filterAll')}</option>
+                <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+                <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+                <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setManualBookingOpen(true);
+                window.requestAnimationFrame(() => {
+                  document.getElementById('admin-desktops-manual-booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
               }}
-              className={`${adminFormControlClass} w-full sm:w-auto sm:min-w-[12rem]`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-admin-brand-2/25 bg-white px-3 py-2 text-sm font-medium text-admin-brand shadow-sm transition-colors hover:bg-admin-surface/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brand/25"
+              aria-controls="admin-desktops-manual-booking-panel"
+              aria-expanded={manualBookingOpen}
             >
-              <option value="">{t('admin.desktopsReservations.filterAll')}</option>
-              <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
-              <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
-              <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
-            </select>
+              {t('admin.desktopsReservations.create.title')}
+              <svg className="h-4 w-4 shrink-0 text-admin-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           </div>
+        </div>
+
+        <div id="admin-desktops-manual-booking" className="scroll-mt-6 border-t border-admin-brand-2/12">
           <button
             type="button"
-            onClick={() => {
-              setManualBookingOpen(true);
-              window.requestAnimationFrame(() => {
-                document.getElementById('admin-desktops-manual-booking')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              });
-            }}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-admin-brand-2/25 bg-white px-3 py-2 text-sm font-medium text-admin-brand shadow-sm transition-colors hover:bg-admin-surface/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-admin-brand/25"
-            aria-controls="admin-desktops-manual-booking-panel"
+            onClick={() => setManualBookingOpen((open) => !open)}
+            className="flex w-full items-center justify-between gap-4 border-b border-admin-brand-2/12 px-5 py-5 text-left transition-colors hover:bg-admin-surface/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-admin-brand/20 sm:px-6"
             aria-expanded={manualBookingOpen}
+            aria-controls="admin-desktops-manual-booking-panel"
+            id="admin-desktops-manual-booking-heading"
           >
-            {t('admin.desktopsReservations.create.title')}
-            <svg className="h-4 w-4 shrink-0 text-admin-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+            <div className="min-w-0">
+              <h2 className="text-lg font-semibold text-admin-brand">{t('admin.desktopsReservations.create.title')}</h2>
+              <p className="mt-1 text-sm text-admin-brand/60">{t('admin.desktopsReservations.create.subtitle')}</p>
+            </div>
+            <svg
+              className={`h-5 w-5 shrink-0 text-admin-muted transition-transform duration-200 ${manualBookingOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-        </div>
-      </Card>
 
-      <section
-        id="admin-desktops-manual-booking"
-        className="scroll-mt-6 rounded-xl border border-admin-brand-2/18 bg-white shadow-[0_1px_2px_rgba(47,63,61,0.05),0_8px_24px_-8px_rgba(47,63,61,0.1)]"
-      >
-        <button
-          type="button"
-          onClick={() => setManualBookingOpen((open) => !open)}
-          className="flex w-full items-center justify-between gap-4 border-b border-admin-brand-2/12 p-5 text-left transition-colors hover:bg-admin-surface/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-admin-brand/20"
-          aria-expanded={manualBookingOpen}
-          aria-controls="admin-desktops-manual-booking-panel"
-          id="admin-desktops-manual-booking-heading"
-        >
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold text-admin-brand">{t('admin.desktopsReservations.create.title')}</h2>
-            <p className="mt-1 text-sm text-admin-brand/60">{t('admin.desktopsReservations.create.subtitle')}</p>
-          </div>
-          <svg
-            className={`h-5 w-5 shrink-0 text-admin-muted transition-transform duration-200 ${manualBookingOpen ? 'rotate-180' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden
+          <div
+            id="admin-desktops-manual-booking-panel"
+            hidden={!manualBookingOpen}
+            className="border-t border-admin-brand-2/10 px-5 pb-5 pt-4 sm:px-6"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-
-        <div
-          id="admin-desktops-manual-booking-panel"
-          hidden={!manualBookingOpen}
-          className="border-t border-admin-brand-2/10 px-5 pb-5 pt-4"
-        >
           <form onSubmit={handleCreateReservation} aria-labelledby="admin-desktops-manual-booking-heading">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
               <select
@@ -620,8 +617,9 @@ export default function AdminDesktopsPage() {
               </button>
             </div>
           </form>
+          </div>
         </div>
-      </section>
+      </Card>
 
       <Card variant="admin" className={dashboardCardPadding}>
         {loading ? (
