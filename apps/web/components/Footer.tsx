@@ -60,16 +60,27 @@ export function Footer() {
             {/* Left Column - Restaurant Info */}
             <div className="-mt-10 space-y-0 md:-mt-14">
               <div className="flex items-center gap-3">
-                <div className="relative h-36 w-36 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-48 lg:w-48">
-                  <Image
-                    src="/hero-logo.png"
-                    alt={t('home.footer.logoAlt')}
-                    width={162}
-                    height={162}
-                    className="h-full w-full object-contain"
-                    unoptimized
-                  />
-                </div>
+                <Link
+                  prefetch
+                  href="/"
+                  aria-label={t('home.header.logoAlt')}
+                  className={`inline-flex shrink-0 rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                    isMenuPage
+                      ? 'focus-visible:ring-[#2f3f3d]/40 focus-visible:ring-offset-[#ffe5c2]'
+                      : 'focus-visible:ring-white/40 focus-visible:ring-offset-[#2f3f3d]'
+                  }`}
+                >
+                  <div className="relative h-36 w-36 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-48 lg:w-48">
+                    <Image
+                      src="/hero-logo.png"
+                      alt=""
+                      width={162}
+                      height={162}
+                      className="h-full w-full object-contain"
+                      unoptimized
+                    />
+                  </div>
+                </Link>
               </div>
               <div className="flex max-w-[300px] flex-col gap-4">
               <p
