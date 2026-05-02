@@ -5,6 +5,7 @@ import type { RefObject } from 'react';
 import { Suspense, useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
+import { scrollAppScrollRegionToTop } from '@/lib/appScrollRegion';
 import { CategoryIcon } from './CategoryIcon';
 import { useCategories } from './hooks/useCategories';
 import { useCategoryProducts } from './hooks/useCategoryProducts';
@@ -162,7 +163,12 @@ function SidebarCategoryRow({
       href={navHref}
       prefetch
       scroll={false}
-      onClick={() => onNavigate?.()}
+      onClick={() => {
+        onNavigate?.();
+        requestAnimationFrame(() => {
+          scrollAppScrollRegionToTop('smooth');
+        });
+      }}
       className={`group flex items-center justify-between gap-1.5 ${strip ? pillClass : `${pillClass} ${sidebarSurface}`} ${
         strip ? (isActive ? 'ring-1 ring-[#2F3F3D]/40' : '') : ''
       }`}
