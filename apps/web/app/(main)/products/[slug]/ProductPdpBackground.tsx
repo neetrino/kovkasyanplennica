@@ -31,7 +31,7 @@ function PdpPatternLayer({ src, wrapClass, innerClass }: PatternLayerProps) {
 export function ProductPdpBackground() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden "
       aria-hidden
     >
       <PdpPatternLayer
@@ -44,16 +44,7 @@ export function ProductPdpBackground() {
         wrapClass="absolute flex inset-[-8.79%_-27.7%_67.42%_61.94%] items-center justify-center"
         innerClass="-scale-x-100 flex-none h-[hypot(-96.9563cqw,3.78647cqh)] w-[hypot(-3.04365cqw,-96.2135cqh)] rotate-[87.99deg]"
       />
-      <PdpPatternLayer
-        src={PATTERN.bl}
-        wrapClass="absolute flex inset-[52.77%_-33.4%_-17.24%_42.15%] items-center justify-center"
-        innerClass="-scale-x-100 flex-none h-[hypot(-48.0979cqw,57.4976cqh)] w-[hypot(-51.9021cqw,-42.5024cqh)] rotate-[39.61deg]"
-      />
-      <PdpPatternLayer
-        src={PATTERN.br}
-        wrapClass="absolute flex inset-[52.77%_42.08%_-17.24%_-33.33%] items-center justify-center"
-        innerClass="flex-none h-[hypot(48.0979cqw,57.4976cqh)] w-[hypot(51.9021cqw,-42.5024cqh)] rotate-[-39.61deg]"
-      />
+   
     </div>
   );
 }

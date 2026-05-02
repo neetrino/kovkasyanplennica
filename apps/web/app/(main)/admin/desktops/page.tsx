@@ -10,7 +10,6 @@ import { AdminPaginationControls } from '../components/AdminNumericPagination';
 import {
   adminAlertErrorClass,
   adminBulkDangerButtonClass,
-  adminFilterLabelClass,
   adminFormControlClass,
   adminPaginationMetaClass,
   adminSolidButtonClass,
@@ -414,9 +413,12 @@ export default function AdminDesktopsPage() {
               </p>
             ) : null}
           </header>
-          <div className="flex flex-wrap items-end justify-end gap-3 sm:items-center">
-            <div className="w-full sm:w-auto sm:min-w-[12rem]">
-              <label htmlFor="desktop-reservation-status" className={adminFilterLabelClass}>
+          <div className="flex flex-wrap items-center justify-start gap-3 sm:justify-end">
+            <div className="flex min-w-0 max-w-full items-center gap-2 sm:min-w-[12rem]">
+              <label
+                htmlFor="desktop-reservation-status"
+                className="shrink-0 whitespace-nowrap text-sm font-medium text-admin-brand/65"
+              >
                 {t('admin.desktopsReservations.statusFilter')}
               </label>
               <select
@@ -426,7 +428,7 @@ export default function AdminDesktopsPage() {
                   setFilterStatus(e.target.value);
                   setPage(1);
                 }}
-                className={`${adminFormControlClass} w-full sm:w-auto sm:min-w-[12rem]`}
+                className={`${adminFormControlClass} min-w-0 flex-1 sm:w-auto sm:min-w-[12rem] sm:flex-none`}
               >
                 <option value="">{t('admin.desktopsReservations.filterAll')}</option>
                 <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
