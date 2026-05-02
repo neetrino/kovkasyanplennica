@@ -4,7 +4,7 @@
     "date": "Дата",
     "time": "С",
     "timeEnd": "До",
-    "guests": "Гости",
+    "guests": "Количество человек",
     "cta": "Забронировать"
   },
   "page": {
@@ -78,7 +78,8 @@
       "birthday": "День рождения",
       "regular": "Обычный визит"
     },
-    "guestCount": "Количество гостей",
+    "guestCount": "Количество человек",
+    "guestCountPlaceholder": "Выберите",
     "note": "Комментарий (необязательно)",
     "placeholders": {
       "firstName": "Иван",

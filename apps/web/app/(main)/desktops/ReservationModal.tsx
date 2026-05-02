@@ -35,7 +35,7 @@ const INITIAL_FORM: ReservationForm = {
   date: '',
   time: '',
   timeEnd: '',
-  guestCount: '1',
+  guestCount: '',
   note: '',
 };
 
@@ -97,17 +97,22 @@ export function ReservationModal({
 
   useEffect(() => {
     if (!quickBarPrefill) return;
-    const raw = parseInt(quickBarPrefill.guestCount, 10);
-    const guests = Math.min(
-      table.seats,
-      Math.max(1, Number.isFinite(raw) ? raw : 1),
-    );
+    const gc = quickBarPrefill.guestCount.trim();
+    let nextGuestCount: string | undefined;
+    if (gc === '') {
+      nextGuestCount = '';
+    } else {
+      const raw = parseInt(gc, 10);
+      if (Number.isFinite(raw) && raw >= 1) {
+        nextGuestCount = String(Math.min(table.seats, raw));
+      }
+    }
     setForm((prev) => ({
       ...prev,
       date: quickBarPrefill.date || prev.date,
       time: quickBarPrefill.time || prev.time,
       timeEnd: quickBarPrefill.timeEnd ?? prev.timeEnd,
-      guestCount: String(guests),
+      ...(nextGuestCount !== undefined ? { guestCount: nextGuestCount } : {}),
     }));
   }, [
     table.id,
@@ -425,6 +430,7 @@ export function ReservationModal({
                 onChange={set('guestCount')}
                 className={`${inputNormal} appearance-none`}
               >
+                <option value="">{t('desktops.modal.guestCountPlaceholder')}</option>
                 {Array.from({ length: table.seats }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>
                     {t('desktops.modal.guestsOption').replace('{n}', String(n))}

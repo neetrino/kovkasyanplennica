@@ -19,7 +19,7 @@ export default function DesktopsPage() {
     date: '',
     time: '',
     timeEnd: '',
-    guestCount: '2',
+    guestCount: '',
   });
 
   useEffect(() => {
