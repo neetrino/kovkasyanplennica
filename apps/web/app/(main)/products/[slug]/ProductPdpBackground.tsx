@@ -31,7 +31,7 @@ function PdpPatternLayer({ src, wrapClass, innerClass }: PatternLayerProps) {
 export function ProductPdpBackground() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden "
+      className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden sm:block"
       aria-hidden
     >
       <PdpPatternLayer
