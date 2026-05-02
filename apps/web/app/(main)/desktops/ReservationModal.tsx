@@ -23,7 +23,6 @@ interface ReservationForm {
   date: string;
   time: string;
   timeEnd: string;
-  occasion: string;
   guestCount: string;
   note: string;
 }
@@ -36,7 +35,6 @@ const INITIAL_FORM: ReservationForm = {
   date: '',
   time: '',
   timeEnd: '',
-  occasion: '',
   guestCount: '1',
   note: '',
 };
@@ -235,7 +233,7 @@ export function ReservationModal({
           date: form.date,
           time: form.time,
           timeEnd: form.timeEnd,
-          occasion: form.occasion.trim() ? form.occasion : 'regular',
+          occasion: 'regular',
           guestCount: parseInt(form.guestCount, 10) || 1,
           note: form.note.trim() || null,
           ...(productTitle && { productTitle: productTitle.trim() }),
@@ -404,35 +402,18 @@ export function ReservationModal({
               {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="min-w-0">
-                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  {t('desktops.modal.occasion')}
-                </label>
-                <select
-                  value={form.occasion}
-                  onChange={set('occasion')}
-                  className={`${errors.occasion ? inputError : inputNormal} appearance-none`}
-                >
-                  <option value="">{t('desktops.modal.occasionPlaceholder')}</option>
-                  <option value="birthday">{t('desktops.modal.occasions.birthday')}</option>
-                  <option value="regular">{t('desktops.modal.occasions.regular')}</option>
-                </select>
-                {errors.occasion && <p className="text-red-400 text-xs mt-1">{errors.occasion}</p>}
-              </div>
-              <div className="min-w-0">
-                <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
-                  {t('desktops.modal.date')} <span className="text-[#7CB342]">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={form.date}
-                  min={today}
-                  onChange={set('date')}
-                  className={`${errors.date ? inputError : inputNormal} [color-scheme:dark]`}
-                />
-                {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date}</p>}
-              </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
+                {t('desktops.modal.date')} <span className="text-[#7CB342]">*</span>
+              </label>
+              <input
+                type="date"
+                value={form.date}
+                min={today}
+                onChange={set('date')}
+                className={`${errors.date ? inputError : inputNormal} [color-scheme:dark]`}
+              />
+              {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date}</p>}
             </div>
 
             <div>

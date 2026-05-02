@@ -298,18 +298,18 @@ export function Header() {
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className={`relative flex items-center gap-2 rounded-full text-left transition-[height,width,padding] duration-300 ease-out hover:opacity-90 ${
+            className={`relative flex items-center gap-1.5 rounded-full text-left transition-[height,width,padding] duration-300 ease-out hover:opacity-90 ${
               isHomeCream
-                ? 'h-10 w-[160px] border border-black bg-[#ffe5c2] pl-2.5 pr-3'
-                : 'h-12 w-[290px] max-w-[min(290px,calc(100vw-24rem))] border border-white/20 bg-[rgba(119,138,132,0.34)] pl-3 pr-4'
+                ? 'h-9 w-[136px] border border-black bg-[#ffe5c2] pl-2 pr-2.5'
+                : 'h-10 w-[220px] max-w-[min(220px,calc(100vw-22rem))] border border-white/20 bg-[rgba(119,138,132,0.34)] pl-2.5 pr-3'
             }`}
             aria-label={t('home.header.search.ariaLabel')}
             aria-expanded={isSearchOpen}
           >
-            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
               <svg
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -332,7 +332,7 @@ export function Header() {
               </svg>
             </span>
             <span
-              className={`min-w-0 flex-1 truncate font-medium ${isHomeCream ? 'text-sm text-[#2f3f3d]' : 'text-base text-white'} ${!searchQuery.trim() ? (isHomeCream ? 'text-[rgba(47,63,61,0.65)]' : 'text-[rgba(255,255,255,0.38)]') : ''}`}
+              className={`min-w-0 flex-1 truncate font-medium ${isHomeCream ? 'text-xs text-[#2f3f3d]' : 'text-sm text-white'} ${!searchQuery.trim() ? (isHomeCream ? 'text-[rgba(47,63,61,0.65)]' : 'text-[rgba(255,255,255,0.38)]') : ''}`}
             >
               {searchQuery.trim() ? searchQuery : t('home.header.search.placeholder')}
             </span>
@@ -348,27 +348,27 @@ export function Header() {
         {/* Cart Button */}
         <Link
           href="/cart"
-          className={`flex items-center gap-1.5 rounded-[45px] transition-opacity hover:opacity-90 ${
+          className={`flex items-center gap-1 rounded-full transition-opacity hover:opacity-90 ${
             isHomeCream
-              ? `bg-[#2F3F3D] ${isLoggedIn ? 'h-10 min-w-[92px] px-3.5' : 'h-8 min-w-[80px] px-3'}`
-              : 'h-12 min-w-[106px] bg-[#ffe5c2] px-3.5'
+              ? `bg-[#2F3F3D] ${isLoggedIn ? 'h-9 min-w-[80px] px-3' : 'h-7 min-w-[70px] px-2.5'}`
+              : 'h-10 min-w-[92px] bg-[#ffe5c2] px-3'
           }`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
           <div
-            className={`flex items-center justify-center ${isHomeCream ? (isLoggedIn ? 'h-4 w-4' : 'h-3 w-3') : 'h-[29px] w-[29px]'}`}
+            className={`flex shrink-0 items-center justify-center ${isHomeCream ? (isLoggedIn ? 'h-3.5 w-3.5' : 'h-3 w-3') : 'h-6 w-6'}`}
           >
             <Image
               src="/assets/product-card/Icon.svg"
               alt=""
-              width={16}
-              height={16}
-              className="max-h-full max-w-full object-contain"
+              width={14}
+              height={14}
+              className={`max-h-full max-w-full object-contain ${isHomeCream ? '' : 'brightness-0'}`}
               unoptimized
             />
           </div>
           <span
-            className={`font-bold ${isHomeCream ? `text-[#fff4de] ${isLoggedIn ? 'text-sm leading-5' : 'text-xs leading-4'}` : 'text-base leading-6 text-[#2f3f3d]'}`}
+            className={`font-bold ${isHomeCream ? `text-[#fff4de] ${isLoggedIn ? 'text-xs leading-4' : 'text-[11px] leading-tight'}` : 'text-sm leading-5 text-[#2f3f3d]'}`}
           >
             {formatPrice(cartTotal, currency)}
           </span>
