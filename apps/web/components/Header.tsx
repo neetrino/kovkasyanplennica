@@ -240,17 +240,22 @@ export function Header() {
   /** Same box on home for cream + dark so right-side icons align with the dark bar. */
   const logoBoxOther =
     'w-52 h-[96px] md:w-60 md:h-[100px] lg:w-72 lg:h-[100px]';
+  /** Tighter logo on inner pages — frees horizontal room for nav + utilities on dark bar. */
+  const logoBoxInnerPages =
+    'w-44 h-[84px] md:w-52 md:h-[92px] lg:w-60 lg:h-[96px]';
 
   return (
     <>
       <header
-        className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 lg:px-8 ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
+        className={`fixed top-0 z-app-header flex max-w-full min-w-0 [left:var(--app-header-scroll-sync-left,0px)] [width:var(--app-header-scroll-sync-width,100%)] items-center justify-between px-4 shadow-none transition-[height,box-shadow] duration-300 ease-in-out transition-colors duration-300 ease-in-out sm:px-6 ${isHomeCream ? 'lg:px-8' : 'lg:px-5'} ${HEADER_DESKTOP_HEIGHT_CLASS} ${headerBg}`}
       >
       {isHomePage && homeHeaderSurface === 'dark' ? (
         <div aria-hidden="true" className={HEADER_HOME_FIGMA_GRADIENT} />
       ) : null}
       {/* Logo Section - Left: hero-logo on home, 121.png on other pages */}
-      <div className="relative z-10 flex items-center gap-4 lg:gap-6">
+      <div
+        className={`relative z-10 flex items-center ${isHomeCream ? 'gap-4 lg:gap-6' : 'gap-3 lg:gap-4'}`}
+      >
         <Link
           prefetch
           href="/"
@@ -258,7 +263,7 @@ export function Header() {
           aria-label={t('home.header.logoAlt')}
         >
           <div
-            className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${logoBoxOther}`}
+            className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${isHomePage ? logoBoxOther : logoBoxInnerPages}`}
           >
             <Image
               src={isHomeCream ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
@@ -275,15 +280,17 @@ export function Header() {
 
       {/* Navigation Menu - Center */}
       <nav
-        className={`relative z-10 hidden items-center transition-[gap] duration-300 ease-out lg:flex ${isHomeCream ? 'lg:gap-10' : 'lg:gap-6'}`}
+        className={`relative z-10 hidden items-center transition-[gap] duration-300 ease-out lg:flex ${isHomeCream ? 'lg:gap-10' : 'lg:gap-9'}`}
       >
         {navigationLinks.map((link) => (
           <Link
             key={link.label}
             prefetch
             href={link.href}
-            className={`text-base font-normal leading-6 transition-[font-size] duration-300 ease-out hover:opacity-80 ${
-              isHomeCream ? 'text-[#2f3f3d]' : 'text-[#ffe5c2] uppercase tracking-wide'
+            className={`font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 ${
+              isHomeCream
+                ? 'text-base leading-6 text-[#2f3f3d]'
+                : 'whitespace-nowrap text-sm leading-5 text-[#ffe5c2] uppercase tracking-normal'
             }`}
           >
             {isHomeCream ? formatNavLabel(link.label) : link.label.toUpperCase()}
@@ -292,7 +299,9 @@ export function Header() {
       </nav>
 
       {/* Search and Login - Right */}
-      <div className="relative z-10 flex items-center gap-5 transition-[gap] duration-300 ease-out">
+      <div
+        className={`relative z-10 flex items-center transition-[gap] duration-300 ease-out ${isHomeCream ? 'gap-5' : 'gap-3'}`}
+      >
         {/* Search — opens glass overlay with live results */}
         <div className="relative">
           <button
@@ -301,15 +310,17 @@ export function Header() {
             className={`relative flex items-center gap-1.5 rounded-full text-left transition-[height,width,padding] duration-300 ease-out hover:opacity-90 ${
               isHomeCream
                 ? 'h-9 w-[136px] border border-black bg-[#ffe5c2] pl-2 pr-2.5'
-                : 'h-10 w-[220px] max-w-[min(220px,calc(100vw-22rem))] border border-white/20 bg-[rgba(119,138,132,0.34)] pl-2.5 pr-3'
+                : 'h-9 w-[168px] max-w-[min(168px,calc(100vw-20rem))] border border-white/20 bg-[rgba(119,138,132,0.34)] pl-2 pr-2.5'
             }`}
             aria-label={t('home.header.search.ariaLabel')}
             aria-expanded={isSearchOpen}
           >
-            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full">
+            <span
+              className={`flex flex-shrink-0 items-center justify-center rounded-full ${isHomeCream ? 'h-7 w-7' : 'h-6 w-6'}`}
+            >
               <svg
-                width="18"
-                height="18"
+                width={isHomeCream ? 18 : 16}
+                height={isHomeCream ? 18 : 16}
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -332,7 +343,7 @@ export function Header() {
               </svg>
             </span>
             <span
-              className={`min-w-0 flex-1 truncate font-medium ${isHomeCream ? 'text-xs text-[#2f3f3d]' : 'text-sm text-white'} ${!searchQuery.trim() ? (isHomeCream ? 'text-[rgba(47,63,61,0.65)]' : 'text-[rgba(255,255,255,0.38)]') : ''}`}
+              className={`min-w-0 flex-1 truncate font-medium ${isHomeCream ? 'text-xs text-[#2f3f3d]' : 'text-xs text-white'} ${!searchQuery.trim() ? (isHomeCream ? 'text-[rgba(47,63,61,0.65)]' : 'text-[rgba(255,255,255,0.38)]') : ''}`}
             >
               {searchQuery.trim() ? searchQuery : t('home.header.search.placeholder')}
             </span>
@@ -348,15 +359,15 @@ export function Header() {
         {/* Cart Button */}
         <Link
           href="/cart"
-          className={`flex items-center gap-1 rounded-full transition-opacity hover:opacity-90 ${
+          className={`flex items-center rounded-full transition-opacity hover:opacity-90 ${
             isHomeCream
-              ? `bg-[#2F3F3D] ${isLoggedIn ? 'h-9 min-w-[80px] px-3' : 'h-7 min-w-[70px] px-2.5'}`
-              : 'h-10 min-w-[92px] bg-[#ffe5c2] px-3'
+              ? `gap-1 bg-[#2F3F3D] ${isLoggedIn ? 'h-9 min-w-[80px] px-3' : 'h-7 min-w-[70px] px-2.5'}`
+              : 'gap-0.5 bg-[#ffe5c2] px-2.5 h-9 min-w-[80px]'
           }`}
           aria-label={t('home.header.cart.ariaLabel') || 'Cart'}
         >
           <div
-            className={`flex shrink-0 items-center justify-center ${isHomeCream ? (isLoggedIn ? 'h-3.5 w-3.5' : 'h-3 w-3') : 'h-6 w-6'}`}
+            className={`flex shrink-0 items-center justify-center ${isHomeCream ? (isLoggedIn ? 'h-3.5 w-3.5' : 'h-3 w-3') : 'h-5 w-5'}`}
           >
             <Image
               src="/assets/product-card/Icon.svg"
@@ -368,7 +379,7 @@ export function Header() {
             />
           </div>
           <span
-            className={`font-bold ${isHomeCream ? `text-[#fff4de] ${isLoggedIn ? 'text-xs leading-4' : 'text-[11px] leading-tight'}` : 'text-sm leading-5 text-[#2f3f3d]'}`}
+            className={`font-bold ${isHomeCream ? `text-[#fff4de] ${isLoggedIn ? 'text-xs leading-4' : 'text-[11px] leading-tight'}` : 'text-xs leading-4 text-[#2f3f3d]'}`}
           >
             {formatPrice(cartTotal, currency)}
           </span>
@@ -379,14 +390,14 @@ export function Header() {
           <div className="relative">
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="rounded-full h-10 w-10 flex items-center justify-center bg-[#ffe5c2] hover:opacity-90 transition-opacity"
+              className={`flex items-center justify-center rounded-full bg-[#ffe5c2] transition-opacity hover:opacity-90 ${isHomeCream ? 'h-10 w-10' : 'h-9 w-9'}`}
               aria-label={t('home.header.profile.ariaLabel') || 'Profile'}
             >
               <Image
                 src="/assets/product-card/439.png"
                 alt=""
-                width={40}
-                height={40}
+                width={isHomeCream ? 40 : 36}
+                height={isHomeCream ? 40 : 36}
                 className="object-contain rounded-full"
                 unoptimized
               />
@@ -434,7 +445,7 @@ export function Header() {
         ) : (
           <Link
             href="/login"
-            className={`border px-3 py-1.5 rounded-full h-8 w-[100px] flex items-center justify-center font-semibold text-xs leading-4 tracking-[0.32px] transition-colors ${isHomeCream ? 'bg-[#2f3f3d] border-[#2f3f3d] text-white hover:bg-[#1f2f2d]' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
+            className={`flex items-center justify-center rounded-full border font-semibold transition-colors ${isHomeCream ? 'h-8 w-[100px] px-3 py-1.5 text-xs leading-4 tracking-[0.32px] bg-[#2f3f3d] border-[#2f3f3d] text-white hover:bg-[#1f2f2d]' : 'h-7 w-[88px] px-2.5 py-1 text-[11px] leading-4 tracking-[0.24px] bg-white/20 border-white/30 text-white hover:bg-white/30'}`}
           >
             {t('home.header.login')}
           </Link>
