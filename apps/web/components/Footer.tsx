@@ -60,16 +60,27 @@ export function Footer() {
             {/* Left Column - Restaurant Info */}
             <div className="-mt-10 space-y-0 md:-mt-14">
               <div className="flex items-center gap-3">
-                <div className="relative h-36 w-36 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-48 lg:w-48">
-                  <Image
-                    src="/hero-logo.png"
-                    alt={t('home.footer.logoAlt')}
-                    width={162}
-                    height={162}
-                    className="h-full w-full object-contain"
-                    unoptimized
-                  />
-                </div>
+                <Link
+                  prefetch
+                  href="/"
+                  aria-label={t('home.header.logoAlt')}
+                  className={`inline-flex shrink-0 rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                    isMenuPage
+                      ? 'focus-visible:ring-[#2f3f3d]/40 focus-visible:ring-offset-[#ffe5c2]'
+                      : 'focus-visible:ring-white/40 focus-visible:ring-offset-[#2f3f3d]'
+                  }`}
+                >
+                  <div className="relative h-36 w-36 sm:h-40 sm:w-40 md:h-44 md:w-44 lg:h-48 lg:w-48">
+                    <Image
+                      src="/hero-logo.png"
+                      alt=""
+                      width={162}
+                      height={162}
+                      className="h-full w-full object-contain"
+                      unoptimized
+                    />
+                  </div>
+                </Link>
               </div>
               <div className="flex max-w-[300px] flex-col gap-4">
               <p
@@ -191,7 +202,7 @@ export function Footer() {
                 href={NEETRINO_COMPANY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-40 lg:mr-64 cursor-pointer transition-colors`}
               >
                 Copyright © 2026 | All Rights Reserved, Created by Neetrino IT Company
               </a>
@@ -212,12 +223,6 @@ export function Footer() {
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.privacy')}
-              </Link>
-              <Link
-                href="/terms"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors whitespace-nowrap`}
-              >
-                {t('home.footer.bottomLinks.publicOffer')}
               </Link>
             </div>
           </div>

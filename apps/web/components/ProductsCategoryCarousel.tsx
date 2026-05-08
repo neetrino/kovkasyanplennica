@@ -95,7 +95,7 @@ export function ProductsCategoryCarousel({
   return (
     <div className="relative flex flex-col items-stretch gap-3 sm:gap-4 md:flex-row md:items-center md:gap-6">
       <div
-        className="order-2 min-w-0 w-full flex-1 grid gap-x-2 gap-y-16 pb-10 pt-2 sm:gap-x-3 sm:gap-y-20 sm:pb-12 sm:pt-3 md:order-1 md:gap-x-4 md:gap-y-16 md:pt-32 md:pb-20 lg:gap-x-5 lg:gap-y-20 lg:pt-36"
+        className="order-2 min-w-0 w-full flex-1 grid gap-x-2 gap-y-16 pb-10 pt-2 sm:gap-x-3 sm:gap-y-20 sm:pb-12 sm:pt-3 md:order-1 md:gap-x-4 md:gap-y-16 md:pb-12 lg:gap-x-5 lg:gap-y-20"
         style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
       >
         {displayed.map((product) => (

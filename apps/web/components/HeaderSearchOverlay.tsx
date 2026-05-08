@@ -203,11 +203,11 @@ export function HeaderSearchOverlay({
           onSubmit={handleSubmit}
           className="overflow-hidden rounded-2xl border border-white/50 bg-[#3a5c57]/35 shadow-2xl backdrop-blur-2xl"
         >
-          <div className="flex items-center gap-3 border-b border-white/25 px-4 py-3.5">
-            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/10">
+          <div className="flex items-center gap-2 border-b border-white/25 px-3 py-2.5">
+            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-white/10">
               <svg
-                width="22"
-                height="22"
+                width="18"
+                height="18"
                 viewBox="0 0 16 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +236,7 @@ export function HeaderSearchOverlay({
               onChange={(e) => onSearchQueryChange(e.target.value)}
               placeholder={t('home.header.search.placeholder')}
               autoComplete="off"
-              className="min-w-0 flex-1 bg-transparent text-base font-medium text-white outline-none placeholder:text-white/65"
+              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-white outline-none placeholder:text-white/65"
             />
           </div>
 

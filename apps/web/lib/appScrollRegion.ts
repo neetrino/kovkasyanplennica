@@ -20,3 +20,10 @@ export function getAppScrollRegion(): HTMLElement | null {
     document.documentElement
   );
 }
+
+/** Scroll the main app column to top (not `window` — matches layout scroll root). */
+export function scrollAppScrollRegionToTop(behavior: ScrollBehavior = 'smooth'): void {
+  const el = getAppScrollRegion();
+  if (!el) return;
+  el.scrollTo({ top: 0, behavior });
+}

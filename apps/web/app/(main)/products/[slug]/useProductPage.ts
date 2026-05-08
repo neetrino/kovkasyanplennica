@@ -33,7 +33,6 @@ export function useProductPage({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currency, setCurrency] = useState(getStoredCurrency());
   const [language, setLanguage] = useState<LanguageCode>('ru');
-  const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0);
 
   const resolvedParams = use(params);
   const rawSlug = resolvedParams?.slug ?? '';
@@ -145,7 +144,6 @@ export function useProductPage({
       const initialVariant = variantById || variantByIndex || product.variants[0];
       setSelectedVariant(initialVariant);
       setCurrentImageIndex(0);
-      setThumbnailStartIndex(0);
     }
   }, [product, variantIdFromUrl, setSelectedVariant]);
 
@@ -167,9 +165,6 @@ export function useProductPage({
     setReviews,
     images,
     currentImageIndex,
-    setCurrentImageIndex,
-    thumbnailStartIndex,
-    setThumbnailStartIndex,
     currency,
     language,
     selectedVariant,
@@ -177,6 +172,7 @@ export function useProductPage({
     selectedSize,
     selectedAttributeValues,
     quantity,
+    setQuantity,
     averageRating,
     slug,
     relatedProducts,

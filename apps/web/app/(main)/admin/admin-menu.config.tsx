@@ -287,8 +287,10 @@ export function getAdminMenuTABS(t: (path: string) => string): AdminMenuItem[] {
 }
 
 export function getHostessMenuTABS(t: (path: string) => string): AdminMenuItem[] {
-  const allowedIds = new Set(["orders", "desktops"]);
-  return getAdminMenuTABS(t).filter((item) => allowedIds.has(item.id));
+  const allowedIds = new Set(['orders', 'desktops']);
+  return getAdminMenuTABS(t).filter(
+    (item) => item.isSiteLogoNav === true || allowedIds.has(item.id),
+  );
 }
 
 

@@ -92,8 +92,22 @@ export function MobileHeader() {
                     logout();
                     closeMenu();
                   }}
-                  className="w-full rounded-full bg-white/10 py-3 text-sm font-semibold text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-[#ffe5c2] py-3 text-sm font-bold text-[#2f3f3d] transition-opacity hover:opacity-90"
                 >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center text-[#2f3f3d]" aria-hidden>
+                    <svg
+                      className="h-[14px] w-[14px]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                  </span>
                   {t('common.navigation.logout') || 'Logout'}
                 </button>
               )}

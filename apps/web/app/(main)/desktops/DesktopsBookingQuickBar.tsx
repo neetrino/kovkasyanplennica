@@ -229,13 +229,26 @@ export function DesktopsBookingQuickBar({
               onOpenChange={(open) => setOpenMenu(open ? 'guests' : null)}
               iconSrc={bookingQuickBarAssets.guests}
               chevronSrc={bookingQuickBarAssets.chevron}
-              triggerLabel={t('desktops.modal.guestsOption').replace('{n}', value.guestCount)}
-              isPlaceholder={false}
+              triggerLabel={
+                value.guestCount.trim() === ''
+                  ? t('desktops.modal.guestCountPlaceholder')
+                  : t('desktops.modal.guestsOption').replace('{n}', value.guestCount)
+              }
+              isPlaceholder={value.guestCount.trim() === ''}
               triggerTextSize="xs"
               roundedClass="rounded-[40px]"
               ariaLabel={t('desktops.quickBar.guests')}
               iconClassName="h-2.5 w-4 md:h-3 md:w-[18px]"
             >
+              <BookingQuickBarDropdownOption
+                selected={value.guestCount.trim() === ''}
+                onPick={() => {
+                  patch({ guestCount: '' });
+                  setOpenMenu(null);
+                }}
+              >
+                {t('desktops.modal.guestCountPlaceholder')}
+              </BookingQuickBarDropdownOption>
               {Array.from({ length: QUICK_BAR_MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                 <BookingQuickBarDropdownOption
                   key={n}

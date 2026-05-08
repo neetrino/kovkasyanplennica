@@ -28,7 +28,7 @@ export function MobileHomeReservationBlock() {
   const minDate = useMemo(() => formatLocalISODate(new Date()), []);
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [guestCount, setGuestCount] = useState('2');
+  const [guestCount, setGuestCount] = useState('');
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
 
   useEffect(() => {
@@ -60,7 +60,10 @@ export function MobileHomeReservationBlock() {
       : '';
 
   const timeLabel = time || t('desktops.modal.timePlaceholder');
-  const guestsLabel = t('desktops.modal.guestsOption').replace('{n}', guestCount);
+  const guestsLabel =
+    guestCount.trim() === ''
+      ? t('desktops.modal.guestCountPlaceholder')
+      : t('desktops.modal.guestsOption').replace('{n}', guestCount);
 
   return (
     <>
@@ -171,7 +174,11 @@ export function MobileHomeReservationBlock() {
               className="flex h-12 w-full items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px]"
             >
               <Image src="/assets/mobile-home/reserve-users.svg" alt="" width={16} height={16} aria-hidden />
-              <span className="ml-3 flex-1 truncate text-[#0a2533]">{guestsLabel}</span>
+              <span
+                className={`ml-3 flex-1 truncate ${guestCount.trim() === '' ? 'text-[#909090]' : 'text-[#0a2533]'}`}
+              >
+                {guestsLabel}
+              </span>
               <Image src="/assets/mobile-home/reserve-chevron.svg" alt="" width={21} height={21} aria-hidden />
             </button>
             {openMenu === 'guests' ? (
@@ -179,6 +186,19 @@ export function MobileHomeReservationBlock() {
                 role="listbox"
                 className="absolute bottom-full left-0 right-0 z-[100] mb-1 max-h-[min(22rem,55vh)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-black/10 bg-white py-1 shadow-xl"
               >
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    className="w-full px-3 py-2.5 text-left text-sm text-[#0a2533] hover:bg-black/5"
+                    onClick={() => {
+                      setGuestCount('');
+                      setOpenMenu(null);
+                    }}
+                  >
+                    {t('desktops.modal.guestCountPlaceholder')}
+                  </button>
+                </li>
                 {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                   <li key={n}>
                     <button
