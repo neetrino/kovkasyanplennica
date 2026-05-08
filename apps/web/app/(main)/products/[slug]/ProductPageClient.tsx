@@ -2,7 +2,6 @@
 
 import { useAuth } from '@/lib/auth/AuthContext';
 import { t } from '@/lib/i18n';
-import { resolvePdpPortionBundle } from './utils/pdp-portion-text';
 import { ProductReviews } from '@/components/ProductReviews';
 import { RelatedProducts } from '@/components/RelatedProducts';
 import { ProductImageGallery } from './ProductImageGallery';
@@ -85,8 +84,6 @@ export function ProductPageClient({
     );
   }
 
-  const { longDescriptionHtml } = resolvePdpPortionBundle(language, product);
-
   return (
     <div className="relative">
       <ProductPdpBackground />
@@ -133,13 +130,6 @@ export function ProductPageClient({
             getRequiredAttributesMessage={getRequiredAttributesMessage}
           />
         </div>
-
-        {longDescriptionHtml.trim() ? (
-          <div
-            className="prose prose-invert prose-p:leading-relaxed mx-auto mt-16 max-w-3xl text-[#ececec] prose-headings:text-[#fff4de] prose-a:text-[#ffe5c2] sm:prose-base"
-            dangerouslySetInnerHTML={{ __html: longDescriptionHtml }}
-          />
-        ) : null}
 
         <div className="mt-20 lg:mt-24">
           <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />

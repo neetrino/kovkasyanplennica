@@ -202,7 +202,7 @@ export function Footer() {
                 href={NEETRINO_COMPANY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-16 lg:mr-24 cursor-pointer transition-colors`}
+                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]' : 'text-white/60 hover:text-white'} text-[11px] md:text-xs text-center md:text-left mb-6 md:mb-0 md:mr-40 lg:mr-64 cursor-pointer transition-colors`}
               >
                 Copyright © 2026 | All Rights Reserved, Created by Neetrino IT Company
               </a>
@@ -223,12 +223,6 @@ export function Footer() {
                 className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors`}
               >
                 {t('home.footer.bottomLinks.privacy')}
-              </Link>
-              <Link
-                href="/terms"
-                className={`${isMenuPage ? 'text-[#2f3f3d]/60 hover:text-[#2f3f3d]/80' : 'text-white/60 hover:text-white/80'} text-[11px] md:text-xs transition-colors whitespace-nowrap`}
-              >
-                {t('home.footer.bottomLinks.publicOffer')}
               </Link>
             </div>
           </div>
