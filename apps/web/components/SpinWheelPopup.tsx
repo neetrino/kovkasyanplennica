@@ -466,6 +466,7 @@ export function SpinWheelPopup() {
               ...(wonPrizePreview.title && { productTitle: wonPrizePreview.title }),
               ...(wonPrizePreview.imageUrl && { productImageUrl: wonPrizePreview.imageUrl }),
             }).toString()}`}
+            onClick={() => setOpen(false)}
             className="group relative z-[1] mt-4 flex overflow-hidden rounded-[24px] border border-white/12 bg-[linear-gradient(145deg,rgba(32,48,46,0.92),rgba(18,29,27,0.96))] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-colors hover:border-[#f8c56e]/30 hover:bg-[linear-gradient(145deg,rgba(38,56,54,0.95),rgba(22,35,33,0.98))] md:absolute md:bottom-0 md:right-0 md:mt-0 md:w-[17rem]"
           >
             <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-[#f8c56e]/16 blur-2xl" />
