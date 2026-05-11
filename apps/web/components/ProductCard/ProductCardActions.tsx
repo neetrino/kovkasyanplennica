@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { CompareIcon } from '../icons/CompareIcon';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 interface WishlistIconProps {
   filled?: boolean;
@@ -115,7 +116,7 @@ export function ProductCardActions({
         </svg>
       ) : (
         <Image
-          src="/assets/product-card/cart-icon.svg"
+          src={toR2Url('/assets/product-card/cart-icon.svg')}
           alt="Cart"
           width={58}
           height={58}

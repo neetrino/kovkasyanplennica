@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { t } from '@/lib/i18n';
+import { toR2Url } from '@/lib/r2-assets';
 
 export const revalidate = 3600;
 
@@ -20,7 +21,7 @@ export default function AboutPage() {
         className="absolute bottom-0  left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-50"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
 
       {/* ══════════════════════════════════

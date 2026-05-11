@@ -8,6 +8,7 @@ import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import type { CurrencyCode } from '../../lib/currency';
 import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
+import { toR2Url } from '@/lib/r2-assets';
 
 interface ProductCardInfoProps {
   slug: string;
@@ -230,7 +231,7 @@ export function ProductCardInfo({
               </svg>
             ) : (
               <Image
-                src="/assets/product-card/cart-icon-white.svg"
+                src={toR2Url('/assets/product-card/cart-icon-white.svg')}
                 alt="Cart"
                 width={24}
                 height={24}

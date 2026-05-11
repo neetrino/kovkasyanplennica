@@ -5,6 +5,7 @@ import { Input, Card } from '@shop/ui';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -122,7 +123,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-[#2F3F3D] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       <div className="w-full max-w-lg relative overflow-visible">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] aspect-square max-h-[800px] pointer-events-none z-[1]" aria-hidden>
-          <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+          <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
         </div>
         <Card className="relative z-10 p-6 !rounded-[50px] overflow-hidden bg-white/20 backdrop-blur-md border border-white/25 shadow-xl text-white">
         {/* Դեկորատիվ վեկտորներ — ձախ վերև, աջ ներքև */}

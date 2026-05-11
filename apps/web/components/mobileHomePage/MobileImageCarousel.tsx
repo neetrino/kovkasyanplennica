@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../../lib/i18n-client';
+import { staticAssetHref, toR2Url } from '@/lib/r2-assets';
 
 interface CarouselImage {
   id: string;
@@ -24,13 +25,13 @@ const newFolderImageSources = [
 ];
 
 const carouselImages: CarouselImage[] = [
-  { id: '1', src: encodeURI(newFolderImageSources[0]), alt: 'Restaurant gallery image 1', width: 517, height: 690 },
-  { id: '2', src: encodeURI(newFolderImageSources[1]), alt: 'Restaurant gallery image 2', width: 375, height: 749 },
-  { id: '3', src: encodeURI(newFolderImageSources[2]), alt: 'Restaurant gallery image 3', width: 299, height: 431 },
-  { id: '4', src: encodeURI(newFolderImageSources[3]), alt: 'Restaurant gallery image 4', width: 749, height: 375 },
-  { id: '5', src: encodeURI(newFolderImageSources[4]), alt: 'Restaurant gallery image 5', width: 517, height: 690 },
-  { id: '6', src: encodeURI(newFolderImageSources[5]), alt: 'Restaurant gallery image 6', width: 517, height: 690 },
-  { id: '7', src: encodeURI(newFolderImageSources[6]), alt: 'Restaurant gallery image 7', width: 517, height: 690 },
+  { id: '1', src: staticAssetHref(newFolderImageSources[0]), alt: 'Restaurant gallery image 1', width: 517, height: 690 },
+  { id: '2', src: staticAssetHref(newFolderImageSources[1]), alt: 'Restaurant gallery image 2', width: 375, height: 749 },
+  { id: '3', src: staticAssetHref(newFolderImageSources[2]), alt: 'Restaurant gallery image 3', width: 299, height: 431 },
+  { id: '4', src: staticAssetHref(newFolderImageSources[3]), alt: 'Restaurant gallery image 4', width: 749, height: 375 },
+  { id: '5', src: staticAssetHref(newFolderImageSources[4]), alt: 'Restaurant gallery image 5', width: 517, height: 690 },
+  { id: '6', src: staticAssetHref(newFolderImageSources[5]), alt: 'Restaurant gallery image 6', width: 517, height: 690 },
+  { id: '7', src: staticAssetHref(newFolderImageSources[6]), alt: 'Restaurant gallery image 7', width: 517, height: 690 },
 ];
 
 const AUTO_PLAY_INTERVAL_MS = 3000;
@@ -128,7 +129,7 @@ export function MobileImageCarousel() {
         <div className="relative flex justify-center mt-12">
           <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[380px] h-[180px] pointer-events-none opacity-80">
             <img
-              src="/assets/hero/decorative-pattern.svg"
+              src={toR2Url('/assets/hero/decorative-pattern.svg')}
               alt=""
               width={280}
               height={160}

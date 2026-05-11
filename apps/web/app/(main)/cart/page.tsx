@@ -10,6 +10,7 @@ import { handleRemoveItem, handleUpdateQuantity } from './cart-handlers';
 import { CartTable, OrderSummary } from './cart-components';
 import { EmptyCart } from './empty-cart';
 import { LoadingState } from './loading-state';
+import { toR2Url } from '@/lib/r2-assets';
 
 export default function CartPage() {
   const { isLoggedIn } = useAuth();
@@ -80,13 +81,13 @@ export default function CartPage() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[600px] lg:w-[700px] aspect-square max-h-[700px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div
         className="absolute bottom-0 right-0 w-[300px] md:w-[500px] aspect-square max-h-[500px] pointer-events-none z-[1] opacity-30 translate-x-1/4 translate-y-1/4"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">

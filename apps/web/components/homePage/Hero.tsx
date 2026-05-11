@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Ruslan_Display } from 'next/font/google';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 const ruslanDisplay = Ruslan_Display({
   subsets: ['latin', 'cyrillic'],
@@ -28,7 +29,7 @@ export function Hero() {
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets/hero/hero.png"
+            src={toR2Url('/assets/hero/hero.png')}
             alt=""
             className="absolute inset-0 size-full object-cover object-[center_70%]"
           />
@@ -42,7 +43,7 @@ export function Hero() {
       >
         <div className="relative h-full w-full">
           <Image
-            src="/assets/hero/hero-pattern-figma.png"
+            src={toR2Url('/assets/hero/hero-pattern-figma.png')}
             alt=""
             fill
             className="object-cover object-center"
@@ -57,7 +58,7 @@ export function Hero() {
         {/* Vase — Figma 134:352 (170×257) */}
         <div className="relative h-[257px] w-[170px] shrink-0">
           <Image
-            src="/assets/hero/hero-vase-figma.svg"
+            src={toR2Url('/assets/hero/hero-vase-figma.svg')}
             alt=""
             width={170}
             height={257}

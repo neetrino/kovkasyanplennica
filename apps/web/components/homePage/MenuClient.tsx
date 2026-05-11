@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
 interface MenuItem {
@@ -135,7 +136,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute left-[calc(16.67%+66px)] top-[26px] w-[828.824px] h-[840px] mix-blend-screen ">
           <Image
-            src="/assets/hero/union-decorative.png"
+            src={toR2Url('/assets/hero/union-decorative.png')}
             alt=""
             fill
             className="object-contain"
@@ -155,7 +156,7 @@ export function MenuClient({ initialItems = [], totalPages = 0 }: MenuClientProp
           <div className="absolute left-1/2 -translate-x-1/2 -translate-y-3 top-full w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] flex justify-center">
             <div className="relative w-full h-full">
               <Image
-                src="/assets/hero/Vector7.svg"
+                src={toR2Url('/assets/hero/Vector7.svg')}
                 alt=""
                 fill
                 className="object-contain"

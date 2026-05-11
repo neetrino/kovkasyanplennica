@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { Ruslan_Display } from 'next/font/google';
 
+import { toR2Url } from '@/lib/r2-assets';
+
 const ruslanDisplay = Ruslan_Display({
   subsets: ['latin', 'cyrillic'],
   weight: '400',
@@ -14,7 +16,7 @@ export function ComingSoon() {
       {/* Decorative Pattern Background — մոբայլում փոքր scale */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 hidden sm:block scale-50 md:scale-75 lg:scale-100 origin-center">
         <Image
-          src="/assets/hero/decorative-pattern.svg"
+          src={toR2Url('/assets/hero/decorative-pattern.svg')}
           alt=""
           fill
           className="object-cover opacity-30 rotate-180"
@@ -26,7 +28,7 @@ export function ComingSoon() {
       <div className="relative z-10 mx-auto max-w-7xl px-2 sm:px-4 lg:px-6 pt-0 sm:pt-0">
         <div className="relative mx-auto h-[50vh] w-full max-w-[720px] sm:h-[300px] md:h-[420px] lg:h-[520px]">
           <Image
-            src={`${ASSETS_BASE_PATH}/dish.png`}
+            src={toR2Url(`${ASSETS_BASE_PATH}/dish.png`)}
             alt=""
             fill
             priority

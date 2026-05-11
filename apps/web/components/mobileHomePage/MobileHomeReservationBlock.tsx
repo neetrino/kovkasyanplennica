@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from '@/lib/i18n-client';
 import { formatLocalISODate } from '@/lib/formatLocalISODate';
 import { RESERVATION_TIME_SLOTS } from '../../app/(main)/desktops/reservationTimeSlots';
+import { toR2Url } from '@/lib/r2-assets';
 
 const MAX_GUESTS = 8;
 
@@ -75,7 +76,7 @@ export function MobileHomeReservationBlock() {
           <div className="relative flex h-12 w-full items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px]">
             <div className="pointer-events-none flex min-w-0 flex-1 items-center">
               <Image
-                src="/assets/mobile-home/reserve-calendar.svg"
+                src={toR2Url('/assets/mobile-home/reserve-calendar.svg')}
                 alt=""
                 width={16}
                 height={16}
@@ -88,7 +89,7 @@ export function MobileHomeReservationBlock() {
                 {dateLabel || '\u00a0'}
               </span>
               <Image
-                src="/assets/mobile-home/reserve-chevron.svg"
+                src={toR2Url('/assets/mobile-home/reserve-chevron.svg')}
                 alt=""
                 width={21}
                 height={21}
@@ -120,13 +121,13 @@ export function MobileHomeReservationBlock() {
               onClick={() => setOpenMenu((m) => (m === 'time' ? null : 'time'))}
               className="flex h-12 w-full items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px] text-[#0a2533]"
             >
-              <Image src="/assets/mobile-home/reserve-clock.svg" alt="" width={16} height={16} aria-hidden />
+              <Image src={toR2Url('/assets/mobile-home/reserve-clock.svg')} alt="" width={16} height={16} aria-hidden />
               <span
                 className={`ml-3 flex-1 truncate ${time ? 'text-[#0a2533]' : 'text-[#909090]'}`}
               >
                 {timeLabel}
               </span>
-              <Image src="/assets/mobile-home/reserve-chevron.svg" alt="" width={21} height={21} aria-hidden />
+              <Image src={toR2Url('/assets/mobile-home/reserve-chevron.svg')} alt="" width={21} height={21} aria-hidden />
             </button>
             {openMenu === 'time' ? (
               <ul
@@ -173,13 +174,13 @@ export function MobileHomeReservationBlock() {
               onClick={() => setOpenMenu((m) => (m === 'guests' ? null : 'guests'))}
               className="flex h-12 w-full items-center rounded-[40px] bg-[#dbdbdb] px-5 text-left text-[14px]"
             >
-              <Image src="/assets/mobile-home/reserve-users.svg" alt="" width={16} height={16} aria-hidden />
+              <Image src={toR2Url('/assets/mobile-home/reserve-users.svg')} alt="" width={16} height={16} aria-hidden />
               <span
                 className={`ml-3 flex-1 truncate ${guestCount.trim() === '' ? 'text-[#909090]' : 'text-[#0a2533]'}`}
               >
                 {guestsLabel}
               </span>
-              <Image src="/assets/mobile-home/reserve-chevron.svg" alt="" width={21} height={21} aria-hidden />
+              <Image src={toR2Url('/assets/mobile-home/reserve-chevron.svg')} alt="" width={21} height={21} aria-hidden />
             </button>
             {openMenu === 'guests' ? (
               <ul

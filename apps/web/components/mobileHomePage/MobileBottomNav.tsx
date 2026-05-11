@@ -8,6 +8,7 @@ import { fetchCart } from '@/app/(main)/cart/cart-fetcher';
 import type { Cart } from '@/app/(main)/cart/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
 import { NavCartIcon, NavHomeIcon, NavProfileIcon, NavSearchIcon } from './MobileBottomNavIcons';
 
@@ -55,7 +56,7 @@ export function MobileBottomNav() {
       <div className="relative h-[162px]">
         <div className="absolute inset-x-0 bottom-0 h-[128px] overflow-hidden ">
           <Image
-            src="/assets/mobile-home/nav-surface.svg"
+            src={toR2Url('/assets/mobile-home/nav-surface.svg')}
             alt=""
             fill
             priority
@@ -72,7 +73,7 @@ export function MobileBottomNav() {
             isProductsActive ? 'ring-2 ring-[#75bf5e] ring-offset-2 ring-offset-[#2f3f3d]' : ''
           }`}
         >
-          <Image src="/assets/mobile-home/nav-chef.svg" alt="" width={24} height={24} aria-hidden />
+          <Image src={toR2Url('/assets/mobile-home/nav-chef.svg')} alt="" width={24} height={24} aria-hidden />
         </Link>
         <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
           <Link prefetch href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">

@@ -6,6 +6,7 @@ import { CheckoutForm } from './CheckoutForm';
 import { CheckoutModals } from './CheckoutModals';
 import { OrderSummary } from './OrderSummary';
 import { useCheckout } from './useCheckout';
+import { toR2Url } from '@/lib/r2-assets';
 
 function CheckoutLoading() {
   return (
@@ -14,7 +15,7 @@ function CheckoutLoading() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] md:w-[700px] aspect-square max-h-[700px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 animate-pulse">
         <div className="mb-10">
@@ -92,7 +93,7 @@ export default function CheckoutPage() {
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] aspect-square max-h-[600px] pointer-events-none z-0 opacity-40"
           aria-hidden
         >
-          <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+          <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
           <div className="w-20 h-20 rounded-full bg-[#3d504e]/60 border border-[#3d504e] flex items-center justify-center mx-auto mb-8">
@@ -122,13 +123,13 @@ export default function CheckoutPage() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[650px] aspect-square max-h-[650px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div
         className="absolute bottom-0 right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-[1] opacity-25 translate-x-1/4 translate-y-1/4"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">

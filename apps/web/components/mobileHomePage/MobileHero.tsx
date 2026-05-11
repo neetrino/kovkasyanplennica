@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 /**
  * Mobile Hero — логотип, название, кнопки Заказать / Забронировать.
@@ -17,7 +18,7 @@ export function MobileHero() {
     >
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <Image
-          src="/assets/hero/hero.png"
+          src={toR2Url('/assets/hero/hero.png')}
           alt=""
           fill
           className="object-cover object-center"
@@ -31,7 +32,7 @@ export function MobileHero() {
         {/* Логотип */}
         <div className="relative w-[59%] max-w-[252px] aspect-[252/350] mb-4">
           <Image
-            src="/assets/hero/121.png"
+            src={toR2Url('/assets/hero/121.png')}
             alt={t('home.hero.logoAlt')}
             fill
             className="object-contain"
@@ -44,7 +45,7 @@ export function MobileHero() {
         {/* Подзаголовок под логотипом (декоративная полоска из Figma) */}
         <div className="relative w-[54%] max-w-[234px] h-[4px] mb-6">
           <Image
-            src="/assets/hero/Vector7.svg"
+            src={toR2Url('/assets/hero/Vector7.svg')}
             alt=""
             fill
             className="object-contain"

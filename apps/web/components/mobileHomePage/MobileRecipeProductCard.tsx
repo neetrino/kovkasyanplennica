@@ -6,6 +6,7 @@ import type { MouseEvent } from 'react';
 import { useAddToCart } from '../hooks/useAddToCart';
 import { useCurrency } from '../hooks/useCurrency';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { formatPrice } from '../../lib/currency';
 export type MobileRecipeProductCardProps = {
   id: string;
@@ -112,7 +113,7 @@ export function MobileRecipeProductCard({
                 </svg>
               ) : (
                 <Image
-                  src="/assets/product-card/cart-icon-white.svg"
+                  src={toR2Url('/assets/product-card/cart-icon-white.svg')}
                   alt=""
                   width={20}
                   height={20}

@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../lib/auth/AuthContext';
 import { formatNavLabel } from '../../lib/formatNavLabel';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 export function MobileHeader() {
   const pathname = usePathname();
@@ -31,7 +32,7 @@ export function MobileHeader() {
         <div className="mx-auto flex w-full items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
           <Link prefetch href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
             <Image
-              src="/assets/mobile-home/logo-kp2.png"
+              src={toR2Url('/assets/mobile-home/logo-kp2.png')}
               alt=""
               width={150}
               height={110}

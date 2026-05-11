@@ -1,5 +1,7 @@
+import { staticAssetHref } from '@/lib/r2-assets';
+
 /**
- * Desktop home gallery — paths under `public/`. Encoded hrefs match `encodeURI` for Cyrillic segments.
+ * Desktop home gallery — paths under `public/`. Relative paths stay `encodeURI`-safe for Cyrillic when served locally.
  */
 export const HOME_CAROUSEL_RAW_PATHS = [
   '/assets/New folder/JW_06812 1.webp',
@@ -12,4 +14,4 @@ export const HOME_CAROUSEL_RAW_PATHS = [
 ] as const;
 
 export const HOME_CAROUSEL_IMAGE_HREFS: readonly string[] =
-  HOME_CAROUSEL_RAW_PATHS.map((p) => encodeURI(p));
+  HOME_CAROUSEL_RAW_PATHS.map((p) => staticAssetHref(p));

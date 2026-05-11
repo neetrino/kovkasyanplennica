@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 const NEETRINO_COMPANY_URL = 'https://neetrino.com/';
 
@@ -17,7 +18,7 @@ export function Footer() {
       {/* Background Decorative Pattern */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
         <img
-          src="/assets/hero/decorative-pattern.svg"
+          src={toR2Url('/assets/hero/decorative-pattern.svg')}
           alt=""
           className="w-full h-full object-contain opacity-80 rotate-180 translate-y-36"
           aria-hidden
@@ -33,7 +34,7 @@ export function Footer() {
           {/* Vector7 декоративный паттерн под заголовком - из Figma */}
           <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-6 flex justify-center mx-auto">
             <Image
-              src="/assets/hero/Vector7.svg"
+              src={toR2Url('/assets/hero/Vector7.svg')}
               alt=""
               fill
               className="object-contain"

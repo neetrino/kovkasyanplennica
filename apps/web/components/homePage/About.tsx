@@ -4,9 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
+import { staticAssetHref, toR2Url } from '@/lib/r2-assets';
 
-const ABOUT_HOME_IMAGE_FIRST = encodeURI('/assets/New folder/JW_01347 1.webp');
-const ABOUT_HOME_IMAGE_SECOND = encodeURI('/assets/New folder/JW_01369-редакт 1.webp');
+const ABOUT_HOME_IMAGE_FIRST = staticAssetHref('/assets/New folder/JW_01347 1.webp');
+const ABOUT_HOME_IMAGE_SECOND = staticAssetHref('/assets/New folder/JW_01369-редакт 1.webp');
 
 /**
  * About Component
@@ -33,7 +34,7 @@ export function About() {
             {/* Vector7 декоративный паттерн под заголовком - из Figma */}
             <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-6 flex justify-center mx-auto">
               <Image
-                src="/assets/hero/Vector7.svg"
+                src={toR2Url('/assets/hero/Vector7.svg')}
                 alt=""
                 fill
                 className="object-contain grayscale"

@@ -1,8 +1,10 @@
+import { toR2Url } from '@/lib/r2-assets';
+
 const PATTERN = {
-  tl: '/assets/pdp/bg-pattern-tl.svg',
-  tr: '/assets/pdp/bg-pattern-tr.svg',
-  bl: '/assets/pdp/bg-pattern-bl.svg',
-  br: '/assets/pdp/bg-pattern-br.svg',
+  tl: toR2Url('/assets/pdp/bg-pattern-tl.svg'),
+  tr: toR2Url('/assets/pdp/bg-pattern-tr.svg'),
+  bl: toR2Url('/assets/pdp/bg-pattern-bl.svg'),
+  br: toR2Url('/assets/pdp/bg-pattern-br.svg'),
 } as const;
 
 type PatternLayerProps = {
