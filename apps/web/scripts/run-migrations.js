@@ -1,40 +1,36 @@
 #!/usr/bin/env node
 
 /**
- * Cross-platform migration runner
- * Tries to run migrations, falls back to db:push if migrations fail
- * Always exits with success to allow build to continue
+ * Deploys Prisma migrations (manual / release step — not part of production build).
+ * Production: migrate deploy only; failures exit non-zero. No db push fallback.
+ * Non-production: optional db push fallback for local convenience only.
  */
 
 const { execSync } = require('child_process');
 const path = require('path');
 
 const dbPath = path.join(__dirname, '../../../packages/db');
+const isProduction = process.env.NODE_ENV === 'production';
 
 process.chdir(dbPath);
 
 try {
-  console.log('🔄 Attempting to deploy migrations...');
+  console.log('🔄 Deploying migrations...');
   execSync('npm run db:migrate:deploy', { stdio: 'inherit' });
   console.log('✅ Migrations deployed successfully');
+  process.exit(0);
 } catch (error) {
-  console.log('⚠️  Migration deploy failed, trying db:push...');
+  if (isProduction) {
+    console.error('❌ Migration deploy failed in production. Set DATABASE_URL and fix migration state.');
+    process.exit(1);
+  }
+  console.log('⚠️  Migration deploy failed, trying db:push (non-production only)...');
   try {
     execSync('npm run db:push', { stdio: 'inherit' });
     console.log('✅ Database schema pushed successfully');
+    process.exit(0);
   } catch (pushError) {
-    console.log('⚠️  Database operations failed, but continuing build...');
-    console.log('   (This is expected if DATABASE_URL is not set)');
+    console.error('❌ db:push failed.');
+    process.exit(1);
   }
 }
-
-// Always exit with success to allow build to continue
-process.exit(0);
-
-
-
-
-
-
-
-

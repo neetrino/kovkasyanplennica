@@ -8,7 +8,7 @@
     "dev:clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && next dev",
     "prebuild": "cd ../../packages/db && npm run db:generate",
     "prebuild:migrate": "node scripts/run-migrations.js",
-    "build": "npm run prebuild:migrate && next build --experimental-build-mode=compile",
+    "build": "next build --experimental-build-mode=compile",
     "start": "next start",
     "lint": "next lint",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\"",
