@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { getStoredLanguage } from '@/lib/language';
 import { t } from '@/lib/i18n';
+import { toR2Url } from '@/lib/r2-assets';
 
 const VACANCIES_REVALIDATE_SECONDS = 60;
 
@@ -97,7 +98,7 @@ export default async function VacanciesPage() {
             className={`pointer-events-none absolute -bottom-20 left-1/2 z-[1] -translate-x-1/2 opacity-90 sm:-bottom-28 md:-bottom-72 ${UNION_DECORATIVE_BOX_BOTTOM}`}
             aria-hidden
           >
-            <img src="/assets/hero/union-decorative.png" alt="" className="h-full w-full object-contain" />
+            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="h-full w-full object-contain" />
           </div>
         </>
       ) : null}

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 interface ErrorStateProps {
   error: string | null;
@@ -16,7 +17,7 @@ export function ErrorState({ error }: ErrorStateProps) {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] aspect-square max-h-[600px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center pb-20">

@@ -15,6 +15,7 @@ import { categoriesService } from '@/lib/services/categories.service';
 import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.service';
 import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
+import { toR2Url } from '@/lib/r2-assets';
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
 /** Returned product count for shop grouping; DB raw fetch is capped (see query-executor). */
@@ -462,15 +463,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       {showFullDecorativeBackground && (
         <>
           <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
           </div>
           <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
           </div>
         </>
       )}
       <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
         <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">

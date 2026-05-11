@@ -5,6 +5,7 @@ import type { FormEvent, ChangeEvent } from 'react';
 import { useTranslation } from '@/lib/i18n-client';
 import { apiClient } from '@/lib/api-client';
 import contactData from '../../../../../config/json/contact.json';
+import { toR2Url } from '@/lib/r2-assets';
 
 const EMPTY_FORM = { name: '', email: '', subject: '', message: '' };
 
@@ -111,13 +112,13 @@ export default function ContactPage() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[650px] aspect-square max-h-[650px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div
         className="absolute top-[55%] right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-0 opacity-25 translate-x-1/4"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
 interface MenuItem {
@@ -39,7 +40,7 @@ export function MobileFavorites({ items = [] }: MobileFavoritesProps) {
     <>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute left-0 top-0 w-full max-w-[500px] h-[503px] mix-blend-screen mt-44">
-          <Image src="/assets/hero/union-decorative.png" alt="" fill className="object-contain" aria-hidden unoptimized />
+          <Image src={toR2Url('/assets/hero/union-decorative.png')} alt="" fill className="object-contain" aria-hidden unoptimized />
         </div>
       </div>
 
@@ -48,7 +49,7 @@ export function MobileFavorites({ items = [] }: MobileFavoritesProps) {
           {t('home.favorites.title')}
         </h2>
         <div className="relative w-[180px] h-[5px] mx-auto mb-6">
-          <Image src="/assets/hero/Vector7.svg" alt="" fill className="object-contain" aria-hidden unoptimized />
+          <Image src={toR2Url('/assets/hero/Vector7.svg')} alt="" fill className="object-contain" aria-hidden unoptimized />
         </div>
 
         {displayItems.length > 0 ? (

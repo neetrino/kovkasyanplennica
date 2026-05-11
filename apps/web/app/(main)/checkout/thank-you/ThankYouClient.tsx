@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 function CheckoutThankYouDecor() {
   return (
@@ -11,13 +12,13 @@ function CheckoutThankYouDecor() {
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] md:w-[650px] aspect-square max-h-[650px] pointer-events-none z-0 opacity-40"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
       <div
         className="absolute bottom-0 right-0 w-[300px] md:w-[450px] aspect-square max-h-[450px] pointer-events-none z-[1] opacity-25 translate-x-1/4 translate-y-1/4"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
       </div>
     </>
   );

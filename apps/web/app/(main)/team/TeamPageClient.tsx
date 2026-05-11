@@ -2,6 +2,7 @@
 
 import { TeamCarousel } from '@/components/TeamCarousel';
 import { useTranslation } from '@/lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 
 /** Bottom anchor union decorative — same as vacancies page */
 const UNION_DECORATIVE_BOX_BOTTOM =
@@ -36,7 +37,7 @@ export function TeamPageClient() {
         className={`pointer-events-none absolute -bottom-20 left-1/2 z-[1] -translate-x-1/2 opacity-90 sm:-bottom-28 md:-bottom-72 ${UNION_DECORATIVE_BOX_BOTTOM}`}
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="h-full w-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="h-full w-full object-contain" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[80px] sm:pt-[110px] pb-16 relative z-10">

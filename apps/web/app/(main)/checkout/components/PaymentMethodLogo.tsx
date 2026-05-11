@@ -1,5 +1,7 @@
 'use client';
 
+import { toR2Url } from '@/lib/r2-assets';
+
 interface PaymentMethodLogoProps {
   paymentMethod: 'arca';
   logoErrors: Record<string, boolean>;
@@ -19,7 +21,7 @@ export function PaymentMethodLogo({
   onError,
   size = 'medium',
 }: PaymentMethodLogoProps) {
-  const logoPath = '/assets/payments/arca.svg';
+  const logoPath = toR2Url('/assets/payments/arca.svg');
   const altText = 'ArCa';
 
   if (logoErrors[paymentMethod]) {

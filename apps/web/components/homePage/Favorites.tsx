@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '../../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
 interface MenuItem {
@@ -59,7 +60,7 @@ export function Favorites({ items = [] }: FavoritesProps) {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[800px] max-h-[800px] ">
           <img
-            src="/assets/hero/union-decorative.png"
+            src={toR2Url('/assets/hero/union-decorative.png')}
             alt=""
             className="w-full h-full object-contain"
             aria-hidden="true"
@@ -76,7 +77,7 @@ export function Favorites({ items = [] }: FavoritesProps) {
           {/* Vector7 декоративный паттерн под заголовком - из Figma */}
           <div className="relative w-[50%] max-w-[300px] h-[8px] md:h-[10px] lg:h-[12px] mt-4 mb-8 flex justify-center mx-auto">
             <Image
-              src="/assets/hero/Vector7.svg"
+              src={toR2Url('/assets/hero/Vector7.svg')}
               alt=""
               fill
               className="object-contain"

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { toR2Url } from '@/lib/r2-assets';
+
 /** Shared SEO / Open Graph copy for the storefront — keep in sync across root layout and `/`. */
 export const SITE_TITLE = 'Kovkasyan Plennica';
 
@@ -7,7 +9,7 @@ export const SITE_DESCRIPTION =
   'В «Кавказской пленнице» вы окунётесь в атмосферу любимого фильма, насладитесь вкусной кухней и прекрасно проведёте время с семьёй или друзьями.';
 
 /** Default site-wide metadata fragment (requires `metadataBase` from the root layout). */
-const FAVICON_PATH = '/assets/New%20folder/favicon.png';
+const FAVICON_PATH = toR2Url('/assets/New folder/favicon.png');
 
 export function getRootSiteMetadata(metadataBase: URL): Metadata {
   return {

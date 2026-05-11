@@ -4,9 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
+import { staticAssetHref, toR2Url } from '@/lib/r2-assets';
 
-const ABOUT_HOME_IMAGE_FIRST = encodeURI('/assets/New folder/JW_01347 1.webp');
-const ABOUT_HOME_IMAGE_SECOND = encodeURI('/assets/New folder/JW_01369-редакт 1.webp');
+const ABOUT_HOME_IMAGE_FIRST = staticAssetHref('/assets/New folder/JW_01347 1.webp');
+const ABOUT_HOME_IMAGE_SECOND = staticAssetHref('/assets/New folder/JW_01369-редакт 1.webp');
 
 /**
  * Mobile About — два блока (картинка + текст), заголовок О НАС, кнопка Узнать больше.
@@ -45,7 +46,7 @@ export function MobileAbout() {
           {t('home.about.title')}
         </h2>
         <div className="relative w-[180px] h-[5px] mx-auto mb-8">
-          <Image src="/assets/hero/Vector7.svg" alt="" fill className="object-contain grayscale" aria-hidden unoptimized />
+          <Image src={toR2Url('/assets/hero/Vector7.svg')} alt="" fill className="object-contain grayscale" aria-hidden unoptimized />
         </div>
 
         {/* Блок 1: картинка слева, текст справа */}

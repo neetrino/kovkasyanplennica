@@ -8,8 +8,9 @@ import type { QuickBookingValues } from './DesktopsBookingQuickBar';
 import { ReservationModal } from './ReservationModal';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
+import { toR2Url } from '@/lib/r2-assets';
 
-const TABLES_SECTION_DIVIDER_SRC = '/assets/hero/Vector7.svg';
+const TABLES_SECTION_DIVIDER_SRC = toR2Url('/assets/hero/Vector7.svg');
 
 export default function DesktopsPage() {
   const { t } = useTranslation();
@@ -74,13 +75,13 @@ export default function DesktopsPage() {
         className="pointer-events-none absolute left-1/2 top-0 z-0 aspect-square max-h-[420px] w-[260px] -translate-x-1/2 opacity-25 md:max-h-[480px] md:w-[380px]"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="size-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="size-full object-contain" />
       </div>
       <div
         className="pointer-events-none absolute bottom-0 right-0 z-[1] aspect-square max-h-[320px] w-[200px] translate-x-1/4 translate-y-1/4 opacity-15 md:max-h-[380px] md:w-[280px]"
         aria-hidden
       >
-        <img src="/assets/hero/union-decorative.png" alt="" className="size-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="size-full object-contain" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 md:py-14">

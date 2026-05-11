@@ -83,13 +83,14 @@ const nextConfig = {
         hostname: '*.r2.dev',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev',
+        pathname: '/assets/**',
+      },
     ],
-    // Allow unoptimized images for development (images will use unoptimized prop)
-    // Ensure image optimization is enabled for production
     formats: ['image/avif', 'image/webp'],
-    // In development, disable image optimization globally to allow any local IP
-    // Components can still use unoptimized prop, but this ensures all images work
-    unoptimized: process.env.NODE_ENV === 'development',
+    unoptimized: true,
   },
   // Fix for HMR issues in Next.js 15
   webpack: (config, { dev, isServer }) => {

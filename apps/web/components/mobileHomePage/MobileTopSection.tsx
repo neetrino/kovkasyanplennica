@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice, getStoredCurrency } from '../../lib/currency';
 import type { MobileTopProduct } from '@/lib/home/mobile-home-sections';
+import { toR2Url } from '@/lib/r2-assets';
 
 /** Bottom-left blob for «Топ» card (matches design SVG). */
 const MOBILE_TOP_CARD_GREEN_PATH =
@@ -49,7 +50,7 @@ function MobileTopFeaturedCard({
             </svg>
             <div className="absolute inset-0 flex flex-col justify-end gap-2 px-3 pb-3 pt-6 text-white">
               <div className="flex min-w-0 items-center gap-1.5 text-[14px] leading-[1.45]">
-                <Image src="/assets/mobile-home/time-light.svg" alt="" width={16} height={16} aria-hidden />
+                <Image src={toR2Url('/assets/mobile-home/time-light.svg')} alt="" width={16} height={16} aria-hidden />
                 <span className="truncate">{meta}</span>
               </div>
               <p className="line-clamp-2 text-[16px] leading-[1.35]">{title}</p>

@@ -1,8 +1,10 @@
+import { toR2Url } from '@/lib/r2-assets';
+
 /** Figma node 200:2336 — exported SVG hashes under /public/assets/desktops/figma */
 const BASE = '/assets/desktops/figma';
 
 function asset(hash: string): string {
-  return `${BASE}/${hash}.svg`;
+  return toR2Url(`${BASE}/${hash}.svg`);
 }
 
 export const figmaFloorAssets = {
