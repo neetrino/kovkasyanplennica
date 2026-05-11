@@ -111,7 +111,7 @@ function getPrizePreview(prize: SpinWheelPrize) {
 export function SpinWheelPopup() {
   const { t } = useTranslation();
   const pathname = usePathname();
-  const { isLoading, isLoggedIn, isAdmin } = useAuth();
+  const { isLoading, isAdmin } = useAuth();
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -187,7 +187,7 @@ export function SpinWheelPopup() {
   }, [isCelebrating]);
 
   useEffect(() => {
-    if (isLoading || !isLoggedIn || isAdmin) {
+    if (isLoading || isAdmin) {
       return;
     }
 
@@ -220,7 +220,7 @@ export function SpinWheelPopup() {
     return () => {
       window.clearTimeout(delayTimer);
     };
-  }, [isAdmin, isLoading, isLoggedIn, pathname]);
+  }, [isAdmin, isLoading, pathname]);
 
   const handleSpin = async () => {
     if (spinning || visiblePrizes.length === 0 || remainingSpins <= 0) {
