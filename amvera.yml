@@ -5,11 +5,7 @@ meta:
     version: 20
 
 build:
-  additionalCommands: |
-    npm install --include=optional
-    NEXT_VERSION=$(node -p "require('./node_modules/next/package.json').version")
-    npm install --no-save @next/swc-linux-x64-gnu@$NEXT_VERSION
-    npm run build
+  additionalCommands: bash scripts/amvera-build.sh
 
 run:
   command: npm run start --workspace=@shop/web
