@@ -17,7 +17,8 @@
     "migrate:mongo-to-postgres": "tsx scripts/migrate-mongo-to-postgres.ts",
     "create-admin": "tsx scripts/create-admin.ts",
     "deploy:neon-migrations": "tsx scripts/deploy-neon-migrations.ts",
-    "setup:neon-db": "tsx scripts/setup-neon-db.ts"
+    "setup:neon-db": "tsx scripts/setup-neon-db.ts",
+    "migrate:deploy": "npm run prebuild:migrate --workspace=@shop/web"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3"
