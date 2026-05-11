@@ -18,6 +18,31 @@ import * as prizeCrud from "./spin-wheel-prize-crud";
 import * as wins from "./spin-wheel-wins";
 import { getProductSnapshotsSafe } from "./spin-wheel-product-snapshot";
 
+async function hydratePrizesWithProducts(prizes: SpinWheelPrize[]) {
+  const productIdsByPrize = prizes.map((prize) => ({
+    prize,
+    ids: prize.productIds?.length ? prize.productIds : [prize.productId].filter(Boolean),
+  }));
+  const hydratedProducts = await Promise.all(
+    productIdsByPrize.map(({ ids }) => getProductSnapshotsSafe(ids))
+  );
+  return prizes.map((prize, index) => {
+    const fresh = hydratedProducts[index];
+    if (fresh.length === 0) {
+      return prize;
+    }
+    const first = fresh[0];
+    return {
+      ...prize,
+      products: fresh,
+      productId: first.productId,
+      productTitle: first.productTitle,
+      productSlug: first.productSlug,
+      productImageUrl: first.productImageUrl,
+    };
+  });
+}
+
 class SpinWheelService {
   async getAdminPrizes() {
     const prizesStore = await store.getPrizesStore();
@@ -49,29 +74,7 @@ class SpinWheelService {
       .filter((p) => isPrizeActive(p as SpinWheelPrize, now))
       .map((p) => normalizePrize(p as SpinWheelPrize));
     const eligiblePrizes = activePrizes.filter((p) => isEligibleForPrize(p, userId));
-
-    const productIdsByPrize = eligiblePrizes.map((p) => ({
-      prize: p,
-      ids: p.productIds?.length ? p.productIds : [p.productId].filter(Boolean),
-    }));
-    const hydratedProducts = await Promise.all(
-      productIdsByPrize.map(({ ids }) => getProductSnapshotsSafe(ids))
-    );
-    const prizesWithFreshProducts: SpinWheelPrize[] = eligiblePrizes.map((p, i) => {
-      const fresh = hydratedProducts[i];
-      if (fresh.length > 0) {
-        const first = fresh[0];
-        return {
-          ...p,
-          products: fresh,
-          productId: first.productId,
-          productTitle: first.productTitle,
-          productSlug: first.productSlug,
-          productImageUrl: first.productImageUrl,
-        };
-      }
-      return p;
-    });
+    const prizesWithFreshProducts = await hydratePrizesWithProducts(eligiblePrizes);
 
     const eligiblePrizeIds = new Set(prizesWithFreshProducts.map((p) => p.id));
     const userAttempts = attemptsStore.attempts.filter(
