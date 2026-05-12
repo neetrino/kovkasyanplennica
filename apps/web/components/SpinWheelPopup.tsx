@@ -374,15 +374,15 @@ export function SpinWheelPopup() {
             <h2 className="mt-3 text-2xl font-bold tracking-tight text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.38)] md:text-3xl">
               {t('home.spinWheel.title')}
             </h2>
-            <p className="mt-2 max-w-md text-sm leading-6 text-white/88 drop-shadow-[0_4px_12px_rgba(0,0,0,0.28)]">
+            <p className="mt-2 max-w-md text-sm leading-6 text-[#f3cf91] drop-shadow-[0_4px_12px_rgba(0,0,0,0.28)]">
               {t('home.spinWheel.subtitle')}
             </p>
           </div>
           <div className="inline-flex items-center rounded-2xl border border-white/16 bg-white/10 px-4 py-3 shadow-[0_12px_28px_rgba(0,0,0,0.16)] backdrop-blur">
             <div className="mr-3 h-2.5 w-2.5 rounded-full bg-[#7ef2c6] shadow-[0_0_14px_rgba(126,242,198,0.95)]" />
             <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-white/72">Spins left</p>
-              <p className="text-lg font-semibold text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.28)]">{remainingSpins}</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[#f3cf91]/85">Spins left</p>
+              <p className="text-lg font-semibold text-[#fff4de] drop-shadow-[0_4px_10px_rgba(0,0,0,0.28)]">{remainingSpins}</p>
             </div>
           </div>
         </div>
@@ -450,13 +450,15 @@ export function SpinWheelPopup() {
                         <img src={preview.imageUrl} alt={preview.title} className="h-full w-full object-cover" />
                       </div>
                     ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-black/5 text-[8px]">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-white/40 bg-white/10 text-[8px] text-white/90">
                         IMG
                       </div>
                     )}
                     <p
-                      className={`mt-2 max-w-[96px] line-clamp-2 text-center text-[9px] font-semibold leading-tight ${
-                        isHighlighted ? 'text-[#1d2927] drop-shadow-[0_2px_8px_rgba(255,255,255,0.7)]' : 'text-[#2f3f3d]'
+                      className={`mt-2 max-w-[96px] line-clamp-2 text-center text-[9px] font-extrabold leading-tight ${
+                        isHighlighted
+                          ? 'text-[#1f1f1f] drop-shadow-[0_1px_4px_rgba(255,255,255,0.28)]'
+                          : 'text-[#111111] drop-shadow-[0_1px_4px_rgba(255,255,255,0.22)]'
                       }`}
                     >
                       {preview.title}
@@ -482,7 +484,7 @@ export function SpinWheelPopup() {
         </div>
 
         <div className="relative z-[1] mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:pr-[18rem]">
-          <p className="max-w-md text-sm leading-6 text-[#fff4de]/72">
+          <p className="max-w-md text-sm leading-6 text-[#f3cf91]">
             {t('home.spinWheel.remainingSpins').replace('{count}', String(remainingSpins))}
           </p>
           <button
@@ -502,16 +504,30 @@ export function SpinWheelPopup() {
               ...(wonPrizePreview.imageUrl && { productImageUrl: wonPrizePreview.imageUrl }),
             }).toString()}`}
             onClick={() => setOpen(false)}
-            className="group relative z-[1] mt-4 flex overflow-hidden rounded-[24px] border border-white/12 bg-[linear-gradient(145deg,rgba(32,48,46,0.92),rgba(18,29,27,0.96))] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-colors hover:border-[#f8c56e]/30 hover:bg-[linear-gradient(145deg,rgba(38,56,54,0.95),rgba(22,35,33,0.98))] md:absolute md:bottom-0 md:right-0 md:mt-0 md:w-[17rem]"
+            className="group relative z-[1] mt-4 flex overflow-hidden rounded-[24px] border border-white/12 bg-[linear-gradient(145deg,rgba(32,48,46,0.92),rgba(18,29,27,0.96))] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-colors hover:border-[#f8c56e]/30 hover:bg-[linear-gradient(145deg,rgba(38,56,54,0.95),rgba(22,35,33,0.98))] md:absolute md:bottom-0 md:right-0 md:mt-0 md:w-[19rem]"
           >
             <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-[#f8c56e]/16 blur-2xl" />
             <div className="pointer-events-none absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-[#7ef2c6]/10 blur-2xl" />
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#f3cf91]">
-              {t('home.spinWheel.youWon')}
-            </p>
-            <div className="relative flex flex-1 items-center gap-3">
+            <div className="relative grid w-full grid-cols-[5rem_minmax(0,1fr)] items-end gap-x-4 gap-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] leading-4 text-[#f3cf91]">
+                {t('home.spinWheel.youWon')}
+              </p>
+              <div className="row-span-2 min-w-0">
+                <p className="line-clamp-2 text-base font-extrabold leading-tight text-[#fff4de]">
+                  {wonPrizePreview.title}
+                </p>
+                <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#f3cf91]/85">
+                  {t('home.spinWheel.winMessage').replace('{title}', wonPrizePreview.title)}
+                </p>
+                <p className="mt-2 text-[11px] font-semibold text-[#ffe4b3]">
+                  Чтобы забрать выигрыш, нажмите «Бронировать»
+                </p>
+                <span className="mt-2 inline-flex items-center whitespace-nowrap rounded-full border border-[#f8c56e]/18 bg-white/8 px-3 py-1.5 text-xs font-semibold text-[#fff4de] transition-colors group-hover:bg-white/14">
+                  Бронировать
+                </span>
+              </div>
               {wonPrizePreview.imageUrl ? (
-                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-[18px] border border-white/10 bg-white/90 shadow-[0_10px_24px_rgba(0,0,0,0.16)]">
+                <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[18px] border border-white/10 bg-white/90 shadow-[0_10px_24px_rgba(0,0,0,0.16)]">
                   <img
                     src={wonPrizePreview.imageUrl}
                     alt={wonPrizePreview.title}
@@ -519,19 +535,10 @@ export function SpinWheelPopup() {
                   />
                 </div>
               ) : (
-                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-[18px] bg-white/80 text-[10px] text-gray-500">
+                <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-[18px] bg-white/80 text-[10px] text-gray-500">
                   {t('home.spinWheel.noImage')}
                 </div>
               )}
-              <div className="min-w-0 flex-1">
-                <p className="line-clamp-1 text-sm font-bold text-[#fff4de]">{wonPrizePreview.title}</p>
-                <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/64">
-                  {t('home.spinWheel.winMessage').replace('{title}', wonPrizePreview.title)}
-                </p>
-                <span className="mt-2 inline-flex items-center whitespace-nowrap rounded-full border border-[#f8c56e]/18 bg-white/8 px-3 py-1.5 text-xs font-semibold text-[#fff4de] transition-colors group-hover:bg-white/14">
-                  {t('home.spinWheel.bookTable')}
-                </span>
-              </div>
             </div>
           </Link>
         )}
