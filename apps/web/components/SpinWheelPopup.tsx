@@ -50,7 +50,7 @@ interface SpinResponse {
 /** Slot count; prizes are placed on a circle like clock numbers. */
 const WHEEL_SLOT_COUNT_CONST = 8;
 /** Radius of the circle (as % of half size) for slot centers. */
-const WHEEL_SLOT_RADIUS_PERCENT = 38;
+const WHEEL_SLOT_RADIUS_PERCENT = 35;
 
 /**
  * Returns left/top in % for a slot on the wheel circle.
@@ -134,8 +134,7 @@ export function SpinWheelPopup() {
       return [];
     }
 
-    const source = prizes
-      .flatMap((prize) => {
+    const expanded = prizes.flatMap((prize) => {
         const prizeProducts = prize.products?.length
           ? prize.products
           : [
@@ -154,13 +153,17 @@ export function SpinWheelPopup() {
           productSlug: product.productSlug,
           productImageUrl: product.productImageUrl,
         }));
-      })
-      .slice(0, WHEEL_SLOT_COUNT);
+      });
 
-    if (source.length === WHEEL_SLOT_COUNT) {
-      return source;
+    const uniqueByPrizeProduct = new Map<string, (typeof expanded)[number]>();
+    for (const item of expanded) {
+      const key = `${item.id}:${item.productId}`;
+      if (!uniqueByPrizeProduct.has(key)) {
+        uniqueByPrizeProduct.set(key, item);
+      }
     }
-    return Array.from({ length: WHEEL_SLOT_COUNT }, (_, index) => source[index % source.length]);
+
+    return Array.from(uniqueByPrizeProduct.values()).slice(0, WHEEL_SLOT_COUNT);
   }, [prizes]);
   const confettiPieces = useMemo(
     () =>
@@ -327,8 +330,8 @@ export function SpinWheelPopup() {
   }
 
   return (
-    <div className="fixed inset-0 z-app-overlay pointer-events-none flex items-start justify-center bg-[#081311]/75 p-4 py-6 backdrop-blur-md">
-      <div className="relative w-full max-w-2xl pointer-events-auto overflow-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,244,222,0.14),_transparent_34%),linear-gradient(145deg,_rgba(34,51,49,0.96),_rgba(15,27,25,0.98))] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:p-5">
+    <div className="fixed inset-0 z-app-overlay pointer-events-none flex items-start justify-center overflow-y-auto bg-[#081311]/75 p-4 py-6 backdrop-blur-md md:overflow-y-hidden">
+      <div className="relative max-h-[calc(100vh-3rem)] w-full max-w-2xl pointer-events-auto overflow-y-auto overflow-x-hidden rounded-[30px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,244,222,0.14),_transparent_34%),linear-gradient(145deg,_rgba(34,51,49,0.96),_rgba(15,27,25,0.98))] p-4 shadow-[0_30px_90px_rgba(0,0,0,0.45)] md:max-h-none md:overflow-visible md:p-5">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_36%,transparent_64%,rgba(255,255,255,0.04))]" />
         <div className="pointer-events-none absolute -top-24 -left-16 h-56 w-56 rounded-full bg-[#fff4de]/10 blur-3xl" />
         <div className="pointer-events-none absolute top-1/3 -right-12 h-40 w-40 rounded-full bg-[#f8c56e]/20 blur-3xl" />
@@ -371,14 +374,11 @@ export function SpinWheelPopup() {
             <span className="inline-flex items-center rounded-full border border-[#f8c56e]/40 bg-[#f8c56e]/14 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#ffe4b3] shadow-[0_6px_18px_rgba(248,197,110,0.18)]">
               Lucky Drop
             </span>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.38)] md:text-3xl">
-              {t('home.spinWheel.title')}
-            </h2>
             <p className="mt-2 max-w-md text-sm leading-6 text-[#f3cf91] drop-shadow-[0_4px_12px_rgba(0,0,0,0.28)]">
               {t('home.spinWheel.subtitle')}
             </p>
           </div>
-          <div className="inline-flex items-center rounded-2xl border border-white/16 bg-white/10 px-4 py-3 shadow-[0_12px_28px_rgba(0,0,0,0.16)] backdrop-blur">
+          <div className="hidden items-center rounded-2xl border border-white/16 bg-white/10 px-4 py-3 shadow-[0_12px_28px_rgba(0,0,0,0.16)] backdrop-blur sm:inline-flex">
             <div className="mr-3 h-2.5 w-2.5 rounded-full bg-[#7ef2c6] shadow-[0_0_14px_rgba(126,242,198,0.95)]" />
             <div>
               <p className="text-[11px] uppercase tracking-[0.18em] text-[#f3cf91]/85">Spins left</p>
@@ -389,7 +389,7 @@ export function SpinWheelPopup() {
 
         <div className="relative z-[1] mx-auto">
           <div className="pointer-events-none absolute inset-6 rounded-full bg-[radial-gradient(circle,_rgba(248,197,110,0.3),_transparent_62%)] blur-2xl" />
-          <div className="mx-auto relative h-[18rem] w-[18rem] rounded-full border border-white/12 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.06),rgba(255,255,255,0.015),rgba(255,255,255,0.07),rgba(255,255,255,0.015),rgba(255,255,255,0.06))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_80px_rgba(5,14,13,0.55)] md:h-[21rem] md:w-[21rem]">
+          <div className="mx-auto -translate-x-3.5 relative h-[20rem] w-[20rem] rounded-full border border-white/12 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(255,255,255,0.06),rgba(255,255,255,0.015),rgba(255,255,255,0.07),rgba(255,255,255,0.015),rgba(255,255,255,0.06))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_80px_rgba(5,14,13,0.55)] sm:translate-x-0 sm:h-[21rem] sm:w-[21rem] md:h-[27rem] md:w-[27rem]">
             <div className="absolute inset-[18px] rounded-full border-[10px] border-[#f5d9a8]/80 bg-[radial-gradient(circle_at_50%_35%,#fff4de_0%,#f4d59d_34%,#d9aa67_100%)] shadow-[inset_0_10px_22px_rgba(255,255,255,0.35),inset_0_-14px_24px_rgba(120,78,23,0.22),0_0_0_10px_rgba(255,255,255,0.05)]" />
           <div
             className={`absolute left-1/2 -top-[18px] z-10 -translate-x-1/2 ${wheelTransitioning ? 'pointer-tick' : ''}`}
@@ -432,7 +432,7 @@ export function SpinWheelPopup() {
               return (
                 <div
                   key={`${prize.id}-${prize.productId}-${index}`}
-                  className={`wheel-slot-${index} absolute flex h-[94px] w-[106px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                  className={`wheel-slot-${index} absolute flex h-[94px] w-[106px] flex-col items-center justify-center -translate-x-1/2 -translate-y-1/2 transition-all duration-300 md:h-[100px] md:w-[112px] ${
                     isHighlighted ? 'scale-[1.08]' : ''
                   }`}
                 >
@@ -450,12 +450,12 @@ export function SpinWheelPopup() {
                         <img src={preview.imageUrl} alt={preview.title} className="h-full w-full object-cover" />
                       </div>
                     ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-white/40 bg-white/10 text-[8px] text-white/90">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-dashed border-white/40 bg-white/10 text-[10px] text-white/90">
                         IMG
                       </div>
                     )}
                     <p
-                      className={`mt-2 max-w-[96px] line-clamp-2 text-center text-[9px] font-extrabold leading-tight ${
+                      className={`mt-2 max-w-[110px] line-clamp-2 text-center text-[10px] font-extrabold leading-tight sm:text-[11px] md:max-w-[116px] md:text-[11px] md:leading-snug ${
                         isHighlighted
                           ? 'text-[#1f1f1f] drop-shadow-[0_1px_4px_rgba(255,255,255,0.28)]'
                           : 'text-[#111111] drop-shadow-[0_1px_4px_rgba(255,255,255,0.22)]'
@@ -473,7 +473,7 @@ export function SpinWheelPopup() {
               type="button"
               onClick={handleSpin}
               disabled={spinning || remainingSpins <= 0}
-              className="spin-core relative flex h-24 w-24 items-center justify-center rounded-full border-[6px] border-[#ffe7b9] bg-[radial-gradient(circle_at_35%_30%,#496661_0%,#243330_62%,#172220_100%)] text-[#fff4de] shadow-[0_18px_40px_rgba(10,20,18,0.45)] transition-transform hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+              className="spin-core relative flex h-[7rem] w-[7rem] items-center justify-center rounded-full border-[6px] border-[#ffe7b9] bg-[radial-gradient(circle_at_35%_30%,#496661_0%,#243330_62%,#172220_100%)] text-[#fff4de] shadow-[0_18px_40px_rgba(10,20,18,0.45)] transition-transform hover:scale-[1.03] sm:h-28 sm:w-28 md:h-36 md:w-36 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
             >
               <div className="absolute inset-2 rounded-full border border-white/10" />
               <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_rgba(248,197,110,0.18),_transparent_60%)]" />
@@ -491,7 +491,7 @@ export function SpinWheelPopup() {
             type="button"
             onClick={handleSpin}
             disabled={spinning || remainingSpins <= 0}
-            className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#fff4de,#f7cb7d)] px-6 py-3 text-sm font-bold text-[#21312f] shadow-[0_16px_30px_rgba(248,197,110,0.28)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_34px_rgba(248,197,110,0.34)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="inline-flex items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#fff4de,#f7cb7d)] px-6 py-3 text-sm font-bold text-[#21312f] shadow-[0_16px_30px_rgba(248,197,110,0.28)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_34px_rgba(248,197,110,0.34)] md:translate-x-5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
           >
             {spinning ? t('home.spinWheel.spinning') : t('home.spinWheel.spinNow')}
           </button>
