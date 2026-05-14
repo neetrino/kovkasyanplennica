@@ -115,7 +115,7 @@ export function AdminLayoutShell({ children }: { children: ReactNode }) {
   return (
     <AdminNavThemeProvider>
       <div className="box-border flex min-h-dvh w-full flex-col border border-admin-brand-2/35 bg-admin-surface">
-        <div className="flex min-h-0 flex-1 flex-col gap-8 py-8 lg:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col gap-5 py-8 lg:flex-row lg:gap-0">
           <AdminSidebar
             currentPath={currentPath}
             router={router}

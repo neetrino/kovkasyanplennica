@@ -4,7 +4,7 @@
  */
 
 export const dashboardMainClass =
-  'mx-auto w-full max-w-[1400px] space-y-6 px-4 pb-8 sm:space-y-7 sm:px-6 lg:space-y-8 lg:px-10';
+  'mx-auto w-full max-w-[1400px] space-y-6 px-4 pb-8 sm:space-y-7 sm:px-6 lg:mx-0 lg:space-y-8 lg:px-0';
 
 export const dashboardCardPadding = 'p-5 sm:p-6';
 
