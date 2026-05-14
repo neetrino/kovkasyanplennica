@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
@@ -130,6 +130,13 @@ function statusSelectClass(status: string): string {
   );
 }
 
+function reservationDateTimeValue(date: string, time: string): number {
+  const normalizedDate = date.trim();
+  const normalizedTime = time.trim();
+  const value = Date.parse(`${normalizedDate}T${normalizedTime}:00`);
+  return Number.isNaN(value) ? 0 : value;
+}
+
 export default function AdminDesktopsPage() {
   const { t } = useTranslation();
   const { isLoggedIn, canAccessAdmin, isLoading } = useAuth();
@@ -141,6 +148,8 @@ export default function AdminDesktopsPage() {
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('');
+  const [dateTimeSort, setDateTimeSort] = useState<'' | 'desc' | 'asc'>('');
+  const [dateTimeSortMenuOpen, setDateTimeSortMenuOpen] = useState(false);
   const [createForm, setCreateForm] = useState<ReservationCreateForm>(INITIAL_CREATE_FORM);
   const [createBusyIntervals, setCreateBusyIntervals] = useState<ReservationBusyInterval[]>([]);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -180,6 +189,21 @@ export default function AdminDesktopsPage() {
       fetchReservations();
     }
   }, [isLoggedIn, canAccessAdmin, fetchReservations]);
+
+  const dateTimeSortMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!dateTimeSortMenuOpen) return;
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!dateTimeSortMenuRef.current?.contains(event.target as Node)) {
+        setDateTimeSortMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [dateTimeSortMenuOpen]);
 
   const selectedTable = TABLES.find((table) => table.id === createForm.tableId) ?? null;
 
@@ -329,9 +353,9 @@ export default function AdminDesktopsPage() {
   };
 
   const toggleSelectAll = () => {
-    if (reservations.length === 0) return;
+    if (visibleReservations.length === 0) return;
     setSelectedIds((prev) => {
-      const allIds = reservations.map((r) => r.id);
+      const allIds = visibleReservations.map((r) => r.id);
       const hasAll = allIds.every((id) => prev.has(id));
       return hasAll ? new Set() : new Set(allIds);
     });
@@ -386,6 +410,15 @@ export default function AdminDesktopsPage() {
     }
   };
 
+  const visibleReservations = useMemo(() => {
+    if (!dateTimeSort) return reservations;
+    return [...reservations].sort((a, b) => {
+      const aValue = reservationDateTimeValue(a.date, a.time);
+      const bValue = reservationDateTimeValue(b.date, b.time);
+      return dateTimeSort === 'asc' ? aValue - bValue : bValue - aValue;
+    });
+  }, [dateTimeSort, reservations]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center px-4">
@@ -405,15 +438,16 @@ export default function AdminDesktopsPage() {
     <div className={dashboardMainClass}>
       <Card variant="admin" className="overflow-hidden p-0">
         <div className={`${dashboardCardPadding} space-y-5`}>
-          <header>
-            <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.desktopsReservations.title')}</h1>
-            {meta ? (
-              <p className="mt-1 text-sm text-admin-brand/60">
-                {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
-              </p>
-            ) : null}
-          </header>
-          <div className="flex flex-wrap items-center justify-start gap-3 sm:justify-end">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <header className="min-w-0 flex-1">
+              <h1 className="text-xl font-semibold tracking-tight text-admin-brand">{t('admin.desktopsReservations.title')}</h1>
+              {meta ? (
+                <p className="mt-1 text-base text-admin-brand/90">
+                  {t('admin.desktopsReservations.totalSubtitle').replace('{count}', String(meta.total))}
+                </p>
+              ) : null}
+            </header>
+            <div className="flex flex-wrap items-center justify-start gap-3 sm:justify-end lg:flex-nowrap">
             <div className="flex min-w-0 max-w-full items-center gap-2 sm:min-w-[12rem]">
               <label
                 htmlFor="desktop-reservation-status"
@@ -453,6 +487,7 @@ export default function AdminDesktopsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
+            </div>
           </div>
         </div>
 
@@ -629,7 +664,7 @@ export default function AdminDesktopsPage() {
             <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
             <p className={dashboardEmptyText}>{t('admin.desktopsReservations.loading')}</p>
           </div>
-        ) : reservations.length === 0 ? (
+        ) : visibleReservations.length === 0 ? (
           <div className="py-16 text-center">
             <svg
               className="mx-auto mb-4 h-12 w-12 text-admin-brand/25"
@@ -656,7 +691,10 @@ export default function AdminDesktopsPage() {
                     <input
                       type="checkbox"
                       aria-label={t('admin.desktopsReservations.selectAllAria')}
-                      checked={reservations.length > 0 && reservations.every((r) => selectedIds.has(r.id))}
+                      checked={
+                        visibleReservations.length > 0 &&
+                        visibleReservations.every((reservation) => selectedIds.has(reservation.id))
+                      }
                       onChange={toggleSelectAll}
                       className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                     />
@@ -664,7 +702,45 @@ export default function AdminDesktopsPage() {
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colTable')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colName')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colContact')}</th>
-                  <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colDateTime')}</th>
+                  <th className={`${adminTableHeadCellClass} !px-4`}>
+                    <div ref={dateTimeSortMenuRef} className="relative inline-flex items-center gap-1.5">
+                      <span>{t('admin.desktopsReservations.colDateTime')}</span>
+                      <button
+                        type="button"
+                        onClick={() => setDateTimeSortMenuOpen((prev) => !prev)}
+                        aria-label={t('admin.desktopsReservations.colDateTime')}
+                        className="inline-flex h-5 w-5 items-center justify-center rounded text-admin-brand/75 transition-colors hover:bg-admin-surface hover:text-admin-brand focus:outline-none focus:ring-2 focus:ring-admin-brand/20"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {dateTimeSortMenuOpen ? (
+                        <div className="absolute right-0 top-full z-20 mt-1 min-w-[6.75rem] rounded-md border border-admin-brand-2/20 bg-white py-1 shadow-md normal-case">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDateTimeSort('desc');
+                              setDateTimeSortMenuOpen(false);
+                            }}
+                            className="block w-full px-2 py-1 text-left text-xs font-medium text-admin-brand transition-colors hover:bg-admin-surface"
+                          >
+                            Новые
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDateTimeSort('asc');
+                              setDateTimeSortMenuOpen(false);
+                            }}
+                            className="block w-full px-2 py-1 text-left text-xs font-medium text-admin-brand transition-colors hover:bg-admin-surface"
+                          >
+                            Старые
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colOccasion')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colGuests')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colStatusShort')}</th>
@@ -694,7 +770,7 @@ export default function AdminDesktopsPage() {
                 </tr>
               </thead>
               <tbody className={adminTableBodyClass}>
-                {reservations.map((r) => (
+                {visibleReservations.map((r) => (
                   <tr key={r.id} className={adminTableRowHoverClass}>
                     <td className="px-4 py-4">
                       <input
