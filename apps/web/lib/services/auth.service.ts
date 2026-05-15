@@ -207,11 +207,8 @@ class AuthService {
       };
     }
 
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" } as jwt.SignOptions
-    );
+    // Session until explicit logout: omit JWT `exp` so time-based expiry does not force re-login.
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string);
     logger.info("Auth: JWT token generated");
 
     return {
@@ -314,11 +311,8 @@ class AuthService {
       };
     }
 
-    const token = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" } as jwt.SignOptions
-    );
+    // Session until explicit logout: omit JWT `exp` so time-based expiry does not force re-login.
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string);
 
     logger.info("Auth login successful", { userId: user.id });
 

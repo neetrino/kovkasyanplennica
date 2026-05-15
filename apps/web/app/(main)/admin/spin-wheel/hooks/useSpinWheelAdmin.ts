@@ -24,6 +24,10 @@ interface PrizesResponse {
   data: SpinWheelPrize[];
 }
 
+interface SpinWheelFeatureResponse {
+  enabled: boolean;
+}
+
 interface AdminProductsListResponse {
   data: Array<{ id: string; title: string; image?: string | null }>;
 }
@@ -71,6 +75,9 @@ export function useSpinWheelAdmin() {
   const [pickerSearch, setPickerSearch] = useState('');
   const [pickerProducts, setPickerProducts] = useState<PickerProductItem[]>([]);
   const [pickerLoading, setPickerLoading] = useState(false);
+  const [spinWheelFeatureEnabled, setSpinWheelFeatureEnabled] = useState(true);
+  const [featureToggling, setFeatureToggling] = useState(false);
+  const [togglingPrizeId, setTogglingPrizeId] = useState<string | null>(null);
 
   const isEditMode = editingId !== null;
 
@@ -83,6 +90,11 @@ export function useSpinWheelAdmin() {
   const fetchPrizes = useCallback(async () => {
     const response = await apiClient.get<PrizesResponse>('/api/v1/admin/spin-wheel/prizes');
     setPrizes(response.data || []);
+  }, []);
+
+  const fetchSpinWheelFeature = useCallback(async () => {
+    const response = await apiClient.get<SpinWheelFeatureResponse>('/api/v1/admin/spin-wheel/feature');
+    setSpinWheelFeatureEnabled(response.enabled);
   }, []);
 
   const fetchCategories = useCallback(async () => {
@@ -121,11 +133,11 @@ export function useSpinWheelAdmin() {
   const fetchAll = useCallback(async () => {
     setPageLoading(true);
     try {
-      await Promise.all([fetchPrizes(), fetchUsers()]);
+      await Promise.all([fetchPrizes(), fetchUsers(), fetchSpinWheelFeature()]);
     } finally {
       setPageLoading(false);
     }
-  }, [fetchPrizes, fetchUsers]);
+  }, [fetchPrizes, fetchUsers, fetchSpinWheelFeature]);
 
   useEffect(() => {
     if (!isLoading && (!isLoggedIn || !isAdmin)) {
@@ -284,6 +296,40 @@ export function useSpinWheelAdmin() {
     setProductPickerOpen(false);
   }, []);
 
+  const handleSpinWheelFeatureToggle = useCallback(async () => {
+    if (featureToggling) return;
+    const next = !spinWheelFeatureEnabled;
+    setFeatureToggling(true);
+    try {
+      const response = await apiClient.patch<SpinWheelFeatureResponse>(
+        '/api/v1/admin/spin-wheel/feature',
+        { enabled: next }
+      );
+      setSpinWheelFeatureEnabled(response.enabled);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : t('admin.common.error');
+      alert(t('admin.spinWheel.publicToggleSaveError').replace('{message}', errorMessage));
+    } finally {
+      setFeatureToggling(false);
+    }
+  }, [featureToggling, spinWheelFeatureEnabled, t]);
+
+  const handlePrizeEnabledToggle = useCallback(
+    async (prizeId: string, enabled: boolean) => {
+      setTogglingPrizeId(prizeId);
+      try {
+        await apiClient.put(`/api/v1/admin/spin-wheel/prizes/${prizeId}`, { enabled });
+        await fetchPrizes();
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : t('admin.common.error');
+        alert(t('admin.spinWheel.prizeToggleSaveError').replace('{message}', errorMessage));
+      } finally {
+        setTogglingPrizeId(null);
+      }
+    },
+    [fetchPrizes, t]
+  );
+
   return {
     t,
     isLoading,
@@ -316,5 +362,10 @@ export function useSpinWheelAdmin() {
     pickerProducts,
     pickerLoading,
     handleSelectProduct,
+    spinWheelFeatureEnabled,
+    featureToggling,
+    handleSpinWheelFeatureToggle,
+    togglingPrizeId,
+    handlePrizeEnabledToggle,
   };
 }
