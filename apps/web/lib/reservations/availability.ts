@@ -174,3 +174,26 @@ export function isStartTimeSlotBookable(
 ): boolean {
   return getValidEndTimeSlots(start, allSlots, busyIntervals).length > 0;
 }
+
+/** End times that are valid for every table's busy intervals (same start for all). */
+export function getValidEndTimeSlotsForMultipleTables(
+  start: string,
+  allSlots: readonly string[],
+  busyIntervalsPerTable: readonly (readonly ReservationBusyInterval[])[],
+): string[] {
+  if (busyIntervalsPerTable.length === 0) return [];
+  let ends = getValidEndTimeSlots(start, allSlots, busyIntervalsPerTable[0]!);
+  for (let i = 1; i < busyIntervalsPerTable.length; i += 1) {
+    const allowed = new Set(getValidEndTimeSlots(start, allSlots, busyIntervalsPerTable[i]!));
+    ends = ends.filter((end) => allowed.has(end));
+  }
+  return ends;
+}
+
+export function isStartTimeSlotBookableForMultipleTables(
+  start: string,
+  allSlots: readonly string[],
+  busyIntervalsPerTable: readonly (readonly ReservationBusyInterval[])[],
+): boolean {
+  return getValidEndTimeSlotsForMultipleTables(start, allSlots, busyIntervalsPerTable).length > 0;
+}

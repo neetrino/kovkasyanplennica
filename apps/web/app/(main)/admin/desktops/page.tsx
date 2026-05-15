@@ -25,12 +25,12 @@ import {
   dashboardRowPrimaryMedium,
 } from '../components/dashboardUi';
 import {
-  getValidEndTimeSlots,
+  getValidEndTimeSlotsForMultipleTables,
   isPastTimeSlotForDate,
-  isStartTimeSlotBookable,
+  isStartTimeSlotBookableForMultipleTables,
   type ReservationBusyInterval,
 } from '@/lib/reservations/availability';
-import { TABLES } from '../../desktops/table-data';
+import { TABLES, type TableConfig } from '../../desktops/table-data';
 import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
 
 interface Reservation {
@@ -56,7 +56,7 @@ interface Reservation {
 }
 
 interface ReservationCreateForm {
-  tableId: string;
+  tableIds: string[];
   date: string;
   time: string;
   timeEnd: string;
@@ -90,7 +90,7 @@ const STATUS_SELECT_SKIN: Record<string, string> = {
 
 const DISPLAY_DATE_LOCALE = 'ru-RU';
 const INITIAL_CREATE_FORM: ReservationCreateForm = {
-  tableId: '',
+  tableIds: [],
   date: '',
   time: '',
   timeEnd: '',
@@ -123,6 +123,10 @@ function formatCreatedAtDate(iso: string): string {
   });
 }
 
+function orderedTablesFromIds(tableIds: readonly string[]): TableConfig[] {
+  return TABLES.filter((table) => tableIds.includes(table.id));
+}
+
 function statusSelectClass(status: string): string {
   return (
     STATUS_SELECT_SKIN[status] ??
@@ -151,7 +155,9 @@ export default function AdminDesktopsPage() {
   const [dateTimeSort, setDateTimeSort] = useState<'' | 'desc' | 'asc'>('');
   const [dateTimeSortMenuOpen, setDateTimeSortMenuOpen] = useState(false);
   const [createForm, setCreateForm] = useState<ReservationCreateForm>(INITIAL_CREATE_FORM);
-  const [createBusyIntervals, setCreateBusyIntervals] = useState<ReservationBusyInterval[]>([]);
+  const [createBusyByTableId, setCreateBusyByTableId] = useState<Record<string, ReservationBusyInterval[]>>(
+    {},
+  );
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
@@ -205,70 +211,105 @@ export default function AdminDesktopsPage() {
     };
   }, [dateTimeSortMenuOpen]);
 
-  const selectedTable = TABLES.find((table) => table.id === createForm.tableId) ?? null;
+  const selectedTables = orderedTablesFromIds(createForm.tableIds);
+  const createBusyPerTable = useMemo(
+    () => createForm.tableIds.map((id) => createBusyByTableId[id] ?? []),
+    [createForm.tableIds, createBusyByTableId],
+  );
+
+  const tableIdsKey = createForm.tableIds.join(',');
 
   useEffect(() => {
-    if (!createForm.tableId || !createForm.date) {
-      setCreateBusyIntervals([]);
+    if (!createForm.date || createForm.tableIds.length === 0) {
+      setCreateBusyByTableId({});
       return;
     }
 
     let cancelled = false;
-    const search = new URLSearchParams({
-      tableId: createForm.tableId,
-      date: createForm.date,
-    });
+    const ids = [...createForm.tableIds];
 
-    async function loadCreateBusy() {
-      try {
-        const response = await apiClient.get<{ data?: { busyIntervals?: unknown } }>(
-          `/api/v1/reservations?${search.toString()}`,
-        );
-        const raw = response.data?.busyIntervals;
-        const intervals: ReservationBusyInterval[] = [];
-        if (Array.isArray(raw)) {
-          for (const item of raw) {
-            if (typeof item !== 'object' || item === null) continue;
-            const o = item as { time?: unknown; timeEnd?: unknown };
-            if (typeof o.time === 'string' && typeof o.timeEnd === 'string') {
-              intervals.push({ time: o.time, timeEnd: o.timeEnd });
+    async function loadCreateBusyAll() {
+      const results = await Promise.all(
+        ids.map(async (tableId) => {
+          const search = new URLSearchParams({ tableId, date: createForm.date });
+          try {
+            const response = await apiClient.get<{ data?: { busyIntervals?: unknown } }>(
+              `/api/v1/reservations?${search.toString()}`,
+            );
+            const raw = response.data?.busyIntervals;
+            const intervals: ReservationBusyInterval[] = [];
+            if (Array.isArray(raw)) {
+              for (const item of raw) {
+                if (typeof item !== 'object' || item === null) continue;
+                const o = item as { time?: unknown; timeEnd?: unknown };
+                if (typeof o.time === 'string' && typeof o.timeEnd === 'string') {
+                  intervals.push({ time: o.time, timeEnd: o.timeEnd });
+                }
+              }
             }
+            return { tableId, intervals };
+          } catch {
+            return { tableId, intervals: [] as ReservationBusyInterval[] };
           }
+        }),
+      );
+
+      if (!cancelled) {
+        const next: Record<string, ReservationBusyInterval[]> = {};
+        for (const { tableId, intervals } of results) {
+          next[tableId] = intervals;
         }
-        if (!cancelled) {
-          setCreateBusyIntervals(intervals);
-        }
-      } catch {
-        if (!cancelled) {
-          setCreateBusyIntervals([]);
-        }
+        setCreateBusyByTableId(next);
       }
     }
 
-    void loadCreateBusy();
+    void loadCreateBusyAll();
     return () => {
       cancelled = true;
     };
-  }, [createForm.date, createForm.tableId]);
+  }, [createForm.date, tableIdsKey]);
 
   useEffect(() => {
-    if (!createForm.time) return;
+    if (!createForm.time || createForm.tableIds.length === 0) return;
     setCreateForm((prev) => {
       if (!prev.timeEnd) return prev;
-      const ends = getValidEndTimeSlots(prev.time, RESERVATION_TIME_SLOTS, createBusyIntervals);
+      const perTable = prev.tableIds.map((id) => createBusyByTableId[id] ?? []);
+      const ends = getValidEndTimeSlotsForMultipleTables(prev.time, RESERVATION_TIME_SLOTS, perTable);
       if (ends.includes(prev.timeEnd)) return prev;
       return { ...prev, timeEnd: '' };
     });
-  }, [createForm.time, createBusyIntervals]);
+  }, [createForm.time, createForm.tableIds.length, createBusyByTableId, tableIdsKey]);
 
   const setCreateField = (field: keyof ReservationCreateForm, value: string) => {
     setCreateForm((prev) => ({ ...prev, [field]: value }));
     setCreateError(null);
   };
 
+  const toggleCreateTable = (tableId: string) => {
+    setCreateForm((prev) => {
+      const set = new Set(prev.tableIds);
+      if (set.has(tableId)) {
+        set.delete(tableId);
+      } else {
+        set.add(tableId);
+      }
+      const nextIds = TABLES.filter((table) => set.has(table.id)).map((table) => table.id);
+      return { ...prev, tableIds: nextIds };
+    });
+    setCreateError(null);
+  };
+
+  const maxCreateGuests = selectedTables.reduce((sum, table) => sum + table.seats, 0) || 8;
+
+  useEffect(() => {
+    const n = parseInt(createForm.guestCount, 10) || 1;
+    if (n <= maxCreateGuests) return;
+    setCreateForm((prev) => ({ ...prev, guestCount: String(maxCreateGuests) }));
+  }, [maxCreateGuests, createForm.guestCount]);
+
   const handleCreateReservation = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTable) {
+    if (selectedTables.length === 0) {
       setCreateError(t('admin.desktopsReservations.create.validationTable'));
       return;
     }
@@ -299,45 +340,62 @@ export default function AdminDesktopsPage() {
 
     setCreating(true);
     setCreateError(null);
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      const response = await fetch('/api/v1/admin/reservations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          tableId: selectedTable.id,
-          tableLabel: t(`desktops.tables.${selectedTable.labelKey}`),
-          tableSeats: selectedTable.seats,
-          firstName: createForm.firstName.trim(),
-          lastName: createForm.lastName.trim(),
-          email: createForm.email.trim(),
-          phone: createForm.phone.trim(),
-          date: createForm.date,
-          time: createForm.time,
-          timeEnd: createForm.timeEnd,
-          occasion: createForm.occasion || 'regular',
-          guestCount: parseInt(createForm.guestCount, 10) || 1,
-          note: createForm.note.trim() || null,
-        }),
-      });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    const guestCount = parseInt(createForm.guestCount, 10) || 1;
+    let created = 0;
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        const detail =
-          typeof data.detail === 'string' ? data.detail : t('admin.desktopsReservations.create.failed');
-        throw new Error(detail);
+    try {
+      for (const table of selectedTables) {
+        const response = await fetch('/api/v1/admin/reservations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify({
+            tableId: table.id,
+            tableLabel: t(`desktops.tables.${table.labelKey}`),
+            tableSeats: table.seats,
+            firstName: createForm.firstName.trim(),
+            lastName: createForm.lastName.trim(),
+            email: createForm.email.trim(),
+            phone: createForm.phone.trim(),
+            date: createForm.date,
+            time: createForm.time,
+            timeEnd: createForm.timeEnd,
+            occasion: createForm.occasion || 'regular',
+            guestCount,
+            note: createForm.note.trim() || null,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          const detail =
+            typeof data.detail === 'string' ? data.detail : t('admin.desktopsReservations.create.failed');
+          const tableLabel = t(`desktops.tables.${table.labelKey}`);
+          const atTableMsg = t('admin.desktopsReservations.create.failedAtTable')
+            .replace('{table}', tableLabel)
+            .replace('{detail}', detail);
+          const partial =
+            created > 0
+              ? `${t('admin.desktopsReservations.create.partialCreated')
+                  .replace('{created}', String(created))
+                  .replace('{total}', String(selectedTables.length))} `
+              : '';
+          throw new Error(`${partial}${atTableMsg}`);
+        }
+        created += 1;
       }
 
       setCreateForm(INITIAL_CREATE_FORM);
-      setCreateBusyIntervals([]);
+      setCreateBusyByTableId({});
       await fetchReservations();
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : t('admin.desktopsReservations.create.failed');
       setCreateError(message);
+      await fetchReservations();
     } finally {
       setCreating(false);
     }
@@ -522,18 +580,35 @@ export default function AdminDesktopsPage() {
           >
           <form onSubmit={handleCreateReservation} aria-labelledby="admin-desktops-manual-booking-heading">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-              <select
-                value={createForm.tableId}
-                onChange={(e) => setCreateField('tableId', e.target.value)}
-                className={controlGridClass}
-              >
-                <option value="">{t('admin.desktopsReservations.create.table')}</option>
-                {TABLES.map((table) => (
-                  <option key={table.id} value={table.id}>
-                    {t(`desktops.tables.${table.labelKey}`)}
-                  </option>
-                ))}
-              </select>
+              <fieldset className="min-w-0 rounded-lg border border-admin-brand-2/20 bg-admin-surface/30 p-3 lg:col-span-5">
+                <legend className="px-1 text-sm font-medium text-admin-brand/80">
+                  {t('admin.desktopsReservations.create.table')}
+                </legend>
+                <p className="mb-2 text-xs text-admin-brand/55">{t('admin.desktopsReservations.create.tablesHint')}</p>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {TABLES.map((table) => {
+                    const checked = createForm.tableIds.includes(table.id);
+                    return (
+                      <label
+                        key={table.id}
+                        className={`flex cursor-pointer items-center gap-2 rounded-md border px-2 py-1.5 text-sm transition-colors ${
+                          checked
+                            ? 'border-admin-brand/35 bg-white text-admin-brand'
+                            : 'border-admin-brand-2/15 bg-white/60 text-admin-brand/80 hover:border-admin-brand/25'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleCreateTable(table.id)}
+                          className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+                        />
+                        <span className="min-w-0 truncate">{t(`desktops.tables.${table.labelKey}`)}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
 
               <input
                 type="date"
@@ -556,8 +631,11 @@ export default function AdminDesktopsPage() {
                     key={slot}
                     value={slot}
                     disabled={
-                      !isStartTimeSlotBookable(slot, RESERVATION_TIME_SLOTS, createBusyIntervals) ||
-                      isPastTimeSlotForDate(createForm.date, slot)
+                      !isStartTimeSlotBookableForMultipleTables(
+                        slot,
+                        RESERVATION_TIME_SLOTS,
+                        createBusyPerTable,
+                      ) || isPastTimeSlotForDate(createForm.date, slot)
                     }
                   >
                     {slot}
@@ -572,7 +650,11 @@ export default function AdminDesktopsPage() {
                 className={controlGridClass}
               >
                 <option value="">{t('admin.desktopsReservations.create.timeEnd')}</option>
-                {getValidEndTimeSlots(createForm.time, RESERVATION_TIME_SLOTS, createBusyIntervals).map((slot) => (
+                {getValidEndTimeSlotsForMultipleTables(
+                  createForm.time,
+                  RESERVATION_TIME_SLOTS,
+                  createBusyPerTable,
+                ).map((slot) => (
                   <option key={slot} value={slot}>
                     {slot}
                   </option>
@@ -622,7 +704,7 @@ export default function AdminDesktopsPage() {
                 onChange={(e) => setCreateField('guestCount', e.target.value)}
                 className={controlGridClass}
               >
-                {Array.from({ length: selectedTable?.seats ?? 8 }, (_, i) => i + 1).map((n) => (
+                {Array.from({ length: maxCreateGuests }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
                     {t('admin.desktopsReservations.create.guests').replace('{n}', String(n))}
                   </option>
