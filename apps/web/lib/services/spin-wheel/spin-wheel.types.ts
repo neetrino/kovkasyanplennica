@@ -28,6 +28,8 @@ export interface SpinWheelPrize {
   userIds: string[];
   maxSpinsPerUser: number | null;
   weight: number;
+  /** When false, prize is excluded from the public wheel (admin list only). */
+  enabled: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -46,6 +48,11 @@ export interface SpinWheelPrizesSettingValue {
 
 export interface SpinWheelAttemptsSettingValue {
   attempts: SpinAttempt[];
+}
+
+/** Master switch for the marketing spin wheel (admin + public API). */
+export interface SpinWheelFeatureSettingValue {
+  enabled: boolean;
 }
 
 const MAX_PRODUCTS_PER_PRIZE = 9;
@@ -71,4 +78,5 @@ export interface UpdateSpinWheelPrizeInput {
   userIds?: string[];
   maxSpinsPerUser?: number | null;
   weight?: number;
+  enabled?: boolean;
 }

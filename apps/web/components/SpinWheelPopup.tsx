@@ -216,6 +216,11 @@ export function SpinWheelPopup() {
       return;
     }
 
+    /** Spin promo only runs on the marketing home route (`/`). */
+    if (pathname !== '/') {
+      return;
+    }
+
     const delayTimer = window.setTimeout(async () => {
       try {
         setLoading(true);

@@ -65,14 +65,26 @@ class SpinWheelService {
   }
 
   async getEligibleActivePrizes(userId: string) {
+    const featureOn = await store.getSpinWheelFeatureEnabled();
+    if (!featureOn) {
+      return {
+        prizes: [] as SpinWheelPrize[],
+        meta: {
+          hasSpun: false,
+          totalSpins: 0,
+          remainingSpins: 0,
+          maxSpinsPerUser: 0,
+        },
+      };
+    }
+
     const [prizesStore, attemptsStore] = await Promise.all([
       store.getPrizesStore(),
       store.getAttemptsStore(),
     ]);
     const now = new Date();
-    const activePrizes = prizesStore.prizes
-      .filter((p) => isPrizeActive(p as SpinWheelPrize, now))
-      .map((p) => normalizePrize(p as SpinWheelPrize));
+    const normalizedPrizes = prizesStore.prizes.map((p) => normalizePrize(p as SpinWheelPrize));
+    const activePrizes = normalizedPrizes.filter((p) => isPrizeActive(p, now));
     const eligiblePrizes = activePrizes.filter((p) => isEligibleForPrize(p, userId));
     const prizesWithFreshProducts = await hydratePrizesWithProducts(eligiblePrizes);
 
@@ -94,6 +106,16 @@ class SpinWheelService {
   }
 
   async spin(userId: string) {
+    const featureOn = await store.getSpinWheelFeatureEnabled();
+    if (!featureOn) {
+      throw {
+        status: 403,
+        type: "https://api.shop.am/problems/forbidden",
+        title: "Spin wheel disabled",
+        detail: "The spin wheel is currently turned off",
+      };
+    }
+
     const { prizes, meta } = await this.getEligibleActivePrizes(userId);
     if (prizes.length === 0) {
       throw {
@@ -167,6 +189,16 @@ class SpinWheelService {
 
   async deleteWin(attemptId: string) {
     return wins.deleteWin(attemptId);
+  }
+
+  async getSpinWheelFeatureSetting() {
+    const enabled = await store.getSpinWheelFeatureEnabled();
+    return { enabled };
+  }
+
+  async setSpinWheelFeatureEnabled(enabled: boolean) {
+    await store.saveSpinWheelFeatureEnabled(enabled);
+    return { enabled };
   }
 }
 

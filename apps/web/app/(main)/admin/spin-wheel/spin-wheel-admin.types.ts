@@ -21,6 +21,8 @@ export interface SpinWheelPrize {
   userIds: string[];
   maxSpinsPerUser: number | null;
   weight: number;
+  /** Included in public wheel when true. */
+  enabled: boolean;
 }
 
 export interface CategoryOption {

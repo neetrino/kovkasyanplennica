@@ -36,6 +36,9 @@ export function getProductPrimaryTranslation(
 }
 
 export function isPrizeActive(prize: SpinWheelPrize, now: Date): boolean {
+  if (prize.enabled === false) {
+    return false;
+  }
   const start = new Date(prize.startDate);
   const end = new Date(prize.endDate);
   return start <= now && now <= end;
@@ -109,6 +112,7 @@ export function normalizePrize(prize: SpinWheelPrize): SpinWheelPrize {
       productTitle: p.productTitle ?? firstProduct?.productTitle ?? "",
       productSlug: p.productSlug ?? firstProduct?.productSlug ?? "",
       productImageUrl: p.productImageUrl ?? firstProduct?.productImageUrl ?? null,
+      enabled: p.enabled !== false,
     };
   }
   const legacy = prize as {
@@ -132,5 +136,10 @@ export function normalizePrize(prize: SpinWheelPrize): SpinWheelPrize {
     productSlug: legacy.productSlug,
     productImageUrl: legacy.productImageUrl,
   };
-  return { ...legacy, productIds: [legacy.productId], products: [first] };
+  return {
+    ...legacy,
+    productIds: [legacy.productId],
+    products: [first],
+    enabled: (legacy as { enabled?: boolean }).enabled !== false,
+  };
 }

@@ -569,7 +569,14 @@
     "winsProduct": "Выигранный товар",
     "winsDate": "Дата",
     "winsActions": "Действия",
-    "deleteWinConfirm": "Удалить эту запись о выигрыше?"
+    "deleteWinConfirm": "Удалить эту запись о выигрыше?",
+    "publicToggleTitle": "Колесо на сайте",
+    "publicToggleLabel": "Активно",
+    "publicToggleHint": "Когда выключено, popup на главной странице не показывается, спин для гостей отключён.",
+    "publicToggleSaving": "Сохранение…",
+    "publicToggleSaveError": "Не удалось обновить: {message}",
+    "prizeRowToggleLabel": "Активен",
+    "prizeToggleSaveError": "Не удалось обновить приз: {message}"
   },
   "priceFilter": {
     "title": "Настройки фильтра по цене",

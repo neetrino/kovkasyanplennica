@@ -68,6 +68,7 @@ export async function createPrize(
     userIds,
     maxSpinsPerUser,
     weight,
+    enabled: true,
     createdAt: nowIso,
     updatedAt: nowIso,
   };
@@ -165,6 +166,8 @@ export async function updatePrize(
           ? input.weight
           : DEFAULT_WEIGHT
         : currentPrize.weight,
+    enabled:
+      typeof input.enabled === "boolean" ? input.enabled : currentPrize.enabled,
     updatedAt: new Date().toISOString(),
   };
 
