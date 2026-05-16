@@ -82,15 +82,25 @@ export default function DesktopsPage() {
   const botTables = TABLES.filter((x) => x.zone === 'bottom');
 
   return (
-    <div className="relative min-h-screen w-full bg-[#2F3E3E]">
-      <div
-        className="pointer-events-none absolute left-1/2 top-0 z-0 aspect-square max-h-[420px] w-[260px] -translate-x-1/2 opacity-25 md:max-h-[480px] md:w-[380px]"
-        aria-hidden
-      >
-        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="size-full object-contain" />
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#2F3E3E]">
+      <div className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden md:block" aria-hidden>
+        <div className="absolute -left-24 top-0 h-[360px] w-[320px] opacity-40 sm:h-[460px] sm:w-[420px] lg:h-[620px] lg:w-[560px]">
+          <img
+            src="/hero-vector-1.svg"
+            alt=""
+            className="size-full object-contain object-left-top"
+          />
+        </div>
+        <div className="absolute -right-24 bottom-0 h-[360px] w-[320px] rotate-180 opacity-40 sm:h-[460px] sm:w-[420px] lg:h-[620px] lg:w-[560px]">
+          <img
+            src="/hero-vector-2.svg"
+            alt=""
+            className="size-full object-contain object-right-bottom"
+          />
+        </div>
       </div>
       <div
-        className="pointer-events-none absolute bottom-0 right-0 z-[1] aspect-square max-h-[320px] w-[200px] translate-x-1/4 translate-y-1/4 opacity-15 md:max-h-[380px] md:w-[280px]"
+        className="pointer-events-none absolute bottom-10 left-1/2 z-[1] aspect-square max-h-[320px] w-[220px] -translate-x-1/2 opacity-15 md:bottom-16 md:max-h-[420px] md:w-[360px]"
         aria-hidden
       >
         <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="size-full object-contain" />
