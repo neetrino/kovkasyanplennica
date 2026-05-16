@@ -8,6 +8,11 @@ const HIT =
   'absolute cursor-pointer border-0 bg-transparent p-0 transition-[filter,transform] hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffe5c2]';
 const TABLE_FILL = 'bg-[#ffe5c2]';
 const TABLE_TEXT = 'text-[#4b564f]';
+const TABLE_SIZE_SCALE = 1.6;
+const TABLE_CLUSTER_SCALE_X = 1.05;
+const TABLE_CLUSTER_SCALE_Y = 1.26;
+const FLOOR_PLAN_CENTER = { x: 531.5, y: 751 };
+const FLOOR_PLAN_OFFSET = { x: -50, y: 190 };
 
 type TableKind = 'square' | 'vertical' | 'small' | 'oval' | 'diagonal';
 type ChairSet = 'horizontal4' | 'vertical4' | 'vertical6' | 'solo2' | 'oval2' | 'diagonal8';
@@ -63,7 +68,7 @@ const TABLE_PLACEMENTS: readonly TablePlacement[] = [
 const FIXTURES: readonly FixturePlacement[] = [
   { label: 'Бар', x: 60, y: 900, w: 164, h: 315, radius: 'rounded-[7px]' },
   { label: 'Хостес', x: 718, y: 681, w: 145, h: 349, radius: 'rounded-[7px]' },
-  { label: 'Мангал', x: 60, y: 1308, w: 842, h: 91, radius: 'rounded-[7px]' },
+  { label: 'Мангал', x: 60, y: 1375, w: 842, h: 91, radius: 'rounded-[7px]' },
 ];
 
 function Chair({ className, style }: { className: string; style?: CSSProperties }) {
@@ -90,20 +95,20 @@ function Chairs({ set }: { set: ChairSet }) {
   if (set === 'horizontal4') {
     return (
       <>
-        <Chair className="left-[23%] top-[-7px]" />
-        <Chair className="right-[23%] top-[-7px]" />
-        <Chair className="bottom-[-7px] left-[23%]" />
-        <Chair className="bottom-[-7px] right-[23%]" />
+        <Chair className="left-[30%] top-[-16px]" />
+        <Chair className="right-[30%] top-[-16px]" />
+        <Chair className="bottom-[-16px] left-[30%]" />
+        <Chair className="bottom-[-16px] right-[30%]" />
       </>
     );
   }
   if (set === 'vertical4') {
     return (
       <>
-        <Chair className="left-[-7px] top-[23%]" />
-        <Chair className="bottom-[23%] left-[-7px]" />
-        <Chair className="right-[-7px] top-[23%]" />
-        <Chair className="bottom-[23%] right-[-7px]" />
+        <Chair className="left-[-7px] top-[30%]" />
+        <Chair className="bottom-[30%] left-[-7px]" />
+        <Chair className="right-[-7px] top-[30%]" />
+        <Chair className="bottom-[30%] right-[-7px]" />
       </>
     );
   }
@@ -147,6 +152,23 @@ function DiagonalChairs() {
   );
 }
 
+function getTableStyle(placement: TablePlacement): CSSProperties {
+  const scaledWidth = placement.w * TABLE_SIZE_SCALE;
+  const scaledHeight = placement.h * TABLE_SIZE_SCALE;
+  const centerX = placement.x + placement.w / 2;
+  const centerY = placement.y + placement.h / 2;
+  const nextCenterX = FLOOR_PLAN_CENTER.x + (centerX - FLOOR_PLAN_CENTER.x) * TABLE_CLUSTER_SCALE_X;
+  const nextCenterY = FLOOR_PLAN_CENTER.y + (centerY - FLOOR_PLAN_CENTER.y) * TABLE_CLUSTER_SCALE_Y;
+
+  return {
+    left: nextCenterX - scaledWidth / 2 + FLOOR_PLAN_OFFSET.x,
+    top: nextCenterY - scaledHeight / 2 + FLOOR_PLAN_OFFSET.y,
+    width: scaledWidth,
+    height: scaledHeight,
+    transform: placement.rotate ? `rotate(${placement.rotate}deg)` : undefined,
+  };
+}
+
 function TableHit({
   table,
   placement,
@@ -166,13 +188,7 @@ function TableHit({
       aria-label={label}
       onClick={() => onSelect(table)}
       className={`${HIT} origin-center`}
-      style={{
-        left: placement.x,
-        top: placement.y,
-        width: placement.w,
-        height: placement.h,
-        transform: placement.rotate ? `rotate(${placement.rotate}deg)` : undefined,
-      }}
+      style={getTableStyle(placement)}
     >
       <span className="absolute inset-0">
         <Chairs set={placement.chairs} />
@@ -212,12 +228,17 @@ export function FigmaFloorPlan({
   const tablesById = new Map(allTables.map((table) => [table.id, table]));
 
   return (
-    <div className="relative h-[1502px] w-[1063px] shrink-0">
+    <div className="relative h-[1720px] w-[1240px] shrink-0">
       {FIXTURES.map((fixture) => (
         <div
           key={fixture.label}
           className={`absolute flex items-center justify-center ${fixture.radius} ${TABLE_FILL}`}
-          style={{ left: fixture.x, top: fixture.y, width: fixture.w, height: fixture.h }}
+          style={{
+            left: fixture.x + FLOOR_PLAN_OFFSET.x,
+            top: fixture.y + FLOOR_PLAN_OFFSET.y,
+            width: fixture.w,
+            height: fixture.h,
+          }}
         >
           <span className={`font-sans text-[22px] font-bold leading-3 ${TABLE_TEXT}`}>{fixture.label}</span>
         </div>
