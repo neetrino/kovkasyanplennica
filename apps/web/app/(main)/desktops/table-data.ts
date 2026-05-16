@@ -10,16 +10,16 @@ export interface TableConfig {
 
 export const TABLES: TableConfig[] = [
   { id: 't1', labelKey: 't1', seats: 2, shape: 'rect', zone: 'top' },
-  { id: 't2', labelKey: 't2', seats: 3, shape: 'rect', zone: 'top' },
-  { id: 't3', labelKey: 't3', seats: 3, shape: 'rect', zone: 'top' },
-  { id: 't4', labelKey: 't4', seats: 2, shape: 'rect', zone: 'top' },
+  { id: 't2', labelKey: 't2', seats: 4, shape: 'rect', zone: 'top' },
+  { id: 't3', labelKey: 't3', seats: 4, shape: 'rect', zone: 'top' },
+  { id: 't4', labelKey: 't4', seats: 4, shape: 'rect', zone: 'top' },
 
-  { id: 't5', labelKey: 't5', seats: 2, shape: 'rect', zone: 'left' },
-  { id: 't6', labelKey: 't6', seats: 2, shape: 'rect', zone: 'left' },
+  { id: 't5', labelKey: 't5', seats: 4, shape: 'rect', zone: 'left' },
+  { id: 't6', labelKey: 't6', seats: 4, shape: 'rect', zone: 'left' },
   { id: 't7', labelKey: 't7', seats: 4, shape: 'rect', zone: 'left' },
   { id: 't8', labelKey: 't8', seats: 4, shape: 'rect', zone: 'left' },
 
-  { id: 't9', labelKey: 't9', seats: 8, shape: 'oval', zone: 'center' },
+  { id: 't9', labelKey: 't9', seats: 4, shape: 'rect', zone: 'center' },
 
   { id: 't10', labelKey: 't10', seats: 4, shape: 'rect', zone: 'center-right' },
   { id: 't11', labelKey: 't11', seats: 4, shape: 'rect', zone: 'center-right' },
@@ -34,4 +34,9 @@ export const TABLES: TableConfig[] = [
   { id: 't18', labelKey: 't18', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't19', labelKey: 't19', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't20', labelKey: 't20', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't21', labelKey: 't21', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't22', labelKey: 't22', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't23', labelKey: 't23', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't24', labelKey: 't24', seats: 2, shape: 'oval', zone: 'bottom' },
+  { id: 't25', labelKey: 't25', seats: 2, shape: 'rect', zone: 'bottom' },
 ];
