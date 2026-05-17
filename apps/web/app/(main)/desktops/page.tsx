@@ -9,6 +9,7 @@ import { ReservationModal } from './ReservationModal';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
 import { toR2Url } from '@/lib/r2-assets';
+import { isVenueGuestCount } from './venueGuestLimits';
 
 const TABLES_SECTION_DIVIDER_SRC = toR2Url('/assets/hero/Vector7.svg');
 
@@ -45,7 +46,7 @@ export default function DesktopsPage() {
           nextTimeEnd = timeEndParam;
         }
       }
-      const nextGuests = g && /^[1-8]$/.test(g) ? g : prev.guestCount;
+      const nextGuests = g && isVenueGuestCount(g) ? g : prev.guestCount;
       return { date: nextDate, time: nextTime, timeEnd: nextTimeEnd, guestCount: nextGuests };
     });
   }, [searchParams]);

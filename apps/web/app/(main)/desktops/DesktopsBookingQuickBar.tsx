@@ -9,8 +9,7 @@ import {
   BookingQuickBarDropdownOption,
 } from './DesktopsBookingQuickBar.dropdown';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
-
-const QUICK_BAR_MAX_GUESTS = 8;
+import { venueGuestCounts } from './venueGuestLimits';
 
 export type QuickBookingValues = {
   date: string;
@@ -75,14 +74,14 @@ export function DesktopsBookingQuickBar({
       </p>
 
       <div className="mx-auto mb-5 flex max-w-3xl flex-col gap-5 md:mb-6 lg:flex-row lg:items-end lg:justify-center lg:gap-6">
-        <div className="min-w-0 flex-1 lg:max-w-[180px]">
-          <p className="mb-1.5 text-center text-[11px] font-bold uppercase tracking-[0.08em] text-[#cbc0af] lg:text-left">
+        <div className="min-w-0 flex-1 lg:max-w-[200px]">
+          <p className="mb-2 text-center text-xs font-bold uppercase tracking-[0.1em] text-[#cbc0af] lg:text-left">
             {t('desktops.quickBar.date')}
           </p>
           <FieldShell>
             <label
               htmlFor="desktops-quick-bar-date"
-              className="relative flex h-full w-full cursor-pointer items-center justify-start gap-1 rounded-[40px] pl-2.5 pr-2.5 md:gap-1.5 md:pl-3 md:pr-3"
+              className="relative flex h-full w-full cursor-pointer items-center justify-start gap-1 rounded-[48px] pl-2.5 pr-2.5 md:gap-1.5 md:pl-3 md:pr-3"
               onClick={(e) => {
                 e.preventDefault();
                 openDatePicker();
@@ -95,15 +94,15 @@ export function DesktopsBookingQuickBar({
                 value={value.date}
                 min={minDate}
                 onChange={(e) => patch({ date: e.target.value })}
-                className="pointer-events-none absolute inset-0 z-[1] h-full min-h-0 w-full min-w-0 cursor-pointer rounded-[40px] border-0 opacity-0 outline-none [color-scheme:dark]"
+                className="pointer-events-none absolute inset-0 z-[1] h-full min-h-0 w-full min-w-0 cursor-pointer rounded-[48px] border-0 p-0 opacity-0 outline-none [color-scheme:dark] text-base"
               />
               <img
                 src={bookingQuickBarAssets.calendar}
                 alt=""
-                className="pointer-events-none relative z-[2] mr-2 h-3.5 w-3.5 shrink-0 md:mr-2.5 md:h-[15px] md:w-[15px]"
+                className="pointer-events-none relative z-[2] mr-2 h-[15px] w-[15px] shrink-0"
                 aria-hidden
               />
-              <span className="pointer-events-none relative z-[2] min-w-0 flex-1 truncate text-left text-xs text-[#fdfdfd] md:text-sm">
+              <span className="pointer-events-none relative z-[2] min-w-0 flex-1 truncate text-left text-sm text-[#fdfdfd]">
                     {value.date
                   ? new Date(`${value.date}T12:00:00`).toLocaleDateString('ru-RU', {
                       day: 'numeric',
@@ -249,7 +248,7 @@ export function DesktopsBookingQuickBar({
               >
                 {t('desktops.modal.guestCountPlaceholder')}
               </BookingQuickBarDropdownOption>
-              {Array.from({ length: QUICK_BAR_MAX_GUESTS }, (_, i) => i + 1).map((n) => (
+              {venueGuestCounts().map((n) => (
                 <BookingQuickBarDropdownOption
                   key={n}
                   selected={value.guestCount === String(n)}
