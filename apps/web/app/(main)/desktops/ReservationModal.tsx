@@ -70,14 +70,28 @@ export function ReservationModal({
   const [busyIntervals, setBusyIntervals] = useState<ReservationBusyInterval[]>([]);
   const didPrefillFromUser = useRef(false);
 
-  /** Lock app scroll root so `fixed` centering is stable while the dialog is open. */
+  /** Lock scroll while open — prevents background and modal horizontal drift on mobile. */
   useEffect(() => {
     const root = getAppScrollRegion();
-    if (!root) return;
-    const prev = root.style.overflow;
-    root.style.overflow = 'hidden';
+    const prevRootOverflow = root?.style.overflow ?? '';
+    const prevRootOverflowX = root?.style.overflowX ?? '';
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevBodyOverflowX = document.body.style.overflowX;
+
+    if (root) {
+      root.style.overflow = 'hidden';
+      root.style.overflowX = 'hidden';
+    }
+    document.body.style.overflow = 'hidden';
+    document.body.style.overflowX = 'hidden';
+
     return () => {
-      root.style.overflow = prev;
+      if (root) {
+        root.style.overflow = prevRootOverflow;
+        root.style.overflowX = prevRootOverflowX;
+      }
+      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.overflowX = prevBodyOverflowX;
     };
   }, []);
 
@@ -272,13 +286,13 @@ export function ReservationModal({
   }
 
   const inputBase =
-    'w-full bg-[#1e2b29] border rounded-xl px-4 py-3 text-[#fff4de] text-sm placeholder:text-[#fff4de]/30 focus:outline-none focus:ring-2 transition-all duration-200';
+    'box-border min-w-0 max-w-full w-full bg-[#1e2b29] border rounded-xl px-4 py-3 text-[#fff4de] text-sm placeholder:text-[#fff4de]/30 focus:outline-none focus:ring-2 transition-all duration-200';
   const inputNormal = `${inputBase} border-[#3d504e] focus:border-[#7CB342] focus:ring-[#7CB342]/20`;
   const inputError  = `${inputBase} border-red-500/60 focus:border-red-400 focus:ring-red-400/20`;
 
   const modal = (
     <div
-      className="fixed inset-0 z-app-overlay flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-app-overlay flex items-center justify-center overflow-hidden p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="reservation-modal-title"
@@ -290,18 +304,18 @@ export function ReservationModal({
         onClick={onClose}
       />
       <div
-        className={`relative z-10 flex w-full max-w-xl flex-col ${MODAL_PANEL_MAX_HEIGHT_CLASS} overflow-hidden rounded-3xl border border-[#3d504e] bg-[#2F3F3D] shadow-2xl`}
+        className={`relative z-10 flex w-full min-w-0 max-w-xl flex-col ${MODAL_PANEL_MAX_HEIGHT_CLASS} overflow-hidden rounded-3xl border border-[#3d504e] bg-[#2F3F3D] shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="min-h-0 flex flex-col overflow-y-auto overscroll-contain">
+        <div className="flex min-h-0 min-w-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain">
 
         {/* Header */}
-        <div className="sticky top-0 bg-[#2F3F3D] border-b border-[#3d504e] px-6 py-5 flex items-start justify-between z-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342] mb-1">
+        <div className="sticky top-0 z-10 flex items-start justify-between border-b border-[#3d504e] bg-[#2F3F3D] px-4 py-5 sm:px-6">
+          <div className="min-w-0 flex-1 pr-2">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#7CB342]">
               {t('desktops.modal.eyebrow')}
             </p>
-            <h2 id="reservation-modal-title" className="text-[#fff4de] text-xl font-light italic">
+            <h2 id="reservation-modal-title" className="break-words text-xl font-light italic text-[#fff4de]">
               {tableTitle}
             </h2>
             <p className="text-[#fff4de]/50 text-xs mt-0.5">
@@ -323,7 +337,7 @@ export function ReservationModal({
 
         {/* Success state */}
         {success ? (
-          <div className="px-6 py-12 text-center">
+          <div className="min-w-0 px-4 py-12 text-center sm:px-6">
             <div className="w-16 h-16 rounded-full bg-[#7CB342]/20 border border-[#7CB342]/40 flex items-center justify-center mx-auto mb-6">
               <svg className="w-8 h-8 text-[#7CB342]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -332,7 +346,7 @@ export function ReservationModal({
             <h3 className="text-[#fff4de] text-xl font-light italic mb-2">
               {t('desktops.modal.successTitle')}
             </h3>
-            <p className="text-[#fff4de]/60 text-sm mb-2">
+            <p className="mb-2 break-words text-sm text-[#fff4de]/60">
               {tableTitle} · {form.date} · {form.time}–{form.timeEnd}
             </p>
             <p className="text-[#fff4de]/40 text-xs mb-8">
@@ -347,11 +361,11 @@ export function ReservationModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} noValidate className="px-6 py-6 space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="min-w-0 space-y-4 px-4 py-6 sm:px-6">
 
             {/* Name row */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="min-w-0">
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                   {t('desktops.modal.firstName')} <span className="text-[#7CB342]">*</span>
                 </label>
@@ -364,7 +378,7 @@ export function ReservationModal({
                 />
                 {errors.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>}
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                   {t('desktops.modal.lastName')} <span className="text-[#7CB342]">*</span>
                 </label>
@@ -379,7 +393,7 @@ export function ReservationModal({
               </div>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                 {t('desktops.modal.email')} <span className="text-[#7CB342]">*</span>
               </label>
@@ -393,7 +407,7 @@ export function ReservationModal({
               {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                 {t('desktops.modal.phone')} <span className="text-[#7CB342]">*</span>
               </label>
@@ -407,7 +421,7 @@ export function ReservationModal({
               {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                 {t('desktops.modal.date')} <span className="text-[#7CB342]">*</span>
               </label>
@@ -416,12 +430,12 @@ export function ReservationModal({
                 value={form.date}
                 min={today}
                 onChange={set('date')}
-                className={`${errors.date ? inputError : inputNormal} [color-scheme:dark]`}
+                className={`${errors.date ? inputError : inputNormal} min-h-12 text-base sm:text-sm [color-scheme:dark]`}
               />
               {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date}</p>}
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                 {t('desktops.modal.guestCount')}
               </label>
@@ -439,8 +453,8 @@ export function ReservationModal({
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
+            <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="min-w-0">
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                   {t('desktops.modal.timeFrom')} <span className="text-[#7CB342]">*</span>
                 </label>
@@ -469,7 +483,7 @@ export function ReservationModal({
                 </select>
                 {errors.time && <p className="text-red-400 text-xs mt-1">{errors.time}</p>}
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                   {t('desktops.modal.timeTo')} <span className="text-[#7CB342]">*</span>
                 </label>
@@ -490,7 +504,7 @@ export function ReservationModal({
               </div>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold uppercase tracking-widest text-[#fff4de]/50 mb-1.5">
                 {t('desktops.modal.note')}
               </label>
@@ -507,7 +521,7 @@ export function ReservationModal({
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 bg-[#7CB342] hover:bg-[#6aa535] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:-translate-y-0.5 text-sm uppercase tracking-widest flex items-center justify-center gap-2"
+              className="flex w-full max-w-full items-center justify-center gap-2 rounded-xl bg-[#7CB342] py-3.5 text-sm font-semibold uppercase tracking-widest text-white transition-colors duration-200 hover:bg-[#6aa535] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? (
                 <>

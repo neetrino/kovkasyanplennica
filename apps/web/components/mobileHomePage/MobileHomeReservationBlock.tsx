@@ -6,9 +6,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from '@/lib/i18n-client';
 import { formatLocalISODate } from '@/lib/formatLocalISODate';
 import { RESERVATION_TIME_SLOTS } from '../../app/(main)/desktops/reservationTimeSlots';
+import { venueGuestCounts } from '../../app/(main)/desktops/venueGuestLimits';
 import { toR2Url } from '@/lib/r2-assets';
-
-const MAX_GUESTS = 8;
 
 type OpenMenu = 'time' | 'guests' | null;
 
@@ -200,7 +199,7 @@ export function MobileHomeReservationBlock() {
                     {t('desktops.modal.guestCountPlaceholder')}
                   </button>
                 </li>
-                {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
+                {venueGuestCounts().map((n) => (
                   <li key={n}>
                     <button
                       type="button"

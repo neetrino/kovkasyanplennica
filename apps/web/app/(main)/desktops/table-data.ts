@@ -9,7 +9,7 @@ export interface TableConfig {
 }
 
 export const TABLES: TableConfig[] = [
-  { id: 't1', labelKey: 't1', seats: 2, shape: 'rect', zone: 'top' },
+  { id: 't1', labelKey: 't1', seats: 4, shape: 'rect', zone: 'top' },
   { id: 't2', labelKey: 't2', seats: 4, shape: 'rect', zone: 'top' },
   { id: 't3', labelKey: 't3', seats: 4, shape: 'rect', zone: 'top' },
   { id: 't4', labelKey: 't4', seats: 4, shape: 'rect', zone: 'top' },
@@ -22,11 +22,11 @@ export const TABLES: TableConfig[] = [
   { id: 't9', labelKey: 't9', seats: 4, shape: 'rect', zone: 'center' },
 
   { id: 't10', labelKey: 't10', seats: 4, shape: 'rect', zone: 'center-right' },
-  { id: 't11', labelKey: 't11', seats: 4, shape: 'rect', zone: 'center-right' },
+  { id: 't11', labelKey: 't11', seats: 12, shape: 'rect', zone: 'center-right' },
   { id: 't12', labelKey: 't12', seats: 4, shape: 'rect', zone: 'center-right' },
   { id: 't13', labelKey: 't13', seats: 4, shape: 'rect', zone: 'center-right' },
 
-  { id: 't14', labelKey: 't14', seats: 4, shape: 'rect', zone: 'window', byWindow: true },
+  { id: 't14', labelKey: 't14', seats: 3, shape: 'rect', zone: 'window', byWindow: true },
   { id: 't15', labelKey: 't15', seats: 4, shape: 'rect', zone: 'window', byWindow: true },
   { id: 't16', labelKey: 't16', seats: 4, shape: 'rect', zone: 'window', byWindow: true },
 
@@ -34,9 +34,9 @@ export const TABLES: TableConfig[] = [
   { id: 't18', labelKey: 't18', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't19', labelKey: 't19', seats: 4, shape: 'rect', zone: 'bottom' },
   { id: 't20', labelKey: 't20', seats: 4, shape: 'rect', zone: 'bottom' },
-  { id: 't21', labelKey: 't21', seats: 4, shape: 'rect', zone: 'bottom' },
-  { id: 't22', labelKey: 't22', seats: 4, shape: 'rect', zone: 'bottom' },
-  { id: 't23', labelKey: 't23', seats: 4, shape: 'rect', zone: 'bottom' },
+  { id: 't21', labelKey: 't21', seats: 7, shape: 'rect', zone: 'bottom' },
+  { id: 't22', labelKey: 't22', seats: 6, shape: 'rect', zone: 'bottom' },
+  { id: 't23', labelKey: 't23', seats: 6, shape: 'rect', zone: 'bottom' },
   { id: 't24', labelKey: 't24', seats: 2, shape: 'oval', zone: 'bottom' },
   { id: 't25', labelKey: 't25', seats: 2, shape: 'rect', zone: 'bottom' },
 ];
