@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { TABLES, type TableConfig } from './table-data';
-import { DesktopsBookingQuickBar, type QuickBookingValues } from './DesktopsBookingQuickBar';
+import type { QuickBookingValues } from './DesktopsBookingQuickBar';
 import { ReservationModal } from './ReservationModal';
 import { ScaledFigmaFloorPlan } from './figmaFloorPlan.scaled';
 import { RESERVATION_TIME_SLOTS } from './reservationTimeSlots';
@@ -62,18 +62,6 @@ export default function DesktopsPage() {
       profitCents: profitNum != null && Number.isFinite(profitNum) ? profitNum : null,
     };
   }, [searchParams]);
-
-  const minReservationDate = useMemo(() => new Date().toISOString().split('T')[0] ?? '', []);
-
-  function handleQuickReserveClick() {
-    if (selectedTable) {
-      return;
-    }
-    const fallbackTable = TABLES[0];
-    if (fallbackTable) {
-      setSelectedTable(fallbackTable);
-    }
-  }
 
   const topTables = TABLES.filter((x) => x.zone === 'top');
   const leftTables = TABLES.filter((x) => x.zone === 'left');
@@ -138,13 +126,6 @@ export default function DesktopsPage() {
             onSelectTable={setSelectedTable}
           />
         </div>
-
-        <DesktopsBookingQuickBar
-          value={quickBooking}
-          onChange={setQuickBooking}
-          onReserveClick={handleQuickReserveClick}
-          minDate={minReservationDate}
-        />
 
         <p className="mt-4 text-center text-[10px] leading-relaxed text-[#FCE6C9]/40 md:mt-5 md:text-xs">
           {t('desktops.page.footerNote')}
