@@ -2,14 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Ruslan_Display } from 'next/font/google';
 import { useTranslation } from '../../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
 
-const ruslanDisplay = Ruslan_Display({
-  subsets: ['latin', 'cyrillic'],
-  weight: '400',
-});
+/** Hero wordmark — 475×317 (~10 KB webp) */
+const HERO_WORDMARK_WIDTH = 475;
+const HERO_WORDMARK_HEIGHT = 317;
 
 /**
  * Desktop home hero — aligned to Figma HOME (node 134:256): JW_06330 photo (134:607),
@@ -68,17 +66,18 @@ export function Hero() {
           />
         </div>
 
-        {/* Restaurant name — text wordmark (i18n), light on photo */}
-        <h1
-          id="hero-heading"
-          className={`${ruslanDisplay.className} mt-[31px] max-w-[475px] text-center text-[#fadaac] drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)]`}
-        >
-          <span className="block text-4xl font-normal tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
-            {t('home.hero.restaurantName')}
-          </span>
-          <span className="mt-1 block text-2xl font-light lowercase italic sm:text-3xl md:text-4xl lg:text-5xl">
-            {t('home.hero.restaurantSubtitle')}
-          </span>
+        {/* Wordmark — brush title on dark hero; screen blend hides black plate */}
+        <h1 id="hero-heading" className="mt-[31px] flex justify-center">
+          <Image
+            src={toR2Url('/assets/hero/hero-wordmark.webp')}
+            alt={t('home.hero.logoAlt')}
+            width={HERO_WORDMARK_WIDTH}
+            height={HERO_WORDMARK_HEIGHT}
+            className="h-auto w-[min(95vw,330px)] mix-blend-screen sm:w-[378px] md:w-[426px] xl:w-[475px]"
+            priority
+            unoptimized
+            sizes="(max-width: 640px) 330px, (max-width: 768px) 378px, (max-width: 1280px) 426px, 475px"
+          />
         </h1>
 
         {/* CTAs — Figma 136:636, gap 10px */}
