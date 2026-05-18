@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import { formatPriceInCurrency } from '@/lib/currency';
@@ -17,7 +17,10 @@ import {
   adminTableHeadCellClass,
   adminTableHeadRowClass,
   adminTableRowHoverClass,
+  adminTableSortButtonClass,
   adminTableWrapClass,
+  adminSortIconActiveClass,
+  adminSortIconIdleClass,
   dashboardCardPadding,
   dashboardEmptyText,
   dashboardMainClass,
@@ -32,28 +35,15 @@ import {
 } from '@/lib/reservations/availability';
 import { TABLES, type TableConfig } from '../../desktops/table-data';
 import { RESERVATION_TIME_SLOTS } from '@/lib/reservations/time-slots';
+import {
+  groupProfitCents,
+  groupRepresentative,
+  groupReservations,
+  type ReservationGroup,
+  type TableReservationRow,
+} from '@/lib/reservations/group-reservations';
 
-interface Reservation {
-  id: string;
-  tableId: string;
-  tableLabel: string;
-  tableSeats: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  timeEnd: string;
-  occasion: 'birthday' | 'regular';
-  guestCount: number;
-  note: string | null;
-  status: string;
-  profitCents: number | null;
-  productTitle: string | null;
-  productImageUrl: string | null;
-  createdAt: string;
-}
+type Reservation = TableReservationRow;
 
 interface ReservationCreateForm {
   tableIds: string[];
@@ -152,8 +142,7 @@ export default function AdminDesktopsPage() {
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('');
-  const [dateTimeSort, setDateTimeSort] = useState<'' | 'desc' | 'asc'>('');
-  const [dateTimeSortMenuOpen, setDateTimeSortMenuOpen] = useState(false);
+  const [dateTimeSort, setDateTimeSort] = useState<'' | 'dateTime-asc' | 'dateTime-desc'>('');
   const [createForm, setCreateForm] = useState<ReservationCreateForm>(INITIAL_CREATE_FORM);
   const [createBusyByTableId, setCreateBusyByTableId] = useState<Record<string, ReservationBusyInterval[]>>(
     {},
@@ -181,7 +170,12 @@ export default function AdminDesktopsPage() {
       if (filterStatus) params.status = filterStatus;
 
       const response = await apiClient.get<ReservationsResponse>('/api/v1/admin/reservations', { params });
-      setReservations(response.data || []);
+      setReservations(
+        (response.data || []).map((row) => ({
+          ...row,
+          bookingGroupId: row.bookingGroupId ?? null,
+        })),
+      );
       setMeta(response.meta || null);
     } catch {
       setReservations([]);
@@ -195,21 +189,6 @@ export default function AdminDesktopsPage() {
       fetchReservations();
     }
   }, [isLoggedIn, canAccessAdmin, fetchReservations]);
-
-  const dateTimeSortMenuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!dateTimeSortMenuOpen) return;
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (!dateTimeSortMenuRef.current?.contains(event.target as Node)) {
-        setDateTimeSortMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [dateTimeSortMenuOpen]);
 
   const selectedTables = orderedTablesFromIds(createForm.tableIds);
   const createBusyPerTable = useMemo(
@@ -342,6 +321,10 @@ export default function AdminDesktopsPage() {
     setCreateError(null);
     const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
     const guestCount = parseInt(createForm.guestCount, 10) || 1;
+    const bookingGroupId =
+      selectedTables.length > 1 && typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : null;
     let created = 0;
 
     try {
@@ -353,6 +336,7 @@ export default function AdminDesktopsPage() {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
+            ...(bookingGroupId ? { bookingGroupId } : {}),
             tableId: table.id,
             tableLabel: t(`desktops.tables.${table.labelKey}`),
             tableSeats: table.seats,
@@ -401,37 +385,45 @@ export default function AdminDesktopsPage() {
     }
   };
 
-  const toggleSelect = (id: string) => {
+  const toggleSelectGroup = (ids: readonly string[]) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      const hasAll = ids.every((id) => next.has(id));
+      if (hasAll) {
+        for (const id of ids) next.delete(id);
+      } else {
+        for (const id of ids) next.add(id);
+      }
       return next;
     });
   };
 
   const toggleSelectAll = () => {
-    if (visibleReservations.length === 0) return;
+    if (visibleGroups.length === 0) return;
     setSelectedIds((prev) => {
-      const allIds = visibleReservations.map((r) => r.id);
+      const allIds = visibleGroups.flatMap((group) => group.ids);
       const hasAll = allIds.every((id) => prev.has(id));
       return hasAll ? new Set() : new Set(allIds);
     });
   };
 
-  const handleStatusChange = async (id: string, status: string) => {
-    setUpdatingId(id);
+  const handleStatusChange = async (ids: readonly string[], status: string) => {
+    setUpdatingId(ids[0] ?? null);
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
-      const res = await fetch('/api/v1/admin/reservations', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ id, status }),
-      });
-      if (!res.ok) throw new Error('Failed to update');
+      const results = await Promise.all(
+        ids.map((id) =>
+          fetch('/api/v1/admin/reservations', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: JSON.stringify({ id, status }),
+          }),
+        ),
+      );
+      if (results.some((res) => !res.ok)) throw new Error('Failed to update');
       await fetchReservations();
     } catch {
       alert(t('admin.desktopsReservations.alertUpdateFailed'));
@@ -468,14 +460,122 @@ export default function AdminDesktopsPage() {
     }
   };
 
+  const handleDateTimeSort = () => {
+    setDateTimeSort((current) => (current === 'dateTime-asc' ? 'dateTime-desc' : 'dateTime-asc'));
+  };
+
   const visibleReservations = useMemo(() => {
     if (!dateTimeSort) return reservations;
+    const descending = dateTimeSort === 'dateTime-desc';
     return [...reservations].sort((a, b) => {
       const aValue = reservationDateTimeValue(a.date, a.time);
       const bValue = reservationDateTimeValue(b.date, b.time);
-      return dateTimeSort === 'asc' ? aValue - bValue : bValue - aValue;
+      return descending ? bValue - aValue : aValue - bValue;
     });
   }, [dateTimeSort, reservations]);
+
+  const visibleGroups = useMemo(() => groupReservations(visibleReservations), [visibleReservations]);
+
+  const renderReservationGroupRow = (group: ReservationGroup) => {
+    const r = groupRepresentative(group);
+    const profitCents = groupProfitCents(group);
+    const productRow = group.reservations.find((row) => row.productTitle || row.productImageUrl);
+    const isGroupSelected = group.ids.every((id) => selectedIds.has(id));
+    const isUpdating = group.ids.some((id) => updatingId === id);
+
+    return (
+      <tr key={group.key} className={adminTableRowHoverClass}>
+        <td className="px-4 py-4">
+          <input
+            type="checkbox"
+            aria-label={t('admin.desktopsReservations.selectRowAria').replace(
+              '{name}',
+              `${r.firstName} ${r.lastName}`,
+            )}
+            checked={isGroupSelected}
+            onChange={() => toggleSelectGroup(group.ids)}
+            className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
+          />
+        </td>
+        <td className="whitespace-nowrap px-4 py-4">
+          <div className={dashboardRowPrimaryMedium}>
+            {group.reservations.length === 1
+              ? (() => {
+                  const tableRow = group.reservations[0];
+                  const seats = t('admin.desktopsReservations.seatsShort').replace(
+                    '{n}',
+                    String(tableRow.tableSeats),
+                  );
+                  return `${tableRow.tableLabel} (${seats})`;
+                })()
+              : group.reservations.map((tableRow) => tableRow.tableLabel).join(', ')}
+          </div>
+        </td>
+        <td className="px-4 py-4">
+          <div className={dashboardRowPrimaryMedium}>
+            {r.firstName} {r.lastName}
+          </div>
+          {r.note ? (
+            <div className="max-w-[180px] truncate text-xs text-admin-muted" title={r.note}>
+              {r.note}
+            </div>
+          ) : null}
+        </td>
+        <td className="max-w-[220px] px-4 py-4 text-sm text-admin-brand/85">
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <span className="break-all">{r.email}</span>
+            <span className="text-admin-brand/65">{r.phone}</span>
+          </div>
+        </td>
+        <td className="px-4 py-4">
+          <div className={dashboardRowPrimaryMedium}>{formatStoredReservationDate(r.date)}</div>
+          <div className={dashboardRowMeta}>
+            {r.time}–{r.timeEnd}
+          </div>
+        </td>
+        <td className="px-4 py-4 text-sm text-admin-brand/80">
+          {r.occasion === 'birthday'
+            ? t('admin.desktopsReservations.occasionBirthday')
+            : t('admin.desktopsReservations.occasionRegular')}
+        </td>
+        <td className="px-4 py-4 text-center text-sm text-admin-brand/80">{r.guestCount}</td>
+        <td className="px-4 py-4">
+          <select
+            value={r.status}
+            disabled={isUpdating}
+            onChange={(e) => void handleStatusChange(group.ids, e.target.value)}
+            className={`max-w-[10.5rem] cursor-pointer rounded-md border px-2 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-admin-brand/25 disabled:opacity-50 ${statusSelectClass(r.status)}`}
+          >
+            <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
+            <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
+            <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
+          </select>
+        </td>
+        <td className="px-4 py-4">
+          <div className="flex min-w-0 max-w-[220px] items-center gap-3">
+            {productRow?.productImageUrl ? (
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-admin-brand-2/15 bg-admin-surface">
+                <img src={productRow.productImageUrl} alt="" className="h-full w-full object-cover" />
+              </div>
+            ) : null}
+            <div className="min-w-0 flex-1">
+              {productRow?.productTitle ? (
+                <p className={`${dashboardRowPrimaryMedium} truncate`} title={productRow.productTitle}>
+                  {productRow.productTitle}
+                </p>
+              ) : null}
+              <p className="text-sm text-admin-brand/70">
+                {profitCents != null ? formatPriceInCurrency(profitCents, 'AMD') : '—'}
+              </p>
+            </div>
+          </div>
+        </td>
+        <td className={`whitespace-nowrap px-4 py-4 text-xs ${dashboardRowMeta}`}>
+          {formatCreatedAtDate(r.createdAt)}
+        </td>
+      </tr>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -774,8 +874,8 @@ export default function AdminDesktopsPage() {
                       type="checkbox"
                       aria-label={t('admin.desktopsReservations.selectAllAria')}
                       checked={
-                        visibleReservations.length > 0 &&
-                        visibleReservations.every((reservation) => selectedIds.has(reservation.id))
+                        visibleGroups.length > 0 &&
+                        visibleGroups.every((group) => group.ids.every((id) => selectedIds.has(id)))
                       }
                       onChange={toggleSelectAll}
                       className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
@@ -785,43 +885,34 @@ export default function AdminDesktopsPage() {
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colName')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colContact')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>
-                    <div ref={dateTimeSortMenuRef} className="relative inline-flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleDateTimeSort}
+                      className={adminTableSortButtonClass}
+                      aria-label={t('admin.desktopsReservations.colDateTime')}
+                    >
                       <span>{t('admin.desktopsReservations.colDateTime')}</span>
-                      <button
-                        type="button"
-                        onClick={() => setDateTimeSortMenuOpen((prev) => !prev)}
-                        aria-label={t('admin.desktopsReservations.colDateTime')}
-                        className="inline-flex h-5 w-5 items-center justify-center rounded text-admin-brand/75 transition-colors hover:bg-admin-surface hover:text-admin-brand focus:outline-none focus:ring-2 focus:ring-admin-brand/20"
-                      >
-                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                      <span className="flex flex-col gap-0.5">
+                        <svg
+                          className={`h-2.5 w-2.5 ${dateTimeSort === 'dateTime-asc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                        <svg
+                          className={`h-2.5 w-2.5 ${dateTimeSort === 'dateTime-desc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          aria-hidden
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                      </button>
-                      {dateTimeSortMenuOpen ? (
-                        <div className="absolute right-0 top-full z-20 mt-1 min-w-[6.75rem] rounded-md border border-admin-brand-2/20 bg-white py-1 shadow-md normal-case">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDateTimeSort('desc');
-                              setDateTimeSortMenuOpen(false);
-                            }}
-                            className="block w-full px-2 py-1 text-left text-xs font-medium text-admin-brand transition-colors hover:bg-admin-surface"
-                          >
-                            Новые
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDateTimeSort('asc');
-                              setDateTimeSortMenuOpen(false);
-                            }}
-                            className="block w-full px-2 py-1 text-left text-xs font-medium text-admin-brand transition-colors hover:bg-admin-surface"
-                          >
-                            Старые
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
+                      </span>
+                    </button>
                   </th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colOccasion')}</th>
                   <th className={`${adminTableHeadCellClass} !px-4`}>{t('admin.desktopsReservations.colGuests')}</th>
@@ -852,90 +943,7 @@ export default function AdminDesktopsPage() {
                 </tr>
               </thead>
               <tbody className={adminTableBodyClass}>
-                {visibleReservations.map((r) => (
-                  <tr key={r.id} className={adminTableRowHoverClass}>
-                    <td className="px-4 py-4">
-                      <input
-                        type="checkbox"
-                        aria-label={t('admin.desktopsReservations.selectRowAria').replace(
-                          '{name}',
-                          `${r.firstName} ${r.lastName}`,
-                        )}
-                        checked={selectedIds.has(r.id)}
-                        onChange={() => toggleSelect(r.id)}
-                        className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
-                      />
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className={dashboardRowPrimaryMedium}>{r.tableLabel}</div>
-                      <div className={dashboardRowMeta}>
-                        {t('admin.desktopsReservations.seatsShort').replace('{n}', String(r.tableSeats))}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className={dashboardRowPrimaryMedium}>
-                        {r.firstName} {r.lastName}
-                      </div>
-                      {r.note ? (
-                        <div className="max-w-[180px] truncate text-xs text-admin-muted" title={r.note}>
-                          {r.note}
-                        </div>
-                      ) : null}
-                    </td>
-                    <td className="max-w-[220px] px-4 py-4 text-sm text-admin-brand/85">
-                      <div className="flex min-w-0 flex-col gap-0.5">
-                        <span className="break-all">{r.email}</span>
-                        <span className="text-admin-brand/65">{r.phone}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className={dashboardRowPrimaryMedium}>{formatStoredReservationDate(r.date)}</div>
-                      <div className={dashboardRowMeta}>
-                        {r.time}–{r.timeEnd}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-sm text-admin-brand/80">
-                      {r.occasion === 'birthday'
-                        ? t('admin.desktopsReservations.occasionBirthday')
-                        : t('admin.desktopsReservations.occasionRegular')}
-                    </td>
-                    <td className="px-4 py-4 text-center text-sm text-admin-brand/80">{r.guestCount}</td>
-                    <td className="px-4 py-4">
-                      <select
-                        value={r.status}
-                        disabled={updatingId === r.id}
-                        onChange={(e) => void handleStatusChange(r.id, e.target.value)}
-                        className={`max-w-[10.5rem] cursor-pointer rounded-md border px-2 py-1.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-admin-brand/25 disabled:opacity-50 ${statusSelectClass(r.status)}`}
-                      >
-                        <option value="pending">{t('admin.desktopsReservations.statusPending')}</option>
-                        <option value="confirmed">{t('admin.desktopsReservations.statusConfirmed')}</option>
-                        <option value="cancelled">{t('admin.desktopsReservations.statusCancelled')}</option>
-                      </select>
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="flex min-w-0 max-w-[220px] items-center gap-3">
-                        {r.productImageUrl ? (
-                          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-admin-brand-2/15 bg-admin-surface">
-                            <img src={r.productImageUrl} alt="" className="h-full w-full object-cover" />
-                          </div>
-                        ) : null}
-                        <div className="min-w-0 flex-1">
-                          {r.productTitle ? (
-                            <p className={`${dashboardRowPrimaryMedium} truncate`} title={r.productTitle}>
-                              {r.productTitle}
-                            </p>
-                          ) : null}
-                          <p className="text-sm text-admin-brand/70">
-                            {r.profitCents != null ? formatPriceInCurrency(r.profitCents, 'AMD') : '—'}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className={`whitespace-nowrap px-4 py-4 text-xs ${dashboardRowMeta}`}>
-                      {formatCreatedAtDate(r.createdAt)}
-                    </td>
-                  </tr>
-                ))}
+                {visibleGroups.map((group) => renderReservationGroupRow(group))}
               </tbody>
             </table>
           </div>
