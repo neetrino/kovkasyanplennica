@@ -150,6 +150,7 @@ export default function AdminDesktopsPage() {
   const [createError, setCreateError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [manualBookingOpen, setManualBookingOpen] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -163,6 +164,7 @@ export default function AdminDesktopsPage() {
   const fetchReservations = useCallback(async () => {
     try {
       setLoading(true);
+      setFetchError(null);
       const params: Record<string, string> = {
         page: page.toString(),
         limit: '20',
@@ -177,12 +179,16 @@ export default function AdminDesktopsPage() {
         })),
       );
       setMeta(response.meta || null);
-    } catch {
+    } catch (error: unknown) {
       setReservations([]);
+      setMeta(null);
+      const message =
+        error instanceof Error ? error.message : t('admin.desktopsReservations.loadFailed');
+      setFetchError(message);
     } finally {
       setLoading(false);
     }
-  }, [page, filterStatus]);
+  }, [page, filterStatus, t]);
 
   useEffect(() => {
     if (isLoggedIn && canAccessAdmin) {
@@ -841,6 +847,11 @@ export default function AdminDesktopsPage() {
       </Card>
 
       <Card variant="admin" className={dashboardCardPadding}>
+        {fetchError ? (
+          <p className={`mb-4 ${adminAlertErrorClass}`} role="alert">
+            {fetchError}
+          </p>
+        ) : null}
         {loading ? (
           <div className="py-12 text-center">
             <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-admin-surface border-b-admin-brand" />
