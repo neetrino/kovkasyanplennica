@@ -549,10 +549,11 @@ model ContactMessage {
 // TABLE RESERVATION MODEL
 // ============================================
 model TableReservation {
-  id          String   @id @default(cuid())
-  tableId     String
-  tableLabel  String
-  tableSeats  Int
+  id              String   @id @default(cuid())
+  bookingGroupId  String?
+  tableId         String
+  tableLabel      String
+  tableSeats      Int
   firstName   String
   lastName    String
   email       String
@@ -571,6 +572,7 @@ model TableReservation {
   updatedAt         DateTime @updatedAt
 
   @@index([createdAt(sort: Desc)])
+  @@index([bookingGroupId])
   @@index([tableId])
   @@index([date])
   @@map("table_reservations")

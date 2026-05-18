@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const {
+      bookingGroupId,
       tableId,
       tableLabel,
       tableSeats,
@@ -195,8 +196,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const trimmedBookingGroupId =
+      bookingGroupId != null && typeof bookingGroupId === "string" && bookingGroupId.trim().length > 0
+        ? bookingGroupId.trim()
+        : null;
+
     const reservation = await db.tableReservation.create({
       data: {
+        bookingGroupId: trimmedBookingGroupId,
         tableId: trimmedTableId,
         tableLabel: (tableLabel ?? "").trim(),
         tableSeats: Number(tableSeats) || 0,
