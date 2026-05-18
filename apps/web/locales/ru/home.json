@@ -1,8 +1,8 @@
 {
   "hero": {
-    "restaurantName": "КОВКАСЯН",
-    "restaurantSubtitle": "пленница",
-    "logoAlt": "КОВКАСЯН ПЛЕННИЦА",
+    "restaurantName": "КАВКАЗСКАЯ",
+    "restaurantSubtitle": "ПЛЕННИЦА",
+    "logoAlt": "КАВКАЗСКАЯ ПЛЕННИЦА",
     "bookButton": "ЗАБРОНИРОВАТЬ",
     "orderButton": "ЗАКАЗАТЬ"
   },
@@ -34,7 +34,7 @@
     "bookTable": "стол"
   },
   "header": {
-    "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
+    "logoAlt": "КАВКАЗСКАЯ ПЛЕНИЦА",
     "navigation": {
       "home": "ГЛАВНАЯ",
       "menu": "МЕНЮ",
@@ -69,7 +69,7 @@
       "description": "Зарезервируйте ваш идеальный вечер всего за несколько кликов.",
       "selectTableButton": "Выбрать стол"
     },
-    "logoAlt": "КОВКАСЯН ПЛЕНИЦА",
+    "logoAlt": "КАВКАЗСКАЯ ПЛЕНИЦА",
     "descriptionLine1": "Возражая традиции высокого",
     "descriptionLine2": "кулинарного искусства",
     "descriptionLine3": "",
