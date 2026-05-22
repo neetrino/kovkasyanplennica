@@ -1,3 +1,4 @@
+import { invalidateCatalogRedisCache } from "@/lib/cache/redis-invalidate";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { logger } from "../../../utils/logger";
 
@@ -8,6 +9,11 @@ export function revalidateProductCache(
   productId: string,
   productSlug: string | undefined
 ) {
+  void invalidateCatalogRedisCache().catch((error: unknown) => {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.warn("Redis cache invalidation failed", { error: errorMessage });
+  });
+
   try {
     logger.debug('Revalidating paths for product', { productId });
     if (productSlug) {

@@ -1,4 +1,6 @@
 import { db } from "@white-shop/db";
+import { invalidateCatalogRedisCache } from "@/lib/cache/redis-invalidate";
+import { syncProductSearchIndex } from "@/lib/services/search-index.service";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { findOrCreateAttributeValue } from "../../utils/variant-generator";
 import { ensureProductAttributesTable } from "../../utils/db-ensure";
@@ -416,6 +418,13 @@ class AdminProductsCreateService {
       });
 
       // Revalidate cache
+      if (result?.id) {
+        void syncProductSearchIndex(result.id);
+      }
+
+      void invalidateCatalogRedisCache().catch((e: unknown) => {
+        console.warn('⚠️ [ADMIN PRODUCTS CREATE SERVICE] Redis invalidation failed:', e);
+      });
       try {
         console.log('🧹 [ADMIN PRODUCTS CREATE SERVICE] Revalidating paths for new product');
         revalidatePath('/');

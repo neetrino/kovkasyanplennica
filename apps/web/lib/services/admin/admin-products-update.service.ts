@@ -1,3 +1,4 @@
+import { syncProductSearchIndex } from "@/lib/services/search-index.service";
 import { updateProduct } from "./admin-products-update/product-update-operations";
 import { revalidateProductCache } from "./admin-products-update/cache-revalidator";
 import type { UpdateProductData } from "./admin-products-update/types";
@@ -14,11 +15,12 @@ class AdminProductsUpdateService {
     data: UpdateProductData
   ) {
     const result = await updateProduct(productId, data);
-    
-    // Revalidate cache for this product and related pages
+
+    void syncProductSearchIndex(productId);
+
     const productSlug = result.translations[0]?.slug;
     revalidateProductCache(productId, productSlug);
-    
+
     return result;
   }
 }

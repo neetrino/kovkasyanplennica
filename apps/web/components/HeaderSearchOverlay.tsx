@@ -39,7 +39,7 @@ export type HeaderSearchOverlayProps = {
 };
 
 /**
- * Full-screen glass search overlay with live product results from `/api/v1/products`.
+ * Full-screen glass search overlay with live results from `/api/v1/products/search` (Meilisearch + Redis).
  */
 export function HeaderSearchOverlay({
   open,
@@ -117,9 +117,9 @@ export function HeaderSearchOverlay({
     const timer = window.setTimeout(async () => {
       const reqId = ++requestIdRef.current;
       try {
-        const res = await apiClient.get<ProductsListResponse>('/api/v1/products', {
+        const res = await apiClient.get<ProductsListResponse>('/api/v1/products/search', {
           params: {
-            search: q,
+            q,
             limit: String(SEARCH_RESULT_LIMIT),
             lang,
           },
