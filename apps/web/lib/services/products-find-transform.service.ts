@@ -1,4 +1,5 @@
-import { unstable_cache } from "next/cache";
+import { discountSettingsKey } from "@/lib/cache/redis-keys";
+import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { db } from "@white-shop/db";
 import { processImageUrl } from "../utils/image-utils";
 import { translations } from "../translations";
@@ -13,20 +14,27 @@ const getOutOfStockLabel = (lang: string = "ru"): string => {
   return translation.stock.outOfStock;
 };
 
-const DISCOUNT_SETTINGS_REVALIDATE_SECONDS = 120;
+const DISCOUNT_SETTINGS_TTL_SECONDS = 120;
 
-const getDiscountSettingsCached = unstable_cache(
-  async () =>
-    db.settings.findMany({
-      where: {
-        key: {
-          in: ["globalDiscount", "categoryDiscounts", "brandDiscounts"],
-        },
+async function fetchDiscountSettings() {
+  return db.settings.findMany({
+    where: {
+      key: {
+        in: ["globalDiscount", "categoryDiscounts", "brandDiscounts"],
       },
-    }),
-  ["product-list-discount-settings-v1"],
-  { revalidate: DISCOUNT_SETTINGS_REVALIDATE_SECONDS, tags: ["settings"] }
-);
+    },
+  });
+}
+
+type DiscountSettings = Awaited<ReturnType<typeof fetchDiscountSettings>>;
+
+async function getDiscountSettingsCached(): Promise<DiscountSettings> {
+  return withRedisCache(
+    discountSettingsKey(),
+    DISCOUNT_SETTINGS_TTL_SECONDS,
+    fetchDiscountSettings
+  );
+}
 
 function toPlainTextDescription(value: string | null | undefined): string | null {
   if (!value) return null;

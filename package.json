@@ -18,7 +18,10 @@
     "create-admin": "tsx scripts/create-admin.ts",
     "deploy:neon-migrations": "tsx scripts/deploy-neon-migrations.ts",
     "setup:neon-db": "tsx scripts/setup-neon-db.ts",
-    "migrate:deploy": "npm run prebuild:migrate --workspace=@shop/web"
+    "migrate:deploy": "npm run prebuild:migrate --workspace=@shop/web",
+    "redis:up": "docker compose up -d redis",
+    "redis:down": "docker compose down",
+    "search:reindex": "tsx scripts/reindex-meilisearch.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3"

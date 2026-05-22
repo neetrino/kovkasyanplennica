@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:webpack": "next dev --no-turbo",
     "dev:clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && next dev",
-    "prebuild": "cd ../../packages/db && npm run db:generate",
+    "prebuild": "node scripts/ensure-prisma-generate.js",
     "prebuild:migrate": "node scripts/run-migrations.js",
     "build": "next build --experimental-build-mode=compile",
     "start": "next start",
@@ -14,7 +14,10 @@
     "upload:r2-assets": "tsx scripts/upload-public-assets-to-r2.ts",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\"",
     "prisma:generate": "cd ../../packages/db && npm run db:generate",
-    "reset": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && cd ../../packages/db && npm run db:generate"
+    "reset": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && cd ../../packages/db && npm run db:generate",
+    "redis:up": "docker compose -f ../../docker-compose.yml up -d redis",
+    "redis:down": "docker compose -f ../../docker-compose.yml down",
+    "search:reindex": "tsx ../../scripts/reindex-meilisearch.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1013.0",
@@ -23,6 +26,7 @@
     "@shop/design-tokens": "*",
     "@shop/ui": "*",
     "@smithy/node-http-handler": "^4.5.0",
+    "@upstash/redis": "^1.38.0",
     "@white-shop/db": "*",
     "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.2",
@@ -37,8 +41,6 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "dotenv": "^16.3.1",
-    "tsx": "^4.7.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/browser-image-compression": "^1.0.1",
     "@types/jsonwebtoken": "^9.0.5",
@@ -46,11 +48,13 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^16.3.1",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.7",
     "postcss": "^8.4.0",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.0"
   }
 }

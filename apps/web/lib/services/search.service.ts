@@ -5,7 +5,11 @@
  * Handles product indexing and search operations
  */
 
-import { MeiliSearch } from 'meilisearch';
+import { hashCacheInput, searchKey } from '@/lib/cache/redis-keys';
+import { withRedisCache } from '@/lib/cache/with-redis-cache';
+import { MeiliSearch, type SearchResponse } from 'meilisearch';
+
+const SEARCH_TTL_SECONDS = 60;
 
 // Initialize Meilisearch client
 const searchClient = new MeiliSearch({
@@ -118,16 +122,33 @@ export async function deleteProduct(productId: string) {
 /**
  * Search products
  */
-export async function searchProducts(query: string, options?: {
+type SearchProductsOptions = {
   limit?: number;
   offset?: number;
   filter?: string;
   sort?: string[];
-}) {
+};
+
+export async function searchProducts(
+  query: string,
+  options?: SearchProductsOptions
+): Promise<SearchResponse<Record<string, unknown>>> {
+  const cacheKey = searchKey(
+    hashCacheInput({ query, options: options ?? {} })
+  );
+  return withRedisCache(cacheKey, SEARCH_TTL_SECONDS, () =>
+    searchProductsUncached(query, options)
+  );
+}
+
+async function searchProductsUncached(
+  query: string,
+  options?: SearchProductsOptions
+): Promise<SearchResponse<Record<string, unknown>>> {
   try {
     const index = await getIndex();
-    
-    const searchOptions: any = {
+
+    const searchOptions: SearchProductsOptions = {
       limit: options?.limit || 20,
       offset: options?.offset || 0,
     };
@@ -140,8 +161,7 @@ export async function searchProducts(query: string, options?: {
       searchOptions.sort = options.sort;
     }
 
-    const results = await index.search(query, searchOptions);
-    return results;
+    return await index.search(query, searchOptions);
   } catch (error) {
     console.error('❌ [SEARCH] Error searching products:', error);
     throw error;

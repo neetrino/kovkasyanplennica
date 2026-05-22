@@ -1,4 +1,12 @@
+import {
+  categorySlugKey,
+  categoryTreeKey,
+} from "@/lib/cache/redis-keys";
+import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { db } from "@white-shop/db";
+
+const CATEGORY_TREE_TTL_SECONDS = 300;
+const CATEGORY_SLUG_TTL_SECONDS = 300;
 
 function getCategoryImageUrl(media: unknown): string | null {
   if (!Array.isArray(media)) return null;
@@ -22,6 +30,14 @@ class CategoriesService {
    * Get category tree
    */
   async getTree(lang: string = "en") {
+    return withRedisCache(
+      categoryTreeKey(lang),
+      CATEGORY_TREE_TTL_SECONDS,
+      () => this.getTreeUncached(lang)
+    );
+  }
+
+  private async getTreeUncached(lang: string) {
     const categories = await db.category.findMany({
       where: {
         published: true,
@@ -94,6 +110,14 @@ class CategoriesService {
    * Get category by slug
    */
   async findBySlug(slug: string, lang: string = "en") {
+    return withRedisCache(
+      categorySlugKey(slug, lang),
+      CATEGORY_SLUG_TTL_SECONDS,
+      () => this.findBySlugUncached(slug, lang)
+    );
+  }
+
+  private async findBySlugUncached(slug: string, lang: string) {
     const category = await db.category.findFirst({
       where: {
         translations: {

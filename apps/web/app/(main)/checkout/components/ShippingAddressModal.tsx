@@ -159,7 +159,6 @@ export function ShippingAddressModal({
             <OrderSummaryModal
               cart={cart}
               orderSummary={orderSummary}
-              currency={currency}
               shippingMethod={shippingMethod}
               shippingCity={shippingCity}
               loadingDeliveryPrice={loadingDeliveryPrice}
