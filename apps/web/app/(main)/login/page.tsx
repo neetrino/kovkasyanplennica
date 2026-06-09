@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, useEffect, Suspense } from 'react';
+import { useState, FormEvent, useEffect, Suspense, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Input, Card } from '@shop/ui';
 import Link from 'next/link';
@@ -10,6 +10,9 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
 import { Eye, EyeOff } from 'lucide-react';
+
+const loginCardClassName =
+  'relative z-10 p-8 !rounded-[50px] overflow-hidden border border-white/25 shadow-xl text-white max-lg:bg-[#3a504e]/95 max-lg:backdrop-blur-none lg:bg-white/20 lg:backdrop-blur-md';
 
 function LoginPageContent() {
   const { t } = useTranslation();
@@ -24,6 +27,11 @@ function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams?.get('redirect') || '/';
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  const focusPassword = useCallback(() => {
+    passwordRef.current?.focus();
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,12 +75,12 @@ function LoginPageContent() {
   }, [isLoggedIn, isLoading, redirectTo, roles, router]);
 
   return (
-    <div className="min-h-screen bg-[#2F3F3D] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-      <div className="w-full max-w-lg relative overflow-visible">
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] aspect-square max-h-[800px] pointer-events-none z-[1]" aria-hidden>
+    <div className="bg-[#2F3F3D] px-4 sm:px-6 lg:px-8 py-6 lg:py-12 lg:min-h-screen lg:flex lg:items-center lg:justify-center">
+      <div className="w-full max-w-lg relative mx-auto lg:overflow-visible">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] aspect-square max-h-[800px] pointer-events-none z-[1] hidden lg:block" aria-hidden>
           <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
         </div>
-        <Card className="relative z-10 p-8 !rounded-[50px] overflow-hidden bg-white/20 backdrop-blur-md border border-white/25 shadow-xl text-white">
+        <Card className={loginCardClassName}>
           {/* Դեկորատիվ վեկտորներ — ձախ վերև, աջ ներքև */}
           <div className="absolute top-0 left-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 pointer-events-none z-0 opacity-90" aria-hidden>
             <img src="/hero-vector-1.svg" alt="" className="w-full h-full object-contain object-left-top" />
@@ -98,10 +106,17 @@ function LoginPageContent() {
               id="loginId"
               type="text"
               autoComplete="username"
+              enterKeyHint="next"
               placeholder={`${t('login.form.emailPlaceholder')} / username`}
               className="w-full rounded-xl font-normal text-gray-900 placeholder:text-gray-500"
               value={loginId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLoginId(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  focusPassword();
+                }
+              }}
               disabled={isSubmitting || isLoading}
               required
             />
@@ -112,8 +127,11 @@ function LoginPageContent() {
             </label>
             <div className="relative">
               <Input
+                ref={passwordRef}
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                enterKeyHint="done"
                 placeholder={t('login.form.passwordPlaceholder')}
                 className="w-full pr-10 rounded-xl font-normal text-gray-900 placeholder:text-gray-500"
                 value={password}
@@ -123,9 +141,11 @@ function LoginPageContent() {
               />
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-black focus:outline-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-black focus:outline-none touch-manipulation"
                 disabled={isSubmitting || isLoading}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
                   <EyeOff className="h-5 w-5" />
@@ -181,12 +201,12 @@ function LoginPageContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#2F3F3D] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-        <div className="w-full max-w-lg relative overflow-visible">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] aspect-square max-h-[800px] pointer-events-none z-0 opacity-90" aria-hidden>
+      <div className="bg-[#2F3F3D] px-4 sm:px-6 lg:px-8 py-6 lg:py-12 lg:min-h-screen lg:flex lg:items-center lg:justify-center">
+        <div className="w-full max-w-lg relative mx-auto">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[500px] md:w-[600px] lg:w-[700px] xl:w-[800px] aspect-square max-h-[800px] pointer-events-none z-0 opacity-90 hidden lg:block" aria-hidden>
             <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
           </div>
-          <Card className="relative z-10 p-8 !rounded-2xl overflow-hidden bg-white/20 backdrop-blur-md border border-white/25 shadow-xl w-full max-w-lg">
+          <Card className={`${loginCardClassName} !rounded-2xl w-full max-w-lg`}>
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
