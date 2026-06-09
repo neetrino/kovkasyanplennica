@@ -59,12 +59,23 @@ const LOGIN_SELECT_WITH_USERNAME = {
   username: true,
 } as const;
 
-const isUnknownUsernameArgumentError = (error: unknown): boolean => {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isUsernameColumnMissingError = (error: unknown): boolean => {
   if (!(error instanceof Error)) {
     return false;
   }
 
-  return error.message.includes("Unknown argument `username`");
+  if (error.message.includes("Unknown argument `username`")) {
+    return true;
+  }
+
+  if (!isRecord(error) || error.code !== "P2022" || !isRecord(error.meta)) {
+    return false;
+  }
+
+  return error.meta.column === "users.username";
 };
 
 const findLoginUser = async (normalizedLogin: string): Promise<LoginUserRecord | null> => {
@@ -80,7 +91,7 @@ const findLoginUser = async (normalizedLogin: string): Promise<LoginUserRecord |
       select: LOGIN_SELECT_WITH_USERNAME,
     });
   } catch (error: unknown) {
-    if (!isUnknownUsernameArgumentError(error)) {
+    if (!isUsernameColumnMissingError(error)) {
       throw error;
     }
 
