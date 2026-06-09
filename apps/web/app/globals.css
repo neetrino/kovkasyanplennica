@@ -57,6 +57,7 @@
     caret-color: currentColor !important;
     font-weight: normal;
     font-style: normal;
+    scroll-margin-block: 1.5rem;
   }
   
   /* Ensure caret is visible and blinking in focused inputs */

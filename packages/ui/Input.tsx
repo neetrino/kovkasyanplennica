@@ -31,8 +31,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const inputBase =
       variant === 'admin'
-        ? 'w-full px-4 py-2 rounded-md border bg-admin-brand text-admin-flesh placeholder:text-admin-flesh-muted focus:outline-none focus:ring-2 focus:ring-admin-warm focus:border-transparent disabled:cursor-not-allowed disabled:opacity-60 border-white/20'
-        : `w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed ${
+        ? 'w-full px-4 py-2 rounded-md border bg-admin-brand text-base text-admin-flesh placeholder:text-admin-flesh-muted focus:outline-none focus:ring-2 focus:ring-admin-warm focus:border-transparent disabled:cursor-not-allowed disabled:opacity-60 border-white/20 touch-manipulation'
+        : `w-full px-4 py-2 border rounded-md text-base touch-manipulation focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:bg-gray-50 disabled:cursor-not-allowed ${
             error ? 'border-error focus:ring-error' : 'border-gray-300'
           }`;
 
