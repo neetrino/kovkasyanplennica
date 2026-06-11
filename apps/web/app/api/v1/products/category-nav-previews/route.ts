@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CATEGORY_NAV_PREVIEW_MAX_SLUGS_PER_REQUEST } from "@/lib/category-nav-preview-limits";
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { getCategoryNavPreviews } from "@/lib/services/products-nav-preview.service";
 
 export async function GET(req: NextRequest) {
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
       { data },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "Cache-Control": `public, s-maxage=${PUBLIC_PAGE_REVALIDATE_SECONDS}, stale-while-revalidate=${PUBLIC_PAGE_REVALIDATE_SECONDS}`,
         },
       }
     );

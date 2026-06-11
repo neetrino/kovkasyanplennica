@@ -1,4 +1,5 @@
 import { discountSettingsKey } from "@/lib/cache/redis-keys";
+import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { db } from "@white-shop/db";
 import { processImageUrl } from "../utils/image-utils";
@@ -14,7 +15,7 @@ const getOutOfStockLabel = (lang: string = "ru"): string => {
   return translation.stock.outOfStock;
 };
 
-const DISCOUNT_SETTINGS_TTL_SECONDS = 120;
+const DISCOUNT_SETTINGS_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
 
 async function fetchDiscountSettings() {
   return db.settings.findMany({

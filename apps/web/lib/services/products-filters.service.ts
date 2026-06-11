@@ -132,9 +132,9 @@ class ProductsFiltersService {
       }
 
       // Get products with variants
-      let products;
+      let products: ProductWithRelations[] = [];
       try {
-        products = await db.product.findMany({
+        products = (await db.product.findMany({
           where,
           include: {
             variants: {
@@ -168,7 +168,7 @@ class ProductsFiltersService {
               },
             },
           },
-        });
+        })) as unknown as ProductWithRelations[];
       } catch (dbError) {
         console.error('❌ [PRODUCTS FILTERS SERVICE] Error fetching products in getFilters:', dbError);
         throw dbError;

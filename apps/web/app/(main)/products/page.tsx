@@ -16,12 +16,14 @@ import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.serv
 import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 import { toR2Url } from '@/lib/r2-assets';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
 
-const PRODUCTS_LIST_REVALIDATE_SECONDS = 120;
+const PRODUCTS_LIST_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 /** Returned product count for shop grouping; DB raw fetch is capped (see query-executor). */
 const PRODUCTS_SHOP_LIST_LIMIT = 120;
 
-export const revalidate = PRODUCTS_LIST_REVALIDATE_SECONDS;
+/** ISR — products list (see PUBLIC_PAGE_REVALIDATE_SECONDS) */
+export const revalidate = 3600;
 
 function buildProductFilters(
   page: number,

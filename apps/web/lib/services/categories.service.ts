@@ -2,11 +2,12 @@ import {
   categorySlugKey,
   categoryTreeKey,
 } from "@/lib/cache/redis-keys";
+import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { db } from "@white-shop/db";
 
-const CATEGORY_TREE_TTL_SECONDS = 300;
-const CATEGORY_SLUG_TTL_SECONDS = 300;
+const CATEGORY_TREE_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
+const CATEGORY_SLUG_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
 
 function getCategoryImageUrl(media: unknown): string | null {
   if (!Array.isArray(media)) return null;

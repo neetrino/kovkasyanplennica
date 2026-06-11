@@ -2,6 +2,7 @@ import { unstable_cache } from 'next/cache';
 import { t } from '@/lib/i18n';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { productsService } from '@/lib/services/products.service';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
 
 export const HOME_MENU_LIMIT = 4;
 export const HOME_FAVORITES_LIMIT = 8;
@@ -36,7 +37,7 @@ export type HomeSectionProduct = {
   colors?: Array<{ value: string; imageUrl?: string | null; colors?: string[] | null }>;
 };
 
-const HOME_PRODUCTS_REVALIDATE_SECONDS = 120;
+const HOME_PRODUCTS_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 
 function mapRawToHomeProduct(
   p: {

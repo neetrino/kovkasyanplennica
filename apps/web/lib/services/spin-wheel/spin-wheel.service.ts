@@ -6,6 +6,10 @@ import type {
   UpdateSpinWheelPrizeInput,
 } from "./spin-wheel.types";
 import { DEFAULT_WEIGHT } from "./spin-wheel.constants";
+import { spinWheelFeatureKey } from "@/lib/cache/redis-keys";
+import { SETTINGS_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
+import { withRedisCache } from "@/lib/cache/with-redis-cache";
+import { cacheService } from "@/lib/services/cache.service";
 import * as store from "./spin-wheel-store";
 import {
   createId,
@@ -17,6 +21,16 @@ import {
 import * as prizeCrud from "./spin-wheel-prize-crud";
 import * as wins from "./spin-wheel-wins";
 import { getProductSnapshotsSafe } from "./spin-wheel-product-snapshot";
+
+async function getSpinWheelFeatureEnabledCached(): Promise<boolean> {
+  return withRedisCache(spinWheelFeatureKey(), SETTINGS_REDIS_TTL_SECONDS, () =>
+    store.getSpinWheelFeatureEnabled()
+  );
+}
+
+async function invalidateSpinWheelFeatureCache(): Promise<void> {
+  await cacheService.del(spinWheelFeatureKey());
+}
 
 async function hydratePrizesWithProducts(prizes: SpinWheelPrize[]) {
   const productIdsByPrize = prizes.map((prize) => ({
@@ -65,7 +79,7 @@ class SpinWheelService {
   }
 
   async getEligibleActivePrizes(userId: string) {
-    const featureOn = await store.getSpinWheelFeatureEnabled();
+    const featureOn = await getSpinWheelFeatureEnabledCached();
     if (!featureOn) {
       return {
         prizes: [] as SpinWheelPrize[],
@@ -78,10 +92,7 @@ class SpinWheelService {
       };
     }
 
-    const [prizesStore, attemptsStore] = await Promise.all([
-      store.getPrizesStore(),
-      store.getAttemptsStore(),
-    ]);
+    const { prizesStore, attemptsStore } = await store.getSpinWheelRuntimeSettings();
     const now = new Date();
     const normalizedPrizes = prizesStore.prizes.map((p) => normalizePrize(p as SpinWheelPrize));
     const activePrizes = normalizedPrizes.filter((p) => isPrizeActive(p, now));
@@ -106,7 +117,7 @@ class SpinWheelService {
   }
 
   async spin(userId: string) {
-    const featureOn = await store.getSpinWheelFeatureEnabled();
+    const featureOn = await getSpinWheelFeatureEnabledCached();
     if (!featureOn) {
       throw {
         status: 403,
@@ -198,6 +209,7 @@ class SpinWheelService {
 
   async setSpinWheelFeatureEnabled(enabled: boolean) {
     await store.saveSpinWheelFeatureEnabled(enabled);
+    await invalidateSpinWheelFeatureCache();
     return { enabled };
   }
 }

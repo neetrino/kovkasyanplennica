@@ -20,7 +20,12 @@ export async function GET(
         price: true,
         compareAtPrice: true,
         product: {
-          select: { slug: true },
+          select: {
+            translations: {
+              select: { slug: true },
+              take: 1,
+            },
+          },
         },
       },
     });
@@ -43,7 +48,7 @@ export async function GET(
     return NextResponse.json({
       id: variant.id,
       productId: variant.productId,
-      productSlug: variant.product.slug,
+      productSlug: variant.product.translations[0]?.slug ?? "",
       sku: variant.sku ?? "",
       price: variant.price,
       compareAtPrice: variant.compareAtPrice ?? null,

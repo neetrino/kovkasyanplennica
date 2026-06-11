@@ -138,26 +138,26 @@ async function fetchBySlugAnyLocale(slugCandidates: string[]): Promise<ProductWi
   };
 
   try {
-    return await db.product.findFirst({
+    return (await db.product.findFirst({
       where: baseWhere,
       include: {
         ...baseInclude,
         ...getProductAttributesInclude(),
       },
-    });
+    })) as ProductWithFullRelations | null;
   } catch (error: unknown) {
     if (isProductAttributesError(error)) {
-      return db.product.findFirst({
+      return (await db.product.findFirst({
         where: baseWhere,
         include: baseInclude,
-      });
+      })) as ProductWithFullRelations | null;
     }
 
     if (isAttributeValuesColorsError(error)) {
-      return db.product.findFirst({
+      return (await db.product.findFirst({
         where: baseWhere,
         include: getBaseIncludeWithoutAttributeValue(),
-      });
+      })) as ProductWithFullRelations | null;
     }
 
     throw error;
@@ -185,7 +185,7 @@ async function fetchWithProductAttributes(
     logger.info('Successfully fetched product with productAttributes');
     const productAttrs = product && 'productAttributes' in product && Array.isArray(product.productAttributes) ? product.productAttributes : [];
     logger.debug('Product attributes count', { count: productAttrs.length });
-    return product;
+    return product as ProductWithFullRelations | null;
   } catch (error: unknown) {
     if (isProductAttributesError(error)) {
       logger.warn('product_attributes table not found, fetching without it', { 
@@ -202,7 +202,7 @@ async function fetchWithProductAttributes(
           where: baseWhere,
           include: baseInclude,
         });
-        return product;
+        return product as ProductWithFullRelations | null;
       } catch (attributesError: unknown) {
         return handleAttributesError(attributesError, slugCandidates, lang);
       }
@@ -236,7 +236,7 @@ async function fetchWithoutProductAttributes(
     });
     const productAttrsFallback = product && 'productAttributes' in product && Array.isArray(product.productAttributes) ? product.productAttributes : [];
     logger.debug('Fallback query (without productAttributes)', { count: productAttrsFallback.length });
-    return product;
+    return product as ProductWithFullRelations | null;
   } catch (retryError: unknown) {
     if (isVariantAttributesError(retryError)) {
       logger.warn('product_variants.attributes column not found, attempting to create it');
@@ -246,7 +246,7 @@ async function fetchWithoutProductAttributes(
           where: baseWhere,
           include: baseInclude,
         });
-        return product;
+        return product as ProductWithFullRelations | null;
       } catch (attributesError: unknown) {
         return handleAttributesError(attributesError, slugCandidates, lang);
       }
@@ -299,7 +299,7 @@ async function fetchWithoutAttributeValue(
         ...getProductAttributesInclude(),
       },
     });
-    return product;
+    return product as ProductWithFullRelations | null;
   } catch (productAttrError: unknown) {
     // If productAttributes also fails, retry without it
     if (isProductAttributesError(productAttrError)) {
@@ -307,7 +307,7 @@ async function fetchWithoutAttributeValue(
         where: baseWhere,
         include: baseIncludeWithoutAttributeValue,
       });
-      return product;
+      return product as ProductWithFullRelations | null;
     }
     throw productAttrError;
   }
@@ -327,7 +327,7 @@ export async function buildProductQuery(
 
   const product = await fetchWithProductAttributes(slugCandidates, lang);
   if (product) {
-    return product;
+    return product as ProductWithFullRelations | null;
   }
 
   const fallbackProduct = await fetchBySlugAnyLocale(slugCandidates);

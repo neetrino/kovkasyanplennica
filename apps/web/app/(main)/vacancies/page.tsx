@@ -5,9 +5,7 @@ import { getStoredLanguage } from '@/lib/language';
 import { t } from '@/lib/i18n';
 import { toR2Url } from '@/lib/r2-assets';
 
-const VACANCIES_REVALIDATE_SECONDS = 60;
-
-export const revalidate = VACANCIES_REVALIDATE_SECONDS;
+export const revalidate = 60;
 
 const FALLBACK_VACANCY_IMAGE =
   'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1200';
@@ -44,7 +42,7 @@ async function fetchVacancies(): Promise<VacancyDto[]> {
     const origin = await getVacanciesRequestOrigin();
     const res = await fetch(`${origin}/api/v1/vacancies`, {
       next: {
-        revalidate: VACANCIES_REVALIDATE_SECONDS,
+        revalidate: 60,
         tags: ['vacancies-list'],
       },
     });

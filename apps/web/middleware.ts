@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import {
+  healthProbeResponse,
+  shouldBypassForUptimeProbe,
+} from '@/lib/health/uptime-probe';
 
 const MOBILE_UA =
   /Mobile|Android|iPhone|iPad|webOS|BlackBerry|IEMobile|Opera Mini/i;
 
 /**
- * Lets crawlers / link-preview bots re-fetch HTML instead of serving a long-lived stale copy.
- * Telegram still caches previews on its side; combine with redeploy + @webpagebot or ?v= on the URL.
- *
  * `/` — `x-home-variant` (mobile|desktop) so the server renders only one home tree (no duplicate RSC/data).
+ *
+ * Do not override Cache-Control here — Next.js ISR / route handlers set CDN-friendly headers.
+ * Forcing `max-age=0, must-revalidate` on every page was waking Neon on each bot/monitor hit.
  */
 export function middleware(request: NextRequest) {
+  if (shouldBypassForUptimeProbe(request)) {
+    return healthProbeResponse(request.method);
+  }
+
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/_next') || pathname.startsWith('/api')) {
@@ -35,7 +43,6 @@ export function middleware(request: NextRequest) {
     const res = NextResponse.next({
       request: { headers: requestHeaders },
     });
-    res.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
     if (!cookieVariant) {
       res.cookies.set('home-variant', variant, {
         maxAge: 60 * 60 * 24 * 30,
@@ -46,9 +53,7 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  const response = NextResponse.next();
-  response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

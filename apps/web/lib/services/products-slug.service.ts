@@ -1,9 +1,10 @@
 import { productSlugKey } from "@/lib/cache/redis-keys";
+import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { buildProductQuery } from "./products-slug/product-query-builder";
 import { transformProduct } from "./products-slug/product-transformer";
 
-const PRODUCT_SLUG_TTL_SECONDS = 120;
+const PRODUCT_SLUG_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
 
 /**
  * Service for fetching products by slug

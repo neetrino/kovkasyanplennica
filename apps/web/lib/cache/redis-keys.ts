@@ -31,6 +31,10 @@ export function discountSettingsKey(): string {
   return `${PREFIX}:settings:discounts:v1`;
 }
 
+export function spinWheelFeatureKey(): string {
+  return `${PREFIX}:settings:spin-wheel-feature:v1`;
+}
+
 export const REDIS_CACHE_PATTERNS = {
   products: `${PREFIX}:products:*`,
   productSlugs: `${PREFIX}:product:slug:*`,
