@@ -59,9 +59,9 @@ function calculateTopProducts(orders: Array<{
       product?: {
         id: string;
         translations?: Array<{ title: string }>;
-        media?: Array<{ url?: string }>;
+        media?: Array<{ url?: string }> | unknown[];
       };
-    };
+    } | null;
     productTitle?: string;
     sku?: string;
     quantity: number;
@@ -127,7 +127,7 @@ function calculateTopCategories(orders: Array<{
           translations?: Array<{ title: string }>;
         }>;
       };
-    };
+    } | null;
     quantity: number;
     total: number;
   }>;

@@ -1,10 +1,11 @@
 import { unstable_cache } from 'next/cache';
 import type { LanguageCode } from '@/lib/language';
 import { productsService } from '@/lib/services/products.service';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
 
 export const NEW_ARRIVALS_LIMIT = 12;
 
-const MOBILE_NEW_ARRIVALS_REVALIDATE_SECONDS = 120;
+const MOBILE_NEW_ARRIVALS_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 
 export type MobileNewArrivalProduct = {
   id: string;

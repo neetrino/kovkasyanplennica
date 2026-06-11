@@ -125,8 +125,7 @@ async function buildFilterFilter(
   }
 
   if (filter === "bestseller") {
-    type BestsellerVariant = { variantId: string | null; _sum: { quantity: number | null } };
-    const bestsellerVariants: BestsellerVariant[] = await db.orderItem.groupBy({
+    const bestsellerVariants = await db.orderItem.groupBy({
       by: ["variantId"],
       _sum: { quantity: true },
       where: {
@@ -158,7 +157,7 @@ async function buildFilterFilter(
       });
 
       const productSales = new Map<string, number>();
-      bestsellerVariants.forEach((item: BestsellerVariant) => {
+      bestsellerVariants.forEach((item) => {
         const variantId = item.variantId;
         if (!variantId) return;
         const productId = variantToProduct.get(variantId);

@@ -470,11 +470,24 @@ class AdminProductsCreateService {
       size: v.size,
       imageUrl: v.imageUrl || undefined,
       published: false,
-      options: (v.options || []).map((o) => ({
-        valueId: o.valueId || undefined,
-        attributeKey: o.attributeKey || undefined,
-        value: o.value || undefined,
-      })).filter((o) => o.valueId || (o.attributeKey && o.value)),
+      options: (v.options || [])
+        .flatMap((o) => {
+          if (o.valueId) {
+            return [{
+              valueId: o.valueId,
+              attributeKey: o.attributeKey ?? "",
+              value: o.value ?? "",
+            }];
+          }
+          if (o.attributeKey && o.value) {
+            return [{
+              attributeKey: o.attributeKey,
+              value: o.value,
+              valueId: o.valueId ?? undefined,
+            }];
+          }
+          return [];
+        }),
     }));
 
     const payload = {

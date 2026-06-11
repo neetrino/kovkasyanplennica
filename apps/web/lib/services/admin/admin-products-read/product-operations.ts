@@ -67,7 +67,7 @@ export async function getProductById(productId: string) {
   
   // Get all attribute IDs from productAttributes relation
   const productAttributes = Array.isArray((product as { productAttributes?: unknown[] }).productAttributes) 
-    ? (product as { productAttributes: Array<{ attributeId?: string; attribute?: { id: string } }> }).productAttributes 
+    ? (product as unknown as { productAttributes: Array<{ attributeId?: string; attribute?: { id: string } }> }).productAttributes 
     : [];
   const attributeIds = productAttributes
     .map((pa) => pa.attributeId || pa.attribute?.id)

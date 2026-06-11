@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@white-shop/db";
 import type {
   SpinWheelAttemptsSettingValue,
@@ -61,10 +62,10 @@ export async function savePrizesStore(
 ): Promise<void> {
   await db.settings.upsert({
     where: { key: SPIN_WHEEL_PRIZES_SETTINGS_KEY },
-    update: { value: store, updatedAt: new Date() },
+    update: { value: store as unknown as Prisma.InputJsonValue, updatedAt: new Date() },
     create: {
       key: SPIN_WHEEL_PRIZES_SETTINGS_KEY,
-      value: store,
+      value: store as unknown as Prisma.InputJsonValue,
       description: "Spin wheel prizes configuration",
     },
   });
@@ -75,10 +76,10 @@ export async function saveAttemptsStore(
 ): Promise<void> {
   await db.settings.upsert({
     where: { key: SPIN_WHEEL_ATTEMPTS_SETTINGS_KEY },
-    update: { value: store, updatedAt: new Date() },
+    update: { value: store as unknown as Prisma.InputJsonValue, updatedAt: new Date() },
     create: {
       key: SPIN_WHEEL_ATTEMPTS_SETTINGS_KEY,
-      value: store,
+      value: store as unknown as Prisma.InputJsonValue,
       description: "Spin wheel spin attempts history",
     },
   });
@@ -92,14 +93,42 @@ export async function getSpinWheelFeatureEnabled(): Promise<boolean> {
   return toFeatureStore(setting?.value).enabled;
 }
 
+/** Single round-trip for spin-wheel runtime reads (replaces 3 separate findUnique calls). */
+export async function getSpinWheelRuntimeSettings(): Promise<{
+  prizesStore: SpinWheelPrizesSettingValue;
+  attemptsStore: SpinWheelAttemptsSettingValue;
+  featureEnabled: boolean;
+}> {
+  const rows = await db.settings.findMany({
+    where: {
+      key: {
+        in: [
+          SPIN_WHEEL_PRIZES_SETTINGS_KEY,
+          SPIN_WHEEL_ATTEMPTS_SETTINGS_KEY,
+          SPIN_WHEEL_FEATURE_SETTINGS_KEY,
+        ],
+      },
+    },
+    select: { key: true, value: true },
+  });
+
+  const byKey = new Map(rows.map((row) => [row.key, row.value]));
+
+  return {
+    prizesStore: toPrizesStore(byKey.get(SPIN_WHEEL_PRIZES_SETTINGS_KEY)),
+    attemptsStore: toAttemptsStore(byKey.get(SPIN_WHEEL_ATTEMPTS_SETTINGS_KEY)),
+    featureEnabled: toFeatureStore(byKey.get(SPIN_WHEEL_FEATURE_SETTINGS_KEY)).enabled,
+  };
+}
+
 export async function saveSpinWheelFeatureEnabled(enabled: boolean): Promise<void> {
   const value: SpinWheelFeatureSettingValue = { enabled };
   await db.settings.upsert({
     where: { key: SPIN_WHEEL_FEATURE_SETTINGS_KEY },
-    update: { value, updatedAt: new Date() },
+    update: { value: value as unknown as Prisma.InputJsonValue, updatedAt: new Date() },
     create: {
       key: SPIN_WHEEL_FEATURE_SETTINGS_KEY,
-      value,
+      value: value as unknown as Prisma.InputJsonValue,
       description: "Spin wheel public visibility (on/off)",
     },
   });

@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { db } from "@white-shop/db";
 import { processImageUrl } from "../utils/image-utils";
 import {
@@ -125,7 +126,7 @@ async function findPreviewForCategorySlug(
   };
 }
 
-const NAV_PREVIEW_REVALIDATE_SECONDS = 120;
+const NAV_PREVIEW_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 /** Avoid opening dozens of concurrent DB queries (pool / CPU spikes on `/products`). */
 const NAV_PREVIEW_CONCURRENCY = 6;
 

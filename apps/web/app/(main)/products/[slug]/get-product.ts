@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
+import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
 import { productsService } from '@/lib/services/products.service';
 
 /**
@@ -14,7 +15,7 @@ const getCachedProductBySlug = unstable_cache(
     }
   },
   ['pdp-product-by-slug'],
-  { revalidate: 300, tags: ['products'] },
+  { revalidate: PUBLIC_PAGE_REVALIDATE_SECONDS, tags: ['products'] },
 );
 
 async function getFreshProductBySlug(slug: string, lang: string) {

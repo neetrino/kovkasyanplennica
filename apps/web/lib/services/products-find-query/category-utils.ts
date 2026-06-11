@@ -45,6 +45,11 @@ export async function findCategoryBySlug(
       published: true,
       deletedAt: null,
     },
+    include: {
+      translations: {
+        select: { slug: true, locale: true },
+      },
+    },
   });
 
   // If category not found in current language, try to find it in other languages (fallback)
@@ -59,6 +64,11 @@ export async function findCategoryBySlug(
         },
         published: true,
         deletedAt: null,
+      },
+      include: {
+        translations: {
+          select: { slug: true, locale: true },
+        },
       },
     });
     
