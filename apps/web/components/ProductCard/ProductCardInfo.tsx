@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, type MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import type { MouseEvent } from 'react';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import type { CurrencyCode } from '../../lib/currency';
-import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 import { toR2Url } from '@/lib/r2-assets';
 
 interface ProductCardInfoProps {
@@ -66,13 +64,9 @@ export function ProductCardInfo({
   omitProductTitleLink = false,
 }: ProductCardInfoProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const normalizedSlug = slug.trim();
   const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
   const categoryValue = category || brandName || t('common.defaults.category');
-  const handleProductIntent = useCallback(() => {
-    prefetchProductByIntent(router, slug);
-  }, [router, slug]);
 
   const handleAddToCart = (e: MouseEvent) => {
     e.preventDefault();
@@ -122,10 +116,7 @@ export function ProductCardInfo({
       ) : (
         <Link
           href={productHref}
-          prefetch
-          onMouseEnter={handleProductIntent}
-          onTouchStart={handleProductIntent}
-          onFocus={handleProductIntent}
+          prefetch={false}
           className="block"
         >
           <h3

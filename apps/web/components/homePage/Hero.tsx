@@ -83,14 +83,14 @@ export function Hero() {
         {/* CTAs — Figma 136:636, gap 10px */}
         <div className="mt-[31px] flex flex-row flex-wrap items-center justify-center gap-[10px]">
           <Link
-            prefetch
+            prefetch={false}
             href="/desktops"
             className="flex h-14 w-full min-w-[190px] max-w-[280px] shrink-0 items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[rgba(255,255,255,0.06)] px-6 backdrop-blur-[3.5px] text-base font-semibold tracking-[0.32px] text-[#fadaac] transition-colors hover:bg-[rgba(255,255,255,0.12)] sm:w-auto sm:max-w-none"
           >
             {t('home.hero.bookButton')}
           </Link>
           <Link
-            prefetch
+            prefetch={false}
             href="/products"
             className="flex h-14 w-full min-w-[190px] max-w-[280px] shrink-0 items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[#fadaac] px-6 text-base font-bold tracking-[0.32px] text-[#2f3f3d] transition-colors hover:bg-[#f5d49a] sm:w-auto sm:max-w-none"
           >

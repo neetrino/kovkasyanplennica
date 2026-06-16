@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, type MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import type { MouseEvent } from 'react';
 import { ProductCardInfo } from './ProductCardInfo';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
-import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 
 interface ProductCardGridProps {
   product: {
@@ -59,16 +57,12 @@ export function ProductCardGrid({
   onImageError,
   onAddToCart,
 }: ProductCardGridProps) {
-  const router = useRouter();
   const normalizedSlug = product.slug.trim();
   const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
   const imageSizesAttr =
     largeCompactImage && compactHeight ? 'min(60vw, 280px)' : compactListing ? '200px' : '223px';
   const denseDesktop = compactListing && !compactHeight;
   const denseMobile = compactListing && compactHeight;
-  const handleProductIntent = useCallback(() => {
-    prefetchProductByIntent(router, product.slug);
-  }, [router, product.slug]);
 
   return (
     <div
@@ -92,10 +86,7 @@ export function ProductCardGrid({
     >
       <Link
         href={productHref}
-        prefetch
-        onMouseEnter={handleProductIntent}
-        onTouchStart={handleProductIntent}
-        onFocus={handleProductIntent}
+        prefetch={false}
         className="absolute inset-0 z-[1] rounded-[35px] outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         aria-label={`${product.title} — view product`}
       />

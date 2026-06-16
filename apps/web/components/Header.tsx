@@ -258,7 +258,7 @@ export function Header() {
         className={`relative z-10 flex items-center ${isHomeCream ? 'gap-4 lg:gap-6' : 'gap-3 lg:gap-4'}`}
       >
         <Link
-          prefetch
+          prefetch={false}
           href="/"
           className="flex shrink-0 items-center"
           aria-label={t('home.header.logoAlt')}
@@ -286,7 +286,7 @@ export function Header() {
         {navigationLinks.map((link) => (
           <Link
             key={link.label}
-            prefetch
+            prefetch={false}
             href={link.href}
             className={`font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 ${
               isHomeCream

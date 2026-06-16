@@ -1,31 +1,77 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as any;
+type GlobalWithPrisma = typeof globalThis & {
+  prisma?: PrismaClient;
+};
 
-// Ensure UTF-8 encoding for PostgreSQL connection
-// This fixes encoding issues with Armenian and other UTF-8 characters
-const databaseUrl = process.env.DATABASE_URL || '';
-let urlWithEncoding = databaseUrl;
+const globalForPrisma = globalThis as GlobalWithPrisma;
 
-if (!databaseUrl.includes('client_encoding')) {
-  urlWithEncoding = databaseUrl.includes('?') 
-    ? `${databaseUrl}&client_encoding=UTF8`
-    : `${databaseUrl}?client_encoding=UTF8`;
-  
-  // Temporarily override DATABASE_URL for Prisma Client
+function appendQueryParam(url: string, param: string): string {
+  return url.includes("?") ? `${url}&${param}` : `${url}?${param}`;
+}
+
+function buildDatabaseUrl(rawUrl: string): string {
+  if (!rawUrl) {
+    return rawUrl;
+  }
+
+  let url = rawUrl;
+
+  if (!url.includes("client_encoding")) {
+    url = appendQueryParam(url, "client_encoding=UTF8");
+  }
+
+  if (url.includes("-pooler.") && !url.includes("pgbouncer")) {
+    url = appendQueryParam(url, "pgbouncer=true");
+  }
+
+  if (!url.includes("connection_limit")) {
+    url = appendQueryParam(url, "connection_limit=1");
+  }
+
+  return url;
+}
+
+const databaseUrl = process.env.DATABASE_URL ?? "";
+const urlWithEncoding = buildDatabaseUrl(databaseUrl);
+const isDevelopmentNeonUrl =
+  process.env.NODE_ENV === "development" && databaseUrl.includes("neon.tech");
+
+if (urlWithEncoding && urlWithEncoding !== databaseUrl) {
   process.env.DATABASE_URL = urlWithEncoding;
+}
+
+if (isDevelopmentNeonUrl) {
+  const allowCloudDevDb = process.env.ALLOW_CLOUD_DEV_DATABASE === "true";
+  const isAllowedDevBranch =
+    process.env.NEON_BRANCH === "development" ||
+    process.env.NEON_BRANCH === "dev";
+
+  if (!allowCloudDevDb && !isAllowedDevBranch) {
+    throw new Error(
+      [
+        "Development is using a Neon cloud DATABASE_URL.",
+        "This can wake and query the production database from local `npm run dev`.",
+        "Use a local Postgres/Neon dev branch, or set ALLOW_CLOUD_DEV_DATABASE=true only when this is intentional.",
+      ].join(" ")
+    );
+  }
+
+  console.warn(
+    "⚠️  DEV uses Neon cloud DATABASE_URL. Make sure this is a dev branch, not production."
+  );
 }
 
 export const db =
   globalForPrisma.prisma ??
-  new PrismaClient({ 
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
     errorFormat: "pretty",
   });
 
-// Prisma Client connects automatically on first query (lazy connection)
-// No need to call $connect() explicitly as it can cause issues in Next.js API routes
-// Connection will be established automatically when the first database query is made
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
-
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = db;
+}

@@ -30,7 +30,7 @@ export function MobileHeader() {
     <>
       <header className="sticky top-0 z-app-header bg-[#2f3f3d] xl:hidden">
         <div className="mx-auto flex w-full items-center justify-between px-4 pb-4 pt-[max(12px,env(safe-area-inset-top,0px))]">
-          <Link prefetch href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
+          <Link prefetch={false} href={logoHomeHref} className="shrink-0" aria-label="Kovkasyan Plennica home">
             <Image
               src={toR2Url('/assets/mobile-home/logo-kp2.png')}
               alt=""
@@ -42,7 +42,7 @@ export function MobileHeader() {
           </Link>
           <div className="flex shrink-0 items-center gap-[11px]">
             <Link
-              prefetch
+              prefetch={false}
               href="/desktops"
               className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
             >
