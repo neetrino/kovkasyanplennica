@@ -18,6 +18,7 @@ export function MobileCategoriesSection({ categories }: MobileCategoriesSectionP
           <Link
             key={category.id}
             href={`/products?category=${encodeURIComponent(category.slug)}`}
+            prefetch={false}
             className={`shrink-0 rounded-[40px] px-6 py-[9px] text-[16px] leading-[1.45] ${
               index === 0 ? 'bg-[#75bf5e] text-white' : 'bg-[#f1f5f5] text-[#0a2533]'
             }`}

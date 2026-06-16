@@ -62,7 +62,7 @@ export function Footer() {
             <div className="-mt-10 space-y-0 md:-mt-14">
               <div className="flex items-center gap-3">
                 <Link
-                  prefetch
+                  prefetch={false}
                   href="/"
                   aria-label={t('home.header.logoAlt')}
                   className={`inline-flex shrink-0 rounded-md outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 ${

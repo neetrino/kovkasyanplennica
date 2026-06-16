@@ -60,7 +60,7 @@ export function MobileRecipeProductCard({
     <article className="relative w-[200px] shrink-0 rounded-2xl bg-white p-4 shadow-[0_2px_16px_rgba(6,51,54,0.1)]">
       <Link
         href={href}
-        prefetch
+        prefetch={false}
         className="absolute inset-0 z-0 rounded-2xl outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         aria-label={`${title} — view product`}
       />

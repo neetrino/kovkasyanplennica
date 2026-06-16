@@ -161,7 +161,7 @@ function SidebarCategoryRow({
   return (
     <Link
       href={navHref}
-      prefetch
+      prefetch={false}
       scroll={false}
       onClick={() => {
         onNavigate?.();

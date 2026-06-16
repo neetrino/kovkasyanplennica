@@ -74,6 +74,7 @@ const SLOT_CIRCLE_POSITIONS = Array.from({ length: WHEEL_SLOT_COUNT_CONST }, (_,
 const POPUP_DELAY_MS = 3500;
 const POPUP_DISMISS_COOLDOWN_MS = 30 * 60 * 1000;
 const POPUP_DISMISS_UNTIL_STORAGE_KEY = 'spin-wheel-popup-dismissed-until';
+const USER_INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll'] as const;
 const SPIN_DURATION_MS = 5500;
 const SPIN_FULL_TURNS = 5;
 const CELEBRATION_DURATION_MS = 1400;
@@ -127,6 +128,7 @@ export function SpinWheelPopup() {
   const [wheelTransitioning, setWheelTransitioning] = useState(false);
   const [pointerTickDurationMs, setPointerTickDurationMs] = useState(180);
   const [dismissedUntil, setDismissedUntil] = useState(0);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const spinEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const visiblePrizes = useMemo(() => {
@@ -205,7 +207,27 @@ export function SpinWheelPopup() {
   }, []);
 
   useEffect(() => {
-    if (isLoading || isAdmin) {
+    if (hasInteracted) {
+      return;
+    }
+
+    const markInteracted = () => setHasInteracted(true);
+    USER_INTERACTION_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, markInteracted, {
+        once: true,
+        passive: true,
+      });
+    });
+
+    return () => {
+      USER_INTERACTION_EVENTS.forEach((eventName) => {
+        window.removeEventListener(eventName, markInteracted);
+      });
+    };
+  }, [hasInteracted]);
+
+  useEffect(() => {
+    if (!hasInteracted || isLoading || isAdmin) {
       return;
     }
     if (dismissedUntil > Date.now()) {
@@ -246,7 +268,7 @@ export function SpinWheelPopup() {
     return () => {
       window.clearTimeout(delayTimer);
     };
-  }, [dismissedUntil, isAdmin, isLoading, pathname]);
+  }, [dismissedUntil, hasInteracted, isAdmin, isLoading, pathname]);
 
   const handleClosePopup = () => {
     setOpen(false);

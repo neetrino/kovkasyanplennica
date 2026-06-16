@@ -2,14 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, type MouseEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import type { MouseEvent } from 'react';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
-import { prefetchProductByIntent } from '@/lib/product-intent-prefetch';
 
 interface ProductCardListProps {
   product: {
@@ -45,21 +43,14 @@ export function ProductCardList({
   onAddToCart,
 }: ProductCardListProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const normalizedSlug = product.slug.trim();
   const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
-  const handleProductIntent = useCallback(() => {
-    prefetchProductByIntent(router, product.slug);
-  }, [router, product.slug]);
 
   return (
     <div className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
       <Link
         href={productHref}
-        prefetch
-        onMouseEnter={handleProductIntent}
-        onTouchStart={handleProductIntent}
-        onFocus={handleProductIntent}
+        prefetch={false}
         className="absolute inset-0 z-0 rounded-lg outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         aria-label={`${product.title} — view product`}
       />
