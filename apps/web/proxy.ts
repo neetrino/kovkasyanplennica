@@ -14,7 +14,7 @@ const MOBILE_UA =
  * Do not override Cache-Control here — Next.js ISR / route handlers set CDN-friendly headers.
  * Forcing `max-age=0, must-revalidate` on every page was waking Neon on each bot/monitor hit.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (shouldBypassForUptimeProbe(request)) {
     return healthProbeResponse(request.method);
   }

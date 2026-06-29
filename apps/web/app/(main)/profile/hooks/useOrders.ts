@@ -142,7 +142,7 @@ export function useOrders({
             stock: variantDetails.stock,
           });
           addedCount++;
-        } catch (error: unknown) {
+        } catch {
           skippedCount++;
         }
       }

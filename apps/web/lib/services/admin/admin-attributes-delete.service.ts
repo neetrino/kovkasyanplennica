@@ -62,7 +62,7 @@ class AdminAttributesDeleteService {
             });
             productAttributesCount = productAttributes.length;
             console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes count (via findMany):', productAttributesCount);
-          } catch (findError: any) {
+          } catch {
             console.warn('⚠️ [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes findMany-ը նույնպես չի աշխատում, skip անում ենք ստուգումը');
             productAttributesCount = 0;
           }

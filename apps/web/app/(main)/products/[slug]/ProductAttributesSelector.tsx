@@ -93,7 +93,6 @@ export function ProductAttributesSelector({
                     const isSelected = selectedColor === g.value?.toLowerCase().trim();
                     // IMPORTANT: Don't disable based on stock - show all colors, even if stock is 0
                     // Stock is just informational, not a reason to hide the option
-                    const isDisabled = false; // Always show all colors
                     // Process imageUrl to ensure it's in the correct format
                     const processedImageUrl = g.imageUrl ? processImageUrl(g.imageUrl) : null;
                     const hasImage = processedImageUrl && processedImageUrl.trim() !== '';
@@ -153,7 +152,6 @@ export function ProductAttributesSelector({
                     const isSelected = selectedSize === g.value.toLowerCase().trim();
                     // IMPORTANT: Don't disable based on stock - show all sizes, even if stock is 0
                     // Stock is just informational, not a reason to hide the option
-                    const isDisabled = false; // Always show all sizes
                     
                     // Process imageUrl to ensure it's in the correct format
                     const processedImageUrl = g.imageUrl ? processImageUrl(g.imageUrl) : null;

@@ -57,7 +57,7 @@ export function ColorFilter({ category, search, minPrice, maxPrice, selectedColo
       const response = await apiClient.get<{ colors: ColorOption[]; sizes: any[] }>('/api/v1/products/filters', { params });
       
       setColors(response.colors || []);
-    } catch (error) {
+    } catch {
       setColors([]);
     } finally {
       setLoading(false);

@@ -71,7 +71,7 @@ export function ProductsGrid({ products, sortBy = 'default', gridLayout = 'defau
 
   // Sort products
   useEffect(() => {
-    let sorted = [...products];
+    const sorted = [...products];
 
     switch (sortBy) {
       case 'price-asc':

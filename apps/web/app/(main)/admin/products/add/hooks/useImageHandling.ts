@@ -3,7 +3,7 @@
 import type { ChangeEvent } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { processImageFile } from '@/lib/utils/image-utils';
-import type { Variant, ColorData } from '../types';
+import type { Variant } from '../types';
 import type { GeneratedVariant } from '../types';
 
 interface UseImageHandlingProps {
@@ -37,8 +37,8 @@ interface UseImageHandlingReturn {
 export function useImageHandling({
   imageUrls,
   featuredImageIndex,
-  variants,
-  generatedVariants,
+  variants: _variants,
+  generatedVariants: _generatedVariants,
   colorImageTarget,
   setImageUrls,
   setFeaturedImageIndex,

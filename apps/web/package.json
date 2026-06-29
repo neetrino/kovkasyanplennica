@@ -10,7 +10,7 @@
     "prebuild:migrate": "node scripts/run-migrations.js",
     "build": "next build --experimental-build-mode=compile",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "upload:r2-assets": "tsx scripts/upload-public-assets-to-r2.ts",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\"",
     "prisma:generate": "cd ../../packages/db && npm run db:generate",

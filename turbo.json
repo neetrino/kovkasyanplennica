@@ -9,6 +9,12 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
+    "@shop/ui#build": {
+      "outputs": []
+    },
+    "@shop/design-tokens#build": {
+      "outputs": []
+    },
     "start": {
       "cache": false,
       "persistent": true

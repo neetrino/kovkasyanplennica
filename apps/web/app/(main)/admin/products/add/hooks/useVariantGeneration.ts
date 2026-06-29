@@ -20,7 +20,7 @@ export function useVariantGeneration({
   selectedAttributesForVariants,
   selectedAttributeValueIds,
   attributes,
-  generatedVariants,
+  generatedVariants: _generatedVariants,
   formDataSlug,
   formDataTitle,
   isEditMode,

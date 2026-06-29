@@ -38,7 +38,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<string>('createdAt-desc');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
-  const [togglingAllFeatured, setTogglingAllFeatured] = useState(false);
+  const [_togglingAllFeatured, setTogglingAllFeatured] = useState(false);
   const [currency, setCurrency] = useState<CurrencyCode>('RUB');
 
   useEffect(() => {

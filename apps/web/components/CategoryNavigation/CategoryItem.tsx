@@ -28,7 +28,7 @@ export function CategoryItem({
   category,
   product,
   isActive,
-  currentCategory,
+  currentCategory: _currentCategory,
   onCategoryClick,
   t,
 }: CategoryItemProps) {

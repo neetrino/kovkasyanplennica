@@ -1,8 +1,6 @@
 import { apiClient } from '@/lib/api-client';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { normalizeProductSlug } from '@/lib/utils/slug';
-import type { Attribute } from '../types';
-
 interface CreateAndSubmitPayloadProps {
   formData: {
     title: string;
@@ -99,22 +97,22 @@ export async function createAndSubmitPayload({
     } catch (err: any) {
       console.error('❌ [ADMIN] Error saving product:', err);
       
-      let errorMessage = isEditMode ? 'Չհաջողվեց թարմացնել ապրանքը' : 'Չհաջողվեց ստեղծել ապրանքը';
+      let _errorMessage = isEditMode ? 'Չհաջողվեց թարմացնել ապրանքը' : 'Չհաջողվեց ստեղծել ապրանքը';
       
       if (err?.data?.detail) {
-        errorMessage = err.data.detail;
+        _errorMessage = err.data.detail;
       } else if (err?.response?.data?.detail) {
-        errorMessage = err.response.data.detail;
+        _errorMessage = err.response.data.detail;
       } else if (err?.message) {
         if (err.message.includes('<!DOCTYPE') || err.message.includes('<html')) {
           const mongoErrorMatch = err.message.match(/MongoServerError[^<]+/);
           if (mongoErrorMatch) {
-            errorMessage = `Տվյալների բազայի սխալ: ${mongoErrorMatch[0]}`;
+            _errorMessage = `Տվյալների բազայի սխալ: ${mongoErrorMatch[0]}`;
           } else {
-            errorMessage = 'Տվյալների բազայի սխալ: SKU-ն արդեն օգտագործված է կամ այլ սխալ:';
+            _errorMessage = 'Տվյալների բազայի սխալ: SKU-ն արդեն օգտագործված է կամ այլ սխալ:';
           }
         } else {
-          errorMessage = err.message;
+          _errorMessage = err.message;
         }
       }
       

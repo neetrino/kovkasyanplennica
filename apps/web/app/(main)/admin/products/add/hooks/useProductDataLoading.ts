@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
 import type { CurrencyCode } from '@/lib/currency';
 import type { Brand, Category, Attribute } from '../types';

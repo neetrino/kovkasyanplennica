@@ -240,7 +240,7 @@ export function useProductData({
           `/api/v1/products/${slug}/reviews`
         );
         setReviews(data || []);
-      } catch (error: any) {
+      } catch {
         // If 404, product might not have reviews yet - that's okay
         setReviews([]);
       }
@@ -261,11 +261,11 @@ export function useProductData({
 
   // Placeholder setters for image index and thumbnail start index
   // These will be provided by the component
-  const setCurrentImageIndex = useCallback((index: number) => {
+  const setCurrentImageIndex = useCallback((_index: number) => {
     // This will be overridden by the component
   }, []);
 
-  const setThumbnailStartIndex = useCallback((index: number) => {
+  const setThumbnailStartIndex = useCallback((_index: number) => {
     // This will be overridden by the component
   }, []);
 

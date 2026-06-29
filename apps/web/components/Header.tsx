@@ -38,6 +38,11 @@ const HEADER_SCROLL_SYNC_WIDTH_VAR = '--app-header-scroll-sync-width';
 
 type HomeHeaderSurface = 'cream' | 'dark';
 
+function isNavItemActive(pathname: string, href: string): boolean {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 function parseHomeHeaderSurface(
   value: string | undefined,
 ): HomeHeaderSurface | null {
@@ -113,7 +118,7 @@ export function Header() {
         } else {
           setCartTotal(0);
         }
-      } catch (error) {
+      } catch {
         setCartTotal(0);
       }
     };
@@ -283,20 +288,26 @@ export function Header() {
       <nav
         className={`relative z-10 hidden items-center transition-[gap] duration-300 ease-out lg:flex ${isHomeCream ? 'lg:gap-10' : 'lg:gap-9'}`}
       >
-        {navigationLinks.map((link) => (
-          <Link
-            key={link.label}
-            prefetch={false}
-            href={link.href}
-            className={`font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 ${
-              isHomeCream
-                ? 'text-base leading-6 text-[#2f3f3d]'
-                : 'whitespace-nowrap text-sm leading-5 text-[#ffe5c2] uppercase tracking-normal'
-            }`}
-          >
-            {isHomeCream ? formatNavLabel(link.label) : link.label.toUpperCase()}
-          </Link>
-        ))}
+        {navigationLinks.map((link) => {
+          const isActive = isNavItemActive(pathname, link.href);
+
+          return (
+            <Link
+              key={link.label}
+              prefetch={false}
+              href={link.href}
+              className={`relative pb-1 font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-full after:bg-[#4E2114] after:transition-transform after:duration-200 after:ease-out ${
+                isActive ? 'after:scale-x-100' : 'after:scale-x-0'
+              } ${
+                isHomeCream
+                  ? 'text-base leading-6 text-[#2f3f3d]'
+                  : 'whitespace-nowrap text-sm leading-5 text-[#ffe5c2] uppercase tracking-normal'
+              }`}
+            >
+              {isHomeCream ? formatNavLabel(link.label) : link.label.toUpperCase()}
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Search and Login - Right */}

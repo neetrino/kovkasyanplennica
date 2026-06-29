@@ -126,7 +126,7 @@ export function resolvePdpPortionBundle(language: LanguageCode, product: Product
   const shortForIngredients = portionFromShort
     ? shortDescLines.slice(1).join(' ').trim()
     : shortPlainBlock;
-  let longPlainForIngredients = longToken?.rest ?? longPlainFull;
+  const longPlainForIngredients = longToken?.rest ?? longPlainFull;
   let ingredientsPlain =
     shortForIngredients ||
     (longPlainForIngredients
