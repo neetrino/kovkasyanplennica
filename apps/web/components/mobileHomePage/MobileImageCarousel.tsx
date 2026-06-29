@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../../lib/i18n-client';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 import { staticAssetHref, toR2Url } from '@/lib/r2-assets';
 
 interface CarouselImage {
@@ -125,7 +126,7 @@ export function MobileImageCarousel() {
           ))}
         </div>
 
-        {/* Выбрать стол + դեկորատիվ hero-vector-1 */}
+        {DESKTOPS_ENABLED && (
         <div className="relative flex justify-center mt-12">
           <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[380px] h-[180px] pointer-events-none opacity-80">
             <img
@@ -145,6 +146,7 @@ export function MobileImageCarousel() {
             {t('home.footer.booking.selectTableButton')}
           </Link>
         </div>
+        )}
       </div>
     </section>
   );
