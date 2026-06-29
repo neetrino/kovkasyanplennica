@@ -18,6 +18,19 @@ let errorLogged = false;
 let lastErrorTime = 0;
 const ERROR_COOLDOWN = 30000;
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+  const fallback = String(error ?? "").trim();
+  return fallback || "unknown connection issue";
+}
+
+function logCacheWarning(prefix: string, error?: unknown): void {
+  const suffix = error ? `: ${getErrorMessage(error)}` : "";
+  console.warn(`${prefix}${suffix}`);
+}
+
 async function initUpstash(): Promise<boolean> {
   const config = resolveUpstashRestConfig();
   if (!config) {
@@ -35,8 +48,7 @@ async function initUpstash(): Promise<boolean> {
     console.log("✅ Redis connected (Upstash)");
     return true;
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("❌ [CACHE] Upstash Redis failed:", message);
+    logCacheWarning("⚠️  [CACHE] Upstash Redis unavailable", error);
     backend = null;
     return false;
   }
@@ -65,7 +77,7 @@ async function initIoredis(): Promise<boolean> {
       redisAvailable = false;
       const now = Date.now();
       if (!errorLogged || now - lastErrorTime > ERROR_COOLDOWN) {
-        console.error("⚠️  Redis connection error:", error.message);
+        logCacheWarning("⚠️  Redis connection error", error);
         errorLogged = true;
         lastErrorTime = now;
       }
@@ -77,8 +89,7 @@ async function initIoredis(): Promise<boolean> {
     console.log("✅ Redis connected");
     return true;
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("❌ [CACHE] ioredis failed:", message);
+    logCacheWarning("⚠️  [CACHE] ioredis unavailable", error);
     backend = null;
     return false;
   }

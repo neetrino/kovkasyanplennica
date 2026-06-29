@@ -160,8 +160,6 @@ export function useProductFormHandlers({
         
         if (useGeneratedVariants) {
           console.log('📦 [ADMIN] Using generatedVariants format:', generatedVariants.length, 'variants');
-          const sizeAttribute = getSizeAttribute();
-          
           generatedVariants.forEach((genVariant, variantIndex) => {
             const variantPriceValue = parseFloat(genVariant.price || '0') || 0;
             const variantCompareAtPriceValue = genVariant.compareAtPrice 

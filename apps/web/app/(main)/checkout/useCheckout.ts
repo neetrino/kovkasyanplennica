@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -14,7 +13,6 @@ import { useOrderSummary } from './hooks/useOrderSummary';
 import type { CheckoutFormData } from './types';
 
 export function useCheckout() {
-  const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);

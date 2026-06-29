@@ -78,6 +78,7 @@ function getSafeLang(lang: LanguageCode | undefined): LanguageCode {
   if (typeof window === 'undefined') return 'ru';
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- avoid circular import with language module
     const { getStoredLanguage } = require('./language');
     return getStoredLanguage() || 'ru';
   } catch {
@@ -115,7 +116,7 @@ export function t(lang: LanguageCode | undefined, path: string): string {
   const cacheKey = `${currentLang}:${path}`;
   if (translationCache.has(cacheKey)) return translationCache.get(cacheKey)!;
 
-  let translationObj = loadTranslation(currentLang, namespace);
+  const translationObj = loadTranslation(currentLang, namespace);
   let value = getNestedValue(translationObj, keys);
 
   if (value === null && currentLang !== 'ru') {

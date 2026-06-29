@@ -43,7 +43,7 @@ export function AttributesPageContent() {
     setEditingAttributeName,
     setEditingLabel,
     setEditingColors,
-    setEditingImageUrl,
+    setEditingImageUrl: _setEditingImageUrl,
     setValueError,
     handleCreateAttribute,
     handleDeleteAttribute,

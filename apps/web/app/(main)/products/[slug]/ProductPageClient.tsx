@@ -88,7 +88,7 @@ export function ProductPageClient({
     <div className="relative">
       <ProductPdpBackground />
       <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pt-[76px]">
-        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,min(100%,494px))_minmax(0,1fr)] lg:gap-[42px]">
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,min(100%,494px))_minmax(0,1fr)] lg:items-center lg:gap-[42px]">
           <ProductImageGallery
             images={images}
             product={product}

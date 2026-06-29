@@ -1,5 +1,5 @@
 import type { SpinWheelPrize, SpinWheelPrizeProduct } from "./spin-wheel.types";
-import { DEFAULT_MAX_SPINS_PER_USER, DEFAULT_WEIGHT } from "./spin-wheel.constants";
+import { DEFAULT_MAX_SPINS_PER_USER } from "./spin-wheel.constants";
 
 interface ProductTranslationSnapshot {
   locale: string;

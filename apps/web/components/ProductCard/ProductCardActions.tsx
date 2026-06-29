@@ -3,7 +3,6 @@
 import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import { CompareIcon } from '../icons/CompareIcon';
-import { CartIcon as CartPngIcon } from '../icons/CartIcon';
 import { useTranslation } from '../../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
 
@@ -52,7 +51,6 @@ export function ProductCardActions({
   showOnHover = false,
 }: ProductCardActionsProps) {
   const { t } = useTranslation();
-  const iconSize = isCompact ? 18 : 24;
   const buttonSize = isCompact ? 'w-10 h-10' : 'w-12 h-12';
 
   const actions = (

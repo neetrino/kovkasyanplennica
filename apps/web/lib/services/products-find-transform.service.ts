@@ -76,7 +76,7 @@ class ProductsFindTransformService {
       const ids = Array.isArray(p.categoryIds) ? p.categoryIds : [];
       if (relCategories.length === 0 && ids.length > 0) ids.forEach((id) => categoryIdsToResolve.add(id));
     });
-    let categoryByIdMap = new Map<string, { id: string; translations?: Array<{ locale: string; slug: string; title: string }> }>();
+    const categoryByIdMap = new Map<string, { id: string; translations?: Array<{ locale: string; slug: string; title: string }> }>();
     if (categoryIdsToResolve.size > 0) {
       const categoriesFromDb = await db.category.findMany({
         where: { id: { in: Array.from(categoryIdsToResolve) } },

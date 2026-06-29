@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { getStoredLanguage, setStoredLanguage, LANGUAGES, type LanguageCode } from '../lib/language';
-import { useTranslation } from '../lib/i18n-client';
 
 /**
  * Language Switcher Component
@@ -14,7 +13,6 @@ import { useTranslation } from '../lib/i18n-client';
 export function LanguageSwitcher() {
   const [currentLang, setCurrentLang] = useState<LanguageCode>(getStoredLanguage());
   const [showMenu, setShowMenu] = useState(false);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const handleLanguageUpdate = () => {

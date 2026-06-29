@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { db } from "@white-shop/db";
 import { ensureProductVariantAttributesColumn } from "../../utils/db-ensure";
 import { logger } from "../../utils/logger";
-import type { ProductWithRelations } from "./types";
+import { asProductWithRelations, type ProductWithRelations } from "./types";
 
 /** Hard cap so a misconfigured `limit` cannot trigger massive `findMany` (e.g. shop page ×10 multiplier). */
 const MAX_PRODUCTS_RAW_FETCH = 4000;
@@ -258,7 +258,7 @@ async function executeWithoutAttributeValue(
       take,
     });
     logger.info(`Found ${products.length} products from database (without attributeValue, with productAttributes)`);
-    return products as ProductWithRelations[];
+    return asProductWithRelations(products);
   } catch (productAttrError: unknown) {
     // If productAttributes also fails, try without it
     if (isProductAttributesError(productAttrError)) {
@@ -269,7 +269,7 @@ async function executeWithoutAttributeValue(
         take,
       });
       logger.info(`Found ${products.length} products from database (without attributeValue and productAttributes)`);
-      return products as ProductWithRelations[];
+      return asProductWithRelations(products);
     }
     throw productAttrError;
   }

@@ -8,6 +8,10 @@ import { useAuth } from '../../lib/auth/AuthContext';
 import { formatNavLabel } from '../../lib/formatNavLabel';
 import { useTranslation } from '../../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
+import {
+  getMobileDrawerNavItems,
+  HEADER_NAV_ITEMS,
+} from '@/lib/site-navigation';
 
 export function MobileHeader() {
   const pathname = usePathname();
@@ -17,6 +21,8 @@ export function MobileHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+
+  const mobileNavLinks = getMobileDrawerNavItems(HEADER_NAV_ITEMS);
 
   useEffect(() => {
     const onEscape = (event: KeyboardEvent) => {
@@ -112,25 +118,17 @@ export function MobileHeader() {
                   {t('common.navigation.logout') || 'Logout'}
                 </button>
               )}
-              <Link
-                prefetch={false}
-                href="/coming-soon"
-                onClick={closeMenu}
-                className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
-              >
-                {formatNavLabel(t('home.header.navigation.menu'))}
-              </Link>
-              <Link
-                prefetch={false}
-                href="/products"
-                onClick={closeMenu}
-                className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
-              >
-                {formatNavLabel(t('home.header.navigation.delivery'))}
-              </Link>
-              <Link prefetch={false} href="/about" onClick={closeMenu} className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white">
-                {formatNavLabel(t('home.header.navigation.about'))}
-              </Link>
+              {mobileNavLinks.map((item) => (
+                <Link
+                  key={item.id}
+                  prefetch={false}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="w-full rounded-full bg-white/10 py-3 text-center text-sm font-semibold text-white"
+                >
+                  {formatNavLabel(t(item.labelKey))}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
