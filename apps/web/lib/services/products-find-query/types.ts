@@ -66,6 +66,10 @@ export type ProductWithRelations = Prisma.ProductGetPayload<{
   };
 }>;
 
+export function asProductWithRelations(products: unknown): ProductWithRelations[] {
+  return products as ProductWithRelations[];
+}
+
 
 
 

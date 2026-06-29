@@ -16,6 +16,10 @@ import {
 import { HeaderSearchOverlay } from './HeaderSearchOverlay';
 import type { Cart } from '../app/(main)/cart/types';
 import { toR2Url } from '@/lib/r2-assets';
+import {
+  getVisibleNavItems,
+  HEADER_NAV_ITEMS,
+} from '@/lib/site-navigation';
 
 const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
@@ -98,15 +102,11 @@ export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const navigationLinks = [
-    { href: '/', label: t('home.header.navigation.home') },
-    { href: '/products', label: t('home.header.navigation.delivery') },
-    { href: '/about', label: t('home.header.navigation.about') },
-    { href: '/coming-soon', label: t('home.header.navigation.vacancies') },
-    { href: '/coming-soon', label: t('home.header.navigation.team') },
-    { href: '/contact', label: t('home.header.navigation.contact') },
-    { href: '/coming-soon', label: t('home.header.navigation.menu') },
-  ];
+  const navigationLinks = getVisibleNavItems(HEADER_NAV_ITEMS).map((item) => ({
+    href: item.href,
+    label: t(item.labelKey),
+    id: item.id,
+  }));
 
   // Load cart total
   useEffect(() => {
@@ -293,7 +293,7 @@ export function Header() {
 
           return (
             <Link
-              key={link.label}
+              key={link.id}
               prefetch={false}
               href={link.href}
               className={`relative pb-1 font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-full after:bg-[#4E2114] after:transition-transform after:duration-200 after:ease-out ${

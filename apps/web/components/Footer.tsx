@@ -5,6 +5,10 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
+import {
+  FOOTER_NAV_ITEMS,
+  getVisibleNavItems,
+} from '@/lib/site-navigation';
 
 const NEETRINO_COMPANY_URL = 'https://neetrino.com/';
 
@@ -12,7 +16,9 @@ export function Footer() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const isMenuPage = pathname === '/menu';
-  
+
+  const footerNavLinks = getVisibleNavItems(FOOTER_NAV_ITEMS);
+
   return (
     <footer className={`${isMenuPage ? 'bg-[#ffe5c2]' : 'bg-[#2f3f3d]'} overflow-hidden relative`}>
       {/* Background Decorative Pattern */}
@@ -100,36 +106,16 @@ export function Footer() {
                 {t('home.footer.navigation.title')}
               </h3>
               <ul className="space-y-2">
-                <li>
-                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.menu')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.about')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/vacancies" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.vacancies')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/coming-soon" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.team')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.contacts')}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/delivery" className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}>
-                    {t('home.footer.navigation.delivery')}
-                  </Link>
-                </li>
+                {footerNavLinks.map((item) => (
+                  <li key={item.id}>
+                    <Link
+                      href={item.href}
+                      className={`${isMenuPage ? 'text-[#2f3f3d]/75 hover:text-[#2f3f3d]' : 'text-[#ececec] hover:text-white'} text-sm transition-colors`}
+                    >
+                      {t(item.labelKey)}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 

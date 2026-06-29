@@ -67,6 +67,8 @@ export function useRelatedProducts({
       return;
     }
 
+    let cancelled = false;
+
     const fetchRelatedProducts = async () => {
       try {
         setLoading(true);
@@ -76,17 +78,26 @@ export function useRelatedProducts({
           params: { lang: language },
         });
 
+        if (cancelled) return;
+
         const rows = response.data && Array.isArray(response.data) ? response.data : [];
         setProducts(rows.slice(0, 10));
       } catch (error) {
+        if (cancelled) return;
         console.error('[RelatedProducts] Error fetching related products:', error);
         setProducts([]);
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     void fetchRelatedProducts();
+
+    return () => {
+      cancelled = true;
+    };
   }, [productSlug, language]);
 
   return { products, loading };

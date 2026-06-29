@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { ProductPageClient } from './ProductPageClient';
 import { getProductForPage } from './get-product';
+import { getPdpReviewsAndRelated } from './pdp-supplemental';
 import { RESERVED_ROUTES } from './types';
 import type { Product } from './types';
 
@@ -49,7 +50,10 @@ export default async function Page({ params }: PageParams) {
     redirect(`/${slug}`);
   }
 
-  const product = await getProductForPage(slug);
+  const [product, supplemental] = await Promise.all([
+    getProductForPage(slug),
+    getPdpReviewsAndRelated(slug),
+  ]);
   if (!product) {
     notFound();
   }
@@ -58,6 +62,8 @@ export default async function Page({ params }: PageParams) {
     <ProductPageClient
       params={params}
       initialProduct={product as unknown as Product}
+      initialReviews={supplemental.reviews}
+      initialRelatedProducts={supplemental.related}
     />
   );
 }
