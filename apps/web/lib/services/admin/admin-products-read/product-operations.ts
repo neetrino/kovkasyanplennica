@@ -86,6 +86,8 @@ export async function getProductById(productId: string) {
     slug: translation?.slug || "",
     subtitle: translation?.subtitle || null,
     descriptionHtml: translation?.descriptionHtml || null,
+    ingredients: translation?.ingredients || null,
+    longDescriptionHtml: translation?.longDescriptionHtml || null,
     brandId: product.brandId || null,
     primaryCategoryId: product.primaryCategoryId || null,
     categoryIds: product.categoryIds || [],

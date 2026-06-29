@@ -6,6 +6,8 @@ export interface UpdateProductData {
   slug?: string;
   subtitle?: string;
   descriptionHtml?: string;
+  ingredients?: string;
+  longDescriptionHtml?: string;
   brandId?: string;
   primaryCategoryId?: string;
   categoryIds?: string[];

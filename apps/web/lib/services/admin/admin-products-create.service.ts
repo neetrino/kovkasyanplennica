@@ -97,6 +97,8 @@ class AdminProductsCreateService {
     slug: string;
     subtitle?: string;
     descriptionHtml?: string;
+    ingredients?: string;
+    longDescriptionHtml?: string;
     brandId?: string;
     primaryCategoryId?: string;
     categoryIds?: string[];
@@ -359,6 +361,8 @@ class AdminProductsCreateService {
                 slug: normalizedSlug,
                 subtitle: data.subtitle || undefined,
                 descriptionHtml: data.descriptionHtml || undefined,
+                ingredients: data.ingredients || undefined,
+                longDescriptionHtml: data.longDescriptionHtml || undefined,
               },
             },
             variants: {
@@ -495,6 +499,8 @@ class AdminProductsCreateService {
       slug: copySlug,
       subtitle: source.subtitle ?? undefined,
       descriptionHtml: source.descriptionHtml ?? undefined,
+      ingredients: source.ingredients ?? undefined,
+      longDescriptionHtml: source.longDescriptionHtml ?? undefined,
       brandId: source.brandId ?? undefined,
       primaryCategoryId: source.primaryCategoryId ?? undefined,
       categoryIds: source.categoryIds || [],

@@ -213,7 +213,10 @@ function AddProductPageContent() {
             variantImageInputRefs={formState.variantImageInputRefs}
             onTitleChange={handleTitleChange}
             onSlugChange={(e) => formState.setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+            onSubtitleChange={(e) => formState.setFormData((prev) => ({ ...prev, subtitle: e.target.value }))}
             onDescriptionChange={(e) => formState.setFormData((prev) => ({ ...prev, descriptionHtml: e.target.value }))}
+            onIngredientsChange={(e) => formState.setFormData((prev) => ({ ...prev, ingredients: e.target.value }))}
+            onLongDescriptionChange={(e) => formState.setFormData((prev) => ({ ...prev, longDescriptionHtml: e.target.value }))}
             onProductTypeChange={formState.setProductType}
             onUploadImages={handleUploadImages}
             onRemoveImage={removeImageUrl}
