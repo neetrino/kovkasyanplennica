@@ -13,7 +13,7 @@ interface UseCategoriesReturn {
 /**
  * Hook for fetching and managing categories
  */
-export function useCategories(): UseCategoriesReturn {
+export function useCategories(enabled = true): UseCategoriesReturn {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,8 +36,11 @@ export function useCategories(): UseCategoriesReturn {
   }, []);
 
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    if (!enabled) {
+      return;
+    }
+    void fetchCategories();
+  }, [enabled, fetchCategories]);
 
   return { categories, loading, error, fetchCategories };
 }

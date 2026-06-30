@@ -35,7 +35,7 @@ interface ProductsTableProps {
   toggleSelect: (id: string) => void;
   toggleSelectAll: () => void;
   sortBy: string;
-  handleHeaderSort: (field: 'price' | 'createdAt' | 'title' | 'stock') => void;
+  handleHeaderSort: (field: 'price' | 'createdAt' | 'title') => void;
   currency: CurrencyCode;
   handleDeleteProduct: (productId: string, productTitle: string) => void;
   handleDuplicateProduct: (productId: string) => void;
@@ -106,9 +106,10 @@ export function ProductsTable({
                       className="rounded border-admin-brand-2/35 text-admin-brand focus:ring-admin-brand/30"
                     />
                   </th>
+                  <th className={thCell}>{t('admin.products.image')}</th>
                   <th className={thCell}>
                     <button type="button" onClick={() => handleHeaderSort('title')} className={adminTableSortButtonClass}>
-                      <span>{t('admin.products.product')}</span>
+                      <span>{t('admin.products.name')}</span>
                       <span className="flex flex-col gap-0.5">
                         <svg
                           className={`h-2.5 w-2.5 ${sortBy === 'title-asc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
@@ -120,29 +121,6 @@ export function ProductsTable({
                         </svg>
                         <svg
                           className={`h-2.5 w-2.5 ${sortBy === 'title-desc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </span>
-                    </button>
-                  </th>
-                  <th className={thCell}>
-                    <button type="button" onClick={() => handleHeaderSort('stock')} className={adminTableSortButtonClass}>
-                      <span>{t('admin.products.stock')}</span>
-                      <span className="flex flex-col gap-0.5">
-                        <svg
-                          className={`h-2.5 w-2.5 ${sortBy === 'stock-asc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                        </svg>
-                        <svg
-                          className={`h-2.5 w-2.5 ${sortBy === 'stock-desc' ? adminSortIconActiveClass : adminSortIconIdleClass}`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -176,6 +154,8 @@ export function ProductsTable({
                     </button>
                   </th>
                   <th className={thCell}>{t('admin.products.category')}</th>
+                  <th className={thCenter}>{t('admin.products.featured')}</th>
+                  <th className={`${thCell} pl-6`}>{t('admin.products.actions')}</th>
                   <th className={thCell}>
                     <button type="button" onClick={() => handleHeaderSort('createdAt')} className={adminTableSortButtonClass}>
                       <span>{t('admin.products.created')}</span>
@@ -199,8 +179,6 @@ export function ProductsTable({
                       </span>
                     </button>
                   </th>
-                  <th className={thCenter}>{t('admin.products.featured')}</th>
-                  <th className={`${thCell} pl-6`}>{t('admin.products.actions')}</th>
                 </tr>
               </thead>
               <tbody className={adminTableBodyClass}>
@@ -216,40 +194,21 @@ export function ProductsTable({
                       />
                     </td>
                     <td className="whitespace-nowrap px-3 py-4">
-                      <div className="flex items-center">
-                        {product.image && (
-                          <img
-                            src={processImageUrl(product.image)}
-                            alt={product.title}
-                            className="mr-3 h-12 w-12 rounded-md border border-admin-brand-2/15 object-cover"
-                          />
-                        )}
-                        <div>
-                          <div className={dashboardRowPrimaryMedium}>{product.title}</div>
-                          <div className={`text-sm ${dashboardRowMeta}`}>{product.slug}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-3 py-4">
-                      {product.colorStocks && product.colorStocks.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {product.colorStocks.map((colorStock) => (
-                            <div
-                              key={colorStock.color}
-                              className="rounded-lg border border-admin-brand-2/18 bg-admin-surface/70 px-3 py-1 text-sm"
-                            >
-                              <span className="font-medium text-admin-brand">{colorStock.color}:</span>
-                              <span className="ml-1 text-admin-brand/70">
-                                {colorStock.stock} {t('admin.products.pcs')}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                      {product.image ? (
+                        <img
+                          src={processImageUrl(product.image)}
+                          alt={product.title}
+                          className="h-12 w-12 rounded-md border border-admin-brand-2/15 object-cover"
+                        />
                       ) : (
-                        <span className={`text-sm ${dashboardRowMeta}`}>
-                          {product.stock > 0 ? `${product.stock} ${t('admin.products.pcs')}` : `0 ${t('admin.products.pcs')}`}
-                        </span>
+                        <div className="h-12 w-12 rounded-md border border-admin-brand-2/15 bg-admin-surface/70" />
                       )}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4">
+                      <div className={dashboardRowPrimaryMedium}>{product.title || '—'}</div>
+                      {product.slug ? (
+                        <div className={`text-sm ${dashboardRowMeta}`}>{product.slug}</div>
+                      ) : null}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4">
                       <div className="flex flex-col">
@@ -283,9 +242,6 @@ export function ProductsTable({
                       ) : (
                         '—'
                       )}
-                    </td>
-                    <td className={`whitespace-nowrap px-3 py-4 text-sm ${dashboardRowMeta}`}>
-                      {new Date(product.createdAt).toLocaleDateString('hy-AM')}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-center">
                       <button
@@ -364,6 +320,9 @@ export function ProductsTable({
                           />
                         </button>
                       </div>
+                    </td>
+                    <td className={`whitespace-nowrap px-3 py-4 text-sm ${dashboardRowMeta}`}>
+                      {new Date(product.createdAt).toLocaleDateString('hy-AM')}
                     </td>
                   </tr>
                 ))}

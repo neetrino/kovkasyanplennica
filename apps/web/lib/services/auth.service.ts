@@ -1,6 +1,7 @@
 import * as bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import { db } from "@white-shop/db";
+import { getJwtSecret } from "@/lib/auth/jwt-secret";
 import { logger } from "@/lib/utils/logger";
 
 export interface RegisterData {
@@ -207,8 +208,8 @@ class AuthService {
       throw error;
     }
 
-    // Generate JWT token
-    if (!process.env.JWT_SECRET) {
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
       logger.error("Auth: JWT_SECRET is not set");
       throw {
         status: 500,
@@ -219,7 +220,7 @@ class AuthService {
     }
 
     // Session until explicit logout: omit JWT `exp` so time-based expiry does not force re-login.
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string);
+    const token = jwt.sign({ userId: user.id }, jwtSecret);
     logger.info("Auth: JWT token generated");
 
     return {
@@ -312,8 +313,8 @@ class AuthService {
       };
     }
 
-    // Generate JWT token
-    if (!process.env.JWT_SECRET) {
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
       throw {
         status: 500,
         type: "https://api.shop.am/problems/internal-error",
@@ -323,7 +324,7 @@ class AuthService {
     }
 
     // Session until explicit logout: omit JWT `exp` so time-based expiry does not force re-login.
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string);
+    const token = jwt.sign({ userId: user.id }, jwtSecret);
 
     logger.info("Auth login successful", { userId: user.id });
 

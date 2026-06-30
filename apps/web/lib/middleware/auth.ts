@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import * as jwt from "jsonwebtoken";
 import { db } from "@white-shop/db";
+import { getJwtSecret } from "@/lib/auth/jwt-secret";
 import { logger } from "@/lib/utils/logger";
 import { canAccessAdminArea, isAdminRole } from "@/lib/auth/roles";
 
@@ -26,12 +27,13 @@ export async function authenticateToken(
       return null;
     }
 
-    if (!process.env.JWT_SECRET) {
+    const jwtSecret = getJwtSecret();
+    if (!jwtSecret) {
       logger.error("Auth middleware: JWT_SECRET is not set");
       return null;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+    const decoded = jwt.verify(token, jwtSecret) as {
       userId: string;
     };
 
