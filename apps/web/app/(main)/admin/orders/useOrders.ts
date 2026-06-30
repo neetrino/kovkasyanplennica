@@ -103,9 +103,9 @@ export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState<CurrencyCode>(getStoredCurrency());
-  const [statusFilter, setStatusFilter] = useState('');
-  const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState(() => searchParams?.get('status') ?? '');
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState(() => searchParams?.get('paymentStatus') ?? '');
+  const [searchQuery, setSearchQuery] = useState(() => searchParams?.get('search') ?? '');
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<OrdersResponse['meta'] | null>(null);
   const [sortBy, setSortBy] = useState<string>('createdAt');

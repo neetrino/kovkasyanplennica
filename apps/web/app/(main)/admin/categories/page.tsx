@@ -22,7 +22,7 @@ export default function CategoriesPage() {
   const { t } = useTranslation();
   const { isLoggedIn, isAdmin, isLoading } = useAuth();
   const router = useRouter();
-  const { categories, loading, fetchCategories } = useCategories();
+  const { categories, loading, fetchCategories } = useCategories(!isLoading && isLoggedIn && isAdmin);
   const {
     showAddModal,
     showEditModal,

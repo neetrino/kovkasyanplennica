@@ -22,7 +22,7 @@ export interface Attribute {
   values: AttributeValue[];
 }
 
-export function useAttributes() {
+export function useAttributes(enabled = true) {
   const { t } = useTranslation();
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,8 +88,11 @@ export function useAttributes() {
   }, []);
 
   useEffect(() => {
-    fetchAttributes();
-  }, [fetchAttributes]);
+    if (!enabled) {
+      return;
+    }
+    void fetchAttributes();
+  }, [enabled, fetchAttributes]);
 
   const handleCreateAttribute = async (e: React.FormEvent) => {
     e.preventDefault();

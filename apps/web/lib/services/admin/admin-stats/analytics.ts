@@ -213,30 +213,31 @@ function calculateOrdersByDay(orders: Array<{
 export async function getAnalytics(period: string = 'week', startDate?: string, endDate?: string) {
   const { start, end } = calculateDateRange(period, startDate, endDate);
 
-  // Get orders in date range
-  const orders = await db.order.findMany({
-    where: {
-      createdAt: {
-        gte: start,
-        lte: end,
+  const [orders, totalUsers] = await Promise.all([
+    db.order.findMany({
+      where: {
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
       },
-    },
-    include: {
-      items: {
-        include: {
-          variant: {
-            include: {
-              product: {
-                include: {
-                  translations: {
-                    where: { locale: 'ru' },
-                    take: 1,
-                  },
-                  categories: {
-                    include: {
-                      translations: {
-                        where: { locale: 'ru' },
-                        take: 1,
+      include: {
+        items: {
+          include: {
+            variant: {
+              include: {
+                product: {
+                  include: {
+                    translations: {
+                      where: { locale: 'ru' },
+                      take: 1,
+                    },
+                    categories: {
+                      include: {
+                        translations: {
+                          where: { locale: 'ru' },
+                          take: 1,
+                        },
                       },
                     },
                   },
@@ -246,8 +247,11 @@ export async function getAnalytics(period: string = 'week', startDate?: string, 
           },
         },
       },
-    },
-  });
+    }),
+    db.user.count({
+      where: { deletedAt: null },
+    }),
+  ]);
 
   // Calculate order statistics
   const totalOrders = orders.length;
@@ -273,6 +277,7 @@ export async function getAnalytics(period: string = 'week', startDate?: string, 
       start: start.toISOString(),
       end: end.toISOString(),
     },
+    totalUsers,
     orders: {
       totalOrders,
       totalRevenue,

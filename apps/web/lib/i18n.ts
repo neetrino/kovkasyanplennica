@@ -124,7 +124,9 @@ export function t(lang: LanguageCode | undefined, path: string): string {
   }
 
   const result = typeof value === 'string' ? value : path;
-  if (translationCache.size < 1000) translationCache.set(cacheKey, result);
+  if (translationCache.size < 1000 && result !== path) {
+    translationCache.set(cacheKey, result);
+  }
 
   return result;
 }
