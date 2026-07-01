@@ -8,6 +8,11 @@ import {
   getAllChildCategoryIds,
 } from "./products-find-query/category-utils";
 
+export interface CategoryNavPreviewTarget {
+  slug: string;
+  id?: string;
+}
+
 export interface NavPreviewProduct {
   id: string;
   slug: string;
@@ -80,15 +85,19 @@ async function findPreviewForAll(lang: string): Promise<NavPreviewProduct | null
   };
 }
 
-async function findPreviewForCategorySlug(
-  slug: string,
+async function findPreviewForCategory(
+  target: CategoryNavPreviewTarget,
   lang: string
 ): Promise<NavPreviewProduct | null> {
-  const categoryDoc = await findCategoryBySlug(slug, lang);
-  if (!categoryDoc) return null;
+  let categoryId = target.id;
+  if (!categoryId) {
+    const categoryDoc = await findCategoryBySlug(target.slug, lang);
+    if (!categoryDoc) return null;
+    categoryId = categoryDoc.id;
+  }
 
-  const childIds = await getAllChildCategoryIds(categoryDoc.id);
-  const allIds = [categoryDoc.id, ...childIds];
+  const childIds = await getAllChildCategoryIds(categoryId);
+  const allIds = [categoryId, ...childIds];
 
   const where: Prisma.ProductWhereInput = {
     published: true,
@@ -130,23 +139,40 @@ const NAV_PREVIEW_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 /** Avoid opening dozens of concurrent DB queries (pool / CPU spikes on `/products`). */
 const NAV_PREVIEW_CONCURRENCY = 6;
 
-async function resolveNavPreviewSlugs(
+function normalizeNavPreviewTargets(
+  targets: Array<string | CategoryNavPreviewTarget>
+): CategoryNavPreviewTarget[] {
+  const bySlug = new Map<string, CategoryNavPreviewTarget>();
+  for (const target of targets) {
+    if (!target) continue;
+    const entry = typeof target === "string" ? { slug: target } : target;
+    if (!entry.slug) continue;
+    const existing = bySlug.get(entry.slug);
+    bySlug.set(entry.slug, {
+      slug: entry.slug,
+      id: entry.id ?? existing?.id,
+    });
+  }
+  return [...bySlug.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
+async function resolveNavPreviewTargets(
   lang: string,
-  uniqueSortedSlugs: string[]
+  targets: CategoryNavPreviewTarget[]
 ): Promise<Record<string, NavPreviewProduct | null>> {
   const out: Record<string, NavPreviewProduct | null> = {};
 
-  for (let i = 0; i < uniqueSortedSlugs.length; i += NAV_PREVIEW_CONCURRENCY) {
-    const batch = uniqueSortedSlugs.slice(i, i + NAV_PREVIEW_CONCURRENCY);
+  for (let i = 0; i < targets.length; i += NAV_PREVIEW_CONCURRENCY) {
+    const batch = targets.slice(i, i + NAV_PREVIEW_CONCURRENCY);
     await Promise.all(
-      batch.map(async (slug) => {
+      batch.map(async (target) => {
         try {
-          out[slug] =
-            slug === "all"
+          out[target.slug] =
+            target.slug === "all"
               ? await findPreviewForAll(lang)
-              : await findPreviewForCategorySlug(slug, lang);
+              : await findPreviewForCategory(target, lang);
         } catch {
-          out[slug] = null;
+          out[target.slug] = null;
         }
       })
     );
@@ -156,11 +182,14 @@ async function resolveNavPreviewSlugs(
 }
 
 const getCategoryNavPreviewsCached = unstable_cache(
-  async (lang: string, slugKey: string) => {
-    const uniqueSortedSlugs = slugKey.length > 0 ? slugKey.split("\u0001") : [];
-    return resolveNavPreviewSlugs(lang, uniqueSortedSlugs);
+  async (lang: string, targetKey: string) => {
+    const targets =
+      targetKey.length > 0
+        ? (JSON.parse(targetKey) as CategoryNavPreviewTarget[])
+        : [];
+    return resolveNavPreviewTargets(lang, targets);
   },
-  ["category-nav-previews-v2"],
+  ["category-nav-previews-v3"],
   {
     revalidate: NAV_PREVIEW_REVALIDATE_SECONDS,
     tags: ["category-nav-previews"],
@@ -172,12 +201,12 @@ const getCategoryNavPreviewsCached = unstable_cache(
  */
 export async function getCategoryNavPreviews(
   lang: string,
-  slugs: string[]
+  targets: Array<string | CategoryNavPreviewTarget>
 ): Promise<Record<string, NavPreviewProduct | null>> {
-  const uniqueSorted = [...new Set(slugs.filter(Boolean))].sort();
-  if (uniqueSorted.length === 0) {
+  const normalized = normalizeNavPreviewTargets(targets);
+  if (normalized.length === 0) {
     return {};
   }
-  const slugKey = uniqueSorted.join("\u0001");
-  return getCategoryNavPreviewsCached(lang, slugKey);
+  const targetKey = JSON.stringify(normalized);
+  return getCategoryNavPreviewsCached(lang, targetKey);
 }

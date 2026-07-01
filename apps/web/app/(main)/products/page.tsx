@@ -59,7 +59,7 @@ const fetchProductsCached = unstable_cache(
 
 const getCategoryTreeCached = unstable_cache(
   async (lang: string) => categoriesService.getTree(lang),
-  ['products-shop-category-tree-v1'],
+  ['products-shop-category-tree-v2'],
   { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['categories'] }
 );
 
@@ -257,8 +257,11 @@ async function ProductsPageSidebarSlot() {
   const language = getStoredLanguage();
   const { data: categoryTreeRoots } = await getCategoryTreeCached(language);
   const flatCategoriesForNav = flattenCategories(categoryTreeRoots ?? []);
-  const categoryNavPreviewSlugs = ['all', ...flatCategoriesForNav.map((c) => c.slug)];
-  const categoryNavPreviews = await getCategoryNavPreviews(language, categoryNavPreviewSlugs);
+  const categoryNavPreviewTargets = [
+    { slug: 'all' },
+    ...flatCategoriesForNav.map((c) => ({ slug: c.slug, id: c.id })),
+  ];
+  const categoryNavPreviews = await getCategoryNavPreviews(language, categoryNavPreviewTargets);
 
   return (
     <ProductsCategorySidebar
