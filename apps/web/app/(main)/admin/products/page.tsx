@@ -82,10 +82,10 @@ export default function ProductsPage() {
 
   // Fetch categories on mount
   useEffect(() => {
-    if (isLoggedIn && isAdmin) {
+    if (!isLoading && isLoggedIn && isAdmin) {
       fetchCategories();
     }
-  }, [isLoggedIn, isAdmin]);
+  }, [isLoading, isLoggedIn, isAdmin]);
 
   // Close category dropdown when clicking outside
   useEffect(() => {
@@ -120,11 +120,11 @@ export default function ProductsPage() {
   };
 
   useEffect(() => {
-    if (isLoggedIn && isAdmin) {
+    if (!isLoading && isLoggedIn && isAdmin) {
       fetchProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, isAdmin, page, search, selectedCategories, skuSearch, stockFilter, sortBy, minPrice, maxPrice]);
+  }, [isLoading, isLoggedIn, isAdmin, page, search, selectedCategories, skuSearch, stockFilter, sortBy, minPrice, maxPrice]);
 
   const fetchProducts = async () => {
     try {
@@ -193,7 +193,7 @@ export default function ProductsPage() {
     }
   };
 
-  // Client-side sorting for Product / Price / Stock columns
+  // Client-side sorting for Name / Price columns
   const sortedProducts = useMemo(() => {
     if (!Array.isArray(products)) return [];
 
@@ -222,25 +222,12 @@ export default function ProductsPage() {
         if (aTitle === bTitle) return 0;
         return aTitle > bTitle ? direction : -direction;
       });
-    } else if (field === 'stock') {
-      cloned.sort((a, b) => {
-        const getTotalStock = (product: Product) => {
-          if (product.colorStocks && product.colorStocks.length > 0) {
-            return product.colorStocks.reduce((sum, cs) => sum + (cs.stock || 0), 0);
-          }
-          return product.stock ?? 0;
-        };
-        const aStock = getTotalStock(a);
-        const bStock = getTotalStock(b);
-        if (aStock === bStock) return 0;
-        return aStock > bStock ? direction : -direction;
-      });
     }
 
     return cloned;
   }, [products, sortBy]);
 
-  const handleHeaderSort = (field: 'price' | 'createdAt' | 'title' | 'stock') => {
+  const handleHeaderSort = (field: 'price' | 'createdAt' | 'title') => {
     setPage(1);
 
     setSortBy((current) => {
@@ -267,14 +254,6 @@ export default function ProductsPage() {
           next = 'title-desc';
         } else {
           next = 'title-asc';
-        }
-      }
-
-      if (field === 'stock') {
-        if (current === 'stock-asc') {
-          next = 'stock-desc';
-        } else {
-          next = 'stock-asc';
         }
       }
 
@@ -319,6 +298,17 @@ export default function ProductsPage() {
 
   return (
     <div className={dashboardMainClass}>
+        <button
+          type="button"
+          onClick={() => router.push('/admin')}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-admin-brand-2/18 bg-white text-admin-brand transition-colors hover:border-admin-brand-2/35 hover:bg-admin-surface/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-brand/25 focus-visible:ring-offset-2"
+          aria-label={t('admin.products.backToAdmin')}
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
         {(search || selectedCategories.size > 0 || skuSearch || stockFilter !== 'all') && (
           <div className="flex justify-end">
             <button type="button" onClick={handleClearFilters} className={`${dashboardGhostLink} underline`}>

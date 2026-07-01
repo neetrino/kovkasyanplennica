@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import {
   healthProbeResponse,
   shouldBypassForUptimeProbe,
-} from '@/lib/health/uptime-probe';
+} from './lib/health/uptime-probe';
 
 const MOBILE_UA =
   /Mobile|Android|iPhone|iPad|webOS|BlackBerry|IEMobile|Opera Mini/i;

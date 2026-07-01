@@ -1,3 +1,22 @@
+const ADMIN_PRODUCT_LOCALES = ['ru', 'en', 'hy'] as const;
+
+function pickTranslation<T extends { locale: string; title?: string | null }>(
+  translations: T[] | undefined
+): T | null {
+  if (!Array.isArray(translations) || translations.length === 0) {
+    return null;
+  }
+
+  for (const locale of ADMIN_PRODUCT_LOCALES) {
+    const match = translations.find((item) => item.locale === locale);
+    if (match?.title) {
+      return match;
+    }
+  }
+
+  return translations.find((item) => item.title) ?? translations[0] ?? null;
+}
+
 /**
  * Format product for list response
  */
@@ -8,6 +27,7 @@ export function formatProductForList(product: {
   discountPercent: number | null;
   createdAt: Date;
   translations?: Array<{
+    locale: string;
     slug: string;
     title: string;
   }>;
@@ -18,14 +38,10 @@ export function formatProductForList(product: {
   }>;
   media?: unknown[];
   categories?: Array<{
-    translations?: Array<{ title: string; slug: string }>;
+    translations?: Array<{ locale: string; title: string; slug: string }>;
   }>;
 }) {
-  // Безопасное получение translation с проверкой на существование массива
-  const translation = Array.isArray(product.translations) && product.translations.length > 0
-    ? product.translations[0]
-    : null;
-  
+  const translation = pickTranslation(product.translations);
   // Безопасное получение variant с проверкой на существование массива
   const variant = Array.isArray(product.variants) && product.variants.length > 0
     ? product.variants[0]
@@ -36,7 +52,7 @@ export function formatProductForList(product: {
   const categoryItems = Array.isArray(product.categories)
     ? product.categories
         .map((cat) => {
-          const t = cat.translations?.[0];
+          const t = pickTranslation(cat.translations);
           if (!t || t.title == null) return null;
           return { title: t.title, slug: typeof t.slug === 'string' ? t.slug : '' };
         })

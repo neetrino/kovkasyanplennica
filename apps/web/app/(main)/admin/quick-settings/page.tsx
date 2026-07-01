@@ -341,14 +341,15 @@ export default function QuickSettingsPage() {
     }
   };
 
+  const fetchInitialData = useCallback(async () => {
+    await Promise.all([fetchSettings(), fetchProducts(), fetchCategories(), fetchBrands()]);
+  }, [fetchSettings, fetchProducts, fetchCategories, fetchBrands]);
+
   useEffect(() => {
     if (!isLoading && isLoggedIn && isAdmin) {
-      fetchSettings();
-      fetchProducts();
-      fetchCategories();
-      fetchBrands();
+      void fetchInitialData();
     }
-  }, [isLoading, isLoggedIn, isAdmin, fetchSettings, fetchProducts, fetchCategories, fetchBrands]);
+  }, [isLoading, isLoggedIn, isAdmin, fetchInitialData]);
 
   useEffect(() => {
     if (!isLoading) {

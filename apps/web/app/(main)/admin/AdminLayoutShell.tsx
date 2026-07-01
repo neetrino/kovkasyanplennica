@@ -111,25 +111,28 @@ export function AdminLayoutShell({ children }: { children: ReactNode }) {
     Boolean(isHostess) &&
     (pathname?.startsWith('/admin/orders') === true || pathname?.startsWith('/admin/desktops') === true);
   const sidebarTabs = useHostessTabs ? getHostessMenuTABS(t) : undefined;
+  const hideSidebar = pathname === '/admin/products';
 
   return (
     <AdminNavThemeProvider>
       <div className="box-border flex min-h-dvh w-full flex-col border border-admin-brand-2/35 bg-admin-surface">
-        <div className="flex min-h-0 flex-1 flex-col gap-5 py-8 lg:flex-row lg:gap-0">
-          <AdminSidebar
-            currentPath={currentPath}
-            router={router}
-            t={t}
-            tabs={sidebarTabs}
-            productSubnavExpanded={productSubnavExpanded}
-            onProductSubnavToggle={toggleProductSubnav}
-            toggleProductsSubnavAriaLabel={t('admin.menu.toggleProductsSubnav')}
-            sidebarRailCollapsed={sidebarRailCollapsed}
-            onToggleSidebarRail={toggleSidebarRail}
-            sidebarRailExpandLabel={t('admin.menu.sidebarRailExpand')}
-            sidebarRailCollapseLabel={t('admin.menu.sidebarRailCollapse')}
-          />
-          <div className="min-h-0 min-w-0 flex-1">{children}</div>
+        <div className={`flex min-h-0 flex-1 flex-col gap-5 py-8 ${hideSidebar ? '' : 'lg:flex-row lg:gap-0'}`}>
+          {!hideSidebar ? (
+            <AdminSidebar
+              currentPath={currentPath}
+              router={router}
+              t={t}
+              tabs={sidebarTabs}
+              productSubnavExpanded={productSubnavExpanded}
+              onProductSubnavToggle={toggleProductSubnav}
+              toggleProductsSubnavAriaLabel={t('admin.menu.toggleProductsSubnav')}
+              sidebarRailCollapsed={sidebarRailCollapsed}
+              onToggleSidebarRail={toggleSidebarRail}
+              sidebarRailExpandLabel={t('admin.menu.sidebarRailExpand')}
+              sidebarRailCollapseLabel={t('admin.menu.sidebarRailCollapse')}
+            />
+          ) : null}
+          <div className={`min-h-0 min-w-0 flex-1 ${hideSidebar ? 'px-4 sm:px-6 lg:px-8' : ''}`}>{children}</div>
         </div>
       </div>
     </AdminNavThemeProvider>

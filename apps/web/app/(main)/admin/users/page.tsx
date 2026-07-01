@@ -124,7 +124,6 @@ export default function UsersPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
-    fetchUsers();
   };
 
   const toggleSelect = (id: string) => {

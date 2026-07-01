@@ -8,8 +8,7 @@ import { logger } from "../../../utils/logger";
  */
 const getProductListInclude = () => ({
   translations: {
-    where: { locale: "en" },
-    take: 1,
+    where: { locale: { in: ['ru', 'en', 'hy'] } },
   },
   variants: {
     where: { published: true },
@@ -20,9 +19,8 @@ const getProductListInclude = () => ({
   categories: {
     include: {
       translations: {
-        where: { locale: "en" },
-        take: 1,
-        select: { title: true, slug: true },
+        where: { locale: { in: ['ru', 'en', 'hy'] } },
+        select: { locale: true, title: true, slug: true },
       },
     },
   },

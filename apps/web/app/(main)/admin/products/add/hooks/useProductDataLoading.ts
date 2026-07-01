@@ -73,8 +73,14 @@ export function useProductDataLoading({
     }
   }, [isLoggedIn, isAdmin, setDefaultCurrency]);
 
-  // Fetch brands, categories, and attributes
+  // Fetch brands, categories, and attributes once when admin session is ready
   useEffect(() => {
+    if (!isLoggedIn || !isAdmin || isLoading) {
+      return;
+    }
+
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         console.log('📥 [ADMIN] Fetching brands, categories, and attributes...');
@@ -83,6 +89,7 @@ export function useProductDataLoading({
           apiClient.get<{ data: Category[] }>('/api/v1/admin/categories'),
           apiClient.get<{ data: Attribute[] }>('/api/v1/admin/attributes'),
         ]);
+        if (cancelled) return;
         setBrands(brandsRes.data || []);
         setCategories(categoriesRes.data || []);
         setAttributes(attributesRes.data || []);
@@ -133,12 +140,18 @@ export function useProductDataLoading({
             }))
           );
         }
-      } catch (err: any) {
-        console.error('❌ [ADMIN] Error fetching data:', err);
+      } catch (err: unknown) {
+        if (!cancelled) {
+          console.error('❌ [ADMIN] Error fetching data:', err);
+        }
       }
     };
-    fetchData();
-  }, [setBrands, setCategories, setAttributes]);
+    void fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn, isAdmin, isLoading, setBrands, setCategories, setAttributes]);
 
   // Close category dropdown when clicking outside
   useEffect(() => {

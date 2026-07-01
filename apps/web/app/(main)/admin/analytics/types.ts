@@ -4,6 +4,7 @@ export interface AnalyticsData {
     start: string;
     end: string;
   };
+  totalUsers?: number;
   orders: {
     totalOrders: number;
     totalRevenue: number;

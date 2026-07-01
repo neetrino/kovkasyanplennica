@@ -56,7 +56,12 @@ export async function getProductById(productId: string) {
 
   // Безопасное получение translation с проверкой на существование массива
   const translations = Array.isArray(product.translations) ? product.translations : [];
-  const translation = translations.find((t: { locale: string }) => t.locale === "en") || translations[0] || null;
+  const translation =
+    translations.find((t: { locale: string }) => t.locale === 'ru') ||
+    translations.find((t: { locale: string }) => t.locale === 'en') ||
+    translations.find((t: { locale: string }) => t.locale === 'hy') ||
+    translations[0] ||
+    null;
 
   // Безопасное получение labels с проверкой на существование массива
   const labels = Array.isArray(product.labels) ? product.labels : [];
