@@ -397,7 +397,6 @@ async function ProductsPageMainSlot({
                 <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Pagination">
                   <Link
                     href={buildPaginationUrl(currentPage - 1)}
-                    prefetch={false}
                     className={`inline-flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-lg border text-sm font-medium transition-colors ${
                       currentPage <= 1
                         ? "pointer-events-none border-[#3d504e] text-gray-500 bg-[#2F3F3D]"
@@ -414,7 +413,6 @@ async function ProductsPageMainSlot({
                       <Link
                         key={p}
                         href={buildPaginationUrl(p)}
-                        prefetch={false}
                         className={`inline-flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-lg border text-sm font-medium transition-colors ${
                           p === currentPage
                             ? "border-white bg-white text-[#2F3F3D]"
@@ -427,7 +425,6 @@ async function ProductsPageMainSlot({
                   )}
                   <Link
                     href={buildPaginationUrl(currentPage + 1)}
-                    prefetch={false}
                     className={`inline-flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-lg border text-sm font-medium transition-colors ${
                       currentPage >= totalPages
                         ? "pointer-events-none border-[#3d504e] text-gray-500 bg-[#2F3F3D]"

@@ -66,7 +66,6 @@ export function MobileBottomNav() {
         </div>
         <Link
           href="/products"
-          prefetch={false}
           aria-label={t('home.header.navigation.menu')}
           aria-current={isProductsActive ? 'page' : undefined}
           className={`absolute left-1/2 top-8 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-[#042628] shadow-[0_8px_20px_rgba(4,38,40,0.24)] transition-opacity hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#75bf5e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f3f3d] ${
@@ -76,7 +75,7 @@ export function MobileBottomNav() {
           <Image src={toR2Url('/assets/mobile-home/nav-chef.svg')} alt="" width={24} height={24} aria-hidden />
         </Link>
         <div className="absolute inset-x-0 bottom-[28px] flex items-center justify-between px-[30px]">
-          <Link prefetch={false} href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
+          <Link href={homeHref} aria-label={t('common.navigation.home')} className="flex h-12 w-12 items-center justify-center">
             <NavHomeIcon active={isHomeActive} />
           </Link>
           <button
@@ -90,7 +89,6 @@ export function MobileBottomNav() {
           </button>
           <span className="h-12 w-12" aria-hidden />
           <Link
-            prefetch={false}
             href="/cart"
             aria-label={
               cartItemCount > 0
@@ -106,7 +104,7 @@ export function MobileBottomNav() {
               </span>
             )}
           </Link>
-          <Link prefetch={false} href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
+          <Link href="/profile" aria-label={t('common.navigation.profile')} className="flex h-12 w-12 items-center justify-center">
             <NavProfileIcon active={isProfileActive} />
           </Link>
         </div>

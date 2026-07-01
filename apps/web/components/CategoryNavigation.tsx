@@ -2,8 +2,9 @@
 
 import type { ReactNode } from 'react';
 import { Suspense, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
+import { buildProductsCategoryHref } from '@/lib/navigation/build-products-category-href';
 import { useCategories } from './CategoryNavigation/hooks/useCategories';
 import { useCategoryProducts } from './CategoryNavigation/hooks/useCategoryProducts';
 import { useCategoryScroll } from './CategoryNavigation/hooks/useCategoryScroll';
@@ -30,7 +31,6 @@ function LeadingCategoryBarFallback({ leadingSlot }: { leadingSlot?: ReactNode }
 }
 
 function CategoryNavigationContent({ leadingSlot }: { leadingSlot?: ReactNode }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
   const currentCategory = searchParams?.get('category');
@@ -44,21 +44,6 @@ function CategoryNavigationContent({ leadingSlot }: { leadingSlot?: ReactNode })
     scrollByAmount,
     updateScrollButtons,
   } = useCategoryScroll();
-
-  const handleCategoryClick = (categorySlug: string | null) => {
-    const params = new URLSearchParams(searchParams?.toString() || '');
-    
-    if (categorySlug && categorySlug !== 'all') {
-      params.set('category', categorySlug);
-    } else {
-      params.delete('category');
-    }
-    
-    // Reset to page 1 when changing category
-    params.delete('page');
-    
-    router.push(`/products?${params.toString()}`);
-  };
 
   useEffect(() => {
     if (!categoriesLoading && categories.length > 0) {
@@ -107,8 +92,10 @@ function CategoryNavigationContent({ leadingSlot }: { leadingSlot?: ReactNode })
                   category={category}
                   product={product}
                   isActive={isActive}
-                  currentCategory={currentCategory}
-                  onCategoryClick={handleCategoryClick}
+                  navHref={buildProductsCategoryHref(
+                    category.slug === 'all' ? null : category.slug,
+                    searchParams,
+                  )}
                   t={t}
                 />
               );

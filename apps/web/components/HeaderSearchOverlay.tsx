@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../lib/api-client';
 import { formatPrice, getStoredCurrency } from '../lib/currency';
 import type { CurrencyCode } from '../lib/currency';
 import { useTranslation } from '../lib/i18n-client';
+import { ProductCardLink } from '@/components/ProductCard/ProductCardLink';
 import { APP_SCROLL_REGION_DOM_ID } from '../lib/appScrollRegion';
 const SEARCH_DEBOUNCE_MS = 300;
 const SEARCH_RESULT_LIMIT = 10;
@@ -245,10 +245,9 @@ export function HeaderSearchOverlay({
             {searchQuery.trim() &&
               !loading &&
               results.map((product) => (
-                <Link
+                <ProductCardLink
                   key={product.id}
                   href={getProductHref(product.slug)}
-                  prefetch={false}
                   onClick={onClose}
                   className="flex gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/10"
                 >
@@ -272,7 +271,7 @@ export function HeaderSearchOverlay({
                     <p className="line-clamp-2 text-sm font-semibold leading-snug text-white">{product.title}</p>
                     <p className="mt-1 text-sm font-medium text-sky-300">{formatPrice(product.price, currency)}</p>
                   </div>
-                </Link>
+                </ProductCardLink>
               ))}
           </div>
         </form>
