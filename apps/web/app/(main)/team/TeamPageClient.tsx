@@ -20,14 +20,14 @@ export function TeamPageClient() {
         className="pointer-events-none absolute top-10 left-0 z-[2] w-[min(160px,36vw)] sm:w-[180px] md:w-[240px] select-none"
         aria-hidden
       >
-        <img src="/hero-vector-2.svg" alt="" className="w-full h-auto object-contain object-left-top" />
+        <img src={toR2Url('/hero-vector-2.svg')} alt="" className="w-full h-auto object-contain object-left-top" />
       </div>
       <div
         className="pointer-events-none absolute top-10 right-0 z-[2] w-[min(160px,36vw)] sm:w-[180px] md:w-[240px] select-none"
         aria-hidden
       >
         <img
-          src="/hero-vector-2.svg"
+          src={toR2Url('/hero-vector-2.svg')}
           alt=""
           className="w-full h-auto object-contain object-right-top scale-x-[-1]"
         />

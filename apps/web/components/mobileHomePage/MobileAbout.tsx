@@ -19,7 +19,7 @@ export function MobileAbout() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-8 right-0 w-[280px] h-[315px]">
           <img
-            src="/hero-vector-1.svg"
+            src={toR2Url('/hero-vector-1.svg')}
             alt=""
             width={280}
             height={315}
@@ -30,7 +30,7 @@ export function MobileAbout() {
         </div>
         <div className="absolute bottom-8 left-0 w-[280px] h-[315px] rotate-180">
           <img
-            src="/hero-vector-2.svg"
+            src={toR2Url('/hero-vector-2.svg')}
             alt=""
             width={280}
             height={315}

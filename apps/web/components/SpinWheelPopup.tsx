@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth/AuthContext';
 import { apiClient } from '../lib/api-client';
 import { useTranslation } from '../lib/i18n-client';
+import { toR2Url } from '@/lib/r2-assets';
 import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 
 interface SpinWheelPrize {
@@ -365,10 +366,10 @@ export function SpinWheelPopup() {
         <div className="pointer-events-none absolute top-1/3 -right-12 h-40 w-40 rounded-full bg-[#f8c56e]/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 left-1/4 h-52 w-52 rounded-full bg-[#76c6b4]/12 blur-3xl" />
         <div className="pointer-events-none absolute top-4 right-4 w-32 h-36 md:w-40 md:h-44 opacity-35" aria-hidden>
-          <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-top object-right" />
+          <img src={toR2Url('/hero-vector-1.svg')} alt="" className="h-full w-full object-contain object-top object-right" />
         </div>
         <div className="pointer-events-none absolute bottom-4 left-4 w-32 h-36 md:w-40 md:h-44 opacity-35 rotate-180" aria-hidden>
-          <img src="/hero-vector-1.svg" alt="" className="h-full w-full object-contain object-bottom object-left" />
+          <img src={toR2Url('/hero-vector-1.svg')} alt="" className="h-full w-full object-contain object-bottom object-left" />
         </div>
         {isCelebrating && (
           <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">

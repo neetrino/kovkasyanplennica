@@ -271,7 +271,7 @@ export function Header() {
             className={`relative shrink-0 transition-[width,height] duration-300 ease-out ${isHomePage ? logoBoxOther : logoBoxInnerPages}`}
           >
             <Image
-              src={isHomeCream ? toR2Url('/assets/hero/logo-kp.png') : '/hero-logo.png'}
+              src={isHomeCream ? '/assets/hero/logo-kp.png' : '/hero-logo.png'}
               alt=""
               fill
               className="object-contain object-center"
