@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 import { toR2Url } from '@/lib/r2-assets';
 
 /**
@@ -62,12 +63,14 @@ export function MobileHero() {
           >
             {t('home.hero.orderButton')}
           </Link>
-          <Link
-            href="/desktops"
-            className="flex h-14 w-full items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[rgba(255,255,255,0.06)] backdrop-blur-[3.5px] text-base font-semibold tracking-[0.32px] text-[#fadaac]"
-          >
-            {t('home.hero.bookButton')}
-          </Link>
+          {DESKTOPS_ENABLED && (
+            <Link
+              href="/desktops"
+              className="flex h-14 w-full items-center justify-center rounded-full border border-solid border-[#fadaac] bg-[rgba(255,255,255,0.06)] backdrop-blur-[3.5px] text-base font-semibold tracking-[0.32px] text-[#fadaac]"
+            >
+              {t('home.hero.bookButton')}
+            </Link>
+          )}
         </div>
       </div>
     </section>

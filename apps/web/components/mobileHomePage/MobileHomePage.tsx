@@ -4,6 +4,7 @@ import {
   getMobileFeaturedTopProducts,
   getMobileRootCategories,
 } from '@/lib/home/mobile-home-sections';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 import { MobileCategoriesSection } from './MobileCategoriesSection';
 import { MobileHomeReservationBlock } from './MobileHomeReservationBlock';
 import { MobileNewArrivalsSection } from './MobileNewArrivalsSection';
@@ -34,7 +35,7 @@ export async function MobileHomePage({ newArrivalsProducts }: MobileHomePageProp
 
         <MobileNewArrivalsSection products={arrivals} />
 
-        <MobileHomeReservationBlock />
+        {DESKTOPS_ENABLED && <MobileHomeReservationBlock />}
       </div>
     </div>
   );

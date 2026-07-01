@@ -70,6 +70,8 @@ export interface ProductData {
   slug: string;
   subtitle?: string;
   descriptionHtml?: string;
+  ingredients?: string;
+  longDescriptionHtml?: string;
   brandId?: string | null;
   primaryCategoryId?: string | null;
   categoryIds?: string[];

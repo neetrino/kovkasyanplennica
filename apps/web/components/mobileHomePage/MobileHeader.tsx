@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/auth/AuthContext';
 import { formatNavLabel } from '../../lib/formatNavLabel';
 import { useTranslation } from '../../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 import {
   getMobileDrawerNavItems,
   HEADER_NAV_ITEMS,
@@ -47,13 +48,15 @@ export function MobileHeader() {
             />
           </Link>
           <div className="flex shrink-0 items-center gap-[11px]">
-            <Link
-              prefetch={false}
-              href="/desktops"
-              className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
-            >
-              Бронь
-            </Link>
+            {DESKTOPS_ENABLED && (
+              <Link
+                prefetch={false}
+                href="/desktops"
+                className="flex h-12 min-w-[116px] items-center justify-center rounded-[48px] bg-[#75bf5e] px-6 text-[16px] font-bold leading-6 text-white"
+              >
+                Бронь
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}

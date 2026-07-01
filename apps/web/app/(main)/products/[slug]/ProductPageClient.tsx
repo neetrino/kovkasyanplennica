@@ -7,6 +7,7 @@ import { RelatedProducts } from '@/components/RelatedProducts';
 import { ProductImageGallery } from './ProductImageGallery';
 import { ProductPdpBackground } from './ProductPdpBackground';
 import { ProductInfoAndActions } from './ProductInfoAndActions';
+import { ProductLongDescription } from './ProductLongDescription';
 import { useProductPage } from './useProductPage';
 import type { Product } from './types';
 import type { ProductPageProps } from './types';
@@ -130,6 +131,8 @@ export function ProductPageClient({
             getRequiredAttributesMessage={getRequiredAttributesMessage}
           />
         </div>
+
+        <ProductLongDescription product={product} language={language} />
 
         <div className="mt-20 lg:mt-24">
           <RelatedProducts products={relatedProducts} loading={relatedLoading} language={language} />

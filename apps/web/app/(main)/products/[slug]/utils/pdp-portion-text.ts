@@ -104,7 +104,12 @@ export function resolvePdpPortionBundle(language: LanguageCode, product: Product
     (typeof product.subtitle === 'string' ? product.subtitle.trim() : '');
   const subtitlePlain = plainFirstLine(subtitleSource);
 
-  const shortDescSource = getProductText(language, product.id, 'shortDescription').trim();
+  const explicitIngredients =
+    typeof product.ingredients === 'string' ? product.ingredients.trim() : '';
+
+  const shortDescSource =
+    (typeof product.shortDescription === 'string' ? product.shortDescription.trim() : '') ||
+    getProductText(language, product.id, 'shortDescription').trim();
   const shortPlainBlock = plainField(shortDescSource);
   const shortDescLines = shortPlainBlock
     .split(/\r?\n/)
@@ -114,7 +119,11 @@ export function resolvePdpPortionBundle(language: LanguageCode, product: Product
   const portionFromShort =
     !subtitlePlain && isStandalonePortionCandidate(firstShortLine) ? firstShortLine : '';
 
-  const longRaw = getProductText(language, product.id, 'longDescription') || product.description || '';
+  const longRaw =
+    (typeof product.longDescription === 'string' ? product.longDescription : '') ||
+    getProductText(language, product.id, 'longDescription') ||
+    product.description ||
+    '';
   const longPlainFull = plainField(longRaw);
   const longToken =
     !subtitlePlain && !portionFromShort ? tryLeadingPortionToken(longPlainFull) : null;
@@ -128,6 +137,7 @@ export function resolvePdpPortionBundle(language: LanguageCode, product: Product
     : shortPlainBlock;
   const longPlainForIngredients = longToken?.rest ?? longPlainFull;
   let ingredientsPlain =
+    explicitIngredients ||
     shortForIngredients ||
     (longPlainForIngredients
       ? longPlainForIngredients.length > 220

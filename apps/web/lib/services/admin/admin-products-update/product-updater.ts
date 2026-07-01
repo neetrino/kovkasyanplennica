@@ -104,7 +104,14 @@ export async function updateProductTranslation(
   tx: Prisma.TransactionClient
 ) {
   const normalizedSlug = typeof data.slug === "string" ? normalizeProductSlug(data.slug) : undefined;
-  if (data.title || data.slug || data.subtitle !== undefined || data.descriptionHtml !== undefined) {
+  if (
+    data.title ||
+    data.slug ||
+    data.subtitle !== undefined ||
+    data.descriptionHtml !== undefined ||
+    data.ingredients !== undefined ||
+    data.longDescriptionHtml !== undefined
+  ) {
     const locale = data.locale || "en";
     await tx.productTranslation.upsert({
       where: {
@@ -118,6 +125,8 @@ export async function updateProductTranslation(
         ...(normalizedSlug && { slug: normalizedSlug }),
         ...(data.subtitle !== undefined && { subtitle: data.subtitle || null }),
         ...(data.descriptionHtml !== undefined && { descriptionHtml: data.descriptionHtml || null }),
+        ...(data.ingredients !== undefined && { ingredients: data.ingredients || null }),
+        ...(data.longDescriptionHtml !== undefined && { longDescriptionHtml: data.longDescriptionHtml || null }),
       },
       create: {
         productId,
@@ -126,6 +135,8 @@ export async function updateProductTranslation(
         slug: normalizedSlug || "",
         subtitle: data.subtitle || null,
         descriptionHtml: data.descriptionHtml || null,
+        ingredients: data.ingredients || null,
+        longDescriptionHtml: data.longDescriptionHtml || null,
       },
     });
   }

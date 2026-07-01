@@ -11,7 +11,10 @@ export function useProductFormState() {
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
+    subtitle: '',
     descriptionHtml: '',
+    ingredients: '',
+    longDescriptionHtml: '',
     brandIds: [] as string[],
     primaryCategoryId: '',
     categoryIds: [] as string[],

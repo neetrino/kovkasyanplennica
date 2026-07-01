@@ -70,6 +70,9 @@ export interface Product {
   slug: string;
   title: string;
   subtitle?: string;
+  shortDescription?: string;
+  ingredients?: string;
+  longDescription?: string;
   description?: string;
   media: ProductMedia[] | string[];
   variants: ProductVariant[];

@@ -184,7 +184,7 @@ export function ProductInfoAndActions({
         ) : null}
 
         {ingredientsLine ? (
-          <p className="mt-2 line-clamp-3 w-full text-base font-light italic leading-[25px] text-[#ffe5c2]">
+          <p className="mt-1 line-clamp-4 w-full text-sm font-light italic leading-snug text-[#ffe5c2]/85 sm:text-[15px]">
             {ingredientsLine}
           </p>
         ) : null}

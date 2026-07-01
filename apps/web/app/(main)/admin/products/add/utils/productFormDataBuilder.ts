@@ -7,7 +7,10 @@ import type { ProductData, Variant, ProductLabel } from '../types';
 interface FormData {
   title: string;
   slug: string;
+  subtitle: string;
   descriptionHtml: string;
+  ingredients: string;
+  longDescriptionHtml: string;
   brandIds: string[];
   primaryCategoryId: string;
   categoryIds: string[];
@@ -35,7 +38,10 @@ export function buildFormData(
   return {
     title: product.title || '',
     slug: product.slug || '',
+    subtitle: product.subtitle || '',
     descriptionHtml: product.descriptionHtml || '',
+    ingredients: product.ingredients || '',
+    longDescriptionHtml: product.longDescriptionHtml || '',
     brandIds: brandIds,
     primaryCategoryId: product.primaryCategoryId || '',
     categoryIds: product.categoryIds || [],

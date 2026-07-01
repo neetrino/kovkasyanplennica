@@ -9,10 +9,16 @@ interface BasicInformationProps {
   setProductType: (type: 'simple' | 'variable') => void;
   title: string;
   slug: string;
+  subtitle: string;
   descriptionHtml: string;
+  ingredients: string;
+  longDescriptionHtml: string;
   onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onSlugChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSubtitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onDescriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onIngredientsChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  onLongDescriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export function BasicInformation({
@@ -20,18 +26,26 @@ export function BasicInformation({
   setProductType,
   title,
   slug,
+  subtitle,
   descriptionHtml,
+  ingredients,
+  longDescriptionHtml,
   onTitleChange,
   onSlugChange,
+  onSubtitleChange,
   onDescriptionChange,
+  onIngredientsChange,
+  onLongDescriptionChange,
 }: BasicInformationProps) {
   const { t } = useTranslation();
+
+  const textareaClassName =
+    'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
 
   return (
     <div>
       <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('admin.products.add.basicInformation')}</h2>
       <div className="space-y-4">
-        {/* Product Type Selector */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {t('admin.products.add.productType')} *
@@ -93,19 +107,57 @@ export function BasicInformation({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t('admin.products.add.description')}
+            {t('admin.products.add.subtitle')}
+          </label>
+          <Input
+            type="text"
+            value={subtitle}
+            onChange={onSubtitleChange}
+            placeholder={t('admin.products.add.productSubtitlePlaceholder')}
+          />
+          <p className="mt-1 text-xs text-gray-500">{t('admin.products.add.subtitleHint')}</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('admin.products.add.shortDescription')}
           </label>
           <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={6}
+            className={textareaClassName}
+            rows={3}
             value={descriptionHtml}
             onChange={onDescriptionChange}
-            placeholder={t('admin.products.add.productDescriptionPlaceholder')}
+            placeholder={t('admin.products.add.productShortDescriptionPlaceholder')}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('admin.products.add.ingredients')}
+          </label>
+          <textarea
+            className={textareaClassName}
+            rows={3}
+            value={ingredients}
+            onChange={onIngredientsChange}
+            placeholder={t('admin.products.add.productIngredientsPlaceholder')}
+          />
+          <p className="mt-1 text-xs text-gray-500">{t('admin.products.add.ingredientsHint')}</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('admin.products.add.longDescription')}
+          </label>
+          <textarea
+            className={textareaClassName}
+            rows={8}
+            value={longDescriptionHtml}
+            onChange={onLongDescriptionChange}
+            placeholder={t('admin.products.add.productLongDescriptionPlaceholder')}
           />
         </div>
       </div>
     </div>
   );
 }
-
-

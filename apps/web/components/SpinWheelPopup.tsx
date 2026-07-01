@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '../lib/auth/AuthContext';
 import { apiClient } from '../lib/api-client';
 import { useTranslation } from '../lib/i18n-client';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 
 interface SpinWheelPrize {
   id: string;
@@ -524,15 +525,11 @@ export function SpinWheelPopup() {
           </button>
         </div>
 
-        {wonPrize && wonPrizePreview && (
-          <Link
-            href={`/desktops?${new URLSearchParams({
-              ...(wonPrizePreview.title && { productTitle: wonPrizePreview.title }),
-              ...(wonPrizePreview.imageUrl && { productImageUrl: wonPrizePreview.imageUrl }),
-            }).toString()}`}
-            onClick={() => setOpen(false)}
-            className="group relative z-[1] mt-4 flex overflow-hidden rounded-[24px] border border-white/12 bg-[linear-gradient(145deg,rgba(32,48,46,0.92),rgba(18,29,27,0.96))] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-colors hover:border-[#f8c56e]/30 hover:bg-[linear-gradient(145deg,rgba(38,56,54,0.95),rgba(22,35,33,0.98))] md:absolute md:bottom-0 md:right-0 md:mt-0 md:w-[19rem]"
-          >
+        {wonPrize && wonPrizePreview && (() => {
+          const prizeCardClassName =
+            'group relative z-[1] mt-4 flex overflow-hidden rounded-[24px] border border-white/12 bg-[linear-gradient(145deg,rgba(32,48,46,0.92),rgba(18,29,27,0.96))] p-3 shadow-[0_18px_42px_rgba(0,0,0,0.28)] backdrop-blur-xl md:absolute md:bottom-0 md:right-0 md:mt-0 md:w-[19rem]';
+          const prizeCardContent = (
+            <>
             <div className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-[#f8c56e]/16 blur-2xl" />
             <div className="pointer-events-none absolute -bottom-10 left-6 h-20 w-20 rounded-full bg-[#7ef2c6]/10 blur-2xl" />
             <div className="relative grid w-full grid-cols-[5rem_minmax(0,1fr)] items-end gap-x-4 gap-y-2">
@@ -546,12 +543,16 @@ export function SpinWheelPopup() {
                 <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#f3cf91]/85">
                   {t('home.spinWheel.winMessage').replace('{title}', wonPrizePreview.title)}
                 </p>
-                <p className="mt-2 text-[11px] font-semibold text-[#ffe4b3]">
-                  Чтобы забрать выигрыш, нажмите «Бронировать»
-                </p>
-                <span className="mt-2 inline-flex items-center whitespace-nowrap rounded-full border border-[#f8c56e]/18 bg-white/8 px-3 py-1.5 text-xs font-semibold text-[#fff4de] transition-colors group-hover:bg-white/14">
-                  Бронировать
-                </span>
+                {DESKTOPS_ENABLED && (
+                  <>
+                    <p className="mt-2 text-[11px] font-semibold text-[#ffe4b3]">
+                      Чтобы забрать выигрыш, нажмите «Бронировать»
+                    </p>
+                    <span className="mt-2 inline-flex items-center whitespace-nowrap rounded-full border border-[#f8c56e]/18 bg-white/8 px-3 py-1.5 text-xs font-semibold text-[#fff4de] transition-colors group-hover:bg-white/14">
+                      Бронировать
+                    </span>
+                  </>
+                )}
               </div>
               {wonPrizePreview.imageUrl ? (
                 <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[18px] border border-white/10 bg-white/90 shadow-[0_10px_24px_rgba(0,0,0,0.16)]">
@@ -567,8 +568,26 @@ export function SpinWheelPopup() {
                 </div>
               )}
             </div>
-          </Link>
-        )}
+            </>
+          );
+
+          if (!DESKTOPS_ENABLED) {
+            return <div className={prizeCardClassName}>{prizeCardContent}</div>;
+          }
+
+          return (
+            <Link
+              href={`/desktops?${new URLSearchParams({
+                ...(wonPrizePreview.title && { productTitle: wonPrizePreview.title }),
+                ...(wonPrizePreview.imageUrl && { productImageUrl: wonPrizePreview.imageUrl }),
+              }).toString()}`}
+              onClick={() => setOpen(false)}
+              className={`${prizeCardClassName} transition-colors hover:border-[#f8c56e]/30 hover:bg-[linear-gradient(145deg,rgba(38,56,54,0.95),rgba(22,35,33,0.98))]`}
+            >
+              {prizeCardContent}
+            </Link>
+          );
+        })()}
       </div>
       <style>{`
         ${SLOT_CIRCLE_POSITIONS.map(

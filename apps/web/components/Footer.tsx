@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from '../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
+import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
 import {
   FOOTER_NAV_ITEMS,
   getVisibleNavItems,
@@ -32,6 +33,7 @@ export function Footer() {
       </div>
 
       {/* Booking Section */}
+      {DESKTOPS_ENABLED && (
       <section className="py-16 md:py-20 lg:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className={`${isMenuPage ? 'text-[#2f3f3d]' : 'text-white'} text-4xl md:text-5xl lg:text-6xl font-light italic mb-4`}>
@@ -59,6 +61,7 @@ export function Footer() {
           </Link>
         </div>
       </section>
+      )}
 
       {/* Footer Content */}
       <div className={`${isMenuPage ? 'bg-[#ffe5c2] border-[#2f3f3d]/10' : 'bg-[#2f3f3d] border-white/10'} border-t pt-12 pb-8`}>

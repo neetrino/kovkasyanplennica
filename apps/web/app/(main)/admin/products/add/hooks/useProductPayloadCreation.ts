@@ -5,7 +5,10 @@ interface CreateAndSubmitPayloadProps {
   formData: {
     title: string;
     slug: string;
+    subtitle: string;
     descriptionHtml: string;
+    ingredients: string;
+    longDescriptionHtml: string;
     categoryIds: string[];
     published: boolean;
     featured: boolean;
@@ -44,7 +47,10 @@ export async function createAndSubmitPayload({
   const payload: any = {
       title: formData.title,
       slug: normalizeProductSlug(formData.slug),
+      subtitle: formData.subtitle || undefined,
       descriptionHtml: formData.descriptionHtml || undefined,
+      ingredients: formData.ingredients || undefined,
+      longDescriptionHtml: formData.longDescriptionHtml || undefined,
       brandId: finalBrandIds.length > 0 ? finalBrandIds[0] : undefined,
       primaryCategoryId: finalPrimaryCategoryId || undefined,
       categoryIds: formData.categoryIds.length > 0 ? formData.categoryIds : undefined,

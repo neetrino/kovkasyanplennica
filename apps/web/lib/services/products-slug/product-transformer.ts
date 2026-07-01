@@ -368,7 +368,10 @@ export async function transformProduct(
     slug: translation?.slug || "",
     title: translation?.title || "",
     subtitle: translation?.subtitle || null,
-    description: translation?.descriptionHtml || null,
+    shortDescription: translation?.descriptionHtml || null,
+    ingredients: translation?.ingredients || null,
+    longDescription: translation?.longDescriptionHtml || null,
+    description: translation?.longDescriptionHtml || translation?.descriptionHtml || null,
     brand: product.brand
       ? {
           id: product.brand.id,
