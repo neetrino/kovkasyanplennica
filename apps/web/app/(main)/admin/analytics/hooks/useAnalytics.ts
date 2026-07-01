@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { logger } from '@/lib/utils/logger';
 import { useTranslation } from '@/lib/i18n-client';
-import type { AnalyticsData, AdminStatsSummary } from '../types';
+import type { AnalyticsData } from '../types';
 
 interface UseAnalyticsParams {
   period: string;
@@ -59,6 +59,7 @@ export function useAnalytics({
         
         logger.info('Analytics data loaded', { period, hasData: !!response });
         setAnalytics(response);
+        setTotalUsers(response.totalUsers ?? null);
       } catch (err: unknown) {
         logger.error('Error fetching analytics', { error: err });
         
@@ -87,21 +88,7 @@ export function useAnalytics({
       }
     };
 
-    const fetchAdminStats = async () => {
-      try {
-        logger.debug('Fetching admin stats for Total Users card');
-        const stats = await apiClient.get<AdminStatsSummary>('/api/v1/admin/stats');
-        const usersCount = stats?.users?.total ?? null;
-        setTotalUsers(usersCount);
-        logger.info('Admin stats loaded for Total Users', { usersCount });
-      } catch (err: unknown) {
-        logger.error('Error fetching admin stats', { error: err });
-        setTotalUsers(null);
-      }
-    };
-
-    fetchAnalytics();
-    fetchAdminStats();
+    void fetchAnalytics();
   }, [isLoggedIn, isAdmin, period, startDate, endDate, t]);
 
   return { analytics, totalUsers, loading, error };

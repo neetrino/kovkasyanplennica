@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
 import type { CurrencyCode } from '@/lib/currency';
@@ -54,10 +54,23 @@ export function useProductEditMode({
 }: UseProductEditModeProps) {
   const router = useRouter();
   const { t } = useTranslation();
+  const loadedProductIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (productId && isLoggedIn && isAdmin) {
-      const loadProduct = async () => {
+    if (!productId || !isLoggedIn || !isAdmin) {
+      return;
+    }
+    if (attributes.length === 0) {
+      return;
+    }
+    if (loadedProductIdRef.current === productId) {
+      return;
+    }
+
+    let cancelled = false;
+    loadedProductIdRef.current = productId;
+
+    const loadProduct = async () => {
         try {
           setLoadingProduct(true);
           console.log('📥 [ADMIN] Loading product for edit:', productId);
@@ -266,21 +279,31 @@ export function useProductEditMode({
 
           console.log('✅ [ADMIN] Product loaded for edit');
         } catch (err: unknown) {
-          console.error('❌ [ADMIN] Error loading product:', err);
-          router.push('/admin/products');
+          if (!cancelled) {
+            console.error('❌ [ADMIN] Error loading product:', err);
+            router.push('/admin/products');
+          }
         } finally {
-          setLoadingProduct(false);
+          if (!cancelled) {
+            setLoadingProduct(false);
+          }
         }
       };
 
-      loadProduct();
-    }
+    void loadProduct();
+
+    return () => {
+      cancelled = true;
+      if (loadedProductIdRef.current === productId) {
+        loadedProductIdRef.current = null;
+      }
+    };
   }, [
     productId,
     isLoggedIn,
     isAdmin,
     router,
-    attributes,
+    attributes.length,
     defaultCurrency,
     setLoadingProduct,
     setFormData,

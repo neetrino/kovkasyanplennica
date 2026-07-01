@@ -293,6 +293,8 @@
     "selectAll": "Выбрать все товары",
     "selectProduct": "Выбрать товар {title}",
     "product": "ТОВАР",
+    "image": "ИЗОБРАЖЕНИЕ",
+    "name": "НАЗВАНИЕ",
     "stock": "НАЛИЧИЕ",
     "price": "ЦЕНА",
     "category": "КАТЕГОРИЯ",
