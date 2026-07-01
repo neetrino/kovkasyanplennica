@@ -25,22 +25,23 @@ export async function getAllChildCategoryIds(parentId: string): Promise<string[]
   return allChildIds;
 }
 
-/**
- * Find category by slug with fallback to other languages
- */
-export async function findCategoryBySlug(
+const LOCALE_SLUG_SUFFIX = /-(en|ru|hy)$/;
+
+function stripLocaleSlugSuffix(slug: string): string | null {
+  const match = slug.match(LOCALE_SLUG_SUFFIX);
+  return match ? slug.slice(0, -match[0].length) : null;
+}
+
+async function queryCategoryBySlug(
   categorySlug: string,
-  lang: string
-): Promise<{ id: string } | null> {
-  logger.debug('Looking for category', { category: categorySlug, lang });
-  
-  let categoryDoc = await db.category.findFirst({
+  lang?: string
+): Promise<{ id: string; translations?: Array<{ slug: string; locale: string }> } | null> {
+  return db.category.findFirst({
     where: {
       translations: {
-        some: {
-          slug: categorySlug,
-          locale: lang,
-        },
+        some: lang
+          ? { slug: categorySlug, locale: lang }
+          : { slug: categorySlug },
       },
       published: true,
       deletedAt: null,
@@ -51,34 +52,46 @@ export async function findCategoryBySlug(
       },
     },
   });
+}
 
-  // If category not found in current language, try to find it in other languages (fallback)
+/**
+ * Find category by slug with fallback to other languages
+ */
+export async function findCategoryBySlug(
+  categorySlug: string,
+  lang: string
+): Promise<{ id: string } | null> {
+  logger.debug('Looking for category', { category: categorySlug, lang });
+
+  let categoryDoc = await queryCategoryBySlug(categorySlug, lang);
+
   if (!categoryDoc) {
     logger.warn('Category not found in language, trying other languages', { category: categorySlug, lang });
-    categoryDoc = await db.category.findFirst({
-      where: {
-        translations: {
-          some: {
-            slug: categorySlug,
-          },
-        },
-        published: true,
-        deletedAt: null,
-      },
-      include: {
-        translations: {
-          select: { slug: true, locale: true },
-        },
-      },
-    });
-    
+    categoryDoc = await queryCategoryBySlug(categorySlug);
+
     if (categoryDoc) {
-      const foundIn = categoryDoc.translations?.find((t: { slug: string; locale: string }) => t.slug === categorySlug)?.locale || 'unknown';
-      logger.info('Category found in different language', { 
-        id: categoryDoc.id, 
+      const foundIn =
+        categoryDoc.translations?.find((t) => t.slug === categorySlug)?.locale ?? 'unknown';
+      logger.info('Category found in different language', {
+        id: categoryDoc.id,
         slug: categorySlug,
-        foundIn
+        foundIn,
       });
+    }
+  }
+
+  if (!categoryDoc) {
+    const normalizedSlug = stripLocaleSlugSuffix(categorySlug);
+    if (normalizedSlug && normalizedSlug !== categorySlug) {
+      logger.warn('Category slug looks locale-suffixed, retrying base slug', {
+        category: categorySlug,
+        normalizedSlug,
+        lang,
+      });
+      categoryDoc = await queryCategoryBySlug(normalizedSlug, lang);
+      if (!categoryDoc) {
+        categoryDoc = await queryCategoryBySlug(normalizedSlug);
+      }
     }
   }
 

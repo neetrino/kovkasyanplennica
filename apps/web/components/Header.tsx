@@ -263,7 +263,6 @@ export function Header() {
         className={`relative z-10 flex items-center ${isHomeCream ? 'gap-4 lg:gap-6' : 'gap-3 lg:gap-4'}`}
       >
         <Link
-          prefetch={false}
           href="/"
           className="flex shrink-0 items-center"
           aria-label={t('home.header.logoAlt')}
@@ -294,7 +293,6 @@ export function Header() {
           return (
             <Link
               key={link.id}
-              prefetch={false}
               href={link.href}
               className={`relative pb-1 font-normal transition-[font-size] duration-300 ease-out hover:opacity-80 after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-full after:bg-[#4E2114] after:transition-transform after:duration-200 after:ease-out ${
                 isActive ? 'after:scale-x-100' : 'after:scale-x-0'

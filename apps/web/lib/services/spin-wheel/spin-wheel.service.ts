@@ -7,8 +7,7 @@ import type {
 } from "./spin-wheel.types";
 import { DEFAULT_WEIGHT } from "./spin-wheel.constants";
 import { spinWheelFeatureKey } from "@/lib/cache/redis-keys";
-import { SETTINGS_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
-import { withRedisCache } from "@/lib/cache/with-redis-cache";
+import { invalidateMemoryCache } from "@/lib/cache/with-redis-cache";
 import { cacheService } from "@/lib/services/cache.service";
 import * as store from "./spin-wheel-store";
 import {
@@ -22,13 +21,8 @@ import * as prizeCrud from "./spin-wheel-prize-crud";
 import * as wins from "./spin-wheel-wins";
 import { getProductSnapshotsSafe } from "./spin-wheel-product-snapshot";
 
-async function getSpinWheelFeatureEnabledCached(): Promise<boolean> {
-  return withRedisCache(spinWheelFeatureKey(), SETTINGS_REDIS_TTL_SECONDS, () =>
-    store.getSpinWheelFeatureEnabled()
-  );
-}
-
 async function invalidateSpinWheelFeatureCache(): Promise<void> {
+  invalidateMemoryCache(spinWheelFeatureKey());
   await cacheService.del(spinWheelFeatureKey());
 }
 
@@ -79,20 +73,24 @@ class SpinWheelService {
   }
 
   async getEligibleActivePrizes(userId: string) {
-    const featureOn = await getSpinWheelFeatureEnabledCached();
-    if (!featureOn) {
+    const { featureEnabled, prizesStore, attemptsStore } =
+      await store.getSpinWheelRuntimeSettings();
+
+    const emptyMeta = {
+      featureEnabled,
+      hasSpun: false,
+      totalSpins: 0,
+      remainingSpins: 0,
+      maxSpinsPerUser: 0,
+    };
+
+    if (!featureEnabled) {
       return {
         prizes: [] as SpinWheelPrize[],
-        meta: {
-          hasSpun: false,
-          totalSpins: 0,
-          remainingSpins: 0,
-          maxSpinsPerUser: 0,
-        },
+        meta: emptyMeta,
       };
     }
 
-    const { prizesStore, attemptsStore } = await store.getSpinWheelRuntimeSettings();
     const now = new Date();
     const normalizedPrizes = prizesStore.prizes.map((p) => normalizePrize(p as SpinWheelPrize));
     const activePrizes = normalizedPrizes.filter((p) => isPrizeActive(p, now));
@@ -108,6 +106,7 @@ class SpinWheelService {
     return {
       prizes: prizesWithFreshProducts,
       meta: {
+        featureEnabled: true,
         hasSpun: userAttempts.length >= maxSpinsPerUser,
         totalSpins: userAttempts.length,
         remainingSpins: Math.max(0, maxSpinsPerUser - userAttempts.length),
@@ -117,8 +116,8 @@ class SpinWheelService {
   }
 
   async spin(userId: string) {
-    const featureOn = await getSpinWheelFeatureEnabledCached();
-    if (!featureOn) {
+    const { prizes, meta } = await this.getEligibleActivePrizes(userId);
+    if (!meta.featureEnabled) {
       throw {
         status: 403,
         type: "https://api.shop.am/problems/forbidden",
@@ -126,8 +125,6 @@ class SpinWheelService {
         detail: "The spin wheel is currently turned off",
       };
     }
-
-    const { prizes, meta } = await this.getEligibleActivePrizes(userId);
     if (prizes.length === 0) {
       throw {
         status: 400,
