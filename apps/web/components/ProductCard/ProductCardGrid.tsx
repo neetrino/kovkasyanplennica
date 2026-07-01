@@ -1,9 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import type { MouseEvent } from 'react';
 import { ProductCardInfo } from './ProductCardInfo';
+import { ProductCardLink } from './ProductCardLink';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
 
@@ -84,9 +84,8 @@ export function ProductCardGrid({
               : 'min-h-[240px]'
       }`}
     >
-      <Link
+      <ProductCardLink
         href={productHref}
-        prefetch={false}
         className="absolute inset-0 z-[1] rounded-[35px] outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         aria-label={`${product.title} — view product`}
       />

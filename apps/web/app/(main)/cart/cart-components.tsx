@@ -274,22 +274,20 @@ export function OrderSummary({ cart, currency, t }: OrderSummaryProps) {
         </div>
 
         {/* Checkout button */}
-        <button
-          type="button"
-          onClick={() => { window.location.href = '/checkout'; }}
-          className="w-full py-3.5 px-6 bg-[#7CB342] hover:bg-[#6aa535] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#7CB342]/20 hover:-translate-y-0.5 active:translate-y-0 text-sm uppercase tracking-widest"
+        <Link
+          href="/checkout"
+          className="block w-full py-3.5 px-6 bg-[#7CB342] hover:bg-[#6aa535] text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#7CB342]/20 hover:-translate-y-0.5 active:translate-y-0 text-sm uppercase tracking-widest text-center"
         >
           {t('common.buttons.proceedToCheckout')}
-        </button>
+        </Link>
 
         {/* Continue shopping */}
-        <button
-          type="button"
-          onClick={() => { window.location.href = '/products'; }}
-          className="w-full mt-3 py-3 px-6 bg-transparent border border-[#3d504e] hover:border-[#fff4de]/30 text-[#fff4de]/60 hover:text-[#fff4de] font-medium rounded-xl transition-all duration-200 text-sm"
+        <Link
+          href="/products"
+          className="block w-full mt-3 py-3 px-6 bg-transparent border border-[#3d504e] hover:border-[#fff4de]/30 text-[#fff4de]/60 hover:text-[#fff4de] font-medium rounded-xl transition-all duration-200 text-sm text-center"
         >
           {t('common.buttons.browseProducts')}
-        </button>
+        </Link>
 
         {/* Secure checkout note */}
         <div className="flex items-center justify-center gap-2 mt-5 text-[#fff4de]/30">

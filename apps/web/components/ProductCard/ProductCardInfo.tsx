@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import type { MouseEvent } from 'react';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import type { CurrencyCode } from '../../lib/currency';
 import { toR2Url } from '@/lib/r2-assets';
+import { ProductCardLink } from './ProductCardLink';
 
 interface ProductCardInfoProps {
   slug: string;
@@ -114,9 +114,8 @@ export function ProductCardInfo({
           {title}
         </h3>
       ) : (
-        <Link
+        <ProductCardLink
           href={productHref}
-          prefetch={false}
           className="block"
         >
           <h3
@@ -136,7 +135,7 @@ export function ProductCardInfo({
           >
             {title}
           </h3>
-        </Link>
+        </ProductCardLink>
       )}
 
       {/* Description - Centered, Grey, Semibold */}

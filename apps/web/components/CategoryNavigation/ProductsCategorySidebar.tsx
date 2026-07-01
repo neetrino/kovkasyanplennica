@@ -6,6 +6,7 @@ import { Suspense, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/lib/i18n-client';
 import { scrollAppScrollRegionToTop } from '@/lib/appScrollRegion';
+import { buildProductsCategoryHref } from '@/lib/navigation/build-products-category-href';
 import { CategoryIcon } from './CategoryIcon';
 import { useCategories } from './hooks/useCategories';
 import { useCategoryProducts } from './hooks/useCategoryProducts';
@@ -161,7 +162,6 @@ function SidebarCategoryRow({
   return (
     <Link
       href={navHref}
-      prefetch={false}
       scroll={false}
       onClick={() => {
         onNavigate?.();
@@ -217,21 +217,6 @@ function ProductsCategorySidebarInner({
     variant === 'sidebar' && !categoriesLoading && !fixedSidebarPillWidth;
   const pillHoverWidthPx = useCategoryPillHoverWidthPx(pillHoverEnabled, categoryNavRef);
 
-  const buildCategoryHref = useCallback(
-    (categorySlug: string | null) => {
-      const params = new URLSearchParams(searchParams?.toString() || '');
-      if (categorySlug && categorySlug !== 'all') {
-        params.set('category', categorySlug);
-      } else {
-        params.delete('category');
-      }
-      params.delete('page');
-      const qs = params.toString();
-      return qs ? `/products?${qs}` : '/products';
-    },
-    [searchParams]
-  );
-
   if (categoriesLoading) {
     return <ProductsCategorySidebarSkeleton variant={variant} />;
   }
@@ -247,7 +232,10 @@ function ProductsCategorySidebarInner({
         const isActive =
           category.slug === 'all' ? !currentCategory : currentCategory === category.slug;
         const product = categoryProducts[category.slug];
-        const navHref = buildCategoryHref(category.slug === 'all' ? null : category.slug);
+        const navHref = buildProductsCategoryHref(
+          category.slug === 'all' ? null : category.slug,
+          searchParams,
+        );
         return (
           <SidebarCategoryRow
             key={category.id}

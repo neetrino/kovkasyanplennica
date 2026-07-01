@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import type { MouseEvent } from 'react';
 import { CategoryIcon } from './CategoryIcon';
 import type { Category } from './utils';
 
@@ -16,8 +15,7 @@ interface CategoryItemProps {
   category: Category;
   product: Product | null;
   isActive: boolean;
-  currentCategory: string | null;
-  onCategoryClick: (categorySlug: string | null) => void;
+  navHref: string;
   t: (path: string) => string;
 }
 
@@ -28,8 +26,7 @@ export function CategoryItem({
   category,
   product,
   isActive,
-  currentCategory: _currentCategory,
-  onCategoryClick,
+  navHref,
   t,
 }: CategoryItemProps) {
   const title = category.title;
@@ -47,11 +44,8 @@ export function CategoryItem({
 
   return (
     <Link
-      href={category.slug === 'all' ? '/products' : `/products?category=${category.slug}`}
-      onClick={(e: MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        onCategoryClick(category.slug === 'all' ? null : category.slug);
-      }}
+      href={navHref}
+      scroll={false}
       className="flex flex-col items-center gap-2 sm:gap-3 min-w-[104px] sm:min-w-[132px] group cursor-pointer transition-all duration-200 hover:opacity-80"
     >
       {/* Category Icon/Image */}

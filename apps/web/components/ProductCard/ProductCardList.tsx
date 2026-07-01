@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
 import type { MouseEvent } from 'react';
 import { formatPrice } from '../../lib/currency';
 import { useTranslation } from '../../lib/i18n-client';
 import { CartIcon as CartPngIcon } from '../icons/CartIcon';
+import { ProductCardLink } from './ProductCardLink';
 import type { CurrencyCode } from '../../lib/currency';
 import type { ProductLabel } from '../ProductLabels';
 
@@ -48,9 +48,8 @@ export function ProductCardList({
 
   return (
     <div className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden lg:overflow-visible hover:bg-gray-50 transition-colors">
-      <Link
+      <ProductCardLink
         href={productHref}
-        prefetch={false}
         className="absolute inset-0 z-0 rounded-lg outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
         aria-label={`${product.title} — view product`}
       />

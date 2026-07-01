@@ -15,6 +15,7 @@ node_modules/
 dist/
 build/
 coverage/
+*.tsbuildinfo
 
 # Turborepo local cache (do not commit; can exceed GitHub 100MB limit)
 .turbo/
