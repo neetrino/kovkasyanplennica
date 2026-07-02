@@ -77,6 +77,30 @@ export function toCatalogCardProduct(source: CatalogCardSource): CatalogCardProd
   return card;
 }
 
+export function sortCatalogCardProducts(
+  items: CatalogCardProduct[],
+  sortBy: string
+): CatalogCardProduct[] {
+  const sorted = [...items];
+  switch (sortBy) {
+    case 'price-asc':
+      sorted.sort((a, b) => a.price - b.price);
+      break;
+    case 'price-desc':
+      sorted.sort((a, b) => b.price - a.price);
+      break;
+    case 'name-asc':
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+      break;
+    case 'name-desc':
+      sorted.sort((a, b) => b.title.localeCompare(a.title));
+      break;
+    default:
+      break;
+  }
+  return sorted;
+}
+
 export function apiListingToCatalogCardProduct(product: ApiListingProduct): CatalogCardProduct {
   return toCatalogCardProduct({
     id: product.id,

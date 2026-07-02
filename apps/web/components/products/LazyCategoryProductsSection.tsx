@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ProductsCategoryCarousel } from '../ProductsCategoryCarousel';
 import {
   fetchCategoryRowProducts,
   type CategoryRowFetchFilters,
 } from './fetch-category-row-products';
 import type { CatalogCardProduct } from './catalog-card-product';
+import { ProductsCategoryExpandControls } from './ProductsCategoryExpandControls';
+import { INITIAL_ROW_PRODUCTS } from './shop-listing-limits';
 
 type LazyCategoryProductsSectionProps = CategoryRowFetchFilters & {
   totalInRow: number;
@@ -117,6 +118,7 @@ export function LazyCategoryProductsSection({
   ]);
 
   const resolvedTotal = products?.length ?? totalInRow;
+  const initialProducts = products?.slice(0, INITIAL_ROW_PRODUCTS) ?? [];
 
   return (
     <div ref={rootRef} className="min-h-[180px]">
@@ -125,8 +127,9 @@ export function LazyCategoryProductsSection({
       ) : loadFailed && products.length === 0 ? (
         <CarouselPlaceholder />
       ) : (
-        <ProductsCategoryCarousel
-          products={products}
+        <ProductsCategoryExpandControls
+          initialProducts={initialProducts}
+          prefetchedProducts={products}
           totalInRow={resolvedTotal}
           categorySlug={categorySlug}
           sortBy={sortBy}

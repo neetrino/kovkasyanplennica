@@ -5,9 +5,8 @@ import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
-import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
+import { ProductsCategoryRow } from '@/components/products/ProductsCategoryRow';
 import { LazyCategoryProductsSection } from '@/components/products/LazyCategoryProductsSection';
-import { toCatalogCardProduct } from '@/components/products/catalog-card-product';
 import {
   ABOVE_FOLD_ROWS,
   INITIAL_ROW_PRODUCTS,
@@ -438,14 +437,13 @@ async function ProductsPageMainSlot({
                     </h2>
                   )}
                   {index < ABOVE_FOLD_ROWS ? (
-                    <ProductsCategoryCarousel
-                      products={row.products
-                        .slice(0, INITIAL_ROW_PRODUCTS)
-                        .map(toCatalogCardProduct)}
+                    <ProductsCategoryRow
+                      rowProducts={row.products}
                       totalInRow={row.products.length}
                       categorySlug={row.categorySlug}
                       sortBy={params.sort || 'default'}
                       lang={language}
+                      initialProductCount={INITIAL_ROW_PRODUCTS}
                       filterParams={{
                         search: params.search,
                         colors: params.colors,
