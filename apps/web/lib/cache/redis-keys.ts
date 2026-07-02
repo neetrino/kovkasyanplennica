@@ -35,10 +35,59 @@ export function spinWheelFeatureKey(): string {
   return `${PREFIX}:settings:spin-wheel-feature:v1`;
 }
 
+export type FiltersCacheContext = {
+  lang: string;
+  category: string | null;
+  search: string | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+};
+
+export type PriceRangeCacheContext = {
+  lang: string;
+  category: string | null;
+};
+
+export function normalizeFiltersCacheContext(filters: {
+  category?: string;
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  lang?: string;
+}): FiltersCacheContext {
+  return {
+    lang: filters.lang || "en",
+    category: filters.category?.trim() || null,
+    search: filters.search?.trim() || null,
+    minPrice: filters.minPrice ?? null,
+    maxPrice: filters.maxPrice ?? null,
+  };
+}
+
+export function normalizePriceRangeCacheContext(filters: {
+  category?: string;
+  lang?: string;
+}): PriceRangeCacheContext {
+  return {
+    lang: filters.lang || "en",
+    category: filters.category?.trim() || null,
+  };
+}
+
+export function filtersCacheKey(contextHash: string): string {
+  return `${PREFIX}:filters:v1:${contextHash}`;
+}
+
+export function priceRangeCacheKey(contextHash: string): string {
+  return `${PREFIX}:price-range:v1:${contextHash}`;
+}
+
 export const REDIS_CACHE_PATTERNS = {
   products: `${PREFIX}:products:*`,
   productSlugs: `${PREFIX}:product:slug:*`,
   categories: `${PREFIX}:categories:*`,
   search: `${PREFIX}:search:*`,
   settings: `${PREFIX}:settings:*`,
+  filters: `${PREFIX}:filters:*`,
+  priceRange: `${PREFIX}:price-range:*`,
 } as const;

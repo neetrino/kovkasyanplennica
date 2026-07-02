@@ -1,5 +1,14 @@
 import { db } from "@white-shop/db";
 import { Prisma } from "@prisma/client";
+import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
+import {
+  filtersCacheKey,
+  hashCacheInput,
+  normalizeFiltersCacheContext,
+  normalizePriceRangeCacheContext,
+  priceRangeCacheKey,
+} from "@/lib/cache/redis-keys";
+import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { adminService } from "./admin.service";
 import { ProductWithRelations } from "./products-find-query.service";
 
@@ -32,6 +41,21 @@ class ProductsFiltersService {
    * Get available filters (colors and sizes)
    */
   async getFilters(filters: {
+    category?: string;
+    search?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    lang?: string;
+  }) {
+    const cacheKey = filtersCacheKey(
+      hashCacheInput(normalizeFiltersCacheContext(filters))
+    );
+    return withRedisCache(cacheKey, CATALOG_REDIS_TTL_SECONDS, () =>
+      this.getFiltersUncached(filters)
+    );
+  }
+
+  private async getFiltersUncached(filters: {
     category?: string;
     search?: string;
     minPrice?: number;
@@ -370,6 +394,18 @@ class ProductsFiltersService {
    * Get price range
    */
   async getPriceRange(filters: { category?: string; lang?: string }) {
+    const cacheKey = priceRangeCacheKey(
+      hashCacheInput(normalizePriceRangeCacheContext(filters))
+    );
+    return withRedisCache(cacheKey, CATALOG_REDIS_TTL_SECONDS, () =>
+      this.getPriceRangeUncached(filters)
+    );
+  }
+
+  private async getPriceRangeUncached(filters: {
+    category?: string;
+    lang?: string;
+  }) {
     const where: Prisma.ProductWhereInput = {
       published: true,
       deletedAt: null,
