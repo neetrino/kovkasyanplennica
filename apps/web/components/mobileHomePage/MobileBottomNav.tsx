@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,8 +10,13 @@ import type { Cart } from '@/app/(main)/cart/types';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '../../lib/i18n-client';
 import { toR2Url } from '@/lib/r2-assets';
-import { HeaderSearchOverlay } from '../HeaderSearchOverlay';
 import { NavCartIcon, NavHomeIcon, NavProfileIcon, NavSearchIcon } from './MobileBottomNavIcons';
+
+const HeaderSearchOverlay = dynamic(
+  () =>
+    import('../HeaderSearchOverlay').then((mod) => mod.HeaderSearchOverlay),
+  { ssr: false, loading: () => null }
+);
 
 export function MobileBottomNav() {
   const { t } = useTranslation();
@@ -110,12 +116,14 @@ export function MobileBottomNav() {
         </div>
       </div>
     </div>
-    <HeaderSearchOverlay
-      open={isSearchOpen}
-      onClose={() => setIsSearchOpen(false)}
-      searchQuery={searchQuery}
-      onSearchQueryChange={setSearchQuery}
-    />
+    {isSearchOpen ? (
+      <HeaderSearchOverlay
+        open={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+      />
+    ) : null}
     </>
   );
 }

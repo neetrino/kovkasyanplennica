@@ -63,7 +63,6 @@ export function ProductCardList({
               fill
               className="object-cover transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
               sizes="80px"
-              unoptimized
               onError={onImageError}
               aria-hidden
             />

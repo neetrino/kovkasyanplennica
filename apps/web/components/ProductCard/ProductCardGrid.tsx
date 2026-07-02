@@ -116,7 +116,6 @@ export function ProductCardGrid({
                 fill
                 className="object-contain transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
                 sizes={imageSizesAttr}
-                unoptimized
                 onError={onImageError}
                 aria-hidden
               />

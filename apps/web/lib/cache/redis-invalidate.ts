@@ -18,5 +18,7 @@ export async function invalidateCatalogRedisCache(): Promise<void> {
     cacheService.deletePattern(REDIS_CACHE_PATTERNS.categories),
     cacheService.deletePattern(REDIS_CACHE_PATTERNS.search),
     cacheService.deletePattern(REDIS_CACHE_PATTERNS.settings),
+    cacheService.deletePattern(REDIS_CACHE_PATTERNS.filters),
+    cacheService.deletePattern(REDIS_CACHE_PATTERNS.priceRange),
   ]);
 }

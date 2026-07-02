@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { APP_SCROLL_REGION_DOM_ID } from '@/lib/appScrollRegion';
 import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { MobileBottomNav } from '@/components/mobileHomePage/MobileBottomNav';
 import { MobileHeader } from '@/components/mobileHomePage/MobileHeader';
 
@@ -13,7 +12,13 @@ function isAdminPath(pathname: string | null): boolean {
   return pathname === '/admin' || pathname.startsWith('/admin/');
 }
 
-export function MainSiteChrome({ children }: { children: ReactNode }) {
+export function MainSiteChrome({
+  children,
+  footerSlot,
+}: {
+  children: ReactNode;
+  footerSlot?: ReactNode;
+}) {
   const pathname = usePathname();
   const hideSiteChrome = isAdminPath(pathname);
 
@@ -44,7 +49,7 @@ export function MainSiteChrome({ children }: { children: ReactNode }) {
       <div className="relative flex w-full flex-1 flex-col max-lg:flex-none max-lg:min-h-0">
         <main className="w-full flex-1 max-lg:flex-none">{children}</main>
         <div className="mt-auto hidden shrink-0 lg:block">
-          <Footer />
+          {footerSlot}
         </div>
       </div>
       <div className="relative z-40 block shrink-0 lg:hidden">

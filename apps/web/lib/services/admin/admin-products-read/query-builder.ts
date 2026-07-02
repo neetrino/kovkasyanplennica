@@ -65,16 +65,43 @@ export function buildProductWhereClause(filters: ProductFilters): Prisma.Product
     where.OR = orConditions;
   }
 
-  // SKU filter
+  const andConditions: Prisma.ProductWhereInput[] = [];
+
   if (filters.sku) {
-    where.variants = {
-      some: {
-        sku: {
-          contains: filters.sku,
-          mode: "insensitive",
+    andConditions.push({
+      variants: {
+        some: {
+          sku: {
+            contains: filters.sku,
+            mode: "insensitive",
+          },
         },
       },
-    };
+    });
+  }
+
+  if (filters.stock === 'in_stock') {
+    andConditions.push({
+      variants: {
+        some: {
+          published: true,
+          stock: { gt: 0 },
+        },
+      },
+    });
+  } else if (filters.stock === 'out_of_stock') {
+    andConditions.push({
+      variants: {
+        none: {
+          published: true,
+          stock: { gt: 0 },
+        },
+      },
+    });
+  }
+
+  if (andConditions.length > 0) {
+    where.AND = [...(Array.isArray(where.AND) ? where.AND : where.AND ? [where.AND] : []), ...andConditions];
   }
 
   return where;
