@@ -6,6 +6,7 @@ import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
+import { toCatalogCardProduct } from '@/components/products/catalog-card-product';
 import { flattenCategories } from '@/components/CategoryNavigation/utils';
 import {
   ProductsCategorySidebar,
@@ -13,7 +14,7 @@ import {
 } from '@/components/CategoryNavigation/ProductsCategorySidebar';
 import { categoriesService } from '@/lib/services/categories.service';
 import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.service';
-import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
+import { ProductsMobileCategoriesDrawerLazy } from '@/components/ProductsMobileCategoriesDrawerLazy';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
 import { toR2Url } from '@/lib/r2-assets';
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
@@ -76,6 +77,8 @@ interface Product {
   description?: string | null;
   price: number;
   compareAtPrice: number | null;
+  originalPrice?: number | null;
+  discountPercent?: number | null;
   image: string | null;
   inStock: boolean;
   defaultVariantId?: string | null;
@@ -85,18 +88,25 @@ interface Product {
     name: string;
   } | null;
   categories?: ProductCategory[];
-  labels?: Array<{
-    id: string;
-    type: 'text' | 'percentage';
-    value: string;
-    position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-    color: string | null;
-  }>;
 }
 
-type ProductRow = Product & {
+type ProductRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string | null;
+  price: number;
+  compareAtPrice: number | null;
+  originalPrice?: number | null;
+  discountPercent?: number | null;
+  image: string | null;
+  inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
+  brand: { id: string; name: string } | null;
+  /** Server-only — used for category row grouping. */
+  categories: ProductCategory[];
   category: string;
-  colors: Array<{ value?: string; imageUrl?: string | null; colors?: string[] | null }>;
 };
 
 type CategoryRow = {
@@ -122,17 +132,16 @@ const EMPTY_PRODUCTS_RESPONSE: ProductsResponse = {
 
 const OTHER_SLUG = '__other__';
 
-function normalizeProduct(product: Product & {
-  originalPrice?: number | null;
-  colors?: ProductRow['colors'];
-}): ProductRow {
+function normalizeProduct(product: Product): ProductRow {
   return {
     id: product.id,
     slug: product.slug,
     title: product.title,
     description: product.description ?? null,
     price: product.price,
-    compareAtPrice: product.compareAtPrice ?? product.originalPrice ?? null,
+    compareAtPrice: product.compareAtPrice ?? null,
+    originalPrice: product.originalPrice ?? null,
+    discountPercent: product.discountPercent ?? null,
     image: product.image ?? null,
     inStock: product.inStock ?? true,
     defaultVariantId: product.defaultVariantId ?? null,
@@ -140,8 +149,6 @@ function normalizeProduct(product: Product & {
     brand: product.brand ?? null,
     categories: product.categories ?? [],
     category: product.categories?.[0]?.title ?? '',
-    colors: product.colors ?? [],
-    labels: product.labels ?? [],
   };
 }
 
@@ -306,7 +313,7 @@ async function ProductsPageMainSlot({
   };
 
   const normalizedProducts = productsData.data.map((product) =>
-    normalizeProduct(product as Product & { originalPrice?: number | null; colors?: ProductRow['colors'] }),
+    normalizeProduct(product as Product),
   );
 
   const categoryRows = buildCategoryRows(normalizedProducts, language);
@@ -376,7 +383,7 @@ async function ProductsPageMainSlot({
                         {row.categoryTitle}
                       </h2>
                       <div className="shrink-0 pt-1 lg:hidden">
-                        <ProductsMobileCategoriesDrawer layout="inline" />
+                        <ProductsMobileCategoriesDrawerLazy layout="inline" />
                       </div>
                     </div>
                   ) : (
@@ -389,7 +396,11 @@ async function ProductsPageMainSlot({
                     </h2>
                   )}
                   {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
-                  <ProductsCategoryCarousel products={row.products} sortBy={params.sort || "default"} minVisibleCards={2} />
+                  <ProductsCategoryCarousel
+                    products={row.products.map(toCatalogCardProduct)}
+                    sortBy={params.sort || 'default'}
+                    minVisibleCards={2}
+                  />
                 </section>
               ))}
 
@@ -440,7 +451,7 @@ async function ProductsPageMainSlot({
           ) : (
             <div className="py-12">
               <div className="mb-6 flex justify-end lg:hidden">
-                <ProductsMobileCategoriesDrawer layout="inline" />
+                <ProductsMobileCategoriesDrawerLazy layout="inline" />
               </div>
               <p className="text-center text-lg text-gray-500">
                 {t(language, 'common.messages.noProductsFound')}
@@ -468,15 +479,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       {showFullDecorativeBackground && (
         <>
           <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
+            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" loading="lazy" decoding="async" />
           </div>
           <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
+            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" loading="lazy" decoding="async" />
           </div>
         </>
       )}
       <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
-        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
+        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" loading="lazy" decoding="async" />
       </div>
       <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
         <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">

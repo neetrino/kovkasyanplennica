@@ -2,26 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { ProductCard } from './ProductCard';
+import type { CatalogCardProduct } from './products/catalog-card-product';
 import { useVisibleCards } from './hooks/useVisibleCards';
 import { useTranslation } from '../lib/i18n-client';
 
-interface Product {
-  id: string;
-  slug: string;
-  title: string;
-  description?: string | null;
-  price: number;
-  compareAtPrice: number | null;
-  image: string | null;
-  inStock: boolean;
-  defaultVariantId?: string | null;
-  stock?: number;
-  brand: { id: string; name: string } | null;
-  category?: string;
-}
-
 interface ProductsCategoryCarouselProps {
-  products: Product[];
+  products: CatalogCardProduct[];
   sortBy?: string;
   /** Mobile: at least this many columns (matches prior carousel min width). */
   minVisibleCards?: number;
@@ -107,7 +93,6 @@ export function ProductsCategoryCarousel({
               product={{
                 ...product,
                 compareAtPrice: product.compareAtPrice ?? undefined,
-                labels: undefined,
               }}
               viewMode="grid-3"
               compactHeight={isMobile}
