@@ -95,7 +95,6 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
-    unoptimized: true,
   },
   // Fix for HMR issues in Next.js 15
   webpack: (config, { dev, isServer }) => {
