@@ -17,6 +17,7 @@ function validateAndNormalizeFilters(searchParams: URLSearchParams): {
     minPrice?: number;
     maxPrice?: number;
     sort?: string;
+    stock?: 'in_stock' | 'out_of_stock';
   };
   error?: {
     type: string;
@@ -103,6 +104,14 @@ function validateAndNormalizeFilters(searchParams: URLSearchParams): {
   const categoryParam = searchParams.get("category");
   const categories = categoryParam ? categoryParam.split(',').filter(Boolean) : undefined;
 
+  const stockParam = searchParams.get("stock")?.trim();
+  let stock: 'in_stock' | 'out_of_stock' | undefined;
+  if (stockParam && stockParam !== 'all') {
+    if (stockParam === 'in_stock' || stockParam === 'out_of_stock') {
+      stock = stockParam;
+    }
+  }
+
   return {
     filters: {
       page,
@@ -113,6 +122,7 @@ function validateAndNormalizeFilters(searchParams: URLSearchParams): {
       minPrice,
       maxPrice,
       sort: searchParams.get("sort")?.trim() || undefined,
+      stock,
     },
   };
 }
@@ -130,6 +140,7 @@ function validateAndNormalizeFilters(searchParams: URLSearchParams): {
  * - minPrice: number (optional, non-negative)
  * - maxPrice: number (optional, non-negative)
  * - sort: string (optional)
+ * - stock: string (optional, in_stock | out_of_stock)
  */
 export async function GET(req: NextRequest) {
   const requestStartTime = Date.now();
