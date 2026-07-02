@@ -6,14 +6,13 @@ export type CatalogCardProduct = {
   image: string | null;
   price: number;
   compareAtPrice: number | null;
-  originalPrice?: number | null;
   discountPercent?: number | null;
   inStock: boolean;
   defaultVariantId?: string | null;
   stock?: number;
-  brand: { id: string; name: string } | null;
+  brandName?: string | null;
   category: string;
-  description?: string | null;
+  description?: string;
 };
 
 type CatalogCardSource = {
@@ -33,21 +32,66 @@ type CatalogCardSource = {
   category: string;
 };
 
+type ApiListingProduct = {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string | null;
+  price: number;
+  compareAtPrice: number | null;
+  originalPrice?: number | null;
+  discountPercent?: number | null;
+  image: string | null;
+  inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
+  brand: { id: string; name: string } | null;
+  categories?: Array<{ title?: string }>;
+};
+
 export function toCatalogCardProduct(source: CatalogCardSource): CatalogCardProduct {
-  return {
+  const card: CatalogCardProduct = {
     id: source.id,
     slug: source.slug,
     title: source.title,
     image: source.image,
     price: source.price,
     compareAtPrice: source.compareAtPrice,
-    originalPrice: source.originalPrice,
     discountPercent: source.discountPercent,
     inStock: source.inStock,
     defaultVariantId: source.defaultVariantId,
     stock: source.stock,
-    brand: source.brand,
     category: source.category,
-    description: source.description ?? null,
   };
+
+  const brandName = source.brand?.name?.trim();
+  if (brandName) {
+    card.brandName = brandName;
+  }
+
+  const description = source.description?.trim();
+  if (description) {
+    card.description = description;
+  }
+
+  return card;
+}
+
+export function apiListingToCatalogCardProduct(product: ApiListingProduct): CatalogCardProduct {
+  return toCatalogCardProduct({
+    id: product.id,
+    slug: product.slug,
+    title: product.title,
+    description: product.description ?? null,
+    price: product.price,
+    compareAtPrice: product.compareAtPrice ?? null,
+    originalPrice: product.originalPrice ?? null,
+    discountPercent: product.discountPercent ?? null,
+    image: product.image ?? null,
+    inStock: product.inStock ?? true,
+    defaultVariantId: product.defaultVariantId ?? null,
+    stock: typeof product.stock === 'number' ? product.stock : undefined,
+    brand: product.brand ?? null,
+    category: product.categories?.[0]?.title ?? '',
+  });
 }

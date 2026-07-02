@@ -6,7 +6,13 @@ import { t } from '@/lib/i18n';
 import type { ProductFilters } from '@/lib/services/products-find-query/types';
 import { productsService } from '@/lib/services/products.service';
 import { ProductsCategoryCarousel } from '@/components/ProductsCategoryCarousel';
+import { LazyCategoryProductsSection } from '@/components/products/LazyCategoryProductsSection';
 import { toCatalogCardProduct } from '@/components/products/catalog-card-product';
+import {
+  ABOVE_FOLD_ROWS,
+  INITIAL_ROW_PRODUCTS,
+  PRODUCTS_SHOP_FILTERED_LIST_LIMIT,
+} from '@/components/products/shop-listing-limits';
 import { flattenCategories } from '@/components/CategoryNavigation/utils';
 import {
   ProductsCategorySidebar,
@@ -227,6 +233,40 @@ function firstParam(
   return v;
 }
 
+function hasActiveShopFilters(params: {
+  search?: string;
+  category?: string;
+  colors?: string;
+  sizes?: string;
+  brand?: string;
+  minPrice?: string;
+  maxPrice?: string;
+}): boolean {
+  return Boolean(
+    params.search?.trim() ||
+      params.category?.trim() ||
+      params.colors?.trim() ||
+      params.sizes?.trim() ||
+      params.brand?.trim() ||
+      params.minPrice?.trim() ||
+      params.maxPrice?.trim()
+  );
+}
+
+function resolveShopListLimit(params: {
+  search?: string;
+  category?: string;
+  colors?: string;
+  sizes?: string;
+  brand?: string;
+  minPrice?: string;
+  maxPrice?: string;
+}): number {
+  return hasActiveShopFilters(params)
+    ? PRODUCTS_SHOP_FILTERED_LIST_LIMIT
+    : PRODUCTS_SHOP_LIST_LIMIT;
+}
+
 function ProductsPageMainSkeleton() {
   return (
     <div className="relative z-0 min-w-0 flex-1 overflow-x-visible pt-4 sm:pt-6 lg:pt-[88px] xl:pt-[96px]">
@@ -287,19 +327,6 @@ async function ProductsPageMainSlot({
   const page = parseInt(firstParam(raw.page) ?? '1', 10);
   const language = getStoredLanguage();
 
-  const productsData = await getProducts(
-    1,
-    firstParam(raw.search),
-    firstParam(raw.category),
-    firstParam(raw.minPrice),
-    firstParam(raw.maxPrice),
-    firstParam(raw.colors),
-    firstParam(raw.sizes),
-    firstParam(raw.brand),
-    firstParam(raw.sort),
-    PRODUCTS_SHOP_LIST_LIMIT
-  );
-
   const params = {
     page: firstParam(raw.page),
     search: firstParam(raw.search),
@@ -311,6 +338,21 @@ async function ProductsPageMainSlot({
     brand: firstParam(raw.brand),
     sort: firstParam(raw.sort),
   };
+
+  const listLimit = resolveShopListLimit(params);
+
+  const productsData = await getProducts(
+    1,
+    params.search,
+    params.category,
+    params.minPrice,
+    params.maxPrice,
+    params.colors,
+    params.sizes,
+    params.brand,
+    params.sort,
+    listLimit
+  );
 
   const normalizedProducts = productsData.data.map((product) =>
     normalizeProduct(product as Product),
@@ -395,12 +437,41 @@ async function ProductsPageMainSlot({
                       {row.categoryTitle}
                     </h2>
                   )}
-                  {/* Carousel on all viewports: mobile 2 cards, tablet/desktop 2–4 by width */}
-                  <ProductsCategoryCarousel
-                    products={row.products.map(toCatalogCardProduct)}
-                    sortBy={params.sort || 'default'}
-                    minVisibleCards={2}
-                  />
+                  {index < ABOVE_FOLD_ROWS ? (
+                    <ProductsCategoryCarousel
+                      products={row.products
+                        .slice(0, INITIAL_ROW_PRODUCTS)
+                        .map(toCatalogCardProduct)}
+                      totalInRow={row.products.length}
+                      categorySlug={row.categorySlug}
+                      sortBy={params.sort || 'default'}
+                      lang={language}
+                      filterParams={{
+                        search: params.search,
+                        colors: params.colors,
+                        sizes: params.sizes,
+                        brand: params.brand,
+                        minPrice: params.minPrice,
+                        maxPrice: params.maxPrice,
+                      }}
+                      minVisibleCards={2}
+                    />
+                  ) : (
+                    <LazyCategoryProductsSection
+                      categorySlug={row.categorySlug}
+                      lang={language}
+                      sort={params.sort}
+                      search={params.search}
+                      colors={params.colors}
+                      sizes={params.sizes}
+                      brand={params.brand}
+                      minPrice={params.minPrice}
+                      maxPrice={params.maxPrice}
+                      totalInRow={row.products.length}
+                      sortBy={params.sort || 'default'}
+                      minVisibleCards={2}
+                    />
+                  )}
                 </section>
               ))}
 
