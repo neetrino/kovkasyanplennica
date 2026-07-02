@@ -15,15 +15,12 @@ const DB_PAGINATION_SORTS = new Set([
 ]);
 
 /**
- * Phase 5A/5B: true only for requests that skip in-memory filter/sort/paginate.
- * Colors, sizes, bestseller ranking, price sort, and Meilisearch text search
- * stay on the legacy over-fetch path.
+ * Phase 5A–5D: true for requests that skip in-memory filter/sort/paginate.
+ * Legacy over-fetch remains for price sort, bestseller, and Meilisearch search.
  */
 export function canUseDbPagination(filters: ProductFilters): boolean {
-  const { colors, sizes, filter, sort, search } = filters;
+  const { filter, sort, search } = filters;
 
-  if (colors?.trim()) return false;
-  if (sizes?.trim()) return false;
   if (filter === "bestseller") return false;
   if (search?.trim() && isMeilisearchConfigured()) return false;
   if (!DB_PAGINATION_SORTS.has(sort)) return false;
@@ -32,6 +29,147 @@ export function canUseDbPagination(filters: ProductFilters): boolean {
 }
 
 const INVALID_FILTER_TOKENS = new Set(["undefined", "null", ""]);
+
+function normalizeFilterTokens(
+  value: string | undefined,
+  normalize: (token: string) => string
+): string[] {
+  if (!value || typeof value !== "string") return [];
+
+  return value
+    .split(",")
+    .map((part) => part.trim())
+    .filter((part) => !INVALID_FILTER_TOKENS.has(part.toLowerCase()))
+    .map(normalize)
+    .filter((part) => part.length > 0);
+}
+
+function parseColorTokens(colors?: string): string[] {
+  return normalizeFilterTokens(colors, (token) => token.toLowerCase());
+}
+
+function parseSizeTokens(sizes?: string): string[] {
+  return normalizeFilterTokens(sizes, (token) => token.toUpperCase());
+}
+
+function buildColorOptionMatch(
+  tokenLower: string,
+  lang: string
+): Prisma.ProductVariantOptionWhereInput {
+  return {
+    OR: [
+      {
+        attributeValue: {
+          attribute: { key: "color" },
+          OR: [
+            { value: { equals: tokenLower, mode: "insensitive" } },
+            {
+              translations: {
+                some: {
+                  locale: lang,
+                  label: { equals: tokenLower, mode: "insensitive" },
+                },
+              },
+            },
+            {
+              translations: {
+                some: {
+                  label: { equals: tokenLower, mode: "insensitive" },
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        attributeKey: "color",
+        value: { equals: tokenLower, mode: "insensitive" },
+      },
+    ],
+  };
+}
+
+function buildSizeOptionMatch(
+  tokenUpper: string,
+  lang: string
+): Prisma.ProductVariantOptionWhereInput {
+  return {
+    OR: [
+      {
+        attributeValue: {
+          attribute: { key: "size" },
+          OR: [
+            { value: { equals: tokenUpper, mode: "insensitive" } },
+            {
+              translations: {
+                some: {
+                  locale: lang,
+                  label: { equals: tokenUpper, mode: "insensitive" },
+                },
+              },
+            },
+            {
+              translations: {
+                some: {
+                  label: { equals: tokenUpper, mode: "insensitive" },
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        attributeKey: "size",
+        value: { equals: tokenUpper, mode: "insensitive" },
+      },
+    ],
+  };
+}
+
+/**
+ * Same-variant semantics: one published variant must satisfy all color/size OR groups.
+ */
+function buildColorSizeFilter(
+  colors: string | undefined,
+  sizes: string | undefined,
+  lang: string
+): Prisma.ProductWhereInput | null {
+  const colorTokens = parseColorTokens(colors);
+  const sizeTokens = parseSizeTokens(sizes);
+
+  if (colorTokens.length === 0 && sizeTokens.length === 0) return null;
+
+  const variantAnd: Prisma.ProductVariantWhereInput[] = [];
+
+  if (colorTokens.length > 0) {
+    variantAnd.push({
+      options: {
+        some: {
+          OR: colorTokens.map((token) => buildColorOptionMatch(token, lang)),
+        },
+      },
+    });
+  }
+
+  if (sizeTokens.length > 0) {
+    variantAnd.push({
+      options: {
+        some: {
+          OR: sizeTokens.map((token) => buildSizeOptionMatch(token, lang)),
+        },
+      },
+    });
+  }
+
+  return {
+    variants: {
+      some: {
+        published: true,
+        AND: variantAnd,
+      },
+    },
+  };
+}
 
 /** Comma-separated brand IDs (matches in-memory filter semantics). */
 function parseBrandIds(brand?: string): string[] {
@@ -309,6 +447,8 @@ export async function buildWhereClause(
     minPrice,
     maxPrice,
     brand,
+    colors,
+    sizes,
     lang = "en",
   } = filters;
 
@@ -350,6 +490,9 @@ export async function buildWhereClause(
 
   const priceFilter = buildPriceFilter(minPrice, maxPrice);
   if (priceFilter) extraConditions.push(priceFilter);
+
+  const colorSizeFilter = buildColorSizeFilter(colors, sizes, lang);
+  if (colorSizeFilter) extraConditions.push(colorSizeFilter);
 
   if (extraConditions.length > 0) {
     where = { AND: [where, ...extraConditions] };
