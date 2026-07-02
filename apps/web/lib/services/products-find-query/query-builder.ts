@@ -1,8 +1,48 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@white-shop/db";
 import { logger } from "../../utils/logger";
+import { isMeilisearchConfigured } from "../search-index.service";
 import type { ProductFilters } from "./types";
 import { getAllChildCategoryIds, findCategoryBySlug } from "./category-utils";
+
+/** Sort values expressible safely in Prisma for Phase 5A DB pagination. */
+const DB_PAGINATION_SORTS = new Set([
+  undefined,
+  "",
+  "createdAt",
+  "createdAt-desc",
+  "createdAt-asc",
+]);
+
+/**
+ * Phase 5A: true only for requests that skip in-memory filter/sort/paginate.
+ * Complex filters (price, brand, colors, sizes), bestseller ranking, unsafe sorts,
+ * and Meilisearch text search stay on the legacy over-fetch path until Phase 5B.
+ */
+export function canUseDbPagination(filters: ProductFilters): boolean {
+  const { minPrice, maxPrice, brand, colors, sizes, filter, sort, search } =
+    filters;
+
+  if (minPrice !== undefined || maxPrice !== undefined) return false;
+  if (brand?.trim()) return false;
+  if (colors?.trim()) return false;
+  if (sizes?.trim()) return false;
+  if (filter === "bestseller") return false;
+  if (search?.trim() && isMeilisearchConfigured()) return false;
+  if (!DB_PAGINATION_SORTS.has(sort)) return false;
+
+  return true;
+}
+
+/** Maps safe API sort params to Prisma orderBy (default matches legacy createdAt desc). */
+export function buildDbOrderBy(
+  sort?: string
+): Prisma.ProductOrderByWithRelationInput {
+  if (sort === "createdAt-asc") {
+    return { createdAt: "asc" };
+  }
+  return { createdAt: "desc" };
+}
 
 /**
  * Build search filter for where clause
