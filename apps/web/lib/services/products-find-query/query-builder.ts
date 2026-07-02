@@ -15,16 +15,13 @@ const DB_PAGINATION_SORTS = new Set([
 ]);
 
 /**
- * Phase 5A: true only for requests that skip in-memory filter/sort/paginate.
- * Complex filters (price, brand, colors, sizes), bestseller ranking, unsafe sorts,
- * and Meilisearch text search stay on the legacy over-fetch path until Phase 5B.
+ * Phase 5A/5B: true only for requests that skip in-memory filter/sort/paginate.
+ * Colors, sizes, bestseller ranking, price sort, and Meilisearch text search
+ * stay on the legacy over-fetch path.
  */
 export function canUseDbPagination(filters: ProductFilters): boolean {
-  const { minPrice, maxPrice, brand, colors, sizes, filter, sort, search } =
-    filters;
+  const { colors, sizes, filter, sort, search } = filters;
 
-  if (minPrice !== undefined || maxPrice !== undefined) return false;
-  if (brand?.trim()) return false;
   if (colors?.trim()) return false;
   if (sizes?.trim()) return false;
   if (filter === "bestseller") return false;
@@ -32,6 +29,70 @@ export function canUseDbPagination(filters: ProductFilters): boolean {
   if (!DB_PAGINATION_SORTS.has(sort)) return false;
 
   return true;
+}
+
+const INVALID_FILTER_TOKENS = new Set(["undefined", "null", ""]);
+
+/** Comma-separated brand IDs (matches in-memory filter semantics). */
+function parseBrandIds(brand?: string): string[] {
+  if (!brand || typeof brand !== "string") return [];
+
+  return brand
+    .split(",")
+    .map((value) => value.trim())
+    .filter((value) => !INVALID_FILTER_TOKENS.has(value.toLowerCase()));
+}
+
+function buildBrandFilter(brand?: string): Prisma.ProductWhereInput | null {
+  const brandIds = parseBrandIds(brand);
+  if (brandIds.length === 0) return null;
+
+  if (brandIds.length === 1) {
+    return { brandId: brandIds[0] };
+  }
+
+  return { brandId: { in: brandIds } };
+}
+
+/**
+ * Matches in-memory price filter: product passes when the minimum published
+ * variant price is within [minPrice, maxPrice] (raw variant.price, no discounts).
+ */
+function buildPriceFilter(
+  minPrice?: number,
+  maxPrice?: number
+): Prisma.ProductWhereInput | null {
+  const hasMin = typeof minPrice === "number" && !Number.isNaN(minPrice);
+  const hasMax = typeof maxPrice === "number" && !Number.isNaN(maxPrice);
+  if (!hasMin && !hasMax) return null;
+
+  const conditions: Prisma.ProductWhereInput[] = [
+    { variants: { some: { published: true } } },
+  ];
+
+  if (hasMin) {
+    conditions.push({
+      variants: {
+        none: {
+          published: true,
+          price: { lt: minPrice },
+        },
+      },
+    });
+  }
+
+  if (hasMax) {
+    conditions.push({
+      variants: {
+        some: {
+          published: true,
+          price: { lte: maxPrice },
+        },
+      },
+    });
+  }
+
+  return conditions.length === 1 ? conditions[0] : { AND: conditions };
 }
 
 /** Maps safe API sort params to Prisma orderBy (default matches legacy createdAt desc). */
@@ -245,6 +306,9 @@ export async function buildWhereClause(
     category,
     search,
     filter,
+    minPrice,
+    maxPrice,
+    brand,
     lang = "en",
   } = filters;
 
@@ -279,6 +343,17 @@ export async function buildWhereClause(
   const filterResult = await buildFilterFilter(filter || "", where);
   where = filterResult.where;
   bestsellerProductIds.push(...filterResult.bestsellerProductIds);
+
+  const extraConditions: Prisma.ProductWhereInput[] = [];
+  const brandFilter = buildBrandFilter(brand);
+  if (brandFilter) extraConditions.push(brandFilter);
+
+  const priceFilter = buildPriceFilter(minPrice, maxPrice);
+  if (priceFilter) extraConditions.push(priceFilter);
+
+  if (extraConditions.length > 0) {
+    where = { AND: [where, ...extraConditions] };
+  }
 
   logger.debug('Fetching products with where clause', { where: JSON.stringify(where, null, 2) });
 
