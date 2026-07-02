@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -13,13 +14,18 @@ import {
   APP_SCROLL_REGION_DOM_ID,
   getAppScrollRegion,
 } from '../lib/appScrollRegion';
-import { HeaderSearchOverlay } from './HeaderSearchOverlay';
 import type { Cart } from '../app/(main)/cart/types';
 import { toR2Url } from '@/lib/r2-assets';
 import {
   getVisibleNavItems,
   HEADER_NAV_ITEMS,
 } from '@/lib/site-navigation';
+
+const HeaderSearchOverlay = dynamic(
+  () =>
+    import('./HeaderSearchOverlay').then((mod) => mod.HeaderSearchOverlay),
+  { ssr: false, loading: () => null }
+);
 
 const HEADER_BG_HOME = 'bg-[#ffe5c2]';
 const HEADER_BG_OTHER = 'bg-[#2F3F3D]';
@@ -358,12 +364,14 @@ export function Header() {
               {searchQuery.trim() ? searchQuery : t('home.header.search.placeholder')}
             </span>
           </button>
-          <HeaderSearchOverlay
-            open={isSearchOpen}
-            onClose={() => setIsSearchOpen(false)}
-            searchQuery={searchQuery}
-            onSearchQueryChange={setSearchQuery}
-          />
+          {isSearchOpen ? (
+            <HeaderSearchOverlay
+              open={isSearchOpen}
+              onClose={() => setIsSearchOpen(false)}
+              searchQuery={searchQuery}
+              onSearchQueryChange={setSearchQuery}
+            />
+          ) : null}
         </div>
 
         {/* Cart Button */}

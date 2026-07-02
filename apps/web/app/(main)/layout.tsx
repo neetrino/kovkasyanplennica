@@ -1,5 +1,6 @@
 import { Suspense, type ReactNode } from 'react';
 import { ClientProviders } from '@/components/ClientProviders';
+import { Footer } from '@/components/Footer';
 import { MainSiteChrome } from '@/components/MainSiteChrome';
 
 export default function MainLayout({
@@ -10,7 +11,7 @@ export default function MainLayout({
   return (
     <Suspense fallback={null}>
       <ClientProviders>
-        <MainSiteChrome>{children}</MainSiteChrome>
+        <MainSiteChrome footerSlot={<Footer />}>{children}</MainSiteChrome>
       </ClientProviders>
     </Suspense>
   );
