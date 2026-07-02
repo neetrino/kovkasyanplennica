@@ -31,13 +31,21 @@ export type CategoryRowFilterParams = {
   maxPrice?: string;
 };
 
+/** Minimal row-control payload when server card shells are passed as children. */
+export type CatalogRowInitialProduct = Pick<
+  CatalogCardProduct,
+  'id' | 'price' | 'title' | 'slug'
+>;
+
 type ProductsCategoryExpandControlsProps = CategoryRowFetchFilters & {
-  initialProducts: CatalogCardProduct[];
+  initialProducts: CatalogRowInitialProduct[] | CatalogCardProduct[];
   totalInRow: number;
   sortBy?: string;
   lang: LanguageCode;
   filterParams?: CategoryRowFilterParams;
   minVisibleCards?: number;
+  /** Number of server-rendered card shells passed as children */
+  serverShellCount?: number;
   /** Server-rendered card shells for initial capped products */
   children?: ReactNode;
   /** When products are already fetched client-side (lazy rows) */
@@ -53,6 +61,7 @@ export function ProductsCategoryExpandControls({
   lang,
   filterParams,
   minVisibleCards,
+  serverShellCount = 0,
   children,
   prefetchedProducts,
   categorySlug,
@@ -77,6 +86,18 @@ export function ProductsCategoryExpandControls({
   const serverChildren = Children.toArray(children);
   const hasServerChildren = serverChildren.length > 0;
 
+  const serverChildIndexByProductId = useMemo(() => {
+    if (serverChildren.length === 0) {
+      return new Map<string, number>();
+    }
+
+    const map = new Map<string, number>();
+    initialProducts.slice(0, serverChildren.length).forEach((initialProduct, index) => {
+      map.set(initialProduct.id, index);
+    });
+    return map;
+  }, [initialProducts, serverChildren.length]);
+
   useEffect(() => {
     setVisibleRows(1);
     setExpandedProducts(prefetchedProducts ?? null);
@@ -85,7 +106,7 @@ export function ProductsCategoryExpandControls({
   const rowTotal = totalInRow ?? initialProducts.length;
   const sourceProducts = expandedProducts ?? initialProducts;
   const products = useMemo(
-    () => sortCatalogCardProducts(sourceProducts, sortBy),
+    () => sortCatalogCardProducts(sourceProducts as CatalogCardProduct[], sortBy),
     [sourceProducts, sortBy]
   );
 
@@ -101,7 +122,8 @@ export function ProductsCategoryExpandControls({
   const needsFetch =
     !prefetchedProducts &&
     expandedProducts === null &&
-    rowTotal > initialProducts.length;
+    (rowTotal > initialProducts.length ||
+      (serverShellCount > 0 && rowTotal > serverShellCount));
 
   const loadFullRowProducts = useCallback(async (): Promise<CatalogCardProduct[] | null> => {
     if (
@@ -109,9 +131,14 @@ export function ProductsCategoryExpandControls({
       expandedProducts !== null ||
       !categorySlug ||
       categorySlug === OTHER_SLUG ||
-      !lang ||
-      rowTotal <= initialProducts.length
+      !lang
     ) {
+      return null;
+    }
+
+    const canFetchWithinInitialCap =
+      serverShellCount > 0 && rowTotal > serverShellCount && rowTotal <= initialProducts.length;
+    if (rowTotal <= initialProducts.length && !canFetchWithinInitialCap) {
       return null;
     }
 
@@ -157,13 +184,17 @@ export function ProductsCategoryExpandControls({
     sizes,
     sort,
     sortBy,
+    serverShellCount,
   ]);
 
   const handleExpand = async () => {
     const nextVisibleRows = Math.min(maxRows, visibleRows + 1);
     const neededCount = nextVisibleRows * columnsPerRow;
 
-    if (neededCount > products.length && needsFetch) {
+    if (
+      needsFetch &&
+      (neededCount > products.length || neededCount > serverShellCount)
+    ) {
       await loadFullRowProducts();
     }
 
@@ -185,14 +216,18 @@ export function ProductsCategoryExpandControls({
     const product = products[index];
     if (!product) return null;
 
-    const useServerChild = hasServerChildren && index < serverChildren.length;
+    const serverChildIndex = serverChildIndexByProductId.get(product.id);
+    const useServerChild =
+      serverChildIndex !== undefined && serverChildIndex < serverChildren.length;
+    const fullProduct = 'inStock' in product ? (product as CatalogCardProduct) : undefined;
+
     return (
       <div key={product.id} className={CATALOG_CARD_GRID_CELL_CLASS}>
         {useServerChild ? (
-          serverChildren[index]
-        ) : (
-          <CatalogProductCardClient product={product} />
-        )}
+          serverChildren[serverChildIndex]
+        ) : fullProduct ? (
+          <CatalogProductCardClient product={fullProduct} />
+        ) : null}
       </div>
     );
   });

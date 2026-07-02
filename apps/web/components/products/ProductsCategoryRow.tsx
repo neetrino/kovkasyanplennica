@@ -1,5 +1,6 @@
 import type { LanguageCode } from '@/lib/language';
 import { toCatalogCardProduct } from './catalog-card-product';
+import { CatalogProductCardShell } from './CatalogProductCardShell';
 import {
   ProductsCategoryExpandControls,
   type CategoryRowFilterParams,
@@ -32,15 +33,37 @@ export function ProductsCategoryRow({
     .slice(0, initialProductCount)
     .map(toCatalogCardProduct);
 
+  const serverShellCount = Math.min(
+    initialProducts.length,
+    minVisibleCards ?? 2
+  );
+  const serverShellProducts = initialProducts.slice(0, serverShellCount);
+
+  const initialProductsForControls = initialProducts.map(({ id, price, title, slug }) => ({
+    id,
+    price,
+    title,
+    slug,
+  }));
+
   return (
     <ProductsCategoryExpandControls
-      initialProducts={initialProducts}
+      initialProducts={initialProductsForControls}
+      serverShellCount={serverShellProducts.length}
       totalInRow={totalInRow}
       categorySlug={categorySlug}
       sortBy={sortBy}
       lang={lang}
       filterParams={filterParams}
       minVisibleCards={minVisibleCards}
-    />
+    >
+      {serverShellProducts.map((product) => (
+        <CatalogProductCardShell
+          key={product.id}
+          product={product}
+          locale={lang}
+        />
+      ))}
+    </ProductsCategoryExpandControls>
   );
 }
