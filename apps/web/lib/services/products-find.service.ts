@@ -5,6 +5,7 @@ import { tryFetchProductsViaMeilisearch } from "./products-find-meilisearch.serv
 import { ProductFilters } from "./products-find-query.service";
 import { productsFindQueryService } from "./products-find-query.service";
 import { productsFindFilterService } from "./products-find-filter.service";
+import { productsFindListingTransformService } from "./products-find-listing-transform.service";
 import { productsFindTransformService } from "./products-find-transform.service";
 import { canUseDbPagination } from "./products-find-query/query-builder";
 
@@ -77,10 +78,11 @@ class ProductsFindService {
     const { products, total } =
       await productsFindQueryService.buildQueryAndFetchPaginated(filters);
 
-    const data = await productsFindTransformService.transformProducts(
-      products,
-      lang
-    );
+    const data =
+      await productsFindListingTransformService.transformListingProducts(
+        products,
+        lang
+      );
 
     return {
       data,

@@ -2,9 +2,10 @@ import {
   buildDbOrderBy,
   buildWhereClause,
 } from "./products-find-query/query-builder";
+import { executePaginatedListingQuery } from "./products-find-query/listing-query-executor";
+import type { ProductListingRow } from "./products-find-query/listing-select";
 import {
   countProducts,
-  executePaginatedProductQuery,
   executeProductQuery,
 } from "./products-find-query/query-executor";
 import type { ProductFilters, ProductWithRelations } from "./products-find-query/types";
@@ -17,7 +18,7 @@ class ProductsFindQueryService {
    * Phase 5A: DB-level pagination for safe catalog requests.
    */
   async buildQueryAndFetchPaginated(filters: ProductFilters): Promise<{
-    products: ProductWithRelations[];
+    products: ProductListingRow[];
     total: number;
   }> {
     const { page = 1, limit = 24 } = filters;
@@ -34,7 +35,7 @@ class ProductsFindQueryService {
     const orderBy = buildDbOrderBy(filters.sort);
 
     const [products, total] = await Promise.all([
-      executePaginatedProductQuery(where, { skip, take: limit, orderBy }),
+      executePaginatedListingQuery(where, { skip, take: limit, orderBy }),
       countProducts(where),
     ]);
 
