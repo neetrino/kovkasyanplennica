@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { apiClient } from '@/lib/api-client';
-import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue';
 import { useTranslation } from '@/lib/i18n-client';
 import { getStoredCurrency, initializeCurrencyRates, type CurrencyCode } from '@/lib/currency';
 import { Button } from '@shop/ui';
@@ -26,13 +25,11 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebouncedValue(search, 300);
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
   const [skuSearch, setSkuSearch] = useState('');
-  const debouncedSkuSearch = useDebouncedValue(skuSearch, 300);
   const [stockFilter, setStockFilter] = useState<'all' | 'inStock' | 'outOfStock'>('all');
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<ProductsResponse['meta'] | null>(null);
@@ -127,7 +124,7 @@ export default function ProductsPage() {
       fetchProducts();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, isLoggedIn, isAdmin, page, debouncedSearch, selectedCategories, debouncedSkuSearch, stockFilter, sortBy, minPrice, maxPrice]);
+  }, [isLoading, isLoggedIn, isAdmin, page, search, selectedCategories, skuSearch, stockFilter, sortBy, minPrice, maxPrice]);
 
   const fetchProducts = async () => {
     try {
@@ -137,16 +134,16 @@ export default function ProductsPage() {
         limit: '20',
       };
       
-      if (debouncedSearch.trim()) {
-        params.search = debouncedSearch.trim();
+      if (search.trim()) {
+        params.search = search.trim();
       }
 
       if (selectedCategories.size > 0) {
         params.category = Array.from(selectedCategories).join(',');
       }
 
-      if (debouncedSkuSearch.trim()) {
-        params.sku = debouncedSkuSearch.trim();
+      if (skuSearch.trim()) {
+        params.sku = skuSearch.trim();
       }
 
       if (minPrice.trim()) {
@@ -161,17 +158,32 @@ export default function ProductsPage() {
         params.sort = sortBy;
       }
 
-      if (stockFilter === 'inStock') {
-        params.stock = 'in_stock';
-      } else if (stockFilter === 'outOfStock') {
-        params.stock = 'out_of_stock';
-      }
-
       const response = await apiClient.get<ProductsResponse>('/api/v1/admin/products', {
         params,
       });
+      
+      let filteredProducts = response.data || [];
 
-      setProducts(response.data || []);
+      // Stock filter (client-side)
+      if (stockFilter !== 'all') {
+        filteredProducts = filteredProducts.filter(product => {
+          const getTotalStock = (p: Product) => {
+            if (p.colorStocks && p.colorStocks.length > 0) {
+              return p.colorStocks.reduce((sum, cs) => sum + (cs.stock || 0), 0);
+            }
+            return p.stock ?? 0;
+          };
+          const totalStock = getTotalStock(product);
+          if (stockFilter === 'inStock') {
+            return totalStock > 0;
+          } else if (stockFilter === 'outOfStock') {
+            return totalStock === 0;
+          }
+          return true;
+        });
+      }
+
+      setProducts(filteredProducts);
       setMeta(response.meta || null);
     } catch (err: any) {
       console.error('❌ [ADMIN] Error fetching products:', err);

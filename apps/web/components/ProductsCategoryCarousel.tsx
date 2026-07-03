@@ -1,44 +1,156 @@
 'use client';
 
-import type { LanguageCode } from '@/lib/language';
-import type { CatalogCardProduct } from './products/catalog-card-product';
-import {
-  ProductsCategoryExpandControls,
-  type CategoryRowFilterParams,
-} from './products/ProductsCategoryExpandControls';
+import { useEffect, useMemo, useState } from 'react';
+import { ProductCard } from './ProductCard';
+import { useVisibleCards } from './hooks/useVisibleCards';
+import { useTranslation } from '../lib/i18n-client';
 
-export type { CategoryRowFilterParams };
+interface Product {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string | null;
+  price: number;
+  compareAtPrice: number | null;
+  image: string | null;
+  inStock: boolean;
+  defaultVariantId?: string | null;
+  stock?: number;
+  brand: { id: string; name: string } | null;
+  category?: string;
+}
 
 interface ProductsCategoryCarouselProps {
-  products: CatalogCardProduct[];
+  products: Product[];
   sortBy?: string;
-  categorySlug?: string;
-  totalInRow?: number;
-  lang?: string;
-  filterParams?: CategoryRowFilterParams;
+  /** Mobile: at least this many columns (matches prior carousel min width). */
   minVisibleCards?: number;
 }
 
-/** Client-only category row renderer (lazy below-fold path). Uses catalog client cards, not global ProductCard. */
+const MOBILE_BREAKPOINT = 768;
+
 export function ProductsCategoryCarousel({
-  products: initialProducts,
+  products: rawProducts,
   sortBy = 'default',
-  categorySlug = '',
-  totalInRow,
-  lang = 'ru',
-  filterParams,
   minVisibleCards,
 }: ProductsCategoryCarouselProps) {
+  const { t } = useTranslation();
+  const visibleFromHook = useVisibleCards();
+  const columnsPerRow =
+    minVisibleCards != null ? Math.max(visibleFromHook, minVisibleCards) : visibleFromHook;
+  const [isMobile, setIsMobile] = useState(false);
+  const [visibleRows, setVisibleRows] = useState(1);
+
+  useEffect(() => {
+    const check = () =>
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const products = useMemo(() => {
+    const sorted = [...rawProducts];
+    switch (sortBy) {
+      case 'price-asc':
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case 'name-asc':
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'name-desc':
+        sorted.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+      default:
+        break;
+    }
+    return sorted;
+  }, [rawProducts, sortBy]);
+
+  useEffect(() => {
+    setVisibleRows(1);
+  }, [columnsPerRow, products.length]);
+
+  const maxRows = columnsPerRow > 0 ? Math.ceil(products.length / columnsPerRow) : 1;
+  const shownCount = Math.min(products.length, visibleRows * columnsPerRow);
+  const displayed = products.slice(0, shownCount);
+  const canExpand = visibleRows < maxRows;
+  const canCollapse = visibleRows > 1;
+  const showRowControls = maxRows > 1;
+
+  const roundNavBtnClass =
+    'flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#fff4de] text-[#2F3F3D] shadow-md transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fff4de]/80 sm:h-12 sm:w-12';
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500 text-lg">{t('products.grid.noProducts')}</p>
+      </div>
+    );
+  }
+
   return (
-    <ProductsCategoryExpandControls
-      initialProducts={initialProducts}
-      prefetchedProducts={initialProducts}
-      totalInRow={totalInRow ?? initialProducts.length}
-      categorySlug={categorySlug}
-      sortBy={sortBy}
-      lang={lang as LanguageCode}
-      filterParams={filterParams}
-      minVisibleCards={minVisibleCards}
-    />
+    <div className="relative flex flex-col items-stretch gap-3 sm:gap-4 md:flex-row md:items-center md:gap-6">
+      <div
+        className="order-2 min-w-0 w-full flex-1 grid gap-x-2 gap-y-16 pb-10 pt-2 sm:gap-x-3 sm:gap-y-20 sm:pb-12 sm:pt-3 md:order-1 md:gap-x-4 md:gap-y-16 md:pb-12 lg:gap-x-5 lg:gap-y-20"
+        style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
+      >
+        {displayed.map((product) => (
+          <div
+            key={product.id}
+            className="min-w-0 px-0 pb-2 pt-3 sm:px-2 sm:pb-4 sm:pt-4 md:px-2.5 md:pb-10 md:pt-0"
+          >
+            <ProductCard
+              product={{
+                ...product,
+                compareAtPrice: product.compareAtPrice ?? undefined,
+                labels: undefined,
+              }}
+              viewMode="grid-3"
+              compactHeight={isMobile}
+              largeCompactImage={isMobile}
+              compactListing
+            />
+          </div>
+        ))}
+      </div>
+
+      {showRowControls ? (
+        <div
+          className="order-1 flex w-full shrink-0 flex-col items-end justify-center gap-2 pb-1 md:order-2 md:w-auto md:items-center md:pb-0"
+          role="group"
+          aria-label={t('products.grid.rowExpandGroup')}
+        >
+          {canCollapse ? (
+            <button
+              type="button"
+              onClick={() => setVisibleRows((r) => Math.max(1, r - 1))}
+              className={roundNavBtnClass}
+              aria-label={t('products.grid.showFewer')}
+            >
+              <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+          ) : null}
+          {canExpand ? (
+            <button
+              type="button"
+              onClick={() => setVisibleRows((r) => Math.min(maxRows, r + 1))}
+              className={roundNavBtnClass}
+              aria-label={t('products.grid.showMore')}
+              aria-expanded={visibleRows > 1}
+            >
+              <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }

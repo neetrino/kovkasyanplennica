@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { productsService } from "@/lib/services/products.service";
 
 export async function GET(req: NextRequest) {
@@ -40,11 +39,7 @@ export async function GET(req: NextRequest) {
       colorsCount: result.colors?.length || 0, 
       sizesCount: result.sizes?.length || 0 
     });
-    return NextResponse.json(result, {
-      headers: {
-        "Cache-Control": `public, s-maxage=${CATALOG_REDIS_TTL_SECONDS}, stale-while-revalidate=${CATALOG_REDIS_TTL_SECONDS}`,
-      },
-    });
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error("❌ [PRODUCTS FILTERS] Error:", error);
     console.error("❌ [PRODUCTS FILTERS] Error stack:", error.stack);

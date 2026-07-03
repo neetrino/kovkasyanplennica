@@ -47,6 +47,7 @@ export function Hero() {
             fill
             className="object-cover object-center"
             priority
+            unoptimized
             sizes="100vw"
           />
         </div>
@@ -75,6 +76,7 @@ export function Hero() {
             height={HERO_WORDMARK_HEIGHT}
             className="h-auto w-[min(95vw,330px)] mix-blend-screen sm:w-[378px] md:w-[426px] xl:w-[475px]"
             priority
+            unoptimized
             sizes="(max-width: 640px) 330px, (max-width: 768px) 378px, (max-width: 1280px) 426px, 475px"
           />
         </h1>

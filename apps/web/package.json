@@ -9,7 +9,6 @@
     "prebuild": "node scripts/ensure-prisma-generate.js",
     "prebuild:migrate": "node scripts/run-migrations.js",
     "build": "node ../../node_modules/next/dist/bin/next build --experimental-build-mode=compile",
-    "build:analyze": "node ../../node_modules/next/dist/bin/next build --webpack --experimental-build-mode=compile",
     "start": "node ../../node_modules/next/dist/bin/next start",
     "lint": "eslint .",
     "upload:r2-assets": "tsx scripts/upload-public-assets-to-r2.ts",
@@ -42,7 +41,6 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.2.10",
     "@types/bcryptjs": "^2.4.6",
     "@types/browser-image-compression": "^1.0.1",
     "@types/jsonwebtoken": "^9.0.5",

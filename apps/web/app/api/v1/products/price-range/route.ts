@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { productsService } from "@/lib/services/products.service";
 
 export async function GET(req: NextRequest) {
@@ -11,11 +10,7 @@ export async function GET(req: NextRequest) {
     };
 
     const result = await productsService.getPriceRange(filters);
-    return NextResponse.json(result, {
-      headers: {
-        "Cache-Control": `public, s-maxage=${CATALOG_REDIS_TTL_SECONDS}, stale-while-revalidate=${CATALOG_REDIS_TTL_SECONDS}`,
-      },
-    });
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error("❌ [PRODUCTS] Error:", error);
     return NextResponse.json(

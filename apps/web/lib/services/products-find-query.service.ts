@@ -1,50 +1,11 @@
-import {
-  buildDbOrderBy,
-  buildWhereClause,
-} from "./products-find-query/query-builder";
-import { executePaginatedListingQuery } from "./products-find-query/listing-query-executor";
-import type { ProductListingRow } from "./products-find-query/listing-select";
-import {
-  countProducts,
-  executeProductQuery,
-} from "./products-find-query/query-executor";
+import { buildWhereClause } from "./products-find-query/query-builder";
+import { executeProductQuery } from "./products-find-query/query-executor";
 import type { ProductFilters, ProductWithRelations } from "./products-find-query/types";
 
 /**
  * Service for building and executing product find queries
  */
 class ProductsFindQueryService {
-  /**
-   * Phase 5A: DB-level pagination for safe catalog requests.
-   */
-  async buildQueryAndFetchPaginated(filters: ProductFilters): Promise<{
-    products: ProductListingRow[];
-    total: number;
-  }> {
-    const { page = 1, limit = 24 } = filters;
-    const { where } = await buildWhereClause(filters);
-
-    if (where === null) {
-      return {
-        products: [],
-        total: 0,
-      };
-    }
-
-    const skip = (page - 1) * limit;
-    const orderBy = buildDbOrderBy(filters.sort);
-
-    const [products, total] = await Promise.all([
-      executePaginatedListingQuery(where, { skip, take: limit, orderBy }),
-      countProducts(where),
-    ]);
-
-    return {
-      products,
-      total,
-    };
-  }
-
   /**
    * Build where clause and fetch products from database
    */
@@ -65,7 +26,7 @@ class ProductsFindQueryService {
       };
     }
 
-    // Legacy Phase 5B path: over-fetch for in-memory filter/sort/paginate
+    // Execute query with comprehensive error handling
     const products = await executeProductQuery(where, limit);
 
     return {
