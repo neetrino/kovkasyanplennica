@@ -53,6 +53,10 @@ export function proxy(request: NextRequest) {
     return res;
   }
 
+  if (pathname === '/products' && request.nextUrl.search === '') {
+    return NextResponse.rewrite(new URL('/products-static', request.url));
+  }
+
   return NextResponse.next();
 }
 
