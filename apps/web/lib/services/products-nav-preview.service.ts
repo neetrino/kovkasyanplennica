@@ -221,7 +221,7 @@ const getCategoryNavPreviewsCached = unstable_cache(
       treeKey.length > 0 ? (JSON.parse(treeKey) as Category[]) : [];
     return resolveNavPreviewTargetsBulk(lang, targets, categoryTreeRoots);
   },
-  ["category-nav-previews-v4"],
+  ["category-nav-previews-v5"],
   {
     revalidate: NAV_PREVIEW_REVALIDATE_SECONDS,
     tags: ["category-nav-previews"],

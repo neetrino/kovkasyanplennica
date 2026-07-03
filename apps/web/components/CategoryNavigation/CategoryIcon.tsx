@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { normalizeCategoryImageSrc } from '@/lib/image-optimization';
 import { getCategoryIcon, type Category, type CategoryIconSize } from './utils';
 
 interface Product {
@@ -62,6 +63,8 @@ export function CategoryIcon({
       ? 'flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-full border border-gray-200 transition-all'
       : 'flex h-[80px] w-[80px] items-center justify-center overflow-hidden rounded-full border-2 bg-transparent transition-all sm:h-[104px] sm:w-[104px]';
 
+  const imageSrc = normalizeCategoryImageSrc(category.imageUrl || product?.image);
+
   // Regular categories show product image or placeholder
   return (
     <div
@@ -75,9 +78,9 @@ export function CategoryIcon({
             : 'border-gray-200'
       }`}
     >
-      {(category.imageUrl || product?.image) ? (
+      {imageSrc ? (
         <Image
-          src={category.imageUrl || product?.image || ''}
+          src={imageSrc}
           alt={category.title}
           width={dim}
           height={dim}
