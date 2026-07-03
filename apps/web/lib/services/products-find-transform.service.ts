@@ -2,6 +2,7 @@ import { discountSettingsKey } from "@/lib/cache/redis-keys";
 import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { withRedisCache } from "@/lib/cache/with-redis-cache";
 import { db } from "@white-shop/db";
+import { toOptimizedProductCardUrl } from "@/lib/image-optimization";
 import { processImageUrl } from "../utils/image-utils";
 import { translations } from "../translations";
 import { ProductWithRelations } from "./products-find-query.service";
@@ -297,7 +298,8 @@ class ProductsFindTransformService {
           
           // Process first image - cast JsonValue to ImageUrlInput
           const firstImage = processImageUrl(product.media[0] as string | null | undefined | { url?: string; src?: string; value?: string });
-          return firstImage || null;
+          if (!firstImage) return null;
+          return toOptimizedProductCardUrl(firstImage) ?? firstImage;
         })(),
         inStock: (variant?.stock || 0) > 0,
         labels: (() => {

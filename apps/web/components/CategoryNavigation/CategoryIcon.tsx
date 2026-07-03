@@ -82,7 +82,8 @@ export function CategoryIcon({
           width={dim}
           height={dim}
           className={`h-full w-full object-cover ${imgZoom}`}
-          unoptimized
+          sizes={size === 'sidebar' ? '68px' : '112px'}
+          loading={priority ? undefined : 'lazy'}
           priority={priority}
         />
       ) : (

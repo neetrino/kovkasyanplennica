@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from "@/lib/cache/public-cache-ttl";
 import { db } from "@white-shop/db";
+import { toOptimizedProductCardUrl } from "@/lib/image-optimization";
 import { processImageUrl } from "../utils/image-utils";
 import {
   findCategoryBySlug,
@@ -24,20 +25,23 @@ function extractPreviewImage(product: {
   media: Prisma.JsonValue;
   variants: Array<{ imageUrl: string | null }>;
 }): string | null {
+  let raw: string | null = null;
   const media = product.media;
   if (Array.isArray(media) && media.length > 0) {
-    const u = processImageUrl(
+    raw = processImageUrl(
       media[0] as Parameters<typeof processImageUrl>[0]
     );
-    if (u) return u;
   }
-  for (const v of product.variants) {
-    if (v.imageUrl) {
-      const u = processImageUrl(v.imageUrl);
-      if (u) return u;
+  if (!raw) {
+    for (const v of product.variants) {
+      if (v.imageUrl) {
+        raw = processImageUrl(v.imageUrl);
+        if (raw) break;
+      }
     }
   }
-  return null;
+  if (!raw) return null;
+  return toOptimizedProductCardUrl(raw) ?? raw;
 }
 
 const basePreviewSelect = (lang: string) =>
