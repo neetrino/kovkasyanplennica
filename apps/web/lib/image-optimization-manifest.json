@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-03T11:26:37.297Z",
+  "generatedAt": "2026-07-03T12:41:00.496Z",
   "entries": [
     {
       "source": "assets/hero/hero.png",
@@ -218,6 +218,882 @@
           "key": "assets/optimized/menu/import/deserty/deserty-muravei-nik-a8a1189c69-800w.webp",
           "width": 800,
           "bytes": 128728
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/sousy/sousy-sousy-3721c9b870.webp",
+      "sourceBytes": 241630,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/sousy/sousy-sousy-3721c9b870-400w.webp",
+          "width": 400,
+          "bytes": 39718
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/deserty/deserty-brauni-fd568152a9.webp",
+      "sourceBytes": 213512,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-brauni-fd568152a9-400w.webp",
+          "width": 400,
+          "bytes": 48488
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/deserty/deserty-chizkei-k-d7c6bfcf39.webp",
+      "sourceBytes": 217374,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-chizkei-k-d7c6bfcf39-400w.webp",
+          "width": 400,
+          "bytes": 46754
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/burgery/burgery-kesodilya-8fc9807851.webp",
+      "sourceBytes": 166876,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/burgery/burgery-kesodilya-8fc9807851-400w.webp",
+          "width": 400,
+          "bytes": 32750
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/detskoe-menyu/detskoe-menyu-sup-lapsha-8219cb63d2.webp",
+      "sourceBytes": 239988,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/detskoe-menyu/detskoe-menyu-sup-lapsha-8219cb63d2-400w.webp",
+          "width": 400,
+          "bytes": 41058
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/detskoe-menyu/detskoe-menyu-spagetti-s-kurinoi-sosisko-6340fbcf95.webp",
+      "sourceBytes": 164660,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/detskoe-menyu/detskoe-menyu-spagetti-s-kurinoi-sosisko-6340fbcf95-400w.webp",
+          "width": 400,
+          "bytes": 36784
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-lamadzho-iz-govyadi-4e2012a37e.jpg",
+      "sourceBytes": 12816436,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-lamadzho-iz-govyadi-4e2012a37e-400w.webp",
+          "width": 400,
+          "bytes": 104880
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-lamadzho-iz-govyadi-e7fe10fdd9.jpg",
+      "sourceBytes": 13143390,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-lamadzho-iz-govyadi-e7fe10fdd9-400w.webp",
+          "width": 400,
+          "bytes": 107906
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-megrel-0193373286.jpg",
+      "sourceBytes": 11933556,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-megrel-0193373286-400w.webp",
+          "width": 400,
+          "bytes": 101178
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-adzhar-60973cccf1.webp",
+      "sourceBytes": 161436,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-adzhar-60973cccf1-400w.webp",
+          "width": 400,
+          "bytes": 31632
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-adzhar-06ae697e62.webp",
+      "sourceBytes": 163196,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/hachapuri-i-lamadzho/hachapuri-i-lamadzho-hachapuri-po-adzhar-06ae697e62-400w.webp",
+          "width": 400,
+          "bytes": 30384
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-s-ohotnichimi-kolbaskami-164ddb000d.jpg",
+      "sourceBytes": 12793649,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-s-ohotnichimi-kolbaskami-164ddb000d-400w.webp",
+          "width": 400,
+          "bytes": 103214
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-s-basturmoi-jpg-9d36105297.webp",
+      "sourceBytes": 423006,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-s-basturmoi-jpg-9d36105297-400w.webp",
+          "width": 400,
+          "bytes": 56688
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-chorizo-9f8f1538c8.webp",
+      "sourceBytes": 389622,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-chorizo-9f8f1538c8-400w.webp",
+          "width": 400,
+          "bytes": 55728
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-tsezar-c141533467.webp",
+      "sourceBytes": 422912,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-tsezar-c141533467-400w.webp",
+          "width": 400,
+          "bytes": 59526
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-appetitnyi-tsyplenok-b1a56456a7.webp",
+      "sourceBytes": 379642,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-appetitnyi-tsyplenok-b1a56456a7-400w.webp",
+          "width": 400,
+          "bytes": 54886
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pitstsa/pitstsa-pitstsa-margarita-dbb1d612db.webp",
+      "sourceBytes": 384470,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pitstsa/pitstsa-pitstsa-margarita-dbb1d612db-400w.webp",
+          "width": 400,
+          "bytes": 53832
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/assorti-shashlykov/assorti-shashlykov-kurinoe-assorti-b72ce5866e.jpg",
+      "sourceBytes": 13907279,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/assorti-shashlykov/assorti-shashlykov-kurinoe-assorti-b72ce5866e-400w.webp",
+          "width": 400,
+          "bytes": 113688
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-5-8791c939e0.webp",
+      "sourceBytes": 214280,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-5-8791c939e0-400w.webp",
+          "width": 400,
+          "bytes": 42692
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-4-f5f51a2813.jpg",
+      "sourceBytes": 13102715,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-4-f5f51a2813-400w.webp",
+          "width": 400,
+          "bytes": 107898
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/assorti-shashlykov/assorti-shashlykov-avtorskii-set-armavir-b86736421c.webp",
+      "sourceBytes": 253972,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/assorti-shashlykov/assorti-shashlykov-avtorskii-set-armavir-b86736421c-400w.webp",
+          "width": 400,
+          "bytes": 41988
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-1-9bbb0be24b.jpg",
+      "sourceBytes": 13008338,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/assorti-shashlykov/assorti-shashlykov-assorti-nomer-1-9bbb0be24b-400w.webp",
+          "width": 400,
+          "bytes": 105948
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/lyulya-kebab/lyulya-kebab-kebab-iz-kuritsy-s-shampino-ad3b1b59f6.webp",
+      "sourceBytes": 238008,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/lyulya-kebab/lyulya-kebab-kebab-iz-kuritsy-s-shampino-ad3b1b59f6-400w.webp",
+          "width": 400,
+          "bytes": 44496
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/lyulya-kebab/lyulya-kebab-kebab-iz-kuritsy-dadc2d9147.jpg",
+      "sourceBytes": 13088547,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/lyulya-kebab/lyulya-kebab-kebab-iz-kuritsy-dadc2d9147-400w.webp",
+          "width": 400,
+          "bytes": 96298
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/lyulya-kebab/lyulya-kebab-kebab-govyadiny-s-zelenyu-290ddac5f3.jpg",
+      "sourceBytes": 12855906,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/lyulya-kebab/lyulya-kebab-kebab-govyadiny-s-zelenyu-290ddac5f3-400w.webp",
+          "width": 400,
+          "bytes": 96130
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/lyulya-kebab/lyulya-kebab-kebab-govyadiny-s-syrom-f61f8da6fe.webp",
+      "sourceBytes": 238598,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/lyulya-kebab/lyulya-kebab-kebab-govyadiny-s-syrom-f61f8da6fe-400w.webp",
+          "width": 400,
+          "bytes": 44552
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-baranina-parnaya-37f293d24f.jpg",
+      "sourceBytes": 13741463,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-baranina-parnaya-37f293d24f-400w.webp",
+          "width": 400,
+          "bytes": 99350
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-telyatina-vyrezka-5435d71ebc.webp",
+      "sourceBytes": 264278,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-telyatina-vyrezka-5435d71ebc-400w.webp",
+          "width": 400,
+          "bytes": 44772
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-svinye-re-bra-72635d0750.webp",
+      "sourceBytes": 255240,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-svinye-re-bra-72635d0750-400w.webp",
+          "width": 400,
+          "bytes": 45138
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-kurinye-krylya-37dae2b428.webp",
+      "sourceBytes": 241342,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-kurinye-krylya-37dae2b428-400w.webp",
+          "width": 400,
+          "bytes": 44578
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-grudka-indei-ki-7cafdeaa65.webp",
+      "sourceBytes": 224444,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-grudka-indei-ki-7cafdeaa65-400w.webp",
+          "width": 400,
+          "bytes": 42940
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-antrekot-iz-svininy-po-vesu-920f0bae56.webp",
+      "sourceBytes": 217702,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-antrekot-iz-svininy-po-vesu-920f0bae56-400w.webp",
+          "width": 400,
+          "bytes": 38724
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-kare-yagnenka-po-vesu-ef4d02c5fb.jpg",
+      "sourceBytes": 13082417,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-kare-yagnenka-po-vesu-ef4d02c5fb-400w.webp",
+          "width": 400,
+          "bytes": 100410
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-svinaya-sheya-f9593474c2.webp",
+      "sourceBytes": 244676,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-svinaya-sheya-f9593474c2-400w.webp",
+          "width": 400,
+          "bytes": 44514
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-ovoschi-na-mangale-61a7a97a43.jpg",
+      "sourceBytes": 14176698,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-ovoschi-na-mangale-61a7a97a43-400w.webp",
+          "width": 400,
+          "bytes": 95870
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-kolbaski-sobstvennogo-prigotovl-893bb8c2d9.webp",
+      "sourceBytes": 214704,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-kolbaski-sobstvennogo-prigotovl-893bb8c2d9-400w.webp",
+          "width": 400,
+          "bytes": 38454
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/shashlyk/shashlyk-kolbaski-sobstvennogo-prigotovl-239c143e6b.jpg",
+      "sourceBytes": 13719365,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/shashlyk/shashlyk-kolbaski-sobstvennogo-prigotovl-239c143e6b-400w.webp",
+          "width": 400,
+          "bytes": 99906
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/stei-ki/stei-ki-kurinyi-stei-k-s-syrnoi-nachinko-9bd5aa838c.webp",
+      "sourceBytes": 194428,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/stei-ki/stei-ki-kurinyi-stei-k-s-syrnoi-nachinko-9bd5aa838c-400w.webp",
+          "width": 400,
+          "bytes": 36188
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/stei-ki/stei-ki-ossobuko-68e34f6185.webp",
+      "sourceBytes": 218672,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/stei-ki/stei-ki-ossobuko-68e34f6185-400w.webp",
+          "width": 400,
+          "bytes": 41580
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/garniry/garniry-kartofel-po-derevenski-c9fbfd0efb.webp",
+      "sourceBytes": 129388,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/garniry/garniry-kartofel-po-derevenski-c9fbfd0efb-400w.webp",
+          "width": 400,
+          "bytes": 33828
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/garniry/garniry-fri-cc3e048d9d.webp",
+      "sourceBytes": 185652,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/garniry/garniry-fri-cc3e048d9d-400w.webp",
+          "width": 400,
+          "bytes": 36846
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/pasta/pasta-pasta-rizotto-bc0879ace0.webp",
+      "sourceBytes": 169380,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/pasta/pasta-pasta-rizotto-bc0879ace0-400w.webp",
+          "width": 400,
+          "bytes": 41906
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-blyuda/goryachie-blyuda-befstroganov-856840441a.webp",
+      "sourceBytes": 140790,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-blyuda/goryachie-blyuda-befstroganov-856840441a-400w.webp",
+          "width": 400,
+          "bytes": 30386
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-blyuda/goryachie-blyuda-tarelka-timura-89060c9aac.webp",
+      "sourceBytes": 190170,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-blyuda/goryachie-blyuda-tarelka-timura-89060c9aac-400w.webp",
+          "width": 400,
+          "bytes": 34236
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-blyuda/goryachie-blyuda-hurdzhin-cedaa19cee.webp",
+      "sourceBytes": 157232,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-blyuda/goryachie-blyuda-hurdzhin-cedaa19cee-400w.webp",
+          "width": 400,
+          "bytes": 32788
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-blyuda/goryachie-blyuda-tolma-323f1ac136.webp",
+      "sourceBytes": 176296,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-blyuda/goryachie-blyuda-tolma-323f1ac136-400w.webp",
+          "width": 400,
+          "bytes": 38412
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-hashlama-s-govyazhim-hvostom-102511eb23.jpg",
+      "sourceBytes": 12748992,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-hashlama-s-govyazhim-hvostom-102511eb23-400w.webp",
+          "width": 400,
+          "bytes": 94300
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-hashlama-iz-baraniny-c3301a93f5.jpg",
+      "sourceBytes": 12950194,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-hashlama-iz-baraniny-c3301a93f5-400w.webp",
+          "width": 400,
+          "bytes": 95476
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-sup-lapsha-13b6c516d3.webp",
+      "sourceBytes": 239988,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-sup-lapsha-13b6c516d3-400w.webp",
+          "width": 400,
+          "bytes": 41058
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-spas-4f0060064c.webp",
+      "sourceBytes": 172758,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-spas-4f0060064c-400w.webp",
+          "width": 400,
+          "bytes": 33124
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-sup-s-morskimi-delikatesami-a560e6a1f1.jpg",
+      "sourceBytes": 12753734,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-sup-s-morskimi-delikatesami-a560e6a1f1-400w.webp",
+          "width": 400,
+          "bytes": 97974
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-solyanka-ccc7d919fd.jpg",
+      "sourceBytes": 12544336,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-solyanka-ccc7d919fd-400w.webp",
+          "width": 400,
+          "bytes": 92044
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-borsch-s-govyadinoi-b74996329d.webp",
+      "sourceBytes": 230124,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-borsch-s-govyadinoi-b74996329d-400w.webp",
+          "width": 400,
+          "bytes": 39156
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-krem-sup-syrnyi-087c649f52.jpg",
+      "sourceBytes": 7607397,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-krem-sup-syrnyi-087c649f52-400w.webp",
+          "width": 400,
+          "bytes": 80634
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-krem-sup-s-chechevitsei-243965d10e.jpg",
+      "sourceBytes": 7340781,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-krem-sup-s-chechevitsei-243965d10e-400w.webp",
+          "width": 400,
+          "bytes": 67402
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/supy/supy-krem-sup-tomatnyi-514c31bc67.webp",
+      "sourceBytes": 118672,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/supy/supy-krem-sup-tomatnyi-514c31bc67-400w.webp",
+          "width": 400,
+          "bytes": 29814
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/avtorskie-sety/avtorskie-sety-avtorskii-set-armavir-2-d2b5ce975b.webp",
+      "sourceBytes": 237436,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/avtorskie-sety/avtorskie-sety-avtorskii-set-armavir-2-d2b5ce975b-400w.webp",
+          "width": 400,
+          "bytes": 45922
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-zakuski/goryachie-zakuski-kurinye-krylyshki-v-so-645205751d.jpg",
+      "sourceBytes": 12025672,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-zakuski/goryachie-zakuski-kurinye-krylyshki-v-so-645205751d-400w.webp",
+          "width": 400,
+          "bytes": 98992
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-zakuski/goryachie-zakuski-syrnye-palochki-d1fcd0f7ea.jpg",
+      "sourceBytes": 14524450,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-zakuski/goryachie-zakuski-syrnye-palochki-d1fcd0f7ea-400w.webp",
+          "width": 400,
+          "bytes": 100300
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-zakuski/goryachie-zakuski-tigrovye-krevetki-v-so-4fb1f4628d.webp",
+      "sourceBytes": 169946,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-zakuski/goryachie-zakuski-tigrovye-krevetki-v-so-4fb1f4628d-400w.webp",
+          "width": 400,
+          "bytes": 35346
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/goryachie-zakuski/goryachie-zakuski-nagetsy-hrustyaschie-0ae9011a08.jpg",
+      "sourceBytes": 10348382,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/goryachie-zakuski/goryachie-zakuski-nagetsy-hrustyaschie-0ae9011a08-400w.webp",
+          "width": 400,
+          "bytes": 100062
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/salaty/salaty-salat-ovoschnoi-090e453c23.webp",
+      "sourceBytes": 237420,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/salaty/salaty-salat-ovoschnoi-090e453c23-400w.webp",
+          "width": 400,
+          "bytes": 44644
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/salaty/salaty-salat-tabule-f87554095c.jpg",
+      "sourceBytes": 13508239,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/salaty/salaty-salat-tabule-f87554095c-400w.webp",
+          "width": 400,
+          "bytes": 104962
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/salaty/salaty-salat-tsezar-s-kuritsei-9c9ad27bb4.webp",
+      "sourceBytes": 248526,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/salaty/salaty-salat-tsezar-s-kuritsei-9c9ad27bb4-400w.webp",
+          "width": 400,
+          "bytes": 53058
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/salaty/salaty-salat-tsezar-s-krevetkami-f45b262bc3.webp",
+      "sourceBytes": 222026,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/salaty/salaty-salat-tsezar-s-krevetkami-f45b262bc3-400w.webp",
+          "width": 400,
+          "bytes": 47454
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/salaty/salaty-salat-shurik-84353cb107.webp",
+      "sourceBytes": 275704,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/salaty/salaty-salat-shurik-84353cb107-400w.webp",
+          "width": 400,
+          "bytes": 54234
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-syrnaya-tarelka-evropei-cef199bd60.jpg",
+      "sourceBytes": 13552955,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-syrnaya-tarelka-evropei-cef199bd60-400w.webp",
+          "width": 400,
+          "bytes": 97532
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-syrnaya-tarelka-armyans-b5ade0bfec.jpg",
+      "sourceBytes": 13363268,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-syrnaya-tarelka-armyans-b5ade0bfec-400w.webp",
+          "width": 400,
+          "bytes": 97136
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-myasnaya-tarelka-sobstv-6af586ebd2.webp",
+      "sourceBytes": 157444,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-myasnaya-tarelka-sobstv-6af586ebd2-400w.webp",
+          "width": 400,
+          "bytes": 29964
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-gavurma-a15181db43.webp",
+      "sourceBytes": 165736,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-gavurma-a15181db43-400w.webp",
+          "width": 400,
+          "bytes": 36352
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-avtorskaya-zakuska-e6d962fb7c.webp",
+      "sourceBytes": 214948,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-avtorskaya-zakuska-e6d962fb7c-400w.webp",
+          "width": 400,
+          "bytes": 40238
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-salo-domashnee-d958cc82a7.webp",
+      "sourceBytes": 123384,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-salo-domashnee-d958cc82a7-400w.webp",
+          "width": 400,
+          "bytes": 26712
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/holodnye-zakuski/holodnye-zakuski-ovoschnaya-narezka-89ebde1091.webp",
+      "sourceBytes": 487234,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/holodnye-zakuski/holodnye-zakuski-ovoschnaya-narezka-89ebde1091-400w.webp",
+          "width": 400,
+          "bytes": 59694
         }
       ]
     }
