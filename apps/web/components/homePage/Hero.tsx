@@ -4,11 +4,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
 import { DESKTOPS_ENABLED } from '@/lib/feature-flags';
+import {
+  buildHeroSrcSet,
+  defaultHeroSrc,
+  toOptimizedHeroUrl,
+} from '@/lib/image-optimization';
 import { toR2Url } from '@/lib/r2-assets';
 
 /** Hero wordmark — 475×317 (~10 KB webp) */
 const HERO_WORDMARK_WIDTH = 475;
 const HERO_WORDMARK_HEIGHT = 317;
+
+const HERO_BG_PATH = '/assets/hero/hero.png';
+const HERO_PATTERN_PATH = '/assets/hero/hero-pattern-figma.png';
 
 /**
  * Desktop home hero — aligned to Figma HOME (node 134:256): JW_06330 photo (134:607),
@@ -23,13 +31,17 @@ export function Hero() {
       data-home-header-surface="dark"
       aria-labelledby="hero-heading"
     >
-      {/* JW_06330 — full width; starts below fixed header (no negative margin / no upward crop) */}
+      {/* JW_06330 — LCP background (optimized WebP srcset) */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={toR2Url('/assets/hero/hero.png')}
+            src={defaultHeroSrc(HERO_BG_PATH)}
+            srcSet={buildHeroSrcSet(HERO_BG_PATH)}
+            sizes="100vw"
             alt=""
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 size-full object-cover object-[center_70%]"
           />
         </div>
@@ -42,12 +54,10 @@ export function Hero() {
       >
         <div className="relative h-full w-full">
           <Image
-            src={toR2Url('/assets/hero/hero-pattern-figma.png')}
+            src={toOptimizedHeroUrl(HERO_PATTERN_PATH, 1200)}
             alt=""
             fill
             className="object-cover object-center"
-            priority
-            unoptimized
             sizes="100vw"
           />
         </div>
@@ -62,7 +72,6 @@ export function Hero() {
             width={170}
             height={257}
             className="h-full w-full object-contain"
-            priority
             unoptimized
           />
         </div>
@@ -76,7 +85,6 @@ export function Hero() {
             height={HERO_WORDMARK_HEIGHT}
             className="h-auto w-[min(95vw,330px)] mix-blend-screen sm:w-[378px] md:w-[426px] xl:w-[475px]"
             priority
-            unoptimized
             sizes="(max-width: 640px) 330px, (max-width: 768px) 378px, (max-width: 1280px) 426px, 475px"
           />
         </h1>

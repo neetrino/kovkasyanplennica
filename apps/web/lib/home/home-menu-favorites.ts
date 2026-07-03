@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache';
 import { t } from '@/lib/i18n';
+import { toOptimizedProductCardUrl } from '@/lib/image-optimization';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
 import { productsService } from '@/lib/services/products.service';
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
@@ -68,7 +69,7 @@ function mapRawToHomeProduct(
     title: p.title,
     price: p.price,
     compareAtPrice: p.compareAtPrice ?? p.originalPrice ?? null,
-    image: p.image ?? null,
+    image: toOptimizedProductCardUrl(p.image ?? null) ?? null,
     inStock: p.inStock ?? true,
     defaultVariantId: p.defaultVariantId ?? null,
     stock: typeof p.stock === 'number' ? p.stock : undefined,

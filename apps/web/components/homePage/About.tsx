@@ -4,10 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ABOUT_STORY_FIRST_KEYS, ABOUT_STORY_SECOND_KEYS } from '../../lib/about-story-home-keys';
 import { useTranslation } from '../../lib/i18n-client';
-import { staticAssetHref, toR2Url } from '@/lib/r2-assets';
+import { toOptimizedCarouselUrl } from '@/lib/image-optimization';
+import { toR2Url } from '@/lib/r2-assets';
 
-const ABOUT_HOME_IMAGE_FIRST = staticAssetHref('/assets/New folder/JW_01347 1.webp');
-const ABOUT_HOME_IMAGE_SECOND = staticAssetHref('/assets/New folder/JW_01369-редакт 1.webp');
+const ABOUT_HOME_IMAGE_FIRST = toOptimizedCarouselUrl('/assets/New folder/JW_01347 1.webp');
+const ABOUT_HOME_IMAGE_SECOND = toOptimizedCarouselUrl('/assets/New folder/JW_01369-редакт 1.webp');
 
 /**
  * About Component
@@ -54,8 +55,7 @@ export function About() {
                   alt={t('home.about.interiorAlt')}
                   fill
                   className="object-cover"
-                  priority
-                  unoptimized
+                  loading="lazy"
                 />
               </div>
             </div>
@@ -95,8 +95,7 @@ export function About() {
                 alt={t('home.about.interiorAlt')}
                 fill
                 className="object-cover"
-                priority
-                unoptimized
+                loading="lazy"
               />
             </div>
           </div>

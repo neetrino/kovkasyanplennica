@@ -103,10 +103,8 @@ export function HomePageImageCarousel() {
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover rounded-[10px]"
-                priority
-                fetchPriority="high"
+                loading="lazy"
                 decoding="async"
-                unoptimized
               />
             </div>
 
@@ -121,10 +119,8 @@ export function HomePageImageCarousel() {
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
-                    priority
-                    fetchPriority="high"
+                    loading="lazy"
                     decoding="async"
-                    unoptimized
                   />
                 </div>
                 <div className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[170px] lg:h-[200px]">
@@ -134,10 +130,8 @@ export function HomePageImageCarousel() {
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
                     className="object-cover rounded-[10px]"
-                    priority
-                    fetchPriority="high"
+                    loading="lazy"
                     decoding="async"
-                    unoptimized
                   />
                 </div>
               </div>
@@ -150,10 +144,8 @@ export function HomePageImageCarousel() {
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover rounded-[10px]"
-                  priority
-                  fetchPriority="high"
+                  loading="lazy"
                   decoding="async"
-                  unoptimized
                 />
               </div>
             </div>

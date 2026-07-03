@@ -12,6 +12,7 @@
     "start": "node ../../node_modules/next/dist/bin/next start",
     "lint": "eslint .",
     "upload:r2-assets": "tsx scripts/upload-public-assets-to-r2.ts",
+    "optimize:home-images": "tsx scripts/optimize-homepage-images.ts --from-api https://kovkasyanplennica.vercel.app",
     "clean": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\"",
     "prisma:generate": "cd ../../packages/db && npm run db:generate",
     "reset": "node -e \"require('fs').rmSync('.next', {recursive: true, force: true})\" && cd ../../packages/db && npm run db:generate",

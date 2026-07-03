@@ -5,6 +5,7 @@ import type { MouseEvent } from 'react';
 import { useAddToCart } from '../hooks/useAddToCart';
 import { useCurrency } from '../hooks/useCurrency';
 import { useTranslation } from '../../lib/i18n-client';
+import { toOptimizedProductCardUrl } from '@/lib/image-optimization';
 import { toR2Url } from '@/lib/r2-assets';
 import { formatPrice } from '../../lib/currency';
 import { ProductCardLink } from '../ProductCard/ProductCardLink';
@@ -25,7 +26,7 @@ export function MobileRecipeProductCard({
   id,
   slug,
   title,
-  imageSrc,
+  imageSrc: imageSrcProp,
   price,
   defaultVariantId,
   inStock,
@@ -35,6 +36,7 @@ export function MobileRecipeProductCard({
 }: MobileRecipeProductCardProps) {
   const { t } = useTranslation();
   const currency = useCurrency();
+  const displayImage = toOptimizedProductCardUrl(imageSrcProp) ?? imageSrcProp;
   const { isAddingToCart, addToCart } = useAddToCart({
     productId: id,
     productSlug: slug,
@@ -42,7 +44,7 @@ export function MobileRecipeProductCard({
     defaultVariantId: defaultVariantId ?? null,
     listingPrice: price,
     title,
-    image: imageSrc,
+    image: displayImage,
     stock,
     originalPrice: originalPrice ?? compareAtPrice ?? null,
   });
@@ -65,14 +67,14 @@ export function MobileRecipeProductCard({
       />
       <div className="relative z-[1] pointer-events-none text-inherit">
         <div className="relative mb-4 flex h-32 w-full items-center justify-center overflow-hidden rounded-2xl bg-[#f1f5f5]">
-          {imageSrc ? (
+          {displayImage ? (
             <Image
-              src={imageSrc}
+              src={displayImage}
               alt=""
               fill
               className="object-contain object-center"
               sizes="200px"
-              unoptimized
+              loading="lazy"
               aria-hidden
             />
           ) : (

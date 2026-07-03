@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTranslation } from '../../lib/i18n-client';
+import { toOptimizedDecorativeUrl } from '@/lib/image-optimization';
 import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
@@ -107,7 +108,7 @@ export function MobileMenuClient({ initialItems = [], totalPages = 0 }: MobileMe
     <>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute left-0 top-[26px] w-full max-w-[500px] h-[503px] mix-blend-screen">
-          <Image src={toR2Url('/assets/hero/union-decorative.png')} alt="" fill className="object-contain" aria-hidden unoptimized />
+          <Image src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')} alt="" fill className="object-contain" aria-hidden loading="lazy" />
         </div>
       </div>
 
