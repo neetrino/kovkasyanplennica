@@ -1,4 +1,5 @@
 import { categoriesService } from '@/lib/services/categories.service';
+import { toOptimizedProductCardUrl } from '@/lib/image-optimization';
 import { getStoredLanguage } from '@/lib/language';
 import { productsService } from '@/lib/services/products.service';
 
@@ -42,7 +43,7 @@ export async function getMobileFeaturedTopProducts(limit: number): Promise<Mobil
         slug: String(p.slug ?? ''),
         title: String(p.title ?? ''),
         price: Number(p.price ?? 0),
-        image: p.image ?? null,
+        image: toOptimizedProductCardUrl(p.image ?? null) ?? null,
       }),
     );
   } catch {

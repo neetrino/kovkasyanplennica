@@ -4,6 +4,7 @@
  */
 
 import { productsFindService } from "./products-find.service";
+import { productsFindListingService } from "./products-find-listing.service";
 import { productsFiltersService } from "./products-filters.service";
 import { productsSlugService } from "./products-slug.service";
 
@@ -15,6 +16,8 @@ class ProductsService {
   
   // Find methods
   findAll = productsFindService.findAll.bind(productsFindService);
+  findAllForListing =
+    productsFindListingService.findAllForListing.bind(productsFindListingService);
 
   // Filters methods
   getFilters = productsFiltersService.getFilters.bind(productsFiltersService);

@@ -1,0 +1,225 @@
+{
+  "generatedAt": "2026-07-03T11:26:37.297Z",
+  "entries": [
+    {
+      "source": "assets/hero/hero.png",
+      "sourceBytes": 2519400,
+      "mime": "image/png",
+      "outputs": [
+        {
+          "key": "assets/hero/optimized/hero-768w.webp",
+          "width": 768,
+          "bytes": 109148
+        },
+        {
+          "key": "assets/hero/optimized/hero-1200w.webp",
+          "width": 1200,
+          "bytes": 205036
+        },
+        {
+          "key": "assets/hero/optimized/hero-1600w.webp",
+          "width": 1600,
+          "bytes": 243502
+        }
+      ]
+    },
+    {
+      "source": "assets/hero/hero-pattern-figma.png",
+      "sourceBytes": 405203,
+      "mime": "image/png",
+      "outputs": [
+        {
+          "key": "assets/hero/optimized/hero-pattern-figma-1200w.webp",
+          "width": 1200,
+          "bytes": 68848
+        }
+      ]
+    },
+    {
+      "source": "assets/hero/union-decorative.png",
+      "sourceBytes": 2310581,
+      "mime": "image/png",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/hero/union-decorative-900w.webp",
+          "width": 900,
+          "bytes": 178974
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\favicon.png",
+      "sourceBytes": 282616,
+      "mime": "image/png",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/favicon-800w.webp",
+          "width": 800,
+          "bytes": 32920
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_01347 1.webp",
+      "sourceBytes": 197998,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_01347-1-800w.webp",
+          "width": 800,
+          "bytes": 102404
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_01369-редакт 1.webp",
+      "sourceBytes": 203246,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_01369-редакт-1-800w.webp",
+          "width": 800,
+          "bytes": 73034
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_01463-редакт 1.webp",
+      "sourceBytes": 203148,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_01463-редакт-1-800w.webp",
+          "width": 800,
+          "bytes": 67142
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_01522 1.webp",
+      "sourceBytes": 203958,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_01522-1-800w.webp",
+          "width": 800,
+          "bytes": 131132
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_05698 1.webp",
+      "sourceBytes": 203060,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_05698-1-800w.webp",
+          "width": 800,
+          "bytes": 217962
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_06330 1.webp",
+      "sourceBytes": 203866,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_06330-1-800w.webp",
+          "width": 800,
+          "bytes": 167808
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\JW_06812 1.webp",
+      "sourceBytes": 199736,
+      "mime": "image/webp",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/JW_06812-1-800w.webp",
+          "width": 800,
+          "bytes": 222764
+        }
+      ]
+    },
+    {
+      "source": "assets\\New folder\\Logo Full.png",
+      "sourceBytes": 26789,
+      "mime": "image/png",
+      "outputs": [
+        {
+          "key": "assets/optimized/assets/New folder/Logo-Full-800w.webp",
+          "width": 800,
+          "bytes": 23590
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/deserty/deserty-krasnyi-barhat-a1ca297a9e.jpg",
+      "sourceBytes": 9353644,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-krasnyi-barhat-a1ca297a9e-400w.webp",
+          "width": 400,
+          "bytes": 63438
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-krasnyi-barhat-a1ca297a9e-600w.webp",
+          "width": 600,
+          "bytes": 114048
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-krasnyi-barhat-a1ca297a9e-800w.webp",
+          "width": 800,
+          "bytes": 174158
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/deserty/deserty-medovik-s-sole-noi-karamelyu-dffbb5d49b.jpg",
+      "sourceBytes": 7578580,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-medovik-s-sole-noi-karamelyu-dffbb5d49b-400w.webp",
+          "width": 400,
+          "bytes": 57056
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-medovik-s-sole-noi-karamelyu-dffbb5d49b-600w.webp",
+          "width": 600,
+          "bytes": 108670
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-medovik-s-sole-noi-karamelyu-dffbb5d49b-800w.webp",
+          "width": 800,
+          "bytes": 163108
+        }
+      ]
+    },
+    {
+      "source": "https://pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev/menu/import/deserty/deserty-muravei-nik-a8a1189c69.jpg",
+      "sourceBytes": 8067017,
+      "mime": "image/jpeg",
+      "outputs": [
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-muravei-nik-a8a1189c69-400w.webp",
+          "width": 400,
+          "bytes": 47364
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-muravei-nik-a8a1189c69-600w.webp",
+          "width": 600,
+          "bytes": 84342
+        },
+        {
+          "key": "assets/optimized/menu/import/deserty/deserty-muravei-nik-a8a1189c69-800w.webp",
+          "width": 800,
+          "bytes": 128728
+        }
+      ]
+    }
+  ]
+}

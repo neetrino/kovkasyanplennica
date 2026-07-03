@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '../../lib/i18n-client';
+import { toOptimizedDecorativeUrl } from '@/lib/image-optimization';
 import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
@@ -60,10 +61,12 @@ export function Favorites({ items = [] }: FavoritesProps) {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[800px] max-h-[800px] ">
           <img
-            src={toR2Url('/assets/hero/union-decorative.png')}
+            src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')}
             alt=""
             className="w-full h-full object-contain"
             aria-hidden="true"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>
@@ -82,7 +85,6 @@ export function Favorites({ items = [] }: FavoritesProps) {
               fill
               className="object-contain"
               aria-hidden="true"
-              unoptimized
             />
           </div>
         </div>

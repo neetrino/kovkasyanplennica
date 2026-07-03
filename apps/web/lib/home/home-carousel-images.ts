@@ -1,4 +1,4 @@
-import { staticAssetHref } from '@/lib/r2-assets';
+import { toOptimizedCarouselUrl } from '@/lib/image-optimization';
 
 /**
  * Desktop home gallery — paths under `public/`. Relative paths stay `encodeURI`-safe for Cyrillic when served locally.
@@ -14,4 +14,4 @@ export const HOME_CAROUSEL_RAW_PATHS = [
 ] as const;
 
 export const HOME_CAROUSEL_IMAGE_HREFS: readonly string[] =
-  HOME_CAROUSEL_RAW_PATHS.map((p) => staticAssetHref(p));
+  HOME_CAROUSEL_RAW_PATHS.map((p) => toOptimizedCarouselUrl(p));

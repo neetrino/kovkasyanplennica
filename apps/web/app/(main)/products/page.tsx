@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import { unstable_cache } from 'next/cache';
 import { getStoredLanguage, type LanguageCode } from '@/lib/language';
@@ -13,10 +14,17 @@ import {
 } from '@/components/CategoryNavigation/ProductsCategorySidebar';
 import { categoriesService } from '@/lib/services/categories.service';
 import { getCategoryNavPreviews } from '@/lib/services/products-nav-preview.service';
-import { ProductsMobileCategoriesDrawer } from '@/components/ProductsMobileCategoriesDrawer';
 import { ProductsShopToolbar } from '@/components/ProductsShopToolbar';
-import { toR2Url } from '@/lib/r2-assets';
+import { toOptimizedDecorativeUrl } from '@/lib/image-optimization';
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
+
+const ProductsMobileCategoriesDrawer = dynamic(
+  () =>
+    import('@/components/ProductsMobileCategoriesDrawer').then(
+      (mod) => mod.ProductsMobileCategoriesDrawer
+    ),
+  { loading: () => null }
+);
 
 const PRODUCTS_LIST_REVALIDATE_SECONDS = PUBLIC_PAGE_REVALIDATE_SECONDS;
 /** Returned product count for shop grouping; DB raw fetch is capped (see query-executor). */
@@ -51,9 +59,9 @@ function buildProductFilters(
 const fetchProductsCached = unstable_cache(
   async (filterKey: string) => {
     const filters = JSON.parse(filterKey) as ProductFilters;
-    return productsService.findAll(filters);
+    return productsService.findAllForListing(filters);
   },
-  ['main-products-list-v2'],
+  ['main-products-list-v3'],
   { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['products-list'] }
 );
 
@@ -261,7 +269,11 @@ async function ProductsPageSidebarSlot() {
     { slug: 'all' },
     ...flatCategoriesForNav.map((c) => ({ slug: c.slug, id: c.id })),
   ];
-  const categoryNavPreviews = await getCategoryNavPreviews(language, categoryNavPreviewTargets);
+  const categoryNavPreviews = await getCategoryNavPreviews(
+    language,
+    categoryNavPreviewTargets,
+    categoryTreeRoots ?? []
+  );
 
   return (
     <ProductsCategorySidebar
@@ -273,10 +285,11 @@ async function ProductsPageSidebarSlot() {
 }
 
 async function ProductsPageMainSlot({
-  raw,
+  searchParams,
 }: {
-  raw: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const raw = searchParams ? await searchParams : {};
   const page = parseInt(firstParam(raw.page) ?? '1', 10);
   const language = getStoredLanguage();
 
@@ -456,27 +469,60 @@ type ProductsPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/**
- * Shell streams immediately; sidebar and product grid load in parallel Suspense boundaries.
- */
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+async function ProductsPageDecorativeBackground({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const raw = searchParams ? await searchParams : {};
   const showFullDecorativeBackground = !firstParam(raw.category);
 
+  if (!showFullDecorativeBackground) {
+    return null;
+  }
+
+  return (
+    <>
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+        <img
+          src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')}
+          alt=""
+          className="w-full h-full object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
+        <img
+          src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')}
+          alt=""
+          className="w-full h-full object-contain"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </>
+  );
+}
+
+/**
+ * Shell streams immediately; sidebar and product grid load in parallel Suspense boundaries.
+ * searchParams are read inside Suspense children so the static shell can be cached.
+ */
+export default function ProductsPage({ searchParams }: ProductsPageProps) {
   return (
     <div className="w-full max-w-full bg-[#2F3F3D] relative">
-      {showFullDecorativeBackground && (
-        <>
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[320px] sm:top-8 sm:w-[400px] md:w-[480px] lg:top-[80px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="absolute top-[62%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
-          </div>
-        </>
-      )}
+      <Suspense fallback={null}>
+        <ProductsPageDecorativeBackground searchParams={searchParams} />
+      </Suspense>
       <div className="absolute -bottom-28 sm:-bottom-36 md:-bottom-96 left-1/2 -translate-x-1/2 w-[320px] sm:w-[400px] md:w-[480px] lg:w-[560px] xl:w-[640px] aspect-square max-h-[640px] pointer-events-none z-0 opacity-90 z-[1]" aria-hidden>
-        <img src={toR2Url('/assets/hero/union-decorative.png')} alt="" className="w-full h-full object-contain" />
+        <img
+          src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')}
+          alt=""
+          className="w-full h-full object-contain"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="relative z-10 mx-auto flex w-full max-w-[1920px] overflow-x-visible">
         <aside className="relative z-20 hidden w-[236px] shrink-0 overflow-visible lg:block lg:pt-[88px] xl:pt-[96px]">
@@ -488,7 +534,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </aside>
 
         <Suspense fallback={<ProductsPageMainSkeleton />}>
-          <ProductsPageMainSlot raw={raw} />
+          <ProductsPageMainSlot searchParams={searchParams} />
         </Suspense>
       </div>
     </div>

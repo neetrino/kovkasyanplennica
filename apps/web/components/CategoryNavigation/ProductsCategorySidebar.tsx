@@ -247,7 +247,7 @@ function ProductsCategorySidebarInner({
             t={t}
             strip={variant === 'strip'}
             fixedSidebarPillWidth={Boolean(fixedSidebarPillWidth)}
-            imagePriority={variant === 'sidebar' && index < 8}
+            imagePriority={variant === 'sidebar' && index < 2}
           />
         );
       })}

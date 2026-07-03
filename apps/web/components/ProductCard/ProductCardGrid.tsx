@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import type { MouseEvent } from 'react';
+import { toOptimizedProductCardUrl, HOME_PRODUCT_CARD_SIZES } from '@/lib/image-optimization';
 import { ProductCardInfo } from './ProductCardInfo';
 import { ProductCardLink } from './ProductCardLink';
 import type { CurrencyCode } from '../../lib/currency';
@@ -59,6 +60,7 @@ export function ProductCardGrid({
 }: ProductCardGridProps) {
   const normalizedSlug = product.slug.trim();
   const productHref = normalizedSlug ? `/products/${encodeURIComponent(normalizedSlug)}` : '/products';
+  const imageSrc = toOptimizedProductCardUrl(product.image) ?? product.image;
   const imageSizesAttr =
     largeCompactImage && compactHeight ? 'min(60vw, 280px)' : compactListing ? '200px' : '223px';
   const denseDesktop = compactListing && !compactHeight;
@@ -109,14 +111,14 @@ export function ProductCardGrid({
           }`}
         >
           <div className="relative w-full h-full bg-transparent block">
-            {product.image && !imageError ? (
+            {imageSrc && !imageError ? (
               <Image
-                src={product.image}
+                src={imageSrc}
                 alt=""
                 fill
                 className="object-contain transition-transform duration-700 ease-in-out lg:group-hover:rotate-[30deg]"
-                sizes={imageSizesAttr}
-                unoptimized
+                sizes={imageSizesAttr || HOME_PRODUCT_CARD_SIZES}
+                loading="lazy"
                 onError={onImageError}
                 aria-hidden
               />

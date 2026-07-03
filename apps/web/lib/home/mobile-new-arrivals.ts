@@ -1,4 +1,5 @@
 import { unstable_cache } from 'next/cache';
+import { toOptimizedProductCardUrl } from '@/lib/image-optimization';
 import type { LanguageCode } from '@/lib/language';
 import { productsService } from '@/lib/services/products.service';
 import { PUBLIC_PAGE_REVALIDATE_SECONDS } from '@/lib/cache/public-cache-ttl';
@@ -49,7 +50,7 @@ async function loadNewArrivals(limit: number, lang: LanguageCode): Promise<Mobil
         id: String(p.id),
         slug: String(p.slug ?? ''),
         title: String(p.title ?? ''),
-        image: p.image ?? null,
+        image: toOptimizedProductCardUrl(p.image ?? null) ?? null,
         price: typeof p.price === 'number' && !Number.isNaN(p.price) ? p.price : 0,
         defaultVariantId: p.defaultVariantId ?? null,
         stock: typeof p.stock === 'number' && !Number.isNaN(p.stock) ? p.stock : 0,

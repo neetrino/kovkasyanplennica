@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslation } from '../../lib/i18n-client';
+import { toOptimizedDecorativeUrl } from '@/lib/image-optimization';
 import { toR2Url } from '@/lib/r2-assets';
 import { ProductCard } from '../ProductCard';
 
@@ -40,7 +41,7 @@ export function MobileFavorites({ items = [] }: MobileFavoritesProps) {
     <>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute left-0 top-0 w-full max-w-[500px] h-[503px] mix-blend-screen mt-44">
-          <Image src={toR2Url('/assets/hero/union-decorative.png')} alt="" fill className="object-contain" aria-hidden unoptimized />
+          <Image src={toOptimizedDecorativeUrl('/assets/hero/union-decorative.png')} alt="" fill className="object-contain" aria-hidden loading="lazy" />
         </div>
       </div>
 
