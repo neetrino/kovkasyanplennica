@@ -5,9 +5,7 @@ import { tryFetchProductsViaMeilisearch } from "./products-find-meilisearch.serv
 import { ProductFilters } from "./products-find-query.service";
 import { productsFindQueryService } from "./products-find-query.service";
 import { productsFindFilterService } from "./products-find-filter.service";
-import { productsFindListingTransformService } from "./products-find-listing-transform.service";
 import { productsFindTransformService } from "./products-find-transform.service";
-import { canUseDbPagination } from "./products-find-query/query-builder";
 
 const PRODUCTS_LIST_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
 
@@ -29,11 +27,6 @@ class ProductsFindService {
       lang = "en",
     } = filters;
 
-    if (canUseDbPagination(filters)) {
-      return this.findAllWithDbPagination(filters);
-    }
-
-    // Legacy Phase 5B path: limit×10 over-fetch + in-memory filter/sort/paginate
     const meiliProducts = await tryFetchProductsViaMeilisearch(filters);
 
     const { products, bestsellerProductIds } =
@@ -55,34 +48,6 @@ class ProductsFindService {
       paginatedProducts,
       lang
     );
-
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  /** Phase 5A: real DB skip/take + count for safe catalog requests. */
-  private async findAllWithDbPagination(filters: ProductFilters) {
-    const {
-      page = 1,
-      limit = 24,
-      lang = "en",
-    } = filters;
-
-    const { products, total } =
-      await productsFindQueryService.buildQueryAndFetchPaginated(filters);
-
-    const data =
-      await productsFindListingTransformService.transformListingProducts(
-        products,
-        lang
-      );
 
     return {
       data,

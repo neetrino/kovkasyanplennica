@@ -83,10 +83,10 @@ function LoginPageContent() {
         <Card className={loginCardClassName}>
           {/* Դեկորատիվ վեկտորներ — ձախ վերև, աջ ներքև */}
           <div className="absolute top-0 left-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/hero-vector-1.svg')} alt="" className="w-full h-full object-contain object-left-top" />
+            <img src="/hero-vector-1.svg" alt="" className="w-full h-full object-contain object-left-top" />
           </div>
           <div className="absolute bottom-0 right-0 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 pointer-events-none z-0 opacity-90" aria-hidden>
-            <img src={toR2Url('/hero-vector-2.svg')} alt="" className="w-full h-full object-contain object-right-bottom rotate-180" />
+            <img src="/hero-vector-2.svg" alt="" className="w-full h-full object-contain object-right-bottom rotate-180" />
           </div>
           <h1 className="relative z-10 text-3xl font-bold text-white mb-2">{t('login.title')}</h1>
           <p className="text-white/80 mb-8">{t('login.subtitle')}</p>

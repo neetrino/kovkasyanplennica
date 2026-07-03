@@ -1,18 +1,13 @@
 /**
- * Uploads static images from apps/web/public to Cloudflare R2.
- * Skips logo and favicon files (they stay local).
+ * Uploads apps/web/public/assets/** to Cloudflare R2 with keys assets/... (no public/ prefix).
  *
- * Required env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
- *               R2_BUCKET_NAME, R2_PUBLIC_URL
+ * Required env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME
+ * Optional: R2_UPLOAD_PREFIX (default empty; keys are always under assets/ from public/)
  *
- * Flags:
- *   --dry-run          list only
- *   --force            overwrite even if size matches
- *   --verify           HEAD-check uploaded keys on R2
- *   --cleanup-local    delete local images except logo/favicon (run after verify)
+ * Flags: --dry-run (list only), --force (overwrite even if size matches)
  */
 
-import { createReadStream, existsSync, readdirSync, statSync, unlinkSync } from 'node:fs';
+import { createReadStream, existsSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
@@ -24,56 +19,34 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const IMAGE_EXT = new Set([
-  '.svg',
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.webp',
-  '.gif',
-  '.ico',
-  '.avif',
-  '.bmp',
-]);
-
 const REQUIRED_ENV = [
   'R2_ACCOUNT_ID',
   'R2_ACCESS_KEY_ID',
   'R2_SECRET_ACCESS_KEY',
   'R2_BUCKET_NAME',
-  'R2_PUBLIC_URL',
 ] as const;
 
 function loadEnv(): void {
   const webRoot = path.resolve(__dirname, '..');
   const repoRoot = path.resolve(webRoot, '..', '..');
-  for (const p of [
+  const candidates = [
     path.join(repoRoot, '.env'),
     path.join(repoRoot, 'env', '.env'),
+    path.join(repoRoot, 'env', '.env.local'),
     path.join(webRoot, '.env'),
-  ]) {
+  ];
+  for (const p of candidates) {
     dotenv.config({ path: p });
   }
 }
 
-function isLocalOnlyRelativePath(relPath: string): boolean {
-  const base = path.basename(relPath).toLowerCase();
-  if (base === 'favicon.png') return true;
-  if (base === 'hero-logo.png') return true;
-  if (base === 'logo-kp.png') return true;
-  if (base === 'logo-kp2.png') return true;
-  if (base === 'logo.png') return true;
-  if (base === 'logo full.png') return true;
-  return false;
-}
-
-function walkImageFiles(dir: string): string[] {
+function walkFiles(dir: string): string[] {
   const out: string[] = [];
   for (const ent of readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) {
-      out.push(...walkImageFiles(full));
-    } else if (ent.isFile() && IMAGE_EXT.has(path.extname(ent.name).toLowerCase())) {
+      out.push(...walkFiles(full));
+    } else if (ent.isFile()) {
       out.push(full);
     }
   }
@@ -91,175 +64,127 @@ function guessContentType(filePath: string): string {
     '.gif': 'image/gif',
     '.ico': 'image/x-icon',
     '.avif': 'image/avif',
-    '.bmp': 'image/bmp',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
   };
   return map[ext] ?? 'application/octet-stream';
 }
 
-function parseArgs(argv: string[]): {
-  dryRun: boolean;
-  force: boolean;
-  verify: boolean;
-  cleanupLocal: boolean;
-} {
+function parseArgs(argv: string[]): { dryRun: boolean; force: boolean } {
   return {
     dryRun: argv.includes('--dry-run'),
     force: argv.includes('--force'),
-    verify: argv.includes('--verify'),
-    cleanupLocal: argv.includes('--cleanup-local'),
   };
 }
 
 function assertCredentials(): void {
   const missing = REQUIRED_ENV.filter((k) => !process.env[k]?.trim());
   if (missing.length > 0) {
-    console.error(`Missing env: ${missing.join(', ')}`);
+    console.error(
+      `Missing required environment variables: ${missing.join(', ')}\n` +
+        'Set them in your shell or in the repo root .env file, then retry.\n' +
+        'Optional: R2_UPLOAD_PREFIX (advanced; default keeps keys as assets/... under the bucket root).'
+    );
     process.exit(1);
-  }
-}
-
-function createClient(accountId: string): S3Client {
-  return new S3Client({
-    region: 'auto',
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!.trim(),
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!.trim(),
-    },
-    forcePathStyle: true,
-  });
-}
-
-async function headRemoteSize(
-  client: S3Client,
-  bucket: string,
-  key: string
-): Promise<number | undefined> {
-  try {
-    const head = await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
-    return head.ContentLength;
-  } catch {
-    return undefined;
   }
 }
 
 async function main(): Promise<void> {
   loadEnv();
-  const { dryRun, force, verify, cleanupLocal } = parseArgs(process.argv.slice(2));
+  const { dryRun, force } = parseArgs(process.argv.slice(2));
 
   const webRoot = path.resolve(__dirname, '..');
   const publicRoot = path.join(webRoot, 'public');
+  const assetsRoot = path.join(publicRoot, 'assets');
 
-  if (!existsSync(publicRoot)) {
-    console.error(`Missing: ${publicRoot}`);
+  if (!existsSync(assetsRoot)) {
+    console.error(`Expected directory missing: ${assetsRoot}`);
     process.exit(1);
   }
 
-  if (!dryRun && !cleanupLocal) {
+  if (dryRun) {
+    console.log('[dry-run] Would read credentials and upload from:', assetsRoot);
+  } else {
     assertCredentials();
   }
 
   const accountId = process.env.R2_ACCOUNT_ID?.trim() ?? '';
   const bucket = process.env.R2_BUCKET_NAME?.trim() ?? '';
-  const publicUrl = (process.env.R2_PUBLIC_URL ?? '').replace(/\/+$/, '');
-  const client = !dryRun && accountId ? createClient(accountId) : null;
+  const prefix = (process.env.R2_UPLOAD_PREFIX ?? '').replace(/^\/+|\/+$/g, '');
 
-  const allImages = walkImageFiles(publicRoot);
-  const toUpload = allImages.filter((abs) => {
-    const rel = path.relative(publicRoot, abs).split(path.sep).join('/');
-    return !isLocalOnlyRelativePath(rel);
-  });
-  const localOnly = allImages.filter((abs) => {
-    const rel = path.relative(publicRoot, abs).split(path.sep).join('/');
-    return isLocalOnlyRelativePath(rel);
-  });
+  const client =
+    !dryRun && accountId
+      ? new S3Client({
+          region: 'auto',
+          endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+          credentials: {
+            accessKeyId: process.env.R2_ACCESS_KEY_ID!.trim(),
+            secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!.trim(),
+          },
+          forcePathStyle: true,
+        })
+      : null;
 
-  console.log(`Images in public: ${allImages.length}`);
-  console.log(`Upload to R2: ${toUpload.length}`);
-  console.log(`Keep local (logo/favicon): ${localOnly.length}`);
-
-  if (cleanupLocal) {
-    let removed = 0;
-    for (const abs of toUpload) {
-      if (!existsSync(abs)) continue;
-      unlinkSync(abs);
-      removed += 1;
-      console.log(`removed local: ${path.relative(publicRoot, abs)}`);
-    }
-    console.log(`Cleanup done. Removed ${removed} file(s). Kept ${localOnly.length} logo/favicon.`);
-    return;
-  }
-
+  const files = walkFiles(assetsRoot);
   let uploaded = 0;
   let skipped = 0;
-  const uploadedKeys: string[] = [];
 
-  for (const abs of toUpload) {
+  for (const abs of files) {
     const relFromPublic = path.relative(publicRoot, abs).split(path.sep).join('/');
-    const key = relFromPublic;
+    const key = prefix ? `${prefix}/${relFromPublic}` : relFromPublic;
+
+    if (!key.startsWith('assets/')) {
+      console.error(`Refusing unexpected key (must start with assets/): ${key}`);
+      process.exit(1);
+    }
+
     const localSize = statSync(abs).size;
     const contentType = guessContentType(abs);
 
     if (dryRun) {
-      console.log(`[dry-run] ${key} (${localSize} bytes)`);
-      uploadedKeys.push(key);
+      console.log(`[dry-run] ${key} (${localSize} bytes, ${contentType})`);
       continue;
     }
 
-    if (!client) continue;
+    if (!client) {
+      continue;
+    }
 
-    const remoteSize = await headRemoteSize(client, bucket, key);
+    let remoteSize: number | undefined;
+    try {
+      const head = await client.send(
+        new HeadObjectCommand({ Bucket: bucket, Key: key })
+      );
+      remoteSize = head.ContentLength;
+    } catch {
+      remoteSize = undefined;
+    }
+
     if (!force && remoteSize !== undefined && remoteSize === localSize) {
       skipped += 1;
-      console.log(`skip: ${key}`);
-      uploadedKeys.push(key);
+      console.log(`skip (same size): ${key}`);
       continue;
     }
 
+    const body = createReadStream(abs);
     await client.send(
       new PutObjectCommand({
         Bucket: bucket,
         Key: key,
-        Body: createReadStream(abs),
+        Body: body,
         ContentType: contentType,
       })
     );
     uploaded += 1;
-    uploadedKeys.push(key);
     console.log(`uploaded: ${key}`);
   }
 
-  if (!dryRun && !cleanupLocal) {
-    console.log(`Done. uploaded=${uploaded}, skipped=${skipped}`);
+  if (dryRun) {
+    console.log(`[dry-run] ${files.length} file(s). Run without --dry-run after setting credentials.`);
+    return;
   }
 
-  if (verify && !dryRun && client) {
-    let failed = 0;
-    for (const key of uploadedKeys) {
-      const size = await headRemoteSize(client, bucket, key);
-      if (size === undefined) {
-        failed += 1;
-        console.error(`VERIFY FAIL (missing): ${key}`);
-      }
-    }
-    if (failed > 0) {
-      console.error(`Verify failed: ${failed} missing object(s)`);
-      process.exit(1);
-    }
-    console.log(`Verify OK: ${uploadedKeys.length} object(s) on R2`);
-
-    const sample = uploadedKeys.slice(0, 3);
-    for (const key of sample) {
-      const url = `${publicUrl}/${key.split('/').map(encodeURIComponent).join('/')}`;
-      const res = await fetch(url, { method: 'HEAD' });
-      console.log(`HTTP ${res.status}: ${url}`);
-      if (!res.ok) failed += 1;
-    }
-    if (failed > 0) {
-      console.error('Public URL check failed');
-      process.exit(1);
-    }
-  }
+  console.log(`Done. uploaded=${uploaded}, skipped=${skipped}, total=${files.length}`);
 }
 
 main().catch((err: unknown) => {

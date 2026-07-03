@@ -106,6 +106,7 @@ export function HomePageImageCarousel() {
                 priority
                 fetchPriority="high"
                 decoding="async"
+                unoptimized
               />
             </div>
 
@@ -123,6 +124,7 @@ export function HomePageImageCarousel() {
                     priority
                     fetchPriority="high"
                     decoding="async"
+                    unoptimized
                   />
                 </div>
                 <div className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[10px] md:h-[170px] lg:h-[200px]">
@@ -135,6 +137,7 @@ export function HomePageImageCarousel() {
                     priority
                     fetchPriority="high"
                     decoding="async"
+                    unoptimized
                   />
                 </div>
               </div>
@@ -150,6 +153,7 @@ export function HomePageImageCarousel() {
                   priority
                   fetchPriority="high"
                   decoding="async"
+                  unoptimized
                 />
               </div>
             </div>

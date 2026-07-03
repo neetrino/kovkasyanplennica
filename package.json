@@ -21,13 +21,7 @@
     "migrate:deploy": "npm run prebuild:migrate --workspace=@shop/web",
     "redis:up": "docker compose up -d redis",
     "redis:down": "docker compose down",
-    "search:reindex": "tsx scripts/reindex-meilisearch.ts",
-    "menu:import:dry": "tsx scripts/import-menu-from-excel.ts",
-    "menu:import": "tsx scripts/import-menu-from-excel.ts --force",
-    "menu:audit:strict": "tsx scripts/menu-import/strict-audit-menu-db.ts",
-    "menu:cleanup:strict": "tsx scripts/menu-import/strict-audit-menu-db.ts --cleanup",
-    "assets:r2:upload": "tsx apps/web/scripts/upload-public-assets-to-r2.ts --force --verify",
-    "assets:r2:cleanup-local": "tsx apps/web/scripts/upload-public-assets-to-r2.ts --cleanup-local"
+    "search:reindex": "tsx scripts/reindex-meilisearch.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3"
@@ -44,8 +38,7 @@
     "prettier": "^3.1.0",
     "tsx": "^4.7.0",
     "turbo": "^2.0.0",
-    "typescript": "^5.3.0",
-    "xlsx": "^0.18.5"
+    "typescript": "^5.3.0"
   },
   "engines": {
     "node": ">=20.0.0",

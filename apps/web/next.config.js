@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const path = require('path');
 const fs = require('fs');
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
 
 // Load env from repo root and env/ so app works when .env was moved to env/
 const rootDir = path.resolve(__dirname, '../..');
@@ -89,7 +86,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'pub-4f7faa05c8fb4cdc9799891c76849ee9.r2.dev',
-        pathname: '/**',
+        pathname: '/assets/**',
       },
       {
         protocol: 'https',
@@ -98,6 +95,7 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: true,
   },
   // Fix for HMR issues in Next.js 15
   webpack: (config, { dev, isServer }) => {
@@ -131,5 +129,5 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = nextConfig;
 

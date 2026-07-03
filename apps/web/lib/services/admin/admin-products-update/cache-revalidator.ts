@@ -24,8 +24,6 @@ export function revalidateProductCache(
     // @ts-expect-error - revalidateTag type issue in Next.js
     revalidateTag('products');
     // @ts-expect-error - revalidateTag type issue in Next.js
-    revalidateTag('products-list');
-    // @ts-expect-error - revalidateTag type issue in Next.js
     revalidateTag(`product-${productId}`);
   } catch (error: unknown) {
     // Revalidation might fail in some environments (e.g., during build)

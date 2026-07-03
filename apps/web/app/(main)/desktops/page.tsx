@@ -75,14 +75,14 @@ export default function DesktopsPage() {
       <div className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden md:block" aria-hidden>
         <div className="absolute -left-24 top-0 h-[360px] w-[320px] opacity-40 sm:h-[460px] sm:w-[420px] lg:h-[620px] lg:w-[560px]">
           <img
-            src={toR2Url('/hero-vector-1.svg')}
+            src="/hero-vector-1.svg"
             alt=""
             className="size-full object-contain object-left-top"
           />
         </div>
         <div className="absolute -right-24 bottom-0 h-[360px] w-[320px] rotate-180 opacity-40 sm:h-[460px] sm:w-[420px] lg:h-[620px] lg:w-[560px]">
           <img
-            src={toR2Url('/hero-vector-2.svg')}
+            src="/hero-vector-2.svg"
             alt=""
             className="size-full object-contain object-right-bottom"
           />
