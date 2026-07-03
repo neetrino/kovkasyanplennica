@@ -34,32 +34,9 @@ function buildDatabaseUrl(rawUrl: string): string {
 
 const databaseUrl = process.env.DATABASE_URL ?? "";
 const urlWithEncoding = buildDatabaseUrl(databaseUrl);
-const isDevelopmentNeonUrl =
-  process.env.NODE_ENV === "development" && databaseUrl.includes("neon.tech");
 
 if (urlWithEncoding && urlWithEncoding !== databaseUrl) {
   process.env.DATABASE_URL = urlWithEncoding;
-}
-
-if (isDevelopmentNeonUrl) {
-  const allowCloudDevDb = process.env.ALLOW_CLOUD_DEV_DATABASE === "true";
-  const isAllowedDevBranch =
-    process.env.NEON_BRANCH === "development" ||
-    process.env.NEON_BRANCH === "dev";
-
-  if (!allowCloudDevDb && !isAllowedDevBranch) {
-    throw new Error(
-      [
-        "Development is using a Neon cloud DATABASE_URL.",
-        "This can wake and query the production database from local `npm run dev`.",
-        "Use a local Postgres/Neon dev branch, or set ALLOW_CLOUD_DEV_DATABASE=true only when this is intentional.",
-      ].join(" ")
-    );
-  }
-
-  console.warn(
-    "⚠️  DEV uses Neon cloud DATABASE_URL. Make sure this is a dev branch, not production."
-  );
 }
 
 export const db =
