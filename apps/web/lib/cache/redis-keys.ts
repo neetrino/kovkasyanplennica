@@ -8,7 +8,7 @@ export function hashCacheInput(value: unknown): string {
 }
 
 export function productListKey(filtersHash: string): string {
-  return `${PREFIX}:products:v1:${filtersHash}`;
+  return `${PREFIX}:products:v2:${filtersHash}`;
 }
 
 export function productSlugKey(slug: string, lang: string): string {

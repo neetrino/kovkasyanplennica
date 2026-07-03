@@ -61,7 +61,7 @@ const fetchProductsCached = unstable_cache(
     const filters = JSON.parse(filterKey) as ProductFilters;
     return productsService.findAllForListing(filters);
   },
-  ['main-products-list-v3'],
+  ['main-products-list-v4'],
   { revalidate: PRODUCTS_LIST_REVALIDATE_SECONDS, tags: ['products-list'] }
 );
 

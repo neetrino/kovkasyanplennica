@@ -202,3 +202,36 @@ export function toOptimizedCarouselUrl(publicPath: string): string {
 
 /** Card image sizes attribute for homepage product grids. */
 export const HOME_PRODUCT_CARD_SIZES = '(max-width: 640px) 45vw, (max-width: 1024px) 200px, 223px';
+
+const LOCAL_MENU_OPTIMIZED_PREFIX = '/assets/optimized/menu/import/';
+
+function isLocalMenuOptimizedPath(pathOrUrl: string): boolean {
+  return (
+    pathOrUrl.startsWith(LOCAL_MENU_OPTIMIZED_PREFIX) ||
+    pathOrUrl.startsWith('assets/optimized/menu/import/')
+  );
+}
+
+/**
+ * Normalizes category sidebar / preview image src for Next/Image.
+ * Never returns a broken local `/assets/optimized/menu/import/...` path.
+ */
+export function normalizeCategoryImageSrc(
+  url: string | null | undefined,
+): string | null {
+  const processed = processImageUrl(url ?? null);
+  if (!processed) return null;
+
+  if (isLocalMenuOptimizedPath(processed)) {
+    const path = processed.startsWith('/') ? processed : `/${processed}`;
+    if (getR2PublicBase()) {
+      return staticAssetHref(toR2Url(path));
+    }
+    const key = extractStorageKey(path);
+    const source = key ? getSourceForOptimizedKey(key) : undefined;
+    if (source) return resolveOriginalAssetUrl(source);
+    return null;
+  }
+
+  return toOptimizedProductCardUrl(processed) ?? processed;
+}
