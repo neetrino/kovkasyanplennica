@@ -1,11 +1,8 @@
-import { discountSettingsKey } from "@/lib/cache/redis-keys";
-import { CATALOG_REDIS_TTL_SECONDS } from "@/lib/cache/public-cache-ttl";
-import { withRedisCache } from "@/lib/cache/with-redis-cache";
-import { db } from "@white-shop/db";
 import { toOptimizedProductCardUrl } from "@/lib/image-optimization";
 import { processImageUrl } from "../utils/image-utils";
 import { translations } from "../translations";
 import { ProductWithRelations } from "./products-find-query.service";
+import { getDiscountSettingsCached } from "./products-find-transform-settings";
 
 /**
  * Get "Out of Stock" translation for a given language
@@ -15,28 +12,6 @@ const getOutOfStockLabel = (lang: string = "ru"): string => {
   const translation = translations[langKey] || translations.ru;
   return translation.stock.outOfStock;
 };
-
-const DISCOUNT_SETTINGS_TTL_SECONDS = CATALOG_REDIS_TTL_SECONDS;
-
-async function fetchDiscountSettings() {
-  return db.settings.findMany({
-    where: {
-      key: {
-        in: ["globalDiscount", "categoryDiscounts", "brandDiscounts"],
-      },
-    },
-  });
-}
-
-type DiscountSettings = Awaited<ReturnType<typeof fetchDiscountSettings>>;
-
-async function getDiscountSettingsCached(): Promise<DiscountSettings> {
-  return withRedisCache(
-    discountSettingsKey(),
-    DISCOUNT_SETTINGS_TTL_SECONDS,
-    fetchDiscountSettings
-  );
-}
 
 function toPlainTextDescription(value: string | null | undefined): string | null {
   if (!value) return null;
