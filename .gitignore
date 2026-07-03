@@ -28,6 +28,10 @@ tmp/
 temp/
 .cache/
 
+# Generated optimized WebP (R2-only; do not commit)
+apps/web/public/assets/**/optimized/
+apps/web/.cache/image-optimize/
+
 # IDE (optional, uncomment if needed)
 # .idea/
 # .vscode/
