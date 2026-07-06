@@ -24,6 +24,7 @@ interface UseProductEditModeProps {
   isLoggedIn: boolean;
   isAdmin: boolean;
   isReferenceLoading: boolean;
+  isReferenceLoaded: boolean;
   attributes: any[];
   defaultCurrency: CurrencyCode;
   setLoadingProduct: (loading: boolean) => void;
@@ -43,6 +44,7 @@ export function useProductEditMode({
   isLoggedIn,
   isAdmin,
   isReferenceLoading,
+  isReferenceLoaded,
   attributes,
   defaultCurrency,
   setLoadingProduct,
@@ -59,12 +61,20 @@ export function useProductEditMode({
   const router = useRouter();
   const { t } = useTranslation();
   const loadedProductIdRef = useRef<string | null>(null);
+  const attributesRef = useRef(attributes);
+
+  useEffect(() => {
+    attributesRef.current = attributes;
+  }, [attributes]);
 
   useEffect(() => {
     if (!productId || !isLoggedIn || !isAdmin) {
+      setIsProductLoaded(false);
+      setHasVariantsToLoad(false);
+      loadedProductIdRef.current = null;
       return;
     }
-    if (isReferenceLoading) {
+    if (isReferenceLoading || !isReferenceLoaded) {
       return;
     }
     if (loadedProductIdRef.current === productId) {
@@ -72,14 +82,20 @@ export function useProductEditMode({
     }
 
     let cancelled = false;
-    loadedProductIdRef.current = productId;
     setIsProductLoaded(false);
+    setHasVariantsToLoad(false);
 
     const loadProduct = async () => {
         try {
           setLoadingProduct(true);
           console.log('📥 [ADMIN] Loading product for edit:', productId);
           const product = await apiClient.get<ProductData>(`/api/v1/admin/products/${productId}`);
+          if (cancelled) {
+            return;
+          }
+
+          const snapshotAttributes = attributesRef.current;
+          const defaultColorLabel = t('admin.products.add.defaultColor');
 
           const colorDataMap = new Map<string, ColorData>();
           let firstPrice = '';
@@ -108,7 +124,6 @@ export function useProductEditMode({
 
             if (!color) {
               const defaultColor = 'default';
-              const defaultColorLabel = t('admin.products.add.defaultColor');
 
               if (!colorDataMap.has(defaultColor)) {
                 const colorData = createDefaultColorData(
@@ -125,7 +140,7 @@ export function useProductEditMode({
               }
             } else if (color) {
               if (!colorDataMap.has(color)) {
-                const colorData = createColorData(variant, color, attributes, defaultCurrency, size, stockValue);
+                const colorData = createColorData(variant, color, snapshotAttributes, defaultCurrency, size, stockValue);
                 colorDataMap.set(color, colorData);
               } else {
                 const existingColorData = colorDataMap.get(color)!;
@@ -207,19 +222,24 @@ export function useProductEditMode({
           setNewBrandName('');
           setNewCategoryName('');
 
-          if (product.variants && product.variants.length > 0) {
+          const variants = product.variants || [];
+          const hasVariants = variants.length > 0;
+          const hasVariantsWithAttrs = hasVariantsWithAttributes(variants);
+
+          if (hasVariantsWithAttrs) {
             (window as any).__productVariantsToConvert = product.variants;
             setHasVariantsToLoad(true);
+          } else {
+            delete (window as any).__productVariantsToConvert;
+            setHasVariantsToLoad(false);
           }
 
           if (product.attributeIds && product.attributeIds.length > 0) {
             (window as any).__productAttributeIds = product.attributeIds;
             console.log('📋 [ADMIN] Product attributeIds loaded:', product.attributeIds);
+          } else {
+            delete (window as any).__productAttributeIds;
           }
-
-          const variants = product.variants || [];
-          const hasVariants = variants.length > 0;
-          const hasVariantsWithAttrs = hasVariantsWithAttributes(variants);
 
           console.log('📦 [ADMIN] Product type check:', {
             hasVariants,
@@ -284,6 +304,7 @@ export function useProductEditMode({
 
           console.log('✅ [ADMIN] Product loaded for edit');
           if (!cancelled) {
+            loadedProductIdRef.current = productId;
             setIsProductLoaded(true);
           }
         } catch (err: unknown) {
@@ -303,17 +324,14 @@ export function useProductEditMode({
 
     return () => {
       cancelled = true;
-      if (loadedProductIdRef.current === productId) {
-        loadedProductIdRef.current = null;
-      }
+      setLoadingProduct(false);
     };
   }, [
     productId,
     isLoggedIn,
     isAdmin,
     isReferenceLoading,
-    router,
-    attributes,
+    isReferenceLoaded,
     defaultCurrency,
     setLoadingProduct,
     setIsProductLoaded,
@@ -325,6 +343,7 @@ export function useProductEditMode({
     setHasVariantsToLoad,
     setProductType,
     setSimpleProductData,
+    router,
     t,
   ]);
 }

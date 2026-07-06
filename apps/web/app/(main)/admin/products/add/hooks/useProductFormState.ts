@@ -6,6 +6,7 @@ export function useProductFormState() {
   const [loading, setLoading] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
   const [isReferenceLoading, setIsReferenceLoading] = useState(false);
+  const [isReferenceLoaded, setIsReferenceLoaded] = useState(false);
   const [isProductLoaded, setIsProductLoaded] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -69,6 +70,8 @@ export function useProductFormState() {
     setLoadingProduct,
     isReferenceLoading,
     setIsReferenceLoading,
+    isReferenceLoaded,
+    setIsReferenceLoaded,
     isProductLoaded,
     setIsProductLoaded,
     // Data states
@@ -141,4 +144,3 @@ export function useProductFormState() {
     setHasVariantsToLoad,
   };
 }
-

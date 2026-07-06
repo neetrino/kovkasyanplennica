@@ -12,6 +12,7 @@ interface UseProductDataLoadingProps {
   setCategories: (categories: Category[]) => void;
   setAttributes: (attributes: Attribute[]) => void;
   setIsReferenceLoading: (loading: boolean) => void;
+  setIsReferenceLoaded: (loaded: boolean) => void;
   setDefaultCurrency: (currency: CurrencyCode) => void;
   attributesDropdownOpen: boolean;
   setAttributesDropdownOpen: (open: boolean) => void;
@@ -30,6 +31,7 @@ export function useProductDataLoading({
   setCategories,
   setAttributes,
   setIsReferenceLoading,
+  setIsReferenceLoaded,
   setDefaultCurrency,
   attributesDropdownOpen,
   setAttributesDropdownOpen,
@@ -85,6 +87,7 @@ export function useProductDataLoading({
 
     const fetchData = async () => {
       setIsReferenceLoading(true);
+      setIsReferenceLoaded(false);
       try {
         console.log('📥 [ADMIN] Fetching brands, categories, and attributes...');
         const [brandsRes, categoriesRes, attributesRes] = await Promise.all([
@@ -146,10 +149,14 @@ export function useProductDataLoading({
       } catch (err: unknown) {
         if (!cancelled) {
           console.error('❌ [ADMIN] Error fetching data:', err);
+          setBrands([]);
+          setCategories([]);
+          setAttributes([]);
         }
       } finally {
         if (!cancelled) {
           setIsReferenceLoading(false);
+          setIsReferenceLoaded(true);
         }
       }
     };
@@ -158,7 +165,7 @@ export function useProductDataLoading({
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn, isAdmin, isLoading, setBrands, setCategories, setAttributes, setIsReferenceLoading]);
+  }, [isLoggedIn, isAdmin, isLoading, setBrands, setCategories, setAttributes, setIsReferenceLoading, setIsReferenceLoaded]);
 
   // Close category dropdown when clicking outside
   useEffect(() => {
