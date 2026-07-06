@@ -1,10 +1,15 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import dynamic from 'next/dynamic';
 import { AuthProvider } from '../lib/auth/AuthContext';
 import { CoreRoutePrefetch } from './CoreRoutePrefetch';
 import { ToastContainer } from './Toast';
-import { SpinWheelPopup } from './SpinWheelPopup';
+
+const SpinWheelPopup = dynamic(
+  () => import('./SpinWheelPopup').then((mod) => mod.SpinWheelPopup),
+  { ssr: false, loading: () => null }
+);
 
 /**
  * ClientProviders component
