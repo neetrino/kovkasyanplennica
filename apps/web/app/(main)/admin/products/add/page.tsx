@@ -35,6 +35,7 @@ function AddProductPageContent() {
     setBrands: formState.setBrands,
     setCategories: formState.setCategories,
     setAttributes: formState.setAttributes,
+    setIsReferenceLoading: formState.setIsReferenceLoading,
     setDefaultCurrency: formState.setDefaultCurrency,
     attributesDropdownOpen: formState.attributesDropdownOpen,
     setAttributesDropdownOpen: formState.setAttributesDropdownOpen,
@@ -49,9 +50,11 @@ function AddProductPageContent() {
     productId,
     isLoggedIn,
     isAdmin,
+    isReferenceLoading: formState.isReferenceLoading,
     attributes: formState.attributes,
     defaultCurrency: formState.defaultCurrency,
     setLoadingProduct: formState.setLoadingProduct,
+    setIsProductLoaded: formState.setIsProductLoaded,
     setFormData: formState.setFormData,
     setUseNewBrand: formState.setUseNewBrand,
     setUseNewCategory: formState.setUseNewCategory,
@@ -166,13 +169,22 @@ function AddProductPageContent() {
     isClothingCategory,
   });
 
-  if (isLoading || formState.loadingProduct) {
+  const isEditDataLoading =
+    isEditMode &&
+    (formState.isReferenceLoading ||
+      formState.loadingProduct ||
+      formState.hasVariantsToLoad ||
+      !formState.isProductLoaded);
+
+  if (isLoading || isEditDataLoading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"></div>
           <p className="text-gray-600">
-            {formState.loadingProduct ? t('admin.products.add.loadingProduct') : t('admin.products.add.loading')}
+            {formState.loadingProduct || formState.hasVariantsToLoad
+              ? t('admin.products.add.loadingProduct')
+              : t('admin.products.add.loading')}
           </p>
         </div>
       </div>

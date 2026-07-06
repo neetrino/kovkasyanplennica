@@ -5,6 +5,8 @@ import type { CurrencyCode } from '@/lib/currency';
 export function useProductFormState() {
   const [loading, setLoading] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
+  const [isReferenceLoading, setIsReferenceLoading] = useState(false);
+  const [isProductLoaded, setIsProductLoaded] = useState(false);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [attributes, setAttributes] = useState<Attribute[]>([]);
@@ -65,6 +67,10 @@ export function useProductFormState() {
     setLoading,
     loadingProduct,
     setLoadingProduct,
+    isReferenceLoading,
+    setIsReferenceLoading,
+    isProductLoaded,
+    setIsProductLoaded,
     // Data states
     brands,
     setBrands,

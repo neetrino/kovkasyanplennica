@@ -23,9 +23,11 @@ interface UseProductEditModeProps {
   productId: string | null;
   isLoggedIn: boolean;
   isAdmin: boolean;
+  isReferenceLoading: boolean;
   attributes: any[];
   defaultCurrency: CurrencyCode;
   setLoadingProduct: (loading: boolean) => void;
+  setIsProductLoaded: (loaded: boolean) => void;
   setFormData: (updater: (prev: any) => any) => void;
   setUseNewBrand: (use: boolean) => void;
   setUseNewCategory: (use: boolean) => void;
@@ -40,9 +42,11 @@ export function useProductEditMode({
   productId,
   isLoggedIn,
   isAdmin,
+  isReferenceLoading,
   attributes,
   defaultCurrency,
   setLoadingProduct,
+  setIsProductLoaded,
   setFormData,
   setUseNewBrand,
   setUseNewCategory,
@@ -60,7 +64,7 @@ export function useProductEditMode({
     if (!productId || !isLoggedIn || !isAdmin) {
       return;
     }
-    if (attributes.length === 0) {
+    if (isReferenceLoading) {
       return;
     }
     if (loadedProductIdRef.current === productId) {
@@ -69,6 +73,7 @@ export function useProductEditMode({
 
     let cancelled = false;
     loadedProductIdRef.current = productId;
+    setIsProductLoaded(false);
 
     const loadProduct = async () => {
         try {
@@ -278,9 +283,13 @@ export function useProductEditMode({
           }
 
           console.log('✅ [ADMIN] Product loaded for edit');
+          if (!cancelled) {
+            setIsProductLoaded(true);
+          }
         } catch (err: unknown) {
           if (!cancelled) {
             console.error('❌ [ADMIN] Error loading product:', err);
+            setIsProductLoaded(false);
             router.push('/admin/products');
           }
         } finally {
@@ -302,10 +311,12 @@ export function useProductEditMode({
     productId,
     isLoggedIn,
     isAdmin,
+    isReferenceLoading,
     router,
-    attributes.length,
+    attributes,
     defaultCurrency,
     setLoadingProduct,
+    setIsProductLoaded,
     setFormData,
     setUseNewBrand,
     setUseNewCategory,
