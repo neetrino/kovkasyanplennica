@@ -7,6 +7,7 @@ import type { GeneratedVariant } from '../types';
 interface UseProductVariantConversionProps {
   productId: string | null;
   attributes: any[];
+  hasVariantsToLoad: boolean;
   defaultCurrency: CurrencyCode;
   setSelectedAttributesForVariants: (attrs: Set<string>) => void;
   setSelectedAttributeValueIds: (ids: Record<string, string[]>) => void;
@@ -17,6 +18,7 @@ interface UseProductVariantConversionProps {
 export function useProductVariantConversion({
   productId,
   attributes,
+  hasVariantsToLoad,
   defaultCurrency,
   setSelectedAttributesForVariants,
   setSelectedAttributeValueIds,
@@ -303,9 +305,14 @@ export function useProductVariantConversion({
         });
         setHasVariantsToLoad(false);
       }
-    } else if (productId && attributes.length > 0) {
-      console.log('ℹ️ [ADMIN] Waiting for variants to convert. Attributes loaded:', attributes.length);
+    } else if (
+      productId &&
+      attributes.length > 0 &&
+      hasVariantsToLoad &&
+      !(window as any).__productVariantsToConvert
+    ) {
+      setHasVariantsToLoad(false);
     }
-  }, [productId, attributes, defaultCurrency, setSelectedAttributesForVariants, setSelectedAttributeValueIds, setGeneratedVariants, setHasVariantsToLoad]);
+  }, [productId, attributes, hasVariantsToLoad, defaultCurrency, setSelectedAttributesForVariants, setSelectedAttributeValueIds, setGeneratedVariants, setHasVariantsToLoad]);
 }
 

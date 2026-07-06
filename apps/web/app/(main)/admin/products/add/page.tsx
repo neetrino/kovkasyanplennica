@@ -68,6 +68,7 @@ function AddProductPageContent() {
   useProductVariantConversion({
     productId,
     attributes: formState.attributes,
+    hasVariantsToLoad: formState.hasVariantsToLoad,
     defaultCurrency: formState.defaultCurrency,
     setSelectedAttributesForVariants: formState.setSelectedAttributesForVariants,
     setSelectedAttributeValueIds: formState.setSelectedAttributeValueIds,
@@ -173,8 +174,8 @@ function AddProductPageContent() {
     isEditMode &&
     (formState.isReferenceLoading ||
       formState.loadingProduct ||
-      formState.hasVariantsToLoad ||
-      !formState.isProductLoaded);
+      !formState.isProductLoaded ||
+      formState.hasVariantsToLoad);
 
   if (isLoading || isEditDataLoading) {
     return (
