@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { useTranslation } from '@/lib/i18n-client';
@@ -18,6 +18,7 @@ import { useProductAttributeHandlers } from './hooks/useProductAttributeHandlers
 import { useProductFormHandlers } from './hooks/useProductFormHandlers';
 import { useProductFormCallbacks } from './hooks/useProductFormCallbacks';
 import { isClothingCategory as checkIsClothingCategory, generateSlug } from './utils/productUtils';
+import { markEditPageLoadStart, markEditTiming } from './utils/editLoadTiming';
 
 function AddProductPageContent() {
   const { t } = useTranslation();
@@ -27,6 +28,11 @@ function AddProductPageContent() {
   const isEditMode = !!productId;
 
   const formState = useProductFormState();
+  const formGateReleasedRef = useRef(false);
+
+  useEffect(() => {
+    markEditPageLoadStart();
+  }, []);
 
   useProductDataLoading({
     isLoggedIn,
@@ -51,8 +57,6 @@ function AddProductPageContent() {
     productId,
     isLoggedIn,
     isAdmin,
-    isReferenceLoading: formState.isReferenceLoading,
-    isReferenceLoaded: formState.isReferenceLoaded,
     attributes: formState.attributes,
     defaultCurrency: formState.defaultCurrency,
     setLoadingProduct: formState.setLoadingProduct,
@@ -173,21 +177,38 @@ function AddProductPageContent() {
     isClothingCategory,
   });
 
-  const isEditDataLoading =
+  const isAuthLoading = isLoading;
+  const isProductLoading =
+    isEditMode && (formState.loadingProduct || !formState.isProductLoaded);
+  const isVariantConversionLoading =
     isEditMode &&
-    (!formState.isReferenceLoaded ||
-      formState.isReferenceLoading ||
-      formState.loadingProduct ||
-      !formState.isProductLoaded ||
-      formState.hasVariantsToLoad);
+    formState.productType === 'variable' &&
+    formState.hasVariantsToLoad;
 
-  if (isLoading || isEditDataLoading) {
+  const showEditSpinner = isAuthLoading || isProductLoading;
+
+  useEffect(() => {
+    if (!showEditSpinner && isEditMode && !formGateReleasedRef.current) {
+      formGateReleasedRef.current = true;
+      markEditTiming('form gate released', {
+        isReferenceLoading: formState.isReferenceLoading,
+        isVariantConversionLoading,
+      });
+    }
+  }, [
+    showEditSpinner,
+    isEditMode,
+    formState.isReferenceLoading,
+    isVariantConversionLoading,
+  ]);
+
+  if (showEditSpinner) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"></div>
           <p className="text-gray-600">
-            {formState.loadingProduct || formState.hasVariantsToLoad
+            {isProductLoading
               ? t('admin.products.add.loadingProduct')
               : t('admin.products.add.loading')}
           </p>
@@ -225,6 +246,7 @@ function AddProductPageContent() {
             attributesDropdownOpen={formState.attributesDropdownOpen}
             generatedVariants={formState.generatedVariants}
             hasVariantsToLoad={formState.hasVariantsToLoad}
+            isVariantConversionLoading={isVariantConversionLoading}
             fileInputRef={formState.fileInputRef}
             attributesDropdownRef={formState.attributesDropdownRef}
             variantImageInputRefs={formState.variantImageInputRefs}

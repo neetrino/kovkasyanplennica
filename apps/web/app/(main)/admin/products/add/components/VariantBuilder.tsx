@@ -13,6 +13,7 @@ interface VariantBuilderProps {
   selectedAttributesForVariants: Set<string>;
   isEditMode: boolean;
   hasVariantsToLoad: boolean;
+  isVariantConversionLoading: boolean;
   defaultCurrency: CurrencyCode;
   imageUploadLoading: boolean;
   slug: string;
@@ -32,7 +33,8 @@ export function VariantBuilder({
   attributes,
   selectedAttributesForVariants,
   isEditMode,
-  hasVariantsToLoad: _hasVariantsToLoad,
+  hasVariantsToLoad,
+  isVariantConversionLoading,
   defaultCurrency,
   imageUploadLoading,
   slug,
@@ -71,6 +73,12 @@ export function VariantBuilder({
     <div>
       <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('admin.products.add.variantBuilder')}</h2>
       <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+        {isVariantConversionLoading && generatedVariants.length === 0 && (
+          <div className="flex items-center justify-center py-8 text-gray-600">
+            <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900" />
+            <span>{t('admin.products.add.loadingProduct')}</span>
+          </div>
+        )}
         {/* Generated Variants Table */}
         {generatedVariants.length > 0 && (
           <div>

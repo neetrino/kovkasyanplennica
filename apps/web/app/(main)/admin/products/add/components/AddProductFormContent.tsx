@@ -64,6 +64,7 @@ interface AddProductFormContentProps {
   attributesDropdownOpen: boolean;
   generatedVariants: GeneratedVariant[];
   hasVariantsToLoad: boolean;
+  isVariantConversionLoading: boolean;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   attributesDropdownRef: React.RefObject<HTMLDivElement | null>;
   variantImageInputRefs: React.MutableRefObject<Record<string, HTMLInputElement | null>>;
@@ -132,6 +133,7 @@ export function AddProductFormContent({
   attributesDropdownOpen,
   generatedVariants,
   hasVariantsToLoad,
+  isVariantConversionLoading,
   fileInputRef,
   attributesDropdownRef,
   variantImageInputRefs,
@@ -267,6 +269,7 @@ export function AddProductFormContent({
               selectedAttributesForVariants={selectedAttributesForVariants}
               isEditMode={isEditMode}
               hasVariantsToLoad={hasVariantsToLoad}
+              isVariantConversionLoading={isVariantConversionLoading}
               defaultCurrency={defaultCurrency}
               imageUploadLoading={imageUploadLoading}
               slug={formData.slug}

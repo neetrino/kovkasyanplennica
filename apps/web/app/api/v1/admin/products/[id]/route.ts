@@ -26,7 +26,11 @@ export async function GET(
     }
 
     const { id } = await params;
+    const startMs = Date.now();
     const product = await adminService.getProductById(id);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ADMIN PRODUCTS API] GET [id]', { id, durationMs: Date.now() - startMs });
+    }
 
     return NextResponse.json(product);
   } catch (error: any) {
