@@ -8,6 +8,7 @@ interface UseProductVariantConversionProps {
   productId: string | null;
   attributes: any[];
   hasVariantsToLoad: boolean;
+  isReferenceLoaded: boolean;
   defaultCurrency: CurrencyCode;
   setSelectedAttributesForVariants: (attrs: Set<string>) => void;
   setSelectedAttributeValueIds: (ids: Record<string, string[]>) => void;
@@ -19,6 +20,7 @@ export function useProductVariantConversion({
   productId,
   attributes,
   hasVariantsToLoad,
+  isReferenceLoaded,
   defaultCurrency,
   setSelectedAttributesForVariants,
   setSelectedAttributeValueIds,
@@ -307,12 +309,22 @@ export function useProductVariantConversion({
       }
     } else if (
       productId &&
-      attributes.length > 0 &&
+      isReferenceLoaded &&
       hasVariantsToLoad &&
+      attributes.length === 0
+    ) {
+      console.warn('⚠️ [ADMIN] Variant conversion skipped: attributes empty after reference data loaded.');
+      delete (window as any).__productVariantsToConvert;
+      setHasVariantsToLoad(false);
+    } else if (
+      productId &&
+      isReferenceLoaded &&
+      hasVariantsToLoad &&
+      attributes.length > 0 &&
       !(window as any).__productVariantsToConvert
     ) {
       setHasVariantsToLoad(false);
     }
-  }, [productId, attributes, hasVariantsToLoad, defaultCurrency, setSelectedAttributesForVariants, setSelectedAttributeValueIds, setGeneratedVariants, setHasVariantsToLoad]);
+  }, [productId, attributes, hasVariantsToLoad, isReferenceLoaded, defaultCurrency, setSelectedAttributesForVariants, setSelectedAttributeValueIds, setGeneratedVariants, setHasVariantsToLoad]);
 }
 

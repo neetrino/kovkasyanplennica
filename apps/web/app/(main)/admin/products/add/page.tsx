@@ -36,6 +36,7 @@ function AddProductPageContent() {
     setCategories: formState.setCategories,
     setAttributes: formState.setAttributes,
     setIsReferenceLoading: formState.setIsReferenceLoading,
+    setIsReferenceLoaded: formState.setIsReferenceLoaded,
     setDefaultCurrency: formState.setDefaultCurrency,
     attributesDropdownOpen: formState.attributesDropdownOpen,
     setAttributesDropdownOpen: formState.setAttributesDropdownOpen,
@@ -51,6 +52,7 @@ function AddProductPageContent() {
     isLoggedIn,
     isAdmin,
     isReferenceLoading: formState.isReferenceLoading,
+    isReferenceLoaded: formState.isReferenceLoaded,
     attributes: formState.attributes,
     defaultCurrency: formState.defaultCurrency,
     setLoadingProduct: formState.setLoadingProduct,
@@ -69,6 +71,7 @@ function AddProductPageContent() {
     productId,
     attributes: formState.attributes,
     hasVariantsToLoad: formState.hasVariantsToLoad,
+    isReferenceLoaded: formState.isReferenceLoaded,
     defaultCurrency: formState.defaultCurrency,
     setSelectedAttributesForVariants: formState.setSelectedAttributesForVariants,
     setSelectedAttributeValueIds: formState.setSelectedAttributeValueIds,
@@ -172,7 +175,8 @@ function AddProductPageContent() {
 
   const isEditDataLoading =
     isEditMode &&
-    (formState.isReferenceLoading ||
+    (!formState.isReferenceLoaded ||
+      formState.isReferenceLoading ||
       formState.loadingProduct ||
       !formState.isProductLoaded ||
       formState.hasVariantsToLoad);

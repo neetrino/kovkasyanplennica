@@ -24,6 +24,7 @@ interface UseProductEditModeProps {
   isLoggedIn: boolean;
   isAdmin: boolean;
   isReferenceLoading: boolean;
+  isReferenceLoaded: boolean;
   attributes: any[];
   defaultCurrency: CurrencyCode;
   setLoadingProduct: (loading: boolean) => void;
@@ -43,6 +44,7 @@ export function useProductEditMode({
   isLoggedIn,
   isAdmin,
   isReferenceLoading,
+  isReferenceLoaded,
   attributes,
   defaultCurrency,
   setLoadingProduct,
@@ -72,7 +74,7 @@ export function useProductEditMode({
       loadedProductIdRef.current = null;
       return;
     }
-    if (isReferenceLoading) {
+    if (isReferenceLoading || !isReferenceLoaded) {
       return;
     }
     if (loadedProductIdRef.current === productId) {
@@ -80,7 +82,6 @@ export function useProductEditMode({
     }
 
     let cancelled = false;
-    loadedProductIdRef.current = productId;
     setIsProductLoaded(false);
     setHasVariantsToLoad(false);
 
@@ -303,6 +304,7 @@ export function useProductEditMode({
 
           console.log('✅ [ADMIN] Product loaded for edit');
           if (!cancelled) {
+            loadedProductIdRef.current = productId;
             setIsProductLoaded(true);
           }
         } catch (err: unknown) {
@@ -329,6 +331,7 @@ export function useProductEditMode({
     isLoggedIn,
     isAdmin,
     isReferenceLoading,
+    isReferenceLoaded,
     defaultCurrency,
     setLoadingProduct,
     setIsProductLoaded,
