@@ -22,7 +22,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const startMs = Date.now();
     const result = await adminService.getAttributes();
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ADMIN ATTRIBUTES API] GET', { durationMs: Date.now() - startMs });
+    }
     return NextResponse.json(result);
   } catch (error: any) {
     console.error("❌ [ADMIN ATTRIBUTES] GET Error:", error);
