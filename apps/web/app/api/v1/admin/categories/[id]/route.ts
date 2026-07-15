@@ -82,10 +82,8 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    console.log("📝 [ADMIN CATEGORIES] PUT request:", { id, body });
 
     const result = await adminService.updateCategory(id, body);
-    console.log("✅ [ADMIN CATEGORIES] Category updated:", id);
 
     return NextResponse.json(result);
   } catch (error: any) {
@@ -127,10 +125,8 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    console.log("🗑️ [ADMIN CATEGORIES] DELETE request:", id);
 
     await adminService.deleteCategory(id);
-    console.log("✅ [ADMIN CATEGORIES] Category deleted:", id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

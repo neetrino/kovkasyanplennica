@@ -23,11 +23,9 @@ export function useDashboard({
 
   const loadDashboard = useCallback(async () => {
     try {
-      console.log('📊 [PROFILE] Loading dashboard data...');
       setDashboardLoading(true);
       onError('');
       const data = await apiClient.get<DashboardData>('/api/v1/users/dashboard');
-      console.log('✅ [PROFILE] Dashboard data loaded:', data);
       setDashboardData(data);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : String(err);

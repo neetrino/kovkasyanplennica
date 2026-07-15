@@ -6,9 +6,7 @@ interface CreateAndSubmitPayloadProps {
     title: string;
     slug: string;
     subtitle: string;
-    descriptionHtml: string;
     ingredients: string;
-    longDescriptionHtml: string;
     categoryIds: string[];
     published: boolean;
     featured: boolean;
@@ -44,13 +42,13 @@ export async function createAndSubmitPayload({
   setLoading,
   router,
 }: CreateAndSubmitPayloadProps): Promise<void> {
+  // Intentionally omit descriptionHtml / longDescriptionHtml from the payload.
+  // Those fields remain in DB/API for compatibility; clearing them via empty form values must not happen.
   const payload: any = {
       title: formData.title,
       slug: normalizeProductSlug(formData.slug),
       subtitle: formData.subtitle || undefined,
-      descriptionHtml: formData.descriptionHtml || undefined,
       ingredients: formData.ingredients || undefined,
-      longDescriptionHtml: formData.longDescriptionHtml || undefined,
       brandId: finalBrandIds.length > 0 ? finalBrandIds[0] : undefined,
       primaryCategoryId: finalPrimaryCategoryId || undefined,
       categoryIds: formData.categoryIds.length > 0 ? formData.categoryIds : undefined,
@@ -82,18 +80,15 @@ export async function createAndSubmitPayload({
         color: label.color || null,
       }));
 
-    console.log('📤 [ADMIN] Sending payload:', JSON.stringify(payload, null, 2));
     
     try {
       if (isEditMode && productId) {
-        const product = await apiClient.put(`/api/v1/admin/products/${productId}`, payload);
-        console.log('✅ [ADMIN] Product updated:', product);
+        await apiClient.put(`/api/v1/admin/products/${productId}`, payload);
         const baseMessage = 'Ապրանքը հաջողությամբ թարմացվեց!';
         const extra = creationMessages.length ? `\n\n${creationMessages.join('\n')}` : '';
         alert(`${baseMessage}${extra}`);
       } else {
-        const product = await apiClient.post('/api/v1/admin/products', payload);
-        console.log('✅ [ADMIN] Product created:', product);
+        await apiClient.post('/api/v1/admin/products', payload);
         const baseMessage = 'Ապրանքը հաջողությամբ ստեղծվեց!';
         const extra = creationMessages.length ? `\n\n${creationMessages.join('\n')}` : '';
         alert(`${baseMessage}${extra}`);

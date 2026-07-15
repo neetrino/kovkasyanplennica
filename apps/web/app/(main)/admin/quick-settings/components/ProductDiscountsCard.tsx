@@ -108,13 +108,11 @@ export function ProductDiscountsCard({
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       const value = e.target.value;
                       const discountValue = value === '' ? 0 : parseFloat(value) || 0;
-                      console.log(`🔄 [QUICK SETTINGS] Updating discount for product ${product.id}: ${discountValue}%`);
                       setProductDiscounts((prev) => {
                         const updated = {
                           ...prev,
                           [product.id]: discountValue,
                         };
-                        console.log(`✅ [QUICK SETTINGS] Updated productDiscounts:`, updated);
                         return updated;
                       });
                     }}

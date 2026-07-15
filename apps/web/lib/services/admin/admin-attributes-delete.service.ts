@@ -6,13 +6,8 @@ class AdminAttributesDeleteService {
    */
   async deleteAttribute(attributeId: string) {
     try {
-      console.log('🗑️ [ADMIN ATTRIBUTES DELETE SERVICE] Սկսվում է attribute-ի հեռացում:', {
-        attributeId,
-        timestamp: new Date().toISOString(),
-      });
 
       // Ստուգում ենք, արդյոք attribute-ը գոյություն ունի
-      console.log('🔍 [ADMIN ATTRIBUTES DELETE SERVICE] Ստուգվում է attribute-ի գոյությունը...');
       const attribute = await db.attribute.findUnique({
         where: { id: attributeId },
         select: {
@@ -22,7 +17,6 @@ class AdminAttributesDeleteService {
       });
 
       if (!attribute) {
-        console.log('❌ [ADMIN ATTRIBUTES DELETE SERVICE] Attribute-ը չի գտնվել:', attributeId);
         throw {
           status: 404,
           type: "https://api.shop.am/problems/not-found",
@@ -31,13 +25,8 @@ class AdminAttributesDeleteService {
         };
       }
 
-      console.log('✅ [ADMIN ATTRIBUTES DELETE SERVICE] Attribute-ը գտնվել է:', {
-        id: attribute.id,
-        key: attribute.key,
-      });
 
       // Ստուգում ենք, արդյոք attribute-ը օգտագործվում է արտադրանքներում
-      console.log('🔍 [ADMIN ATTRIBUTES DELETE SERVICE] Ստուգվում է, արդյոք attribute-ը օգտագործվում է արտադրանքներում...');
       
       let productAttributesCount = 0;
       
@@ -47,7 +36,6 @@ class AdminAttributesDeleteService {
           productAttributesCount = await db.productAttribute.count({
             where: { attributeId },
           });
-          console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes count:', productAttributesCount);
         } catch (countError: any) {
           console.error('❌ [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes count սխալ:', {
             error: countError,
@@ -61,7 +49,6 @@ class AdminAttributesDeleteService {
               select: { id: true },
             });
             productAttributesCount = productAttributes.length;
-            console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes count (via findMany):', productAttributesCount);
           } catch {
             console.warn('⚠️ [ADMIN ATTRIBUTES DELETE SERVICE] Product attributes findMany-ը նույնպես չի աշխատում, skip անում ենք ստուգումը');
             productAttributesCount = 0;
@@ -72,7 +59,6 @@ class AdminAttributesDeleteService {
       }
 
       if (productAttributesCount > 0) {
-        console.log('⚠️ [ADMIN ATTRIBUTES DELETE SERVICE] Attribute-ը օգտագործվում է արտադրանքներում:', productAttributesCount);
         throw {
           status: 400,
           type: "https://api.shop.am/problems/validation-error",
@@ -82,17 +68,14 @@ class AdminAttributesDeleteService {
       }
 
       // Ստուգում ենք, արդյոք attribute values-ները օգտագործվում են variants-ներում
-      console.log('🔍 [ADMIN ATTRIBUTES DELETE SERVICE] Ստուգվում է, արդյոք attribute values-ները օգտագործվում են variants-ներում...');
       const attributeValues = await db.attributeValue.findMany({
         where: { attributeId },
         select: { id: true },
       });
 
-      console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Attribute values count:', attributeValues.length);
 
       if (attributeValues.length > 0) {
         const valueIds = attributeValues.map((v: { id: string }) => v.id);
-        console.log('🔍 [ADMIN ATTRIBUTES DELETE SERVICE] Ստուգվում է variant options...');
         
         let variantOptionsCount = 0;
         try {
@@ -101,7 +84,6 @@ class AdminAttributesDeleteService {
               valueId: { in: valueIds },
             },
           });
-          console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Variant options count:', variantOptionsCount);
         } catch (countError: any) {
           console.error('❌ [ADMIN ATTRIBUTES DELETE SERVICE] Variant options count սխալ:', {
             error: countError,
@@ -116,11 +98,9 @@ class AdminAttributesDeleteService {
             select: { id: true },
           });
           variantOptionsCount = variantOptions.length;
-          console.log('📊 [ADMIN ATTRIBUTES DELETE SERVICE] Variant options count (via findMany):', variantOptionsCount);
         }
 
         if (variantOptionsCount > 0) {
-          console.log('⚠️ [ADMIN ATTRIBUTES DELETE SERVICE] Attribute values-ները օգտագործվում են variants-ներում:', variantOptionsCount);
           throw {
             status: 400,
             type: "https://api.shop.am/problems/validation-error",
@@ -131,15 +111,10 @@ class AdminAttributesDeleteService {
       }
 
       // Հեռացնում ենք attribute-ը (values-ները կհեռացվեն cascade-ով)
-      console.log('🗑️ [ADMIN ATTRIBUTES DELETE SERVICE] Հեռացվում է attribute-ը...');
       await db.attribute.delete({
         where: { id: attributeId },
       });
 
-      console.log('✅ [ADMIN ATTRIBUTES DELETE SERVICE] Attribute-ը հաջողությամբ հեռացվել է:', {
-        attributeId,
-        timestamp: new Date().toISOString(),
-      });
       
       return { success: true };
     } catch (error: any) {
@@ -169,7 +144,6 @@ class AdminAttributesDeleteService {
 
       // Prisma սխալների մշակում
       if (error?.code === 'P2025') {
-        console.log('⚠️ [ADMIN ATTRIBUTES DELETE SERVICE] Prisma P2025: Գրառումը չի գտնվել');
         throw {
           status: 404,
           type: "https://api.shop.am/problems/not-found",
@@ -193,7 +167,6 @@ class AdminAttributesDeleteService {
    */
   async deleteAttributeValue(attributeValueId: string) {
     try {
-      console.log('🗑️ [ADMIN ATTRIBUTES DELETE SERVICE] Deleting attribute value:', attributeValueId);
 
       // First check if attribute value exists
       const attributeValue = await db.attributeValue.findUnique({

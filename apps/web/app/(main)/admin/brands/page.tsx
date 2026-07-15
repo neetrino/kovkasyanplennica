@@ -54,10 +54,8 @@ function BrandsSection() {
   const fetchBrands = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('🏷️ [ADMIN] Fetching brands...');
       const response = await apiClient.get<{ data: Brand[] }>('/api/v1/admin/brands');
       setBrands(response.data || []);
-      console.log('✅ [ADMIN] Brands loaded:', response.data?.length || 0);
     } catch (err: unknown) {
       console.error('❌ [ADMIN] Error fetching brands:', err);
       setBrands([]);
@@ -76,9 +74,7 @@ function BrandsSection() {
     }
 
     try {
-      console.log(`🗑️ [ADMIN] Deleting brand: ${brandName} (${brandId})`);
       await apiClient.delete(`/api/v1/admin/brands/${brandId}`);
-      console.log('✅ [ADMIN] Brand deleted successfully');
       await fetchBrands();
       alert(t('admin.brands.deletedSuccess'));
     } catch (err: unknown) {
@@ -116,18 +112,14 @@ function BrandsSection() {
     setSubmitting(true);
     try {
       if (editingBrand) {
-        console.log('🔄 [ADMIN] Updating brand:', editingBrand.id);
         await apiClient.put(`/api/v1/admin/brands/${editingBrand.id}`, {
           name: formData.name.trim(),
         });
-        console.log('✅ [ADMIN] Brand updated successfully');
         alert(t('admin.brands.updatedSuccess'));
       } else {
-        console.log('➕ [ADMIN] Creating brand:', formData.name);
         await apiClient.post('/api/v1/admin/brands', {
           name: formData.name.trim(),
         });
-        console.log('✅ [ADMIN] Brand created successfully');
         alert(t('admin.brands.createdSuccess'));
       }
 

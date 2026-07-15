@@ -86,12 +86,6 @@ export function useProductFormCallbacks({
     };
     setGeneratedVariants((prev) => {
       const updated = [...prev, newVariant];
-      console.log('✅ [VARIANT BUILDER] New manual variant added:', {
-        newVariantId: newVariant.id,
-        totalVariants: updated.length,
-        manualVariants: updated.filter((v) => v.id !== 'variant-all').length,
-        autoVariants: updated.filter((v) => v.id === 'variant-all').length,
-      });
       return updated;
     });
   };

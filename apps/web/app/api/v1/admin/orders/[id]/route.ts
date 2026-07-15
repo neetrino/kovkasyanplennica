@@ -26,10 +26,8 @@ export async function GET(
     }
 
     const { id } = await params;
-    console.log("📦 [ADMIN ORDERS] GET by id:", id);
 
     const order = await adminService.getOrderById(id);
-    console.log("✅ [ADMIN ORDERS] Order loaded:", id);
 
     return NextResponse.json(order);
   } catch (error: any) {
@@ -83,10 +81,8 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    console.log("📤 [ADMIN ORDERS] PUT request:", { id, body });
 
     const order = await adminService.updateOrder(id, body);
-    console.log("✅ [ADMIN ORDERS] Order updated:", id);
 
     return NextResponse.json(order);
   } catch (error: any) {
@@ -129,10 +125,8 @@ export async function DELETE(
 
   try {
     // Ստուգում ենք ավտորիզացիան
-    console.log("🔐 [ADMIN ORDERS] DELETE - Ստուգվում է ավտորիզացիան...");
     const user = await authenticateToken(req);
     if (!user || !requireAdminOrHostess(user)) {
-      console.log("❌ [ADMIN ORDERS] DELETE - Մերժված մուտք (403)");
       return NextResponse.json(
         {
           type: "https://api.shop.am/problems/forbidden",
@@ -146,11 +140,9 @@ export async function DELETE(
     }
 
     // Ստանում ենք պատվերի ID-ն
-    console.log("📋 [ADMIN ORDERS] DELETE - Ստանում ենք params...");
     let resolvedParams;
     try {
       resolvedParams = await params;
-      console.log("✅ [ADMIN ORDERS] DELETE - Params ստացված:", resolvedParams);
     } catch (paramsError: any) {
       console.error("❌ [ADMIN ORDERS] DELETE - Params սխալ:", {
         error: paramsError,
@@ -178,23 +170,11 @@ export async function DELETE(
       };
     }
 
-    console.log("🗑️ [ADMIN ORDERS] DELETE request:", {
-      orderId,
-      userId: user.id,
-      timestamp: new Date().toISOString(),
-    });
 
     // Հեռացնում ենք պատվերը
-    console.log("🔄 [ADMIN ORDERS] DELETE - Կանչվում է adminService.deleteOrder...");
     await adminService.deleteOrder(orderId);
-    console.log("✅ [ADMIN ORDERS] DELETE - adminService.deleteOrder ավարտված");
     
     const duration = Date.now() - startTime;
-    console.log("✅ [ADMIN ORDERS] Order deleted successfully:", {
-      orderId,
-      duration: `${duration}ms`,
-      timestamp: new Date().toISOString(),
-    });
 
     return NextResponse.json({ 
       success: true,

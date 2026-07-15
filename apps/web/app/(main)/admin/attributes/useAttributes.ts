@@ -55,30 +55,17 @@ export function useAttributes(enabled = true) {
   const fetchAttributes = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('📋 [ADMIN] Fetching attributes...');
       const response = await apiClient.get<{ data: Attribute[] }>('/api/v1/admin/attributes');
-      console.log('📋 [ADMIN] Attributes response:', response.data);
       // Log colors for each value to debug
       if (response.data && Array.isArray(response.data)) {
         response.data.forEach((attr) => {
           if (attr.values && Array.isArray(attr.values)) {
             attr.values.forEach((val) => {
-              console.log('🎨 [ADMIN] Attribute value colors:', {
-                attributeId: attr.id,
-                attributeName: attr.name,
-                valueId: val.id,
-                valueLabel: val.label,
-                colors: val.colors,
-                colorsType: typeof val.colors,
-                colorsIsArray: Array.isArray(val.colors),
-                colorsLength: val.colors?.length
-              });
             });
           }
         });
       }
       setAttributes(response.data || []);
-      console.log('✅ [ADMIN] Attributes loaded:', response.data?.length || 0);
     } catch (err) {
       console.error('❌ [ADMIN] Error fetching attributes:', err);
       setAttributes([]);
@@ -106,7 +93,6 @@ export function useAttributes(enabled = true) {
     const autoKey = formData.name.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
     try {
-      console.log('🆕 [ADMIN] Creating attribute:', autoKey);
       await apiClient.post('/api/v1/admin/attributes', {
         name: formData.name.trim(),
         key: autoKey,
@@ -115,7 +101,6 @@ export function useAttributes(enabled = true) {
         locale: 'ru',
       });
       
-      console.log('✅ [ADMIN] Attribute created successfully');
       setShowAddForm(false);
       setFormData({ name: '' });
       fetchAttributes();
@@ -133,9 +118,7 @@ export function useAttributes(enabled = true) {
     }
 
     try {
-      console.log(`🗑️ [ADMIN] Deleting attribute: ${attributeName} (${attributeId})`);
       await apiClient.delete(`/api/v1/admin/attributes/${attributeId}`);
-      console.log('✅ [ADMIN] Attribute deleted successfully');
       fetchAttributes();
       showToast(t('admin.attributes.deletedSuccess'), 'success');
     } catch (err: any) {
@@ -155,12 +138,10 @@ export function useAttributes(enabled = true) {
 
     try {
       setSavingAttribute(true);
-      console.log(`✏️ [ADMIN] Updating attribute name: ${attributeId} -> ${trimmedName}`);
       await apiClient.patch(`/api/v1/admin/attributes/${attributeId}/translations`, {
         name: trimmedName,
         locale: 'ru',
       });
-      console.log('✅ [ADMIN] Attribute name updated successfully');
       setEditingAttribute(null);
       setEditingAttributeName('');
       fetchAttributes();
@@ -221,13 +202,11 @@ export function useAttributes(enabled = true) {
 
     try {
       setAddingValueTo(attributeId);
-      console.log('➕ [ADMIN] Adding value to attribute:', attributeId, trimmedValue);
       await apiClient.post(`/api/v1/admin/attributes/${attributeId}/values`, {
         label: trimmedValue,
         locale: 'ru',
       });
       
-      console.log('✅ [ADMIN] Value added successfully');
       setNewValue('');
       setValueError(null);
       setAddingValueTo(null);
@@ -257,9 +236,7 @@ export function useAttributes(enabled = true) {
 
     try {
       setDeletingValue(valueId);
-      console.log(`🗑️ [ADMIN] Deleting value: ${valueLabel} (${valueId})`);
       await apiClient.delete(`/api/v1/admin/attributes/${attributeId}/values/${valueId}`);
-      console.log('✅ [ADMIN] Value deleted successfully');
       fetchAttributes();
       setDeletingValue(null);
       showToast(t('admin.attributes.valueDeletedSuccess'), 'success');
@@ -279,19 +256,10 @@ export function useAttributes(enabled = true) {
     if (!editingValue) return;
 
     try {
-      console.log('✏️ [ADMIN] Updating value:', { 
-        valueId: editingValue.value.id, 
-        attributeId: editingValue.attributeId,
-        data,
-        colorsType: typeof data.colors,
-        colorsIsArray: Array.isArray(data.colors),
-        colorsLength: data.colors?.length
-      });
       await apiClient.patch(`/api/v1/admin/attributes/${editingValue.attributeId}/values/${editingValue.value.id}`, {
         ...data,
         locale: 'ru',
       });
-      console.log('✅ [ADMIN] Value updated successfully');
       fetchAttributes();
       showToast(t('admin.attributes.valueUpdatedSuccess'), 'success');
     } catch (err: any) {

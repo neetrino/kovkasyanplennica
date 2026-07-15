@@ -1,52 +1,40 @@
 /**
- * Logger utility for consistent logging across the application
- * Replaces console.log with structured logging
+ * Logger utility for consistent logging across the application.
+ * Info/debug/log are silenced; warn/error still go to the console.
  */
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogContext {
   [key: string]: unknown;
 }
 
 class Logger {
-  private isDevelopment(): boolean {
-    return process.env.NODE_ENV === 'development';
-  }
-
   private formatMessage(level: LogLevel, message: string, context?: LogContext): string {
     const timestamp = new Date().toISOString();
-    const contextStr = context ? ` ${JSON.stringify(context)}` : '';
+    const contextStr = context ? ` ${JSON.stringify(context)}` : "";
     return `[${timestamp}] [${level.toUpperCase()}] ${message}${contextStr}`;
   }
 
-  debug(message: string, context?: LogContext): void {
-    if (this.isDevelopment()) {
-      console.debug(this.formatMessage('debug', message, context));
-    }
+  debug(_message: string, _context?: LogContext): void {
+    // Intentionally silent — avoid noisy action logs in the console
   }
 
-  info(message: string, context?: LogContext): void {
-    if (this.isDevelopment()) {
-      console.info(this.formatMessage('info', message, context));
-    }
+  info(_message: string, _context?: LogContext): void {
+    // Intentionally silent — avoid noisy action logs in the console
   }
 
   warn(message: string, context?: LogContext): void {
-    console.warn(this.formatMessage('warn', message, context));
+    console.warn(this.formatMessage("warn", message, context));
   }
 
   error(message: string, context?: LogContext): void {
-    console.error(this.formatMessage('error', message, context));
+    console.error(this.formatMessage("error", message, context));
   }
 
-  log(message: string, context?: LogContext): void {
-    // Alias for info in development
-    this.info(message, context);
+  log(_message: string, _context?: LogContext): void {
+    // Intentionally silent
   }
 }
 
 export const logger = new Logger();
-
-
-

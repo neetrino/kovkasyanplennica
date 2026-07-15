@@ -12,7 +12,8 @@ interface UseProductFormHandlersProps {
   formData: {
     title: string;
     slug: string;
-    descriptionHtml: string;
+    subtitle: string;
+    ingredients: string;
     brandIds: string[];
     primaryCategoryId: string;
     categoryIds: string[];
@@ -108,7 +109,6 @@ export function useProductFormHandlers({
     setLoading(true);
 
     try {
-      console.log('📝 [ADMIN] Submitting product form:', formData);
 
       // Create brand and category if needed
       const brandCategoryResult = await createBrandAndCategory();
@@ -137,7 +137,6 @@ export function useProductFormHandlers({
       const variantSkuSet = new Set<string>();
 
       if (productType === 'simple') {
-        console.log('📦 [ADMIN] Processing Simple Product');
         const priceValue = parseFloat(simpleProductData.price) || 0;
         const compareAtPriceValue = simpleProductData.compareAtPrice && simpleProductData.compareAtPrice.trim() !== ''
           ? parseFloat(simpleProductData.compareAtPrice) || 0
@@ -153,13 +152,11 @@ export function useProductFormHandlers({
         }
         variants.push(simpleVariant);
         variantSkuSet.add(simpleProductData.sku.trim());
-        console.log('✅ [ADMIN] Simple product variant created:', simpleVariant);
       } else {
         // Variable products variant processing (simplified - full logic remains in original)
         const useGeneratedVariants = generatedVariants.length > 0 && selectedAttributesForVariants.size > 0;
         
         if (useGeneratedVariants) {
-          console.log('📦 [ADMIN] Using generatedVariants format:', generatedVariants.length, 'variants');
           generatedVariants.forEach((genVariant, variantIndex) => {
             const variantPriceValue = parseFloat(genVariant.price || '0') || 0;
             const variantCompareAtPriceValue = genVariant.compareAtPrice 
@@ -261,7 +258,6 @@ export function useProductFormHandlers({
           });
         } else {
           // Legacy formData.variants processing (simplified)
-          console.log('📦 [ADMIN] Using formData.variants format (legacy)');
           currentFormData.variants.forEach((variant, variantIndex) => {
             const variantPriceValue = parseFloat(variant.price || '0') || 0;
             const baseVariantData: any = { price: variantPriceValue, published: true };

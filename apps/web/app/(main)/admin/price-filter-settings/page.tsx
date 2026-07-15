@@ -47,7 +47,6 @@ export default function PriceFilterSettingsPage() {
 
   const fetchSettings = useCallback(async () => {
     try {
-      console.log('⚙️ [PRICE FILTER SETTINGS] Fetching settings...');
       setLoading(true);
       const response = await apiClient.get<{
         minPrice?: number;
@@ -73,7 +72,6 @@ export default function PriceFilterSettingsPage() {
       setStepSizeGEL(per.GEL !== undefined ? per.GEL.toString() : '');
       prevStepSizeRef.current = fallbackStep;
 
-      console.log('✅ [PRICE FILTER SETTINGS] Settings loaded:', response);
     } catch (err: unknown) {
       console.error('❌ [PRICE FILTER SETTINGS] Error fetching settings:', err);
       setMinPrice('');
@@ -127,15 +125,6 @@ export default function PriceFilterSettingsPage() {
         setMaxPrice(newMaxNum > 0 ? newMaxNum.toString() : '');
         prevStepSizeRef.current = newValue;
 
-        console.log('🔄 [PRICE FILTER] StepSize changed:', {
-          prevStep: prevStepNum,
-          newStep: newStepNum,
-          difference,
-          prevMin: prevMinNum,
-          newMin: newMinNum,
-          prevMax: prevMaxNum,
-          newMax: newMaxNum,
-        });
 
         setTimeout(() => {
           isUpdatingRef.current = false;
@@ -186,14 +175,6 @@ export default function PriceFilterSettingsPage() {
 
     setSaving(true);
     try {
-      console.log('⚙️ [PRICE FILTER SETTINGS] Saving settings...', {
-        minValue,
-        maxValue,
-        stepValueUSD,
-        stepValueAMD,
-        stepValueRUB,
-        stepValueGEL,
-      });
 
       const stepSizePerCurrency: {
         USD?: number;
@@ -214,7 +195,6 @@ export default function PriceFilterSettingsPage() {
       });
 
       alert(t('admin.priceFilter.savedSuccess'));
-      console.log('✅ [PRICE FILTER SETTINGS] Settings saved');
     } catch (err: unknown) {
       console.error('❌ [PRICE FILTER SETTINGS] Error saving settings:', err);
       alert(t('admin.priceFilter.errorSaving').replace('{message}', saveErrorDetail(err)));
@@ -232,12 +212,10 @@ export default function PriceFilterSettingsPage() {
   useEffect(() => {
     if (!isLoading) {
       if (!isLoggedIn) {
-        console.log('❌ [PRICE FILTER SETTINGS] User not logged in, redirecting to login...');
         router.push('/login');
         return;
       }
       if (!isAdmin) {
-        console.log('❌ [PRICE FILTER SETTINGS] User is not admin, redirecting to home...');
         router.push('/');
         return;
       }

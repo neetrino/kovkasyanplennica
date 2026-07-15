@@ -38,7 +38,6 @@ function LoginPageContent() {
     setError(null);
     setIsSubmitting(true);
 
-    console.log('🔐 [LOGIN PAGE] Form submitted');
 
     // Validation
     if (!loginId.trim()) {
@@ -54,10 +53,8 @@ function LoginPageContent() {
     }
 
     try {
-      console.log('📤 [LOGIN PAGE] Calling login function...');
       const user = await login(loginId.trim(), password);
       const destination = resolvePostLoginDestination(redirectTo, Array.isArray(user.roles) ? user.roles : []);
-      console.log('✅ [LOGIN PAGE] Login successful, redirecting to:', destination);
       router.push(destination);
     } catch (err: any) {
       console.error('❌ [LOGIN PAGE] Login error:', err);

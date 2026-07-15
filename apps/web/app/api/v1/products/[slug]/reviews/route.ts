@@ -21,7 +21,6 @@ export async function GET(
     const lang = searchParams.get("lang") || "en";
     const myReview = searchParams.get("my") === "true";
     
-    console.log('📝 [REVIEWS API] GET request for product slug:', slug, { myReview });
 
     // First, get the product by slug to get the productId
     const product = await productsService.findBySlug(slug, lang);
@@ -108,7 +107,6 @@ export async function POST(
     const lang = searchParams.get("lang") || "en";
     const body = await req.json();
 
-    console.log('📝 [REVIEWS API] POST request:', { slug, userId: user.id, rating: body.rating });
 
     // First, get the product by slug to get the productId
     const product = await productsService.findBySlug(slug, lang);
@@ -158,7 +156,6 @@ export async function POST(
       comment: body.comment,
     });
 
-    console.log('✅ [REVIEWS API] Review created:', review.id);
 
     return NextResponse.json(review, { status: 201 });
   } catch (error: any) {

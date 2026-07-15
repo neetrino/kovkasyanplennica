@@ -59,10 +59,8 @@ export default function DeliveryPage() {
   const fetchDeliverySettings = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('🚚 [ADMIN] Fetching delivery settings...');
       const data = await apiClient.get<DeliverySettings>('/api/v1/admin/delivery');
       setLocations(data.locations || []);
-      console.log('✅ [ADMIN] Delivery settings loaded:', data);
     } catch (err: unknown) {
       console.error('❌ [ADMIN] Error fetching delivery settings:', err);
       setLocations([]);
@@ -80,10 +78,8 @@ export default function DeliveryPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      console.log('🚚 [ADMIN] Saving delivery settings...', { locations });
       await apiClient.put('/api/v1/admin/delivery', { locations });
       alert(t('admin.delivery.savedSuccess'));
-      console.log('✅ [ADMIN] Delivery settings saved');
       await fetchDeliverySettings();
     } catch (err: unknown) {
       console.error('❌ [ADMIN] Error saving delivery settings:', err);

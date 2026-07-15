@@ -218,7 +218,6 @@ export async function executeProductListQuery(
  * Execute product detail query with error handling
  */
 export async function executeProductDetailQuery(productId: string) {
-  const startMs = Date.now();
   try {
     const product = await db.product.findUnique({
       where: { id: productId },
@@ -227,13 +226,6 @@ export async function executeProductDetailQuery(productId: string) {
         ...getProductAttributesInclude(),
       },
     });
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[ADMIN PRODUCTS] GET detail query', {
-        productId,
-        durationMs: Date.now() - startMs,
-        variantCount: Array.isArray(product?.variants) ? product.variants.length : 0,
-      });
-    }
     return product;
   } catch (error: unknown) {
     // If productAttributes table doesn't exist, retry without it

@@ -111,7 +111,6 @@ export function BrandFilter({ category, search, minPrice, maxPrice, selectedBran
   };
 
   const handleBrandSelect = (brandId: string) => {
-    console.log('🎯 [BRAND FILTER] Brand clicked:', { brandId, currentSelectedBrands: selectedBrands });
     
     // Ստեղծում ենք նոր URLSearchParams URL-ի հիման վրա, որպեսզի պահպանենք բոլոր params-ները
     const params = new URLSearchParams(searchParams.toString());
@@ -123,27 +122,22 @@ export function BrandFilter({ category, search, minPrice, maxPrice, selectedBran
     if (currentBrands.includes(brandId)) {
       // Եթե brand-ը արդեն ընտրված է, հեռացնում ենք
       newBrands = currentBrands.filter(id => id !== brandId);
-      console.log('➖ [BRAND FILTER] Brand deselected:', { brandId, newBrands });
     } else {
       // Եթե brand-ը ընտրված չէ, ավելացնում ենք
       newBrands = [...currentBrands, brandId];
-      console.log('➕ [BRAND FILTER] Brand selected:', { brandId, newBrands });
     }
     
     // URL-ում պահում ենք comma-separated string
     if (newBrands.length > 0) {
       params.set('brand', newBrands.join(','));
-      console.log('✅ [BRAND FILTER] Setting brand param:', newBrands.join(','));
     } else {
       params.delete('brand');
-      console.log('🗑️ [BRAND FILTER] Removing brand param');
     }
     
     // Reset page to 1 when filters change
     params.delete('page');
 
     const newUrl = `/products?${params.toString()}`;
-    console.log('🔗 [BRAND FILTER] Navigating to:', newUrl);
     router.push(newUrl);
   };
 

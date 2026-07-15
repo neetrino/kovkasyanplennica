@@ -26,11 +26,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const startMs = Date.now();
     const product = await adminService.getProductById(id);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[ADMIN PRODUCTS API] GET [id]', { id, durationMs: Date.now() - startMs });
-    }
 
     return NextResponse.json(product);
   } catch (error: any) {
@@ -73,16 +69,8 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    console.log("📤 [ADMIN PRODUCTS] PUT request:", { 
-      id, 
-      bodyKeys: Object.keys(body),
-      hasVariants: !!body.variants,
-      variantsCount: body.variants?.length || 0,
-      body: JSON.stringify(body, null, 2) 
-    });
 
     const product = await adminService.updateProduct(id, body);
-    console.log("✅ [ADMIN PRODUCTS] Product updated:", { id, productId: product?.id });
 
     return NextResponse.json(product);
   } catch (error: any) {
@@ -135,10 +123,8 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    console.log("🗑️ [ADMIN PRODUCTS] DELETE request:", id);
 
     await adminService.deleteProduct(id);
-    console.log("✅ [ADMIN PRODUCTS] Product deleted:", id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

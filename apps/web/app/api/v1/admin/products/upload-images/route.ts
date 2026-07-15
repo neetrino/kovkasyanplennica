@@ -28,7 +28,6 @@ function resolveR2Prefix(body: { namespace?: unknown }): R2UploadPrefix {
  */
 export async function POST(req: NextRequest) {
   const requestStartTime = Date.now();
-  console.log("📤 [ADMIN UPLOAD IMAGES API] POST request received", { url: req.url });
   
   try {
     // Аутентификация и проверка прав администратора
@@ -115,10 +114,6 @@ export async function POST(req: NextRequest) {
 
     const r2Prefix = resolveR2Prefix(body);
 
-    console.log("📤 [ADMIN UPLOAD IMAGES API] Uploading to R2:", {
-      count: validImages.length,
-      prefix: r2Prefix,
-    });
 
     const DATA_URL_REGEX = /^data:(image\/[^;]+);base64,(.+)$/;
     const EXT_MAP: Record<string, string> = {
@@ -170,9 +165,6 @@ export async function POST(req: NextRequest) {
     }
 
     const totalTime = Date.now() - requestStartTime;
-    console.log(`✅ [ADMIN UPLOAD IMAGES API] Uploaded to R2 in ${totalTime}ms`, {
-      count: urls.length,
-    });
 
     return NextResponse.json({ urls }, { status: 200 });
   } catch (error: any) {

@@ -24,9 +24,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log("🚚 [DELIVERY PRICE] GET request:", { city, country });
     const price = await adminService.getDeliveryPrice(city, country);
-    console.log("✅ [DELIVERY PRICE] Delivery price fetched:", price);
 
     return NextResponse.json({ price });
   } catch (error: any) {

@@ -61,7 +61,6 @@ export function AdminMenuDrawer({
    * Handles navigation button clicks inside the drawer.
    */
   const handleNavigate = (path: string) => {
-    console.info('[AdminMenuDrawer] Navigating to admin path', { path });
     router.push(path);
     setOpen(false);
   };
@@ -71,7 +70,6 @@ export function AdminMenuDrawer({
       <button
         type="button"
         onClick={() => {
-          console.info('[AdminMenuDrawer] Toggling drawer', { open: !open });
           setOpen(true);
         }}
         className={chrome.menuTrigger}
@@ -86,7 +84,6 @@ export function AdminMenuDrawer({
         <div
           className="fixed inset-0 z-app-modal flex bg-admin-brand/45 backdrop-blur-sm"
           onClick={() => {
-            console.info('[AdminMenuDrawer] Closing drawer from backdrop');
             setOpen(false);
           }}
         >
@@ -101,7 +98,6 @@ export function AdminMenuDrawer({
               <button
                 type="button"
                 onClick={() => {
-                  console.info('[AdminMenuDrawer] Closing drawer from close button');
                   setOpen(false);
                 }}
                 className={chrome.closeButton}

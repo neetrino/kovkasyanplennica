@@ -60,10 +60,8 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    console.log("📤 [ADMIN CATEGORIES] POST request:", body);
 
     const result = await adminService.createCategory(body);
-    console.log("✅ [ADMIN CATEGORIES] Category created:", result.data.id);
 
     return NextResponse.json(result, { status: 201 });
   } catch (error: any) {

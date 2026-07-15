@@ -27,7 +27,6 @@ class ReviewsService {
     // Ensure table exists before querying
     await ensureProductReviewsTable();
     
-    console.log('📝 [REVIEWS SERVICE] Getting reviews for product:', productId);
     
     const where: any = {
       productId,
@@ -55,7 +54,6 @@ class ReviewsService {
       },
     });
 
-    console.log(`✅ [REVIEWS SERVICE] Found ${reviews.length} reviews for product ${productId}`);
 
     // Format response to match frontend expectations
     return reviews.map((review: ProductReviewWithUser) => ({
@@ -81,7 +79,6 @@ class ReviewsService {
     // Ensure table exists before querying
     await ensureProductReviewsTable();
     
-    console.log('📝 [REVIEWS SERVICE] Getting user review:', { productId, userId });
 
     const review = await db.productReview.findUnique({
       where: {
@@ -103,17 +100,14 @@ class ReviewsService {
     });
 
     if (!review) {
-      console.log('📝 [REVIEWS SERVICE] No review found for user');
       return null;
     }
 
     // If includeUnpublished is false, only return published reviews
     if (!includeUnpublished && !review.published) {
-      console.log('📝 [REVIEWS SERVICE] Review exists but is not published');
       return null;
     }
 
-    console.log('✅ [REVIEWS SERVICE] Found user review:', review.id);
 
     // Format response to match frontend expectations
     return {
@@ -177,7 +171,6 @@ class ReviewsService {
     // Ensure table exists before creating review
     await ensureProductReviewsTable();
     
-    console.log('📝 [REVIEWS SERVICE] Creating review:', { productId, userId, rating: data.rating });
 
     // Validate rating
     if (!data.rating || data.rating < 1 || data.rating > 5) {
@@ -244,7 +237,6 @@ class ReviewsService {
       },
     });
 
-    console.log('✅ [REVIEWS SERVICE] Review created:', review.id);
 
     // Format response
     return {

@@ -30,7 +30,6 @@ export function MobileFiltersDrawer({
     if (!openEventName) return;
 
     const handleExternalToggle = () => {
-      console.debug('[MobileFiltersDrawer] external toggle received');
       setOpen((prev) => !prev);
     };
 

@@ -93,7 +93,6 @@ export default function UsersPage() {
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('👥 [ADMIN] Fetching users...', { page, search, roleFilter });
 
       const response = await apiClient.get<UsersResponse>('/api/v1/admin/users', {
         params: {
@@ -104,7 +103,6 @@ export default function UsersPage() {
         },
       });
 
-      console.log('✅ [ADMIN] Users fetched:', response);
       setUsers(response.data || []);
       setMeta(response.meta || null);
     } catch (err) {
@@ -182,7 +180,6 @@ export default function UsersPage() {
         blocked: newStatus,
       });
 
-      console.log(`✅ [ADMIN] User ${newStatus ? 'blocked' : 'unblocked'} successfully`);
 
       fetchUsers();
 
@@ -257,7 +254,6 @@ export default function UsersPage() {
                 onClick={() => {
                   setRoleFilter('all');
                   setPage(1);
-                  console.log('👥 [ADMIN] Role filter changed to: all');
                 }}
                 className={`${rolePillBase} ${roleFilter === 'all' ? rolePillActive : rolePillIdle}`}
               >
@@ -268,7 +264,6 @@ export default function UsersPage() {
                 onClick={() => {
                   setRoleFilter('admin');
                   setPage(1);
-                  console.log('👥 [ADMIN] Role filter changed to: admin');
                 }}
                 className={`${rolePillBase} ${roleFilter === 'admin' ? rolePillActive : rolePillIdle}`}
               >
@@ -279,7 +274,6 @@ export default function UsersPage() {
                 onClick={() => {
                   setRoleFilter('customer');
                   setPage(1);
-                  console.log('👥 [ADMIN] Role filter changed to: customer');
                 }}
                 className={`${rolePillBase} ${roleFilter === 'customer' ? rolePillActive : rolePillIdle}`}
               >

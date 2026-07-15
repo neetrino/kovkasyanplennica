@@ -14,11 +14,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest) {
   try {
-    console.log("📊 [ANALYTICS] Request received");
     const user = await authenticateToken(req);
     
     if (!user || !requireAdmin(user)) {
-      console.log("❌ [ANALYTICS] Unauthorized or not admin");
       return NextResponse.json(
         {
           type: "https://api.shop.am/problems/forbidden",
@@ -37,9 +35,7 @@ export async function GET(req: NextRequest) {
     const startDate = searchParams.get("startDate") || undefined;
     const endDate = searchParams.get("endDate") || undefined;
 
-    console.log(`✅ [ANALYTICS] User authenticated: ${user.id}, period: ${period}`);
     const result = await adminService.getAnalytics(period, startDate, endDate);
-    console.log("✅ [ANALYTICS] Analytics data retrieved successfully");
     
     return NextResponse.json(result);
   } catch (error: any) {

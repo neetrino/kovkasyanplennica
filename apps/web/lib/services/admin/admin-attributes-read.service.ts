@@ -5,7 +5,6 @@ class AdminAttributesReadService {
    * Get attributes
    */
   async getAttributes() {
-    const startMs = Date.now();
     let attributes;
 
     try {
@@ -208,15 +207,6 @@ class AdminAttributesReadService {
         };
       }
     );
-
-    if (process.env.NODE_ENV === 'development') {
-      const totalValues = data.reduce((sum, attr) => sum + attr.values.length, 0);
-      console.log('[ADMIN ATTRIBUTES] GET summary', {
-        attributes: data.length,
-        values: totalValues,
-        durationMs: Date.now() - startMs,
-      });
-    }
 
     return { data };
   }

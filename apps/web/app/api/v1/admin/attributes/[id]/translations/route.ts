@@ -28,7 +28,6 @@ export async function PATCH(
     const { id: attributeId } = await params;
     const body = await req.json();
 
-    console.log('✏️ [ADMIN ATTRIBUTE TRANSLATIONS] PATCH request:', { attributeId, body });
 
     const result = await adminService.updateAttributeTranslation(attributeId, {
       name: body.name,

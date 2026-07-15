@@ -5,21 +5,18 @@ class AdminDeliveryService {
    * Get delivery settings
    */
   async getDeliverySettings() {
-    console.log('🚚 [ADMIN SERVICE] getDeliverySettings called');
     
     const setting = await db.settings.findUnique({
       where: { key: 'delivery-locations' },
     });
 
     if (!setting) {
-      console.log('✅ [ADMIN SERVICE] Delivery settings not found, returning defaults');
       return {
         locations: [],
       };
     }
 
     const value = setting.value as { locations?: Array<{ id?: string; country: string; city: string; price: number }> };
-    console.log('✅ [ADMIN SERVICE] Delivery settings loaded:', value);
     return {
       locations: value.locations || [],
     };
@@ -30,14 +27,12 @@ class AdminDeliveryService {
    * Returns the configured price if city has shipping, otherwise returns 0
    */
   async getDeliveryPrice(city: string, country: string = 'Armenia') {
-    console.log('🚚 [ADMIN SERVICE] getDeliveryPrice called:', { city, country });
     
     const setting = await db.settings.findUnique({
       where: { key: 'delivery-locations' },
     });
 
     if (!setting) {
-      console.log('✅ [ADMIN SERVICE] Delivery settings not found, returning 0 (no shipping for this city)');
       return 0; // No shipping configured for this city
     }
 
@@ -52,7 +47,6 @@ class AdminDeliveryService {
     );
 
     if (location) {
-      console.log('✅ [ADMIN SERVICE] Delivery price found:', location.price);
       return location.price;
     }
 
@@ -62,12 +56,10 @@ class AdminDeliveryService {
     );
 
     if (cityMatch) {
-      console.log('✅ [ADMIN SERVICE] Delivery price found by city:', cityMatch.price);
       return cityMatch.price;
     }
 
     // Return 0 if no match found (city doesn't have shipping configured)
-    console.log('✅ [ADMIN SERVICE] No delivery price found for city, returning 0');
     return 0; // No shipping for this city
   }
 
@@ -75,7 +67,6 @@ class AdminDeliveryService {
    * Update delivery settings
    */
   async updateDeliverySettings(data: { locations: Array<{ id?: string; country: string; city: string; price: number }> }) {
-    console.log('🚚 [ADMIN SERVICE] updateDeliverySettings called:', data);
     
     // Validate locations
     if (!Array.isArray(data.locations)) {
@@ -126,7 +117,6 @@ class AdminDeliveryService {
       },
     });
 
-    console.log('✅ [ADMIN SERVICE] Delivery settings updated:', setting);
     return {
       locations: locationsWithIds,
     };

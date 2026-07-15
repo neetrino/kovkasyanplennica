@@ -20,8 +20,6 @@ export function useVariantConversionToFormData({
   const convertGeneratedVariantsToFormData = (): void => {
     // Skip this for simple products
     if (productType === 'variable' && selectedAttributesForVariants.size > 0 && generatedVariants.length > 0) {
-      console.log('🔄 [ADMIN] Converting new variant builder variants to formData format...');
-      console.log('📊 [ADMIN] Total generated variants to convert:', generatedVariants.length);
       
       const allNewVariants: Variant[] = [];
       const skuSetForConversion = new Set<string>();
@@ -54,7 +52,6 @@ export function useVariantConversionToFormData({
               
               if (value.imageUrl) {
                 colorData.images.push(value.imageUrl);
-                console.log('✅ [ADMIN] Added attribute value imageUrl to color:', value.imageUrl);
               }
               
               if (variant.price) {
@@ -99,7 +96,6 @@ export function useVariantConversionToFormData({
               
               if (sizeValue.imageUrl) {
                 colorData.images.push(sizeValue.imageUrl);
-                console.log('✅ [ADMIN] Added size attribute value imageUrl:', sizeValue.imageUrl);
               }
             }
           });
@@ -136,7 +132,6 @@ export function useVariantConversionToFormData({
                 const value = attribute.values.find(v => v.id === valueId);
                 if (value && value.imageUrl) {
                   colorData.images.push(value.imageUrl);
-                  console.log('✅ [ADMIN] Added attribute value imageUrl from', attribute.key, ':', value.imageUrl);
                 }
               });
             });
@@ -182,7 +177,6 @@ export function useVariantConversionToFormData({
       });
       
       setFormData((prev) => ({ ...prev, variants: allNewVariants }));
-      console.log('✅ [ADMIN] Converted variants:', allNewVariants.length, 'with unique SKUs');
     }
   };
 

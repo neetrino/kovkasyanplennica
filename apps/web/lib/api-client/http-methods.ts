@@ -7,8 +7,8 @@ import { shouldLogError, shouldLogWarning, parseErrorResponse, createApiError } 
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
-function debugApi(...args: unknown[]) {
-  if (IS_DEV) console.log(...args);
+function debugApi(..._args: unknown[]) {
+  // Intentionally silent — avoid noisy API request logs in the console
 }
 
 function mergeAbortSignals(signals: AbortSignal[]): AbortSignal {
@@ -250,7 +250,6 @@ export async function postRequest<T>(
   try {
     const url = buildUrl(baseUrl, endpoint, options?.params);
     
-    console.log('📤 [API CLIENT] POST request:', { url, data: data ? 'provided' : 'none' });
     
     const response = await fetch(url, {
       method: 'POST',
@@ -259,7 +258,6 @@ export async function postRequest<T>(
       ...options,
     });
 
-    console.log('📥 [API CLIENT] Response status:', response.status, response.statusText);
 
     if (!response.ok) {
       const isUnauthorized = response.status === 401;
@@ -274,7 +272,6 @@ export async function postRequest<T>(
 
     try {
       const jsonData = await response.json();
-      console.log('✅ [API CLIENT] Response parsed successfully');
       return jsonData;
     } catch (parseError: unknown) {
       console.error('❌ [API CLIENT] JSON parse error:', parseError);
@@ -318,7 +315,6 @@ export async function putRequest<T>(
 ): Promise<T> {
   const url = buildUrl(baseUrl, endpoint, options?.params);
   
-  console.log('📤 [API CLIENT] PUT request:', { url, endpoint, hasData: !!data });
   
   const response = await fetch(url, {
     method: 'PUT',
@@ -327,7 +323,6 @@ export async function putRequest<T>(
     ...options,
   });
 
-  console.log('📥 [API CLIENT] PUT response status:', response.status, response.statusText);
 
   if (!response.ok) {
     await handleErrorResponse(response, url, baseUrl);
@@ -335,7 +330,6 @@ export async function putRequest<T>(
 
   try {
     const jsonData = await response.json();
-    console.log('✅ [API CLIENT] PUT Response parsed successfully');
     return jsonData;
   } catch (parseError: unknown) {
     console.error('❌ [API CLIENT] PUT JSON parse error:', {

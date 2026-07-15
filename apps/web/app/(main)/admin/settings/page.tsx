@@ -66,7 +66,6 @@ export default function SettingsPage() {
   const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('⚙️ [ADMIN] Fetching settings...');
       const data = await apiClient.get<Settings>('/api/v1/admin/settings');
       setSettings({
         defaultCurrency: data.defaultCurrency || 'RUB',
@@ -81,7 +80,6 @@ export default function SettingsPage() {
           GEL: 2.7,
         },
       });
-      console.log('✅ [ADMIN] Settings loaded:', data);
     } catch (err: unknown) {
       console.error('❌ [ADMIN] Error fetching settings:', err);
       setSettings({
@@ -108,7 +106,6 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      console.log('⚙️ [ADMIN] Saving settings...', settings);
 
       const currencyRatesToSave = {
         USD: 1,
@@ -123,18 +120,15 @@ export default function SettingsPage() {
         currencyRates: currencyRatesToSave,
       });
 
-      console.log('🔄 [ADMIN] Clearing currency rates cache...');
       clearCurrencyRatesCache();
 
       setTimeout(() => {
         if (typeof window !== 'undefined') {
-          console.log('🔄 [ADMIN] Dispatching currency-rates-updated event...');
           window.dispatchEvent(new Event('currency-rates-updated'));
         }
       }, 100);
 
       alert(t('admin.settings.savedSuccess'));
-      console.log('✅ [ADMIN] Settings saved, currency rates:', currencyRatesToSave);
     } catch (err: unknown) {
       console.error('❌ [ADMIN] Error saving settings:', err);
       alert(t('admin.settings.errorSaving').replace('{message}', saveErrorDetail(err)));
