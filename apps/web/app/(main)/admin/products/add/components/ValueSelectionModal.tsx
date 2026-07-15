@@ -86,14 +86,6 @@ export function ValueSelectionModal({
     // Update variant first (to preserve dropdown state)
     onVariantUpdate((prev) => {
       const updated = prev.map((v) => (v.id === variant.id ? { ...v, selectedValueIds: newIds } : v));
-      console.log('✅ [VARIANT BUILDER] Value selection updated:', {
-        variantId: variant.id,
-        isAutoVariant,
-        valueId,
-        action: checked ? 'added' : 'removed',
-        newSelectedIds: newIds.length,
-        totalVariants: updated.length,
-      });
       return updated;
     });
 

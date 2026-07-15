@@ -8,7 +8,6 @@ export function useCurrency() {
   useEffect(() => {
     const updateCurrency = () => {
       const newCurrency = getStoredCurrency();
-      console.log('💱 [PROFILE] Currency updated to:', newCurrency);
       setCurrency(newCurrency);
     };
     
@@ -17,7 +16,6 @@ export function useCurrency() {
     if (typeof window !== 'undefined') {
       window.addEventListener('currency-updated', updateCurrency);
       const handleCurrencyRatesUpdate = () => {
-        console.log('💱 [PROFILE] Currency rates updated, refreshing currency...');
         updateCurrency();
       };
       window.addEventListener('currency-rates-updated', handleCurrencyRatesUpdate);

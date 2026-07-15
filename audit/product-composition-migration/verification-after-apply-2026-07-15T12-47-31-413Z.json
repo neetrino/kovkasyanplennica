@@ -1,0 +1,60 @@
+{
+  "total": 94,
+  "ingredientsFilled": 91,
+  "ingredientsEmpty": 3,
+  "subtitleChanges": 0,
+  "descriptionHtmlChanges": 0,
+  "longDescriptionChanges": 0,
+  "titleChanges": 0,
+  "ingredientsChangedFromNonEmpty": 0,
+  "manual": [
+    {
+      "title": "Мацун",
+      "found": true,
+      "productId": "cmr0q5isu008vaixkrarsh3im",
+      "ingredients": "Мацун",
+      "subtitle": "100 мл",
+      "ingredientsEmpty": false
+    },
+    {
+      "title": "Мацун чесночный",
+      "found": true,
+      "productId": "cmr0q5fhp008maixkebhmos4a",
+      "ingredients": "Мацун чесночный",
+      "subtitle": "50 г",
+      "ingredientsEmpty": false
+    },
+    {
+      "title": "Картофель фри",
+      "found": true,
+      "productId": "cmr0q3qhm003vaixk54klrknr",
+      "ingredients": "",
+      "subtitle": "160г",
+      "ingredientsEmpty": true
+    },
+    {
+      "title": "Картофель по-деревенски",
+      "found": true,
+      "productId": "cmr0q3rjp003yaixkjpaa2it2",
+      "ingredients": "",
+      "subtitle": "200г",
+      "ingredientsEmpty": true
+    },
+    {
+      "title": "Хашлама с говяжьим хвостом",
+      "found": true,
+      "productId": "cmr0q3k2o003daixkvpv261iu",
+      "ingredients": "",
+      "subtitle": "400 г",
+      "ingredientsEmpty": true
+    },
+    {
+      "title": "Хашлама из баранины",
+      "found": true,
+      "productId": "cmr0q3ixd003aaixkh0ih5rkt",
+      "ingredients": "Баранина, бульон/овощи",
+      "subtitle": "400 г",
+      "ingredientsEmpty": false
+    }
+  ]
+}

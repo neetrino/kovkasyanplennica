@@ -31,7 +31,6 @@ export function MobileBottomNav() {
     const updateCounts = () => {
       const wishlist = getWishlistCount();
       const compare = getCompareCount();
-      console.debug('[MobileBottomNav] wishlist/compare counts refreshed', { wishlist, compare });
       setWishlistCount(wishlist);
       setCompareCount(compare);
     };
@@ -60,7 +59,6 @@ export function MobileBottomNav() {
         href: '/products', 
         icon: Store, 
         visible: true,
-        onClick: () => console.info('🛒 [MobileBottomNav] Shop tapped, navigating to /products'),
       },
       // On mobile we show Cart instead of Wishlist
       { 

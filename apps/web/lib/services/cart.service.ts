@@ -257,13 +257,6 @@ class CartService {
 
     // Check if total quantity exceeds available stock
     if (totalQuantity > variant.stock) {
-      console.log('🚫 [CART SERVICE] Stock limit exceeded:', {
-        variantId,
-        currentInCart: existingItem?.quantity || 0,
-        requestedQuantity: quantity,
-        totalQuantity,
-        availableStock: variant.stock
-      });
       throw {
         status: 422,
         type: "https://api.shop.am/problems/validation-error",
@@ -274,12 +267,6 @@ class CartService {
 
     let item;
     if (existingItem) {
-      console.log('✅ [CART SERVICE] Updating existing cart item:', {
-        itemId: existingItem.id,
-        oldQuantity: existingItem.quantity,
-        newQuantity: totalQuantity,
-        variantStock: variant.stock
-      });
       item = await db.cartItem.update({
         where: { id: existingItem.id },
         data: {
@@ -287,11 +274,6 @@ class CartService {
         },
       });
     } else {
-      console.log('✅ [CART SERVICE] Creating new cart item:', {
-        variantId,
-        quantity,
-        variantStock: variant.stock
-      });
       item = await db.cartItem.create({
         data: {
           cartId: cart.id,

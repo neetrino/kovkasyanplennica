@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
       ...(sortOrder && { sortOrder: sortOrder as 'asc' | 'desc' }),
     };
 
-    console.log('📦 [ADMIN ORDERS] GET request with filters:', filters);
     const result = await adminService.getOrders(filters);
     return NextResponse.json(result);
   } catch (error: any) {

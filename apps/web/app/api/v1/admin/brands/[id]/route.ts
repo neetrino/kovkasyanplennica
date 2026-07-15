@@ -27,10 +27,8 @@ export async function PUT(
 
     const { id } = await params;
     const body = await req.json();
-    console.log("📤 [ADMIN BRANDS] PUT request:", { id, body });
 
     const result = await adminService.updateBrand(id, body);
-    console.log("✅ [ADMIN BRANDS] Brand updated:", id);
 
     return NextResponse.json(result);
   } catch (error: any) {
@@ -72,10 +70,8 @@ export async function DELETE(
     }
 
     const { id } = await params;
-    console.log("🗑️ [ADMIN BRANDS] DELETE request:", id);
 
     await adminService.deleteBrand(id);
-    console.log("✅ [ADMIN BRANDS] Brand deleted:", id);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

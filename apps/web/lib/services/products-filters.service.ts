@@ -101,11 +101,6 @@ class ProductsFiltersService {
             const childCategoryIds = await this.getAllChildCategoryIds(categoryDoc.id);
             const allCategoryIds = [categoryDoc.id, ...childCategoryIds];
             
-            console.log('📂 [PRODUCTS FILTERS SERVICE] Category IDs to include in filters:', {
-              parent: categoryDoc.id,
-              children: childCategoryIds,
-              total: allCategoryIds.length
-            });
             
             // Build OR conditions for all categories (parent + children)
             const categoryConditions = allCategoryIds.flatMap((catId: string) => [

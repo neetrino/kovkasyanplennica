@@ -38,7 +38,6 @@ async function getCurrencyRates(): Promise<Record<string, number>> {
       const rates = await response.json();
       currencyRatesCache = rates;
       currencyRatesCacheTime = Date.now();
-      console.log('✅ [CURRENCY] Currency rates loaded:', rates);
       return rates;
     } else {
       console.error('❌ [CURRENCY] API returned error:', response.status, response.statusText);
@@ -119,7 +118,6 @@ export async function initializeCurrencyRates(forceReload: boolean = false): Pro
   }
   
   const rates = await getCurrencyRates();
-  console.log('✅ [CURRENCY] Currency rates initialized:', rates);
 }
 
 export function convertPrice(price: number, fromCurrency: CurrencyCode, toCurrency: CurrencyCode): number {

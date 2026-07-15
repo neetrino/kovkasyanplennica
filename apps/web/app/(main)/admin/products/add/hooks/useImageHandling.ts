@@ -89,11 +89,6 @@ export function useImageHandling({
   };
 
   const addColorImages = (variantId: string, colorValue: string, images: string[]) => {
-    console.log('🖼️ [ADMIN] Adding images to color:', {
-      variantId,
-      colorValue,
-      imagesCount: images.length,
-    });
 
     setVariants((prev) =>
       prev.map((v) => {
@@ -119,7 +114,6 @@ export function useImageHandling({
       return;
     }
 
-    console.log('📸 [UPLOAD] Starting upload of', files.length, 'image(s)');
     setImageUploadLoading(true);
     setImageUploadError(null);
     try {
@@ -134,7 +128,6 @@ export function useImageHandling({
             return { success: false, error: errorMsg, index };
           }
 
-          console.log(`📸 [UPLOAD] Processing file ${index + 1}/${files.length}:`, file.name, `(${Math.round(file.size / 1024)}KB)`);
 
           const outputType =
             file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
@@ -147,7 +140,6 @@ export function useImageHandling({
           });
 
           if (base64 && base64.trim()) {
-            console.log(`✅ [UPLOAD] Successfully processed file ${index + 1}/${files.length}:`, file.name);
             return { success: true, base64, index };
           } else {
             const errorMsg = `Failed to convert "${file.name}" to base64`;
@@ -178,7 +170,6 @@ export function useImageHandling({
         }
       });
 
-      console.log('📸 [UPLOAD] Upload complete. Processed:', uploadedImages.length, 'of', files.length, 'files');
       if (errors.length > 0) {
         console.warn('⚠️ [UPLOAD] Errors during upload:', errors);
         setImageUploadError(errors.join('; '));
@@ -231,11 +222,6 @@ export function useImageHandling({
     setImageUploadLoading(true);
     setImageUploadError(null);
     try {
-      console.log('🖼️ [VARIANT IMAGE] Processing variant image:', {
-        variantId,
-        fileName: file.name,
-        originalSize: `${Math.round(file.size / 1024)}KB`,
-      });
 
       const outputType =
         file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
@@ -254,7 +240,6 @@ export function useImageHandling({
       const imageUrl = urls[0] ?? base64;
 
       setGeneratedVariants((prev) => prev.map((v) => (v.id === variantId ? { ...v, image: imageUrl } : v)));
-      console.log('✅ [VARIANT BUILDER] Variant image uploaded to R2 for variant:', variantId);
     } catch (error: unknown) {
       console.error('❌ [VARIANT IMAGE] Error processing variant image:', error);
       setImageUploadError(error instanceof Error ? error.message : t('admin.products.add.failedToProcessImage'));
@@ -269,7 +254,6 @@ export function useImageHandling({
   const handleUploadColorImages = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (!files.length || !colorImageTarget) {
-      console.log('⚠️ [ADMIN] No files or no color target:', { filesLength: files.length, colorImageTarget });
       if (event.target) {
         event.target.value = '';
       }
@@ -286,14 +270,9 @@ export function useImageHandling({
 
     try {
       setImageUploadLoading(true);
-      console.log('📤 [ADMIN] Starting upload for color:', colorImageTarget.colorValue, 'Files:', imageFiles.length);
 
       const base64Images = await Promise.all(
         imageFiles.map(async (file, index) => {
-          console.log(`🖼️ [COLOR IMAGE] Processing image ${index + 1}/${imageFiles.length}:`, {
-            fileName: file.name,
-            originalSize: `${Math.round(file.size / 1024)}KB`,
-          });
 
           const outputType =
             file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
@@ -305,7 +284,6 @@ export function useImageHandling({
             initialQuality: 0.8,
           });
 
-          console.log(`✅ [COLOR IMAGE] Image ${index + 1}/${imageFiles.length} processed, base64 length:`, base64.length);
           return base64;
         })
       );
@@ -315,14 +293,8 @@ export function useImageHandling({
         { images: base64Images }
       );
 
-      console.log('📥 [ADMIN] Images uploaded to R2, adding to variant:', {
-        variantId: colorImageTarget.variantId,
-        colorValue: colorImageTarget.colorValue,
-        imagesCount: urls.length,
-      });
 
       addColorImages(colorImageTarget.variantId, colorImageTarget.colorValue, urls);
-      console.log('✅ [ADMIN] Color images (R2 URLs) added to state:', urls.length);
     } catch (error: unknown) {
       console.error('❌ [ADMIN] Error uploading color images:', error);
       setImageUploadError(error instanceof Error ? error.message : t('admin.products.add.failedToProcessImages'));

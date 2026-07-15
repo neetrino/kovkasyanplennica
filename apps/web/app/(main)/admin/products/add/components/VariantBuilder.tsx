@@ -420,7 +420,6 @@ export function VariantBuilder({
               <Button
                 type="button"
                 onClick={() => {
-                  console.log('✅ [VARIANT BUILDER] Variants ready for submission:', generatedVariants);
                 }}
               >
                 {t('admin.products.add.variantsReady') || 'Variants Ready'}

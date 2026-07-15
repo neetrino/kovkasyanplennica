@@ -36,12 +36,10 @@ export default function AdminPanel() {
   useEffect(() => {
     if (!isLoading) {
       if (!isLoggedIn) {
-        console.log('❌ [ADMIN] User not logged in, redirecting to login...');
         router.push('/login');
         return;
       }
       if (!canAccessAdmin) {
-        console.log('❌ [ADMIN] User is not admin, redirecting to home...');
         router.push('/');
         return;
       }

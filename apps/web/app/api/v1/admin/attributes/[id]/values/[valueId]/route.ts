@@ -28,7 +28,6 @@ export async function PATCH(
     const { id: attributeId, valueId } = await params;
     const body = await req.json();
 
-    console.log('✏️ [ADMIN ATTRIBUTE VALUES] PATCH request:', { attributeId, valueId, body });
 
     const result = await adminService.updateAttributeValue(attributeId, valueId, {
       label: body.label,

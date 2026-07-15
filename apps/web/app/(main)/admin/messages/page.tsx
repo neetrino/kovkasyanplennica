@@ -74,7 +74,6 @@ export default function MessagesPage() {
   const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('📧 [ADMIN] Fetching messages...', { page });
 
       const response = await apiClient.get<MessagesResponse>('/api/v1/admin/messages', {
         params: {
@@ -83,7 +82,6 @@ export default function MessagesPage() {
         },
       });
 
-      console.log('✅ [ADMIN] Messages fetched:', response);
       setMessages(response.data || []);
       setMeta(response.meta || null);
     } catch (err) {

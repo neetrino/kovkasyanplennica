@@ -172,10 +172,6 @@ export function CategoryGrid() {
       // Get all categories including children (flatten the tree)
       const allCategories = flattenAllCategories(categoriesList);
       
-      console.log('📦 [CategoryGrid] Root categories found:', categoriesList.length);
-      console.log('📦 [CategoryGrid] Root categories:', categoriesList.map(c => c.title));
-      console.log('📦 [CategoryGrid] Total categories (including children):', allCategories.length);
-      console.log('📦 [CategoryGrid] All categories:', allCategories.map(c => c.title));
       
       // Set categories immediately so they render
       setCategories(allCategories);
@@ -194,7 +190,6 @@ export function CategoryGrid() {
       const categoryPromises = allCategories.map(async (category) => {
         try {
           // Fetch products to get count and find one with image
-          console.log(`🔍 [CategoryGrid] Fetching products for category: "${category.title}" (slug: "${category.slug}")`);
           const productsResponse = await apiClient.get<ProductsResponse>('/api/v1/products', {
             params: {
               category: category.slug,
@@ -203,13 +198,6 @@ export function CategoryGrid() {
             },
           });
           
-          console.log(`📦 [CategoryGrid] Response for "${category.title}":`, {
-            total: productsResponse.meta?.total || 0,
-            productsCount: productsResponse.data?.length || 0,
-            firstProductId: productsResponse.data?.[0]?.id,
-            firstProductImage: productsResponse.data?.[0]?.image,
-            allProductIds: productsResponse.data?.map(p => p.id),
-          });
           
           // If category has 0 products, it might mean category was not found
           if (productsResponse.meta?.total === 0) {
@@ -224,7 +212,6 @@ export function CategoryGrid() {
             : null;
           products[category.slug] = productWithImage;
           
-          console.log(`✅ [CategoryGrid] Category "${category.title}" (${category.slug}): ${counts[category.slug]} products, selected product: ${productWithImage?.id} (image: ${productWithImage?.image ? 'yes' : 'no'})`);
         } catch (err) {
           console.error(`❌ [CategoryGrid] Error fetching products for category ${category.slug}:`, err);
           // Keep default values (0 and null)
@@ -239,14 +226,6 @@ export function CategoryGrid() {
       setCategoryProducts(products);
       
       // Log final state to verify each category has unique product
-      console.log('✅ [CategoryGrid] All categories processed. Total:', allCategories.length);
-      console.log('📊 [CategoryGrid] Final category products mapping:', 
-        Object.entries(products).map(([slug, product]) => ({
-          slug,
-          productId: product?.id || 'null',
-          productImage: product?.image || 'null',
-        }))
-      );
       
       // Check for duplicate products
       const productIds = Object.values(products).map(p => p?.id).filter(Boolean);
@@ -291,10 +270,6 @@ export function CategoryGrid() {
     return null;
   }
 
-  console.log('🎨 [CategoryGrid] Rendering categories:', categories.length);
-  console.log('🎨 [CategoryGrid] Product counts:', productCounts);
-  console.log('🎨 [CategoryGrid] Category products:', Object.keys(categoryProducts).length);
-  console.log('🎨 [CategoryGrid] Categories to render:', categories.map(c => c.title));
 
   return (
     <section className="py-12 bg-white border-b border-gray-100">

@@ -396,7 +396,6 @@ class AdminCategoriesService {
    * Delete category (soft delete)
    */
   async deleteCategory(categoryId: string) {
-    console.log('🗑️ [ADMIN SERVICE] deleteCategory called:', categoryId);
     
     const category = await db.category.findUnique({
       where: { id: categoryId },
@@ -459,7 +458,6 @@ class AdminCategoriesService {
       },
     });
 
-    console.log('✅ [ADMIN SERVICE] Category deleted:', categoryId);
     return { success: true };
   }
 }

@@ -41,7 +41,6 @@ export function useBrandAndCategoryCreation({
     // Create new brand if provided
     if (useNewBrand && newBrandName.trim()) {
       try {
-        console.log('🏷️ [ADMIN] Creating new brand:', newBrandName);
         const brandResponse = await apiClient.post<{ data: Brand }>('/api/v1/admin/brands', {
           name: newBrandName.trim(),
           locale: 'ru',
@@ -51,7 +50,6 @@ export function useBrandAndCategoryCreation({
             finalBrandIds.push(brandResponse.data.id);
           }
           setBrands((prev) => [...prev, brandResponse.data]);
-          console.log('✅ [ADMIN] Brand created:', brandResponse.data.id);
           creationMessages.push(t('admin.products.add.brandCreatedSuccess').replace('{name}', newBrandName.trim()));
         }
       } catch (err: any) {
@@ -64,7 +62,6 @@ export function useBrandAndCategoryCreation({
     // Create new category if provided
     if (useNewCategory && newCategoryName.trim()) {
       try {
-        console.log('📁 [ADMIN] Creating new category:', newCategoryName);
         const categoryResponse = await apiClient.post<{ data: Category }>('/api/v1/admin/categories', {
           title: newCategoryName.trim(),
           locale: 'ru',
@@ -73,7 +70,6 @@ export function useBrandAndCategoryCreation({
         if (categoryResponse.data) {
           finalPrimaryCategoryId = categoryResponse.data.id;
           setCategories((prev) => [...prev, categoryResponse.data]);
-          console.log('✅ [ADMIN] Category created:', categoryResponse.data.id);
           creationMessages.push(
             t('admin.products.add.categoryCreatedSuccess').replace('{name}', newCategoryName.trim())
           );

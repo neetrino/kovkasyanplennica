@@ -7,7 +7,6 @@ export function markEditPageLoadStart(): void {
     return;
   }
   pageLoadStart = performance.now();
-  console.log('[ADMIN EDIT TIMING] page mount', { elapsedMs: 0 });
 }
 
 export function markEditTiming(label: string, extra?: Record<string, unknown>): void {
@@ -16,7 +15,6 @@ export function markEditTiming(label: string, extra?: Record<string, unknown>): 
   }
   const elapsedMs =
     pageLoadStart != null ? Math.round(performance.now() - pageLoadStart) : null;
-  console.log(`[ADMIN EDIT TIMING] ${label}`, { elapsedMs, ...extra });
 }
 
 export function measureEditAsync<T>(label: string, fn: () => Promise<T>): Promise<T> {

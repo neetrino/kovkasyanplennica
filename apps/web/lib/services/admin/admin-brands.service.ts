@@ -112,7 +112,6 @@ class AdminBrandsService {
       logoUrl?: string;
     }
   ) {
-    console.log('🔄 [ADMIN SERVICE] updateBrand called:', brandId, data);
     
     const brand = await db.brand.findUnique({
       where: { id: brandId },
@@ -200,7 +199,6 @@ class AdminBrandsService {
    * Delete brand (soft delete)
    */
   async deleteBrand(brandId: string) {
-    console.log('🗑️ [ADMIN SERVICE] deleteBrand called:', brandId);
     
     const brand = await db.brand.findUnique({
       where: { id: brandId },
@@ -241,7 +239,6 @@ class AdminBrandsService {
       },
     });
 
-    console.log('✅ [ADMIN SERVICE] Brand deleted:', brandId);
     return { success: true };
   }
 }

@@ -29,65 +29,41 @@ export default function RegisterPage() {
     setError(null);
     setIsSubmitting(true);
 
-    console.log('🔐 [REGISTER PAGE] Form submitted');
 
     // Validation - check in order of importance
-    console.log('🔍 [REGISTER PAGE] Validating form data...');
-    console.log('🔍 [REGISTER PAGE] Form state:', {
-      email: email.trim() || 'empty',
-      phone: phone.trim() || 'empty',
-      hasPassword: !!password,
-      passwordLength: password.length,
-      passwordsMatch: password === confirmPassword,
-      acceptTerms,
-    });
 
     if (!acceptTerms) {
-      console.log('❌ [REGISTER PAGE] Validation failed: Terms not accepted');
       setError(t('register.errors.acceptTerms'));
       setIsSubmitting(false);
       return;
     }
 
     if (!email.trim() && !phone.trim()) {
-      console.log('❌ [REGISTER PAGE] Validation failed: No email or phone');
       setError(t('register.errors.emailOrPhoneRequired'));
       setIsSubmitting(false);
       return;
     }
 
     if (!password) {
-      console.log('❌ [REGISTER PAGE] Validation failed: No password');
       setError(t('register.errors.passwordRequired'));
       setIsSubmitting(false);
       return;
     }
 
     if (password.length < 6) {
-      console.log('❌ [REGISTER PAGE] Validation failed: Password too short');
       setError(t('register.errors.passwordMinLength'));
       setIsSubmitting(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      console.log('❌ [REGISTER PAGE] Validation failed: Passwords do not match');
       setError(t('register.errors.passwordsDoNotMatch'));
       setIsSubmitting(false);
       return;
     }
 
-    console.log('✅ [REGISTER PAGE] All validations passed');
 
     try {
-      console.log('📤 [REGISTER PAGE] Calling register function...');
-      console.log('📤 [REGISTER PAGE] Registration data:', {
-        email: email.trim() || 'not provided',
-        phone: phone.trim() || 'not provided',
-        hasPassword: !!password,
-        firstName: firstName.trim() || 'not provided',
-        lastName: lastName.trim() || 'not provided',
-      });
       
       await register({
         email: email.trim() || undefined,
@@ -97,12 +73,10 @@ export default function RegisterPage() {
         lastName: lastName.trim() || undefined,
       });
       
-      console.log('✅ [REGISTER PAGE] Registration successful, redirecting...');
       // Redirect is handled by AuthContext
       // But we can also redirect here as a fallback
       setTimeout(() => {
         if (window.location.pathname === '/register') {
-          console.log('🔄 [REGISTER PAGE] Fallback redirect to home...');
           window.location.href = '/';
         }
       }, 1000);

@@ -45,7 +45,6 @@ async function initUpstash(): Promise<boolean> {
     };
     await backend.client.ping();
     redisAvailable = true;
-    console.log("✅ Redis connected (Upstash)");
     return true;
   } catch (error: unknown) {
     logCacheWarning("⚠️  [CACHE] Upstash Redis unavailable", error);
@@ -86,7 +85,6 @@ async function initIoredis(): Promise<boolean> {
     await client.connect();
     backend = { kind: "ioredis", client };
     redisAvailable = true;
-    console.log("✅ Redis connected");
     return true;
   } catch (error: unknown) {
     logCacheWarning("⚠️  [CACHE] ioredis unavailable", error);

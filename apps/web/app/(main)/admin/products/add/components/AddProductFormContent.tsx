@@ -26,9 +26,7 @@ interface AddProductFormContentProps {
     title: string;
     slug: string;
     subtitle: string;
-    descriptionHtml: string;
     ingredients: string;
-    longDescriptionHtml: string;
     brandIds: string[];
     categoryIds: string[];
     primaryCategoryId: string;
@@ -71,9 +69,7 @@ interface AddProductFormContentProps {
   onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onSlugChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubtitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onDescriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onIngredientsChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onLongDescriptionChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onProductTypeChange: (type: 'simple' | 'variable') => void;
   onUploadImages: (event: ChangeEvent<HTMLInputElement>) => Promise<void>;
   onRemoveImage: (index: number) => void;
@@ -140,9 +136,7 @@ export function AddProductFormContent({
   onTitleChange,
   onSlugChange,
   onSubtitleChange,
-  onDescriptionChange,
   onIngredientsChange,
-  onLongDescriptionChange,
   onProductTypeChange,
   onUploadImages,
   onRemoveImage,
@@ -187,15 +181,11 @@ export function AddProductFormContent({
           title={formData.title}
           slug={formData.slug}
           subtitle={formData.subtitle}
-          descriptionHtml={formData.descriptionHtml}
           ingredients={formData.ingredients}
-          longDescriptionHtml={formData.longDescriptionHtml}
           onTitleChange={onTitleChange}
           onSlugChange={onSlugChange}
           onSubtitleChange={onSubtitleChange}
-          onDescriptionChange={onDescriptionChange}
           onIngredientsChange={onIngredientsChange}
-          onLongDescriptionChange={onLongDescriptionChange}
         />
 
         <ProductImages

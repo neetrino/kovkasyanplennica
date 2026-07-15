@@ -29,12 +29,6 @@ export async function PATCH(
     const body = await req.json();
     const discountPercent = body.discountPercent;
 
-    console.log("💰 [ADMIN PRODUCTS] PATCH discount request:", { 
-      id, 
-      body, 
-      discountPercent, 
-      type: typeof discountPercent 
-    });
 
     if (typeof discountPercent !== "number" || discountPercent < 0 || discountPercent > 100) {
       console.error("❌ [ADMIN PRODUCTS] Invalid discountPercent:", discountPercent);
@@ -50,10 +44,8 @@ export async function PATCH(
       );
     }
 
-    console.log("💰 [ADMIN PRODUCTS] Calling updateProductDiscount:", { id, discountPercent });
 
     const result = await adminService.updateProductDiscount(id, discountPercent);
-    console.log("✅ [ADMIN PRODUCTS] Product discount updated:", { id, result });
 
     return NextResponse.json({ success: true, discountPercent: result.discountPercent });
   } catch (error: any) {

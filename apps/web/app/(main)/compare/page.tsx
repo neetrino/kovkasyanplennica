@@ -66,7 +66,6 @@ export default function ComparePage() {
    */
   const fetchCompareProducts = useCallback(async (idsToLoad: string[]) => {
     if (idsToLoad.length === 0) {
-      console.info('[Compare] Skip fetch because ids array is empty');
       setProducts([]);
       setLoading(false);
       return;
@@ -74,7 +73,6 @@ export default function ComparePage() {
 
     try {
       setLoading(true);
-      console.info(`[Compare] Fetching ${idsToLoad.length} products for render`);
       const languagePreference = getStoredLanguage();
       const response = await apiClient.get<{
         data: Product[];
@@ -154,7 +152,6 @@ export default function ComparePage() {
     e.preventDefault();
     e.stopPropagation();
     
-    console.info(`[Compare] Removing product ${productId} from compare UI`);
     
     // Mark as local update to prevent re-fetch in event handler
     isLocalUpdateRef.current = true;

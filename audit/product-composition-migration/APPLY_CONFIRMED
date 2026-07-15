@@ -1,0 +1,5 @@
+CONFIRMED_AT=2026-07-15T12:46:00Z
+CONFIRMED_BY=user
+DRY_RUN_PLAN=dry-run-plan-2026-07-15T12-44-06-562Z.json
+SCOPE=migrate ingredients only for 91 dry-run MIGRATE candidates
+FORBIDDEN=subtitle,descriptionHtml,longDescriptionHtml,title,slug,product table
